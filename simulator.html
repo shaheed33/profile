@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NEM storage simulator | Shaheed</title>
+  <!-- The site theme is set in css/theme.css -->
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    #status { border-left: 4px solid var(--bs-danger); padding-left: .75rem; }
+    #status.ok { border-left-color: var(--bs-success); }
+    #gen-chart { height: 440px; }
+    #level-chart { height: 220px; }
+    .sens-chart { height: 320px; }
+    @media (min-width: 992px) {
+      .period-bar { position: sticky; top: 0; z-index: 30; box-shadow: 0 2px 6px rgba(0,0,0,.08); }
+      .side-sticky { position: sticky; top: calc(var(--pb-h, 0px) + 1rem); max-height: calc(100vh - var(--pb-h, 0px) - 2rem); overflow-y: auto; }
+    }
+    .period-bar { border-color: var(--bs-primary); }
+    .period-bar .btn { white-space: nowrap; }
+    .controls .mb-3 { margin-bottom: .75rem !important; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand bg-primary" data-bs-theme="dark">
+    <div class="container-xl">
+      <a class="navbar-brand" href="index.html">Shaheed</a>
+      <div class="navbar-nav ms-auto flex-wrap">
+        <a class="nav-link" href="index.html">About</a>
+        <a class="nav-link active" aria-current="page" href="simulator.html">NEM storage simulator</a>
+        <a class="nav-link" href="prices.html">NEM price patterns</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container-xl py-4">
+    <ul class="nav nav-pills mb-3" aria-label="Simulator sections">
+      <li class="nav-item"><a class="nav-link active" aria-current="page" href="simulator.html">Simulator</a></li>
+      <li class="nav-item"><a class="nav-link" href="replication.html">Replication: October 2024</a></li>
+    </ul>
+    <h1 class="mb-2">Could the NEM run without coal?</h1>
+    <p class="lead mb-2" style="max-width:62rem">Choose a future grid: how much wind, solar and storage. Then test it against real weather from Australia's east coast grid, every half hour, and see whether the lights stay on. <span id="period-label"></span></p>
+    <p class="small text-body-secondary mb-3" style="max-width:62rem">The same grid is tested in every year. Only the weather changes, so you can see which years were hardest. Each year runs from August to July.</p>
+
+    <section class="card period-bar mb-4">
+      <div class="card-body py-3">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <span class="fw-bold me-1">Weather from:</span>
+          <div class="d-flex flex-wrap gap-2" role="group" aria-label="Weather period" id="period-buttons">
+            <button type="button" class="btn btn-outline-primary" data-period="all" aria-pressed="false">All five years</button>
+            <button type="button" class="btn btn-outline-primary" data-period="aug2021_jul2022" aria-pressed="false">2021 to 2022</button>
+            <button type="button" class="btn btn-outline-primary" data-period="aug2022_jul2023" aria-pressed="false">2022 to 2023</button>
+            <button type="button" class="btn btn-outline-primary" data-period="aug2023_jul2024" aria-pressed="false">2023 to 2024</button>
+            <button type="button" class="btn btn-outline-primary" data-period="aug2024_jul2025" aria-pressed="false">2024 to 2025</button>
+            <button type="button" class="btn btn-primary" data-period="aug2025_jul2026" aria-pressed="true">2025 to 2026</button>
+          </div>
+          <span class="small text-body-secondary ms-1" id="period-loading" hidden>Loading data…</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="row g-4">
+      <div class="col-lg-3 order-1">
+        <div class="card controls side-sticky"><div class="card-body">
+          <h2 class="h6 mb-3">Your future grid</h2>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="windGW">Wind</label><output class="fw-bold text-nowrap ms-2" id="windGW-out"></output></div>
+            <input type="range" class="form-range" id="windGW" min="0" max="80" step="0.5"><p class="form-text mt-0 mb-0" id="windGW-now"></p>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="solarGW">Solar farms</label><output class="fw-bold text-nowrap ms-2" id="solarGW-out"></output></div>
+            <input type="range" class="form-range" id="solarGW" min="0" max="80" step="0.5"><p class="form-text mt-0 mb-0" id="solarGW-now"></p>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="roofGW">Rooftop solar</label><output class="fw-bold text-nowrap ms-2" id="roofGW-out"></output></div>
+            <input type="range" class="form-range" id="roofGW" min="0" max="80" step="0.5"><p class="form-text mt-0 mb-0" id="roofGW-now"></p>
+          </div>
+          <h2 class="h6 mt-4 mb-3">Other supply</h2>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="coal">Coal kept</label><output class="fw-bold text-nowrap ms-2" id="coal-out"></output></div>
+            <input type="range" class="form-range" id="coal" min="0" max="1" step="0.05"><p class="form-text mt-0 mb-0">Share of each year's actual coal output.</p>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="gas">Gas kept</label><output class="fw-bold text-nowrap ms-2" id="gas-out"></output></div>
+            <input type="range" class="form-range" id="gas" min="0" max="1" step="0.05"><p class="form-text mt-0 mb-0">Share of each year's actual gas output.</p>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="hydro">Hydro</label><output class="fw-bold text-nowrap ms-2" id="hydro-out"></output></div>
+            <input type="range" class="form-range" id="hydro" min="0" max="2" step="0.1">
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="demand">Demand</label><output class="fw-bold text-nowrap ms-2" id="demand-out"></output></div>
+            <input type="range" class="form-range" id="demand" min="0.8" max="1.6" step="0.05"><p class="form-text mt-0 mb-0">× the 2025 to 2026 level, applied to every year.</p>
+          </div>
+        </div></div>
+      </div>
+      <div class="col-lg-3 order-2 order-lg-3">
+        <div class="card controls side-sticky"><div class="card-body">
+          <h2 class="h6 mb-3">Storage</h2>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="storageGWh">Energy it can hold</label><output class="fw-bold text-nowrap ms-2" id="storageGWh-out"></output></div>
+            <input type="range" class="form-range" id="storageGWh" min="0" max="1000" step="5"><p class="form-text mt-0 mb-0">All storage, including the batteries and pumped hydro of today.</p>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="powerGW">Maximum power</label><output class="fw-bold text-nowrap ms-2" id="powerGW-out"></output></div>
+            <input type="range" class="form-range" id="powerGW" min="1" max="80" step="0.5">
+            <div class="form-check mt-1"><input class="form-check-input" type="checkbox" id="unlimited"><label class="form-check-label small" for="unlimited">No power limit</label></div>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="loss">Round trip loss</label><output class="fw-bold text-nowrap ms-2" id="loss-out"></output></div>
+            <input type="range" class="form-range" id="loss" min="0" max="0.4" step="0.01">
+          </div>
+          <button class="btn btn-primary w-100" id="reset" type="button">Reset to the starting grid</button>
+          <p class="form-text mt-3 mb-0">Starting grid: 40 GW wind, 35 GW solar farms, 45 GW rooftop solar, 200 GWh of storage, no coal and 20% of gas.</p>
+        </div></div>
+      </div>
+      <div class="col-lg-6 order-3 order-lg-2" aria-live="polite">
+        <ul class="nav nav-tabs mb-3" role="tablist">
+          <li class="nav-item" role="presentation"><button class="nav-link active" id="tab-sim" data-target="pane-sim" type="button" role="tab" aria-selected="true">Simulation</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="tab-sens" data-target="pane-sens" type="button" role="tab" aria-selected="false">What makes the difference</button></li>
+        </ul>
+        <div id="pane-sim" role="tabpanel">
+          <p class="h5 mb-3" id="status"></p>
+          <div class="row g-3 mb-3">
+                        <div class="col-6 col-md-4"><div class="card h-100"><div class="card-body py-3"><div class="h4 mb-0" id="s-met"></div><div class="small text-body-secondary">of demand met</div></div></div></div>
+            <div class="col-6 col-md-4"><div class="card h-100"><div class="card-body py-3"><div class="h4 mb-0" id="s-hours"></div><div class="small text-body-secondary">with shortfalls</div></div></div></div>
+            <div class="col-6 col-md-4"><div class="card h-100"><div class="card-body py-3"><div class="h4 mb-0" id="s-worst"></div><div class="small text-body-secondary">worst shortfall</div></div></div></div>
+            <div class="col-6 col-md-4"><div class="card h-100"><div class="card-body py-3"><div class="h4 mb-0" id="s-need"></div><div class="small text-body-secondary">storage needed to meet the reliability standard</div></div></div></div>
+            <div class="col-6 col-md-4"><div class="card h-100"><div class="card-body py-3"><div class="h4 mb-0" id="s-peak"></div><div class="small text-body-secondary">peak output from storage</div></div></div></div>
+            <div class="col-6 col-md-4"><div class="card h-100"><div class="card-body py-3"><div class="h4 mb-0" id="s-wasted"></div><div class="small text-body-secondary">curtailed (storage full)</div></div></div></div>
+          </div>
+          <div class="card mb-3"><div class="card-header" id="gen-title">Supply by source (MW)</div><div class="card-body p-2"><div id="gen-chart"></div></div></div>
+          <div class="card mb-3"><div class="card-header" id="level-title">Storage level (GWh)</div><div class="card-body p-2"><div id="level-chart"></div></div></div>
+          <div class="card mb-3"><div class="card-header">Where it falls short</div><div class="card-body">
+            <p class="mb-2" id="worst-week"></p>
+            <div class="table-responsive" hidden><table class="table table-sm small mb-3" id="year-table"></table></div>
+            <p class="small text-body-secondary mb-1">Demand unmet by month (GWh)</p>
+            <div id="short-chart" style="height: 240px;"></div>
+          </div></div>
+          <div class="card"><div class="card-header">How windy and sunny was it?</div><div class="card-body">
+            <p class="small text-body-secondary mb-2">Capacity factors: average output as a share of what was installed. These are the weather the grid is tested against. The calmest week is the lowest 7 day average for wind.</p>
+            <div class="table-responsive"><table class="table table-sm small mb-0" id="weather-table"></table></div>
+          </div></div>
+        </div>
+        <div id="pane-sens" role="tabpanel" hidden>
+          <p class="text-body-secondary">Each chart runs the selected weather many times, changing one thing while keeping your other settings. The green dashed line is the NEM reliability standard. The scale is logarithmic so small shortfalls stay visible. Long periods take a moment to calculate.</p>
+          <div class="card mb-3"><div class="card-header">Storage energy: how much it can hold</div><div class="card-body p-2"><div id="sens-storage" class="sens-chart"></div></div></div>
+          <div class="card mb-3"><div class="card-header">Building more or less wind and solar</div><div class="card-body p-2"><div id="sens-renew" class="sens-chart"></div></div></div>
+          <div class="card"><div class="card-header">Storage power: how fast it can discharge</div><div class="card-body p-2"><div id="sens-power" class="sens-chart"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+      <div class="col-md-6">
+        <h2 class="h5">How it works</h2>
+        <p>Each half hour's real wind, solar farm and rooftop solar output is divided by what was installed at the time. That gives the weather on its own, as a share of capacity. Your chosen fleet is then multiplied by that weather, so the same grid faces every year's conditions. Demand keeps each year's daily and seasonal pattern but is scaled to the 2025 to 2026 level.</p>
+        <p>If supply is higher than demand, the surplus charges the storage until it is full, and anything beyond that is curtailed. If supply is lower, the storage covers the gap until it runs empty or reaches its power limit. Whatever is still missing counts as a shortfall. The storage starts full and, in the five year run, carries over from one year to the next.</p>
+        <p class="mb-0">Inspired by Andrew Grogan's <em>Open Electricity Simulation</em> spreadsheet (2024), shared in his <a href="https://www.linkedin.com/posts/andrew-grogan-be-phd-a56b5816_what-would-happen-if-the-nem-had-a-lot-more-share-7258764364134899712-KhCt" target="_blank" rel="noopener">LinkedIn post</a>. Data: AEMO via NEMOSIS, with rooftop solar capacity from AEMO's published figures. See <a href="replication.html">Replication</a>.</p>
+      </div>
+      <div class="col-md-6">
+        <h2 class="h5">What it leaves out</h2>
+        <ul class="mb-0">
+          <li>The whole grid is treated as one place, with no transmission limits between states.</li>
+          <li>Weather is taken from actual output. In recent years some wind and solar output was curtailed when prices were negative, so the weather is slightly understated.</li>
+          <li>New wind and solar farms are assumed to see the same weather as today's farms. In reality, spreading them across more locations smooths their output.</li>
+          <li>No costs, ramping limits or minimum running levels for generators.</li>
+          <li>Hydro follows each year's actual output, including the effect of rainfall.</li>
+          <li>The real reliability standard applies to each region and to expected outcomes over many possible years. Here it is applied to the whole NEM as a rough benchmark.</li>
+          <li>Gas and coal follow each year's actual output pattern, scaled by your settings. They are not dispatched to fill gaps.</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Shaheed. Simulation for discussion only, not a forecast.</footer>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script>
+/* ---- data/capacity.js (built into this page) ---- */
+window.NEM_CAPACITY = {"months":["2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07"],"wind_mw":[8170,8200,8183,8166,8255,8397,8442,8541,9007,9335,9409,9346,9356,9363,9469,9461,9500,9578,9602,9789,9924,10028,10035,10060,10201,10174,10246,10217,10242,10193,10204,10323,10367,10386,10584,10755,10751,10966,11034,11184,11320,11528,11620,12146,12338,12585,12773,12894,12920,12973,12979,13020,13107,13153,13279,13319,13494,13642,13732,13721],"solar_utility_mw":[5039,5196,5370,5391,5510,5549,5559,5634,5697,5821,5955,5974,6163,6479,6786,6854,6946,7071,7122,7156,7305,7434,7556,7731,7903,8001,8034,8113,8134,8098,8070,8057,8033,8179,8213,8373,8478,8582,8889,8974,9175,9381,9654,9752,9742,9812,9937,10027,10389,10538,10648,10817,11267,11483,11387,11643,11542,11535,11523,11294],"rooftop_mw":[13716,13933,14149,14366,14582,14802,15012,15221,15438,15654,15871,16087,16307,16524,16740,16957,17173,17394,17603,17812,18029,18246,18462,18679,18899,19115,19332,19548,19765,19985,20198,20411,20627,20844,21060,21277,21497,21714,21930,22147,22363,22583,22793,23002,23219,23435,23652,23868,24088,24305,24521,24738,24955,25175,25384,25594,25819,26054,26288,26523],"sources":"Wind and solar farms: operating capacity from AEMO unit data (build_capacity.py). Rooftop: interpolated from AEMO figures (about 14 GW in Sep 2021, 25.7 GW Mar 2026, 26.4 GW Jun 2026)."};
+  </script>
+  <script>
+/* ---- model.js (built into this page) ---- */
+// model.js — the storage simulation, based on Andrew Grogan's spreadsheet.
+// Pure calculation: no charts, no page code. Works in the browser and in Node.
+
+const GAS_KEYS = ["distillate", "gas_steam", "gas_ccgt", "gas_ocgt", "gas_recip", "gas_wcmg"];
+
+// Andrew's saved scenario (his row 3 multipliers)
+const ANDREW_PRESET = {
+  demand: 1, coal: 0, hydro: 1, bio: 1, wind: 2.5, solar: 2.5,
+  gas: { distillate: 0.3, gas_steam: 0.8, gas_ccgt: 0.2, gas_ocgt: 0.2, gas_recip: 0.3, gas_wcmg: 1 },
+  storageMWh: 120000, storageMW: Infinity, loss: 0.15, method: "andrew",
+};
+
+function simulate(series, s, stepHours = 0.5) {
+  const n = series.demand.length;
+  const eff = 1 - s.loss;
+  const out = {
+    demand: new Float64Array(n), coal: new Float64Array(n), gas: new Float64Array(n),
+    bio: new Float64Array(n), hydro: new Float64Array(n), wind: new Float64Array(n),
+    solarUtility: new Float64Array(n), solarRooftop: new Float64Array(n),
+    existingBattery: new Float64Array(n), charge: new Float64Array(n),
+    discharge: new Float64Array(n), unmet: new Float64Array(n),
+    curtailed: new Float64Array(n), level: new Float64Array(n),
+  };
+  let G = s.storageMWh; // starts full, as in Andrew's sheet
+  for (let i = 0; i < n; i++) {
+    const coal = s.coal * (series.coal_brown[i] + series.coal_black[i]);
+    let gas = 0;
+    for (const k of GAS_KEYS) gas += s.gas[k] * series[k][i];
+    const bio = s.bio * (series.bio_biogas[i] + series.bio_biomass[i]);
+    const hydro = s.hydro * series.hydro[i];
+    const wind = s.wind * series.wind[i];
+    const su = s.solar * series.solar_utility[i];
+    const sr = s.solar * series.solar_rooftop[i];
+    const eb = series.battery_discharging[i]; // existing batteries: real history, not scaled
+    const demand = s.demand * series.demand[i];
+    const supply = coal + gas + bio + hydro + wind + su + sr + eb;
+    const gap = supply - demand;
+
+    out.level[i] = G; // level at the start of this half hour
+    let ch = 0, dis = 0, un = 0, cur = 0;
+
+    if (s.method === "andrew") {
+      // Exact replica of the spreadsheet formulas (no power limit).
+      if (gap > 0) {
+        ch = gap;
+        const raw = G + gap * stepHours;
+        cur = Math.max(raw - s.storageMWh, 0) / stepHours;
+        G = Math.min(raw, s.storageMWh);
+      } else {
+        dis = Math.min(-gap, G); // Andrew caps MW by the MWh level
+        un = -gap - dis;
+        G = Math.max(G - (dis / eff) * stepHours, 0);
+      }
+    } else {
+      // Improved: power limit (MW) + energy limit (MWh), units handled consistently.
+      if (gap > 0) {
+        ch = Math.min(gap, s.storageMW, (s.storageMWh - G) / stepHours);
+        cur = gap - ch;
+        G += ch * stepHours;
+      } else {
+        const deliverable = (G * eff) / stepHours;
+        dis = Math.min(-gap, s.storageMW, deliverable);
+        un = -gap - dis;
+        G = Math.max(G - (dis / eff) * stepHours, 0);
+      }
+    }
+    out.demand[i] = demand; out.coal[i] = coal; out.gas[i] = gas; out.bio[i] = bio;
+    out.hydro[i] = hydro; out.wind[i] = wind; out.solarUtility[i] = su; out.solarRooftop[i] = sr;
+    out.existingBattery[i] = eb; out.charge[i] = -ch; out.discharge[i] = dis;
+    out.unmet[i] = un; out.curtailed[i] = cur;
+  }
+
+  // Headline numbers
+  let demandE = 0, unmetE = 0, curE = 0, worst = 0, shortSteps = 0, peakDis = 0, peakCh = 0, minLevel = Infinity, renewE = 0, supplyE = 0;
+  for (let i = 0; i < n; i++) {
+    demandE += out.demand[i] * stepHours;
+    unmetE += out.unmet[i] * stepHours;
+    curE += out.curtailed[i] * stepHours;
+    if (out.unmet[i] > 1) shortSteps++;
+    worst = Math.max(worst, out.unmet[i]);
+    peakDis = Math.max(peakDis, out.discharge[i]);
+    peakCh = Math.max(peakCh, -out.charge[i]);
+    minLevel = Math.min(minLevel, out.level[i]);
+  }
+  out.summary = {
+    demandMetPct: 100 * (1 - unmetE / demandE),
+    unmetMWh: unmetE,
+    hoursShort: shortSteps * stepHours,
+    worstShortfallMW: worst,
+    curtailedMWh: curE,
+    peakDischargeMW: peakDis,
+    peakChargeMW: peakCh,
+    minLevelMWh: minLevel,
+  };
+  return out;
+}
+
+if (typeof module !== "undefined") module.exports = { simulate, ANDREW_PRESET, GAS_KEYS };
+
+  </script>
+  <script>
+/* ---- simulator.js (built into this page) ---- */
+// simulator.js: fixed fleet storage simulator.
+// The same future fleet (GW of wind, solar farms and rooftop solar) is tested against each year's real weather.
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const fmt = (x, d = 0) => (+x).toLocaleString("en-AU", { maximumFractionDigits: d, minimumFractionDigits: d });
+  const dFmt = (d) => d.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+  const stepH = 0.5;
+  const RELIABILITY = 0.002; // NEM reliability standard: unserved energy at most 0.002% of demand
+  const YEAR_KEYS = ["aug2021_jul2022", "aug2022_jul2023", "aug2023_jul2024", "aug2024_jul2025", "aug2025_jul2026"];
+  const CAP = window.NEM_CAPACITY;
+  const GAS = ["distillate", "gas_steam", "gas_ccgt", "gas_ocgt", "gas_recip", "gas_wcmg"];
+  const DEFAULTS = { windGW: 40, solarGW: 35, roofGW: 45, coal: 0, gas: 0.2, hydro: 1, demand: 1, storageGWh: 200, powerGW: 30, unlimited: false, loss: 0.15 };
+
+  // ---------- data loading ----------
+  const loaded = {};
+  function loadScript(key) {
+    if (window.NEM_PERIODS && window.NEM_PERIODS[key]) return Promise.resolve(window.NEM_PERIODS[key]);
+    if (!loaded[key]) {
+      loaded[key] = new Promise((resolve, reject) => {
+        const el = document.createElement("script");
+        el.src = "data/nem_" + key + ".js";
+        el.onload = () => (window.NEM_PERIODS && window.NEM_PERIODS[key] ? resolve(window.NEM_PERIODS[key]) : reject(new Error(key)));
+        el.onerror = () => reject(new Error(key));
+        document.head.appendChild(el);
+      });
+    }
+    return loaded[key];
+  }
+  async function loadPeriod(key) {
+    const keys = key === "all" ? YEAR_KEYS : [key];
+    const parts = await Promise.all(keys.map(loadScript));
+    const series = {};
+    for (const k of Object.keys(parts[0].series)) series[k] = [].concat(...parts.map((p) => p.series[k]));
+    return { start: parts[0].start, series, multi: keys.length > 1, blocks: parts.map((p) => p.series.demand.length) };
+  }
+  // Demand level used for every year: the average of Aug 2025 to Jul 2026
+  let demandTarget = null;
+  async function getDemandTarget() {
+    if (demandTarget) return demandTarget;
+    const d = await loadScript("aug2025_jul2026");
+    demandTarget = d.series.demand.reduce((a, b) => a + b, 0) / d.series.demand.length;
+    return demandTarget;
+  }
+
+  // ---------- turn a period into weather traces ----------
+  let P = null; // current period: times, raw series, capacity factors, scaled demand
+  async function setData(d) {
+    const n = d.series.demand.length;
+    const t0 = new Date(d.start);
+    const times = Array.from({ length: n }, (_, i) => new Date(t0.getTime() + i * 1800000));
+    const mIdx = {}; CAP.months.forEach((m, i) => (mIdx[m] = i));
+    const cfW = new Float64Array(n), cfS = new Float64Array(n), cfR = new Float64Array(n), dem = new Float64Array(n), hyd = new Float64Array(n);
+    const S = d.series;
+    for (let i = 0; i < n; i++) {
+      const t = times[i];
+      const j = mIdx[`${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}`];
+      cfW[i] = S.wind[i] / CAP.wind_mw[j];
+      cfS[i] = S.solar_utility[i] / CAP.solar_utility_mw[j];
+      cfR[i] = S.solar_rooftop[i] / CAP.rooftop_mw[j];
+      hyd[i] = S.hydro[i] + S.phes_pumps[i]; // pumped hydro counted net of the energy used to pump
+    }
+    // scale each 12 month block of demand to the same average, so demand growth does not distort the comparison
+    const target = await getDemandTarget();
+    let a = 0;
+    for (const len of d.blocks) {
+      let s = 0; for (let i = a; i < a + len; i++) s += S.demand[i];
+      const f = target / (s / len);
+      for (let i = a; i < a + len; i++) dem[i] = S.demand[i] * f;
+      a += len;
+    }
+    P = { n, times, S, cfW, cfS, cfR, dem, hyd, multi: d.multi };
+    $("period-label").textContent = "Weather from " + dFmt(times[0]) + " to " + dFmt(times[n - 1]) + ", in half hour steps.";
+    showWeather();
+  }
+
+  // ---------- settings ----------
+  const ids = ["windGW", "solarGW", "roofGW", "coal", "gas", "hydro", "demand", "storageGWh", "powerGW", "unlimited", "loss"];
+  function setControls(v) { for (const k of ids) { const el = $(k); if (el.type === "checkbox") el.checked = v[k]; else el.value = v[k]; } }
+  function readControls() {
+    const v = {}; for (const k of ids) { const el = $(k); v[k] = el.type === "checkbox" ? el.checked : +el.value; } return v;
+  }
+  function labels(v) {
+    $("windGW-out").textContent = fmt(v.windGW, 1) + " GW";
+    $("solarGW-out").textContent = fmt(v.solarGW, 1) + " GW";
+    $("roofGW-out").textContent = fmt(v.roofGW, 1) + " GW";
+    $("coal-out").textContent = fmt(v.coal * 100) + "%";
+    $("gas-out").textContent = fmt(v.gas * 100) + "%";
+    $("hydro-out").textContent = "× " + fmt(v.hydro, 1);
+    $("demand-out").textContent = "× " + fmt(v.demand, 2);
+    $("storageGWh-out").textContent = fmt(v.storageGWh) + " GWh";
+    $("powerGW-out").textContent = v.unlimited ? "No limit" : fmt(v.powerGW, 1) + " GW";
+    $("loss-out").textContent = fmt(v.loss * 100) + "%";
+    $("powerGW").disabled = v.unlimited;
+    const last = CAP.months.length - 1;
+    $("windGW-now").textContent = `Today about ${fmt(CAP.wind_mw[last] / 1000, 1)} GW`;
+    $("solarGW-now").textContent = `Today about ${fmt(CAP.solar_utility_mw[last] / 1000, 1)} GW`;
+    $("roofGW-now").textContent = `Today about ${fmt(CAP.rooftop_mw[last] / 1000, 1)} GW`;
+  }
+
+  // Build the series the model uses: weather × chosen fleet
+  function fleetSeries(v) {
+    const n = P.n, S = P.S, o = {};
+    const W = v.windGW * 1000, SO = v.solarGW * 1000, R = v.roofGW * 1000;
+    o.demand = P.dem;
+    o.wind = new Float64Array(n); o.solar_utility = new Float64Array(n); o.solar_rooftop = new Float64Array(n);
+    for (let i = 0; i < n; i++) { o.wind[i] = P.cfW[i] * W; o.solar_utility[i] = P.cfS[i] * SO; o.solar_rooftop[i] = P.cfR[i] * R; }
+    o.hydro = P.hyd;
+    o.battery_discharging = new Float64Array(n); // existing batteries are part of the storage you choose
+    for (const k of ["coal_brown", "coal_black", "bio_biogas", "bio_biomass", ...GAS]) o[k] = S[k];
+    return o;
+  }
+  function modelSettings(v, extra = {}) {
+    const gas = {}; for (const k of GAS) gas[k] = v.gas;
+    return { demand: v.demand, coal: v.coal, hydro: v.hydro, bio: 1, wind: 1, solar: 1, gas,
+      storageMWh: v.storageGWh * 1000, storageMW: v.unlimited ? Infinity : v.powerGW * 1000, loss: v.loss, method: "improved", ...extra };
+  }
+
+  // Smallest storage (GWh) that meets the reliability standard with the other settings, or null if above 3,000 GWh
+  function storageForReliability(series, v) {
+    const ok = (gwh) => 100 - simulate(series, modelSettings(v, { storageMWh: gwh * 1000 }), stepH).summary.demandMetPct <= RELIABILITY;
+    if (!ok(3000)) return null;
+    let lo = 0, hi = 3000;
+    if (ok(0)) return 0;
+    for (let k = 0; k < 14; k++) { const mid = (lo + hi) / 2; if (ok(mid)) hi = mid; else lo = mid; }
+    return hi;
+  }
+
+  // ---------- charts ----------
+  const COLORS = { coal: "#3F3F46", gas: "#8D6E63", bio: "#6B8E23", hydro: "#2563EB", wind: "#0F9D8A",
+    solarUtility: "#F2C200", solarRooftop: "#F7E27A", discharge: "#5B21B6", charge: "#A78BFA", unmet: "#E11D48" };
+  const TRACES = [["coal", "Coal"], ["gas", "Gas"], ["bio", "Bioenergy"], ["hydro", "Hydro"], ["wind", "Wind"],
+    ["solarUtility", "Solar farms"], ["solarRooftop", "Rooftop solar"], ["discharge", "Storage (out)"], ["unmet", "Shortfall"]];
+  const css = getComputedStyle(document.documentElement);
+  const cv = (name, d) => css.getPropertyValue(name).trim() || d;
+  const font = { family: getComputedStyle(document.body).fontFamily, color: cv("--chart-text", "#333"), size: 12 };
+  const baseLayout = { margin: { l: 60, r: 15, t: 10, b: 40 }, font, paper_bgcolor: cv("--chart-bg", "#fff"), plot_bgcolor: cv("--chart-bg", "#fff"),
+    hovermode: "x unified", legend: { orientation: "h", y: -0.18 }, xaxis: { showgrid: false, linecolor: cv("--line", "#ddd") },
+    yaxis: { gridcolor: cv("--chart-grid", "#eee"), zerolinecolor: cv("--muted", "#999"), title: { text: "MW" } } };
+  const config = { displayModeBar: false, responsive: true };
+  function daily(arr, how) {
+    const out = [];
+    for (let i = 0; i < arr.length; i += 48) {
+      let a = how === "min" ? Infinity : 0, c = 0;
+      for (let j = i; j < Math.min(i + 48, arr.length); j++) { if (how === "min") a = Math.min(a, arr[j]); else a += arr[j]; c++; }
+      out.push(how === "min" ? a : a / c);
+    }
+    return out;
+  }
+  function draw(r) {
+    const long = P.n > 3000;
+    const X = long ? P.times.filter((_, i) => i % 48 === 0) : P.times;
+    const Y = (a) => (long ? daily(a, "mean") : a);
+    $("gen-title").textContent = long ? "Supply by source (daily average, MW)" : "Supply by source (MW)";
+    $("level-title").textContent = long ? "Storage level (lowest point each day, GWh)" : "Storage level (GWh)";
+    const gen = TRACES.map(([k, name]) => ({ x: X, y: Y(r[k]), name, type: "scatter", mode: "none", stackgroup: "supply",
+      fillcolor: COLORS[k], hovertemplate: "%{y:,.0f} MW",
+      ...(k === "unmet" ? { fillpattern: { shape: "/", fgcolor: "#7F1D1D", bgcolor: COLORS.unmet, size: 6, solidity: 0.35 } } : {}) }));
+    gen.push({ x: X, y: Y(r.charge), name: "Storage (in)", type: "scatter", mode: "none", stackgroup: "charge", fillcolor: COLORS.charge, hovertemplate: "%{y:,.0f} MW" });
+    gen.push({ x: X, y: Y(r.demand), name: "Demand", type: "scatter", mode: "lines", line: { color: cv("--chart-text", "#333"), width: 1.2 }, hovertemplate: "%{y:,.0f} MW" });
+    Plotly.react("gen-chart", gen, { ...baseLayout }, config);
+    const lev = Array.from(long ? daily(r.level, "min") : r.level, (x) => x / 1000);
+    Plotly.react("level-chart", [{ x: X, y: lev, type: "scatter", mode: "lines", fill: "tozeroy", line: { color: COLORS.discharge, width: 1.5 },
+      fillcolor: "rgba(91,33,182,0.15)", hovertemplate: "%{y:,.1f} GWh" }],
+      { ...baseLayout, showlegend: false, margin: { l: 60, r: 15, t: 10, b: 30 }, yaxis: { ...baseLayout.yaxis, title: { text: "GWh" }, rangemode: "tozero" } }, config);
+  }
+
+  // ---------- summary panels ----------
+  function showSummary(s) {
+    const unmetPct = 100 - s.demandMetPct;
+    $("s-met").textContent = fmt(s.demandMetPct, 2) + "%";
+    $("s-hours").textContent = fmt(s.hoursShort, 1) + " hrs";
+    $("s-worst").textContent = fmt(s.worstShortfallMW / 1000, 1) + " GW";
+    $("s-wasted").textContent = fmt(s.curtailedMWh / 1e6, 1) + " TWh";
+    $("s-peak").textContent = fmt(s.peakDischargeMW / 1000, 1) + " GW";
+    const st = $("status");
+    if (unmetPct <= RELIABILITY) {
+      st.textContent = "This grid meets the NEM reliability standard: unmet demand is within 0.002% of all demand.";
+      st.classList.add("ok");
+    } else {
+      st.textContent = `Demand went unmet for ${fmt(s.hoursShort, 1)} hours (${fmt(unmetPct, 3)}% of all demand). The reliability standard allows 0.002%.`;
+      st.classList.remove("ok");
+    }
+  }
+  let relTimer = null;
+  function showReliability(series, v) {
+    $("s-need").textContent = "…";
+    clearTimeout(relTimer);
+    relTimer = setTimeout(() => {
+      const g = storageForReliability(series, v);
+      $("s-need").textContent = g === null ? "over 3,000 GWh" : fmt(Math.ceil(g / 5) * 5) + " GWh";
+    }, 250);
+  }
+  const blockRanges = () => {
+    const out = []; const t0 = P.times[0];
+    for (let y = 0; ; y++) {
+      const from = new Date(t0.getFullYear() + y, 7, 1), to = new Date(t0.getFullYear() + y + 1, 7, 1);
+      if (from > P.times[P.n - 1]) break;
+      out.push({ from, to, label: `Aug ${from.getFullYear()} to Jul ${to.getFullYear()}` });
+    }
+    return out;
+  };
+  function showBreakdown(r) {
+    const n = P.n, un = r.unmet, dem = r.demand, times = P.times;
+    let w = 0, best = 0, bestEnd = -1;
+    for (let i = 0; i < n; i++) { w += un[i] * stepH; if (i >= 336) w -= un[i - 336] * stepH; if (w > best) { best = w; bestEnd = i; } }
+    $("worst-week").textContent = best <= 0 ? "There were no shortfalls, so there is no worst week."
+      : `Worst week: ${dFmt(times[Math.max(0, bestEnd - 335)])} to ${dFmt(times[bestEnd])}, with ${fmt(best / 1000, 1)} GWh of demand unmet.`;
+    const keys = [], vals = [];
+    for (let i = 0; i < n; i++) {
+      const t = times[i], k = `${t.getFullYear()}-${t.getMonth()}`;
+      if (keys[keys.length - 1] !== k) { keys.push(k); vals.push({ t, gwh: 0 }); }
+      vals[vals.length - 1].gwh += un[i] * stepH / 1000;
+    }
+    Plotly.react("short-chart", [{ x: vals.map((o) => o.t), y: vals.map((o) => o.gwh), type: "bar", marker: { color: COLORS.unmet },
+      hovertemplate: "%{x|%b %Y}: %{y:,.1f} GWh<extra></extra>" }],
+      { ...baseLayout, showlegend: false, hovermode: "closest", bargap: 0.15, margin: { l: 60, r: 15, t: 10, b: 40 },
+        yaxis: { ...baseLayout.yaxis, title: { text: "Unmet (GWh)" }, rangemode: "tozero" } }, config);
+    const tbl = $("year-table"), wrap = tbl.closest(".table-responsive");
+    if (!P.multi) { wrap.hidden = true; return; }
+    wrap.hidden = false;
+    const rows = blockRanges().map((b) => {
+      let de = 0, ue = 0, hs = 0, worst = 0;
+      for (let i = 0; i < n; i++) { if (times[i] < b.from || times[i] >= b.to) continue; de += dem[i] * stepH; ue += un[i] * stepH; if (un[i] > 1) hs += stepH; worst = Math.max(worst, un[i]); }
+      return { ...b, met: 100 * (1 - ue / de), ue, hs, worst };
+    });
+    const hardest = rows.reduce((a, b) => (b.ue > a.ue ? b : a), rows[0]);
+    tbl.innerHTML = '<thead><tr><th>Weather year</th><th class="text-end">Demand met</th><th class="text-end">Hours short</th><th class="text-end">Unmet (GWh)</th><th class="text-end">Worst shortfall</th></tr></thead><tbody>' +
+      rows.map((o) => `<tr${o === hardest && o.ue > 0 ? ' class="fw-bold"' : ""}><td>${o.label}</td><td class="text-end">${fmt(o.met, 2)}%</td><td class="text-end">${fmt(o.hs, 1)}</td><td class="text-end">${fmt(o.ue / 1000, 1)}</td><td class="text-end">${fmt(o.worst / 1000, 1)} GW</td></tr>`).join("") +
+      "</tbody><caption class='small'>The same grid in each year's weather. Storage carries over from one year to the next. The hardest year is in bold.</caption>";
+  }
+  function showWeather() {
+    const rows = (P.multi ? blockRanges() : [{ from: P.times[0], to: new Date(P.times[P.n - 1].getTime() + 1), label: "This period" }]).map((b) => {
+      let w = 0, s = 0, r = 0, c = 0, worst7 = Infinity, run = 0, q = [];
+      for (let i = 0; i < P.n; i++) {
+        if (P.times[i] < b.from || P.times[i] >= b.to) continue;
+        w += P.cfW[i]; s += P.cfS[i]; r += P.cfR[i]; c++;
+        q.push(P.cfW[i]); run += P.cfW[i]; if (q.length > 336) run -= q.shift();
+        if (q.length === 336) worst7 = Math.min(worst7, run / 336);
+      }
+      return { label: b.label, w: (100 * w) / c, s: (100 * s) / c, r: (100 * r) / c, w7: 100 * worst7 };
+    });
+    $("weather-table").innerHTML = '<thead><tr><th>Period</th><th class="text-end">Wind</th><th class="text-end">Solar farms</th><th class="text-end">Rooftop solar</th><th class="text-end">Calmest week of wind</th></tr></thead><tbody>' +
+      rows.map((o) => `<tr><td>${o.label}</td><td class="text-end">${fmt(o.w, 1)}%</td><td class="text-end">${fmt(o.s, 1)}%</td><td class="text-end">${fmt(o.r, 1)}%</td><td class="text-end">${isFinite(o.w7) ? fmt(o.w7, 1) + "%" : ""}</td></tr>`).join("") + "</tbody>";
+  }
+
+  // ---------- update loop ----------
+  let pending = false, lastSeries = null;
+  function update() {
+    if (pending || !P) return;
+    pending = true;
+    requestAnimationFrame(() => {
+      pending = false;
+      const v = readControls(); labels(v);
+      const series = fleetSeries(v); lastSeries = series;
+      const r = simulate(series, modelSettings(v), stepH);
+      showSummary(r.summary); showBreakdown(r); draw(r); showReliability(series, v);
+      document.dispatchEvent(new CustomEvent("sim:update"));
+    });
+  }
+  ids.forEach((k) => $(k).addEventListener("input", update));
+  $("reset").addEventListener("click", () => { setControls(DEFAULTS); update(); });
+
+  // ---------- period buttons ----------
+  const pbtns = Array.from(document.querySelectorAll("#period-buttons [data-period]"));
+  let current = null;
+  async function choosePeriod(key) {
+    current = key;
+    pbtns.forEach((b) => { const on = b.dataset.period === key; b.classList.toggle("btn-primary", on); b.classList.toggle("btn-outline-primary", !on); b.setAttribute("aria-pressed", on); });
+    const note = $("period-loading"); note.textContent = "Loading data…"; note.hidden = false;
+    pbtns.forEach((b) => (b.disabled = true));
+    try { const d = await loadPeriod(key); if (key === current) await setData(d); }
+    catch (e) { note.textContent = "Could not load this period's data file."; pbtns.forEach((b) => (b.disabled = false)); return; }
+    note.hidden = true; pbtns.forEach((b) => (b.disabled = false));
+    update();
+  }
+  pbtns.forEach((b) => b.addEventListener("click", () => choosePeriod(b.dataset.period)));
+  const bar = document.querySelector(".period-bar");
+  const setBarHeight = () => document.documentElement.style.setProperty("--pb-h", (bar ? bar.offsetHeight : 0) + "px");
+  window.addEventListener("resize", setBarHeight); setBarHeight();
+
+  // For the "What makes the difference" tab
+  window.SIM = { readControls, fleetSeries: (v) => fleetSeries(v || readControls()), modelSettings, series: () => lastSeries,
+    baseLayout, config, cv, RELIABILITY, ready: () => !!P };
+  $("year").textContent = new Date().getFullYear();
+  setControls(DEFAULTS);
+  choosePeriod("aug2025_jul2026");
+})();
+
+  </script>
+  <script>
+/* ---- sensitivity.js (built into this page) ---- */
+// sensitivity.js: the "What makes the difference" tab. Re-runs the selected period many times.
+(function () {
+  const stepH = 0.5;
+  const range = (a, b, step) => { const r = []; for (let x = a; x <= b + 1e-9; x += step) r.push(+x.toFixed(4)); return r; };
+  const tabs = document.querySelectorAll('[role="tab"]');
+  tabs.forEach((tab) => tab.addEventListener("click", () => {
+    tabs.forEach((t) => { const on = t === tab; t.classList.toggle("active", on); t.setAttribute("aria-selected", on); document.getElementById(t.dataset.target).hidden = !on; });
+    if (tab.id === "tab-sens") render(); else window.dispatchEvent(new Event("resize"));
+  }));
+  const pane = document.getElementById("pane-sens");
+  let dirty = true;
+  document.addEventListener("sim:update", () => { dirty = true; if (!pane.hidden) setTimeout(render, 30); });
+
+  function chart(id, xs, ys, xTitle, cur, needX) {
+    const { baseLayout, config, cv, RELIABILITY } = window.SIM;
+    const traces = [{ x: xs, y: ys, type: "scatter", mode: "lines", name: "Demand not met (%)", line: { color: "#E11D48", width: 2.5 },
+      hovertemplate: "%{y:.3f}% of demand not met<extra></extra>" }];
+    if (cur) traces.push({ x: [cur.x], y: [cur.y], type: "scatter", mode: "markers", name: "Your setting",
+      marker: { size: 11, color: cv("--chart-text", "#333"), line: { color: "#fff", width: 2 } }, hovertemplate: "Your setting: %{y:.3f}%<extra></extra>" });
+    const shapes = [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: RELIABILITY, y1: RELIABILITY, line: { color: "#16A34A", dash: "dash", width: 1.5 } }];
+    const ann = [{ xref: "paper", x: 1, y: Math.log10(RELIABILITY), yanchor: "bottom", xanchor: "right", text: "Reliability standard (0.002%)", showarrow: false, font: { size: 11, color: "#16A34A" } }];
+    if (needX != null) { shapes.push({ type: "line", yref: "paper", y0: 0, y1: 1, x0: needX, x1: needX, line: { color: "#16A34A", dash: "dot", width: 1 } }); }
+    Plotly.react(id, traces, { ...baseLayout, hovermode: "closest", shapes, annotations: ann, margin: { l: 70, r: 15, t: 10, b: 50 }, legend: { orientation: "h", y: -0.3 },
+      xaxis: { ...baseLayout.xaxis, type: "linear", title: { text: xTitle }, showgrid: true, gridcolor: cv("--chart-grid", "#eee") },
+      yaxis: { ...baseLayout.yaxis, type: "log", title: { text: "% of demand not met (log scale)" }, tickformat: "~g", ticksuffix: "%",
+        range: [Math.log10(Math.min(0.0005, ...ys) * 0.8), Math.log10(Math.max(0.01, ...ys) * 1.5)] } }, config);
+  }
+  const unmet = (series, s) => Math.max(100 - simulate(series, s, stepH).summary.demandMetPct, 1e-4);
+
+  function render() {
+    if (!dirty || !window.SIM || !window.SIM.ready()) return;
+    dirty = false;
+    const S = window.SIM, v = S.readControls(), series = S.series();
+    // 1. storage size
+    const xs1 = range(0, 1000, 25);
+    const y1 = xs1.map((g) => unmet(series, S.modelSettings(v, { storageMWh: g * 1000 })));
+    const need = xs1.find((x, i) => y1[i] <= S.RELIABILITY);
+    chart("sens-storage", xs1, y1, "Storage energy (GWh)", { x: v.storageGWh, y: unmet(series, S.modelSettings(v)) }, need);
+    // 2. scale the whole wind and solar fleet
+    const xs2 = range(0.5, 2, 0.1);
+    const y2 = xs2.map((f) => unmet(series, S.modelSettings(v, { wind: f, solar: f })));
+    chart("sens-renew", xs2, y2, "Wind and solar fleet, as a multiple of your settings", { x: 1, y: unmet(series, S.modelSettings(v)) });
+    // 3. storage power
+    const xs3 = range(5, 80, 2.5);
+    const y3 = xs3.map((g) => unmet(series, S.modelSettings(v, { storageMW: g * 1000 })));
+    chart("sens-power", xs3, y3, "Storage power (GW)", v.unlimited ? null : { x: v.powerGW, y: unmet(series, S.modelSettings(v)) });
+  }
+})();
+
+  </script>
+</body>
+</html>

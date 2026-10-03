@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shaheed</title>
+  <meta name="description" content="Shaheed, PhD candidate in Economics, working on Australia's National Electricity Market and renewable energy.">
+  <!-- The site theme is set in css/theme.css -->
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand bg-primary" data-bs-theme="dark">
+    <div class="container-xl">
+      <a class="navbar-brand" href="index.html">Shaheed</a>
+      <div class="navbar-nav ms-auto flex-wrap">
+        <a class="nav-link active" aria-current="page" href="index.html">About</a>
+        <a class="nav-link" href="simulator.html">NEM storage simulator</a>
+        <a class="nav-link" href="prices.html">NEM price patterns</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-5" style="max-width: 760px;">
+    <div class="d-flex align-items-center gap-4 mb-4">
+      <!-- Profile photo: images/profile.jpg -->
+      <img class="profile-photo" src="images/profile.jpg" alt="Photo of Shaheed" width="120" height="120">
+      <div>
+        <h1 class="mb-1">Shaheed</h1>
+        <p class="lead text-body-secondary mb-0">PhD student in Economics, University of York</p>
+      </div>
+    </div>
+
+    <p>I hold Australian permanent residency with full work rights and I'm looking for roles in energy markets, analysis and policy. I'm moving my PhD to part time study, so I'm available for full time work.</p>
+    <p>I'm currently training in energy market analysis, including AEMO's NEM Foundations course and PLEXOS power system modelling certifications. This site is where I build side projects on energy markets. So far they use public data from Australia's National Electricity Market, and I plan to explore more markets and topics.</p>
+    <div class="d-flex flex-wrap gap-2 my-3">
+      <a class="btn btn-primary" href="docs/Abdulla_Shaheed_CV.pdf" target="_blank" rel="noopener">View my CV (PDF)</a>
+      <a class="btn btn-outline-primary" href="mailto:shahydh33@gmail.com">Email me</a>
+    </div>
+    <p class="mb-3"><strong>Contact:</strong> <a href="mailto:shahydh33@gmail.com">shahydh33@gmail.com</a></p>
+    <p class="small text-body-secondary">Last updated 3 October 2026</p>
+
+
+    <h2 class="h4 mt-5 mb-3">Side projects</h2>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h3 class="h5 card-title"><a href="simulator.html">NEM storage simulator</a></h3>
+        <p class="card-text text-body-secondary mb-0">Choose a future grid of wind, solar and storage, then test it against five years of real weather from the NEM, every half hour. Started as a <a href="replication.html">replication</a> of Andrew Grogan's spreadsheet, shared in his <a href="https://www.linkedin.com/posts/andrew-grogan-be-phd-a56b5816_what-would-happen-if-the-nem-had-a-lot-more-share-7258764364134899712-KhCt" target="_blank" rel="noopener">LinkedIn post</a>.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h3 class="h5 card-title"><a href="prices.html">NEM price patterns</a></h3>
+        <p class="card-text text-body-secondary mb-0">Five years of wholesale electricity prices by hour, season and region. See when power is cheap, how often prices go below zero, and how major events moved the market.</p>
+      </div>
+    </div>
+    <h2 class="h4 mt-5 mb-3">Research</h2>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h3 class="h5 card-title">PhD in Economics, University of York</h3>
+        <p class="card-text text-body-secondary mb-0">Thesis on sovereign debt, climate risk and energy markets, using panel data and time series econometrics.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h3 class="h5 card-title"><a href="docs/Shaheed_MSc_Dissertation_2021.pdf" target="_blank" rel="noopener">MSc dissertation: bubbles in energy and food commodity prices</a></h3>
+        <p class="card-text text-body-secondary mb-2">MSc Economics and Econometrics, University of Nottingham, 2021. Awarded a Distinction.</p>
+        <p class="card-text text-body-secondary mb-0">Tests 12 energy and agricultural commodity prices from 1970 to 2020 for explosive price episodes, dates when each began and ended, and checks whether they spread from one market to another, using right tailed unit root tests and a wild bootstrap test for co explosive behaviour.</p>
+      </div>
+    </div>
+    <h2 class="h4 mt-5 mb-3">Outside work</h2>
+    <p>I love long road trips. I've driven a full loop of Australia, from Sydney through Canberra, Melbourne, Alice Springs, Darwin, Cairns and Brisbane, as well as Perth to Albany and Esperance, around New Zealand, and across England, Wales and Scotland. Next on my list is Australia's hard to reach places, which may take a few years. I also enjoy researching new topics, and a weekly Netflix night.</p>
+  </main>
+
+  <footer class="container py-3 border-top small text-body-secondary" style="max-width: 760px;">© <span id="year"></span> Shaheed.</footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

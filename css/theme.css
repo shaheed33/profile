@@ -1,0 +1,37 @@
+/* ===================================================================
+   SITE THEME — the only file you need to change to restyle the site.
+
+   OPTION A: Bootswatch theme (free, see bootswatch.com)
+     Change "flatly" below to another name, e.g. cosmo, yeti, zephyr,
+     litera, spacelab, sandstone, lux, minty, pulse ...
+
+   OPTION B: A theme you downloaded (Bootstrap 5)
+     Copy its CSS file into this css folder (e.g. css/mytheme.min.css)
+     and change the line below to:   @import url("mytheme.min.css");
+   =================================================================== */
+@import url("https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/litera/bootstrap.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap");
+
+/* Chart colours — change these if you pick a DARK theme
+   (e.g. bg #222, grid #333, text #eee, line #444, muted #999) */
+:root {
+  --chart-bg: #ffffff;
+  --chart-grid: #eef1f4;
+  --chart-text: #2c3e50;
+  --line: #dee2e6;
+  --muted: #7b8a8b;
+}
+
+/* Small site-specific tweaks (work with any theme) */
+#status { border-left: 4px solid var(--bs-danger); padding-left: .75rem; }
+#status.ok { border-left-color: var(--bs-success); }
+#gen-chart { height: 460px; }
+#level-chart { height: 220px; }
+.sens-chart { height: 300px; }
+@media (min-width: 992px) { .sticky-lg { position: sticky; top: 1rem; } }
+.profile-photo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
+
+/* Site font: Public Sans everywhere, including the charts */
+body, body * {
+  font-family: "Public Sans", Arial, sans-serif !important;
+}

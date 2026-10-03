@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NEM price patterns | Shaheed</title>
+  <!-- The site theme is set in css/theme.css -->
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    .pchart { height: 380px; }
+    #c-trend { height: 440px; }
+    #c-heat { height: 420px; }
+    .controls-card { position: sticky; top: 0; z-index: 20; }
+    @media (max-width: 991.98px) { .controls-aside { position: sticky; top: 0; z-index: 20; } }
+    @media (min-width: 992px) { .controls-card { top: 1rem; } }
+    @media (max-width: 991.98px) {
+      .controls-card .card-body { padding: .5rem .75rem; }
+      .controls-card .ctrl { flex: 1 1 30%; min-width: 9rem; }
+      .controls-card .hint { display: none; }
+    }
+    #annual-table th.sel, #annual-table td.sel { background: rgba(13, 110, 253, .08); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand bg-primary" data-bs-theme="dark">
+    <div class="container-xl">
+      <a class="navbar-brand" href="index.html">Shaheed</a>
+      <div class="navbar-nav ms-auto flex-wrap">
+        <a class="nav-link" href="index.html">About</a>
+        <a class="nav-link" href="simulator.html">NEM storage simulator</a>
+        <a class="nav-link active" aria-current="page" href="prices.html">NEM price patterns</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container-xl py-4">
+    <h1 class="mb-2">When is electricity cheap?</h1>
+    <p class="lead mb-4" style="max-width: 60rem;">Wholesale electricity prices in Australia's National Electricity Market, by hour of day, year and region. <span id="period"></span></p>
+
+    <div class="row g-4">
+      <aside class="col-lg-3 controls-aside">
+        <div class="card controls-card shadow-sm">
+          <div class="card-body">
+            <div class="d-flex flex-wrap flex-lg-column gap-2 gap-lg-3">
+              <div class="ctrl">
+                <label for="region" class="form-label fw-bold mb-1">Region</label>
+                <select id="region" class="form-select">
+                  <option value="NSW1">New South Wales</option>
+                  <option value="QLD1">Queensland</option>
+                  <option value="VIC1">Victoria</option>
+                  <option value="SA1">South Australia</option>
+                  <option value="TAS1">Tasmania</option>
+                </select>
+              </div>
+              <div class="ctrl">
+                <label for="season" class="form-label fw-bold mb-1">Season</label>
+                <select id="season" class="form-select">
+                  <option>All year</option>
+                  <option>Summer</option>
+                  <option>Autumn</option>
+                  <option>Winter</option>
+                  <option>Spring</option>
+                </select>
+                <p class="hint small text-body-secondary mt-1 mb-0">Changes the two hourly charts.</p>
+              </div>
+              <div class="ctrl">
+                <label for="measure" class="form-label fw-bold mb-1">Measure</label>
+                <select id="measure" class="form-select">
+                  <option value="simple">Simple average</option>
+                  <option value="weighted">Demand weighted</option>
+                  <option value="median">Median (typical)</option>
+                </select>
+                <p class="hint small text-body-secondary mt-1 mb-0">Changes the chart of prices over time and the hourly price chart.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="col-lg-9">
+        <section class="card mb-4">
+          <div class="card-header">Midday and evening prices over time <span class="measure-label text-body-secondary"></span></div>
+          <div class="card-body">
+            <p class="text-body-secondary mb-2">Monthly prices in the midday and evening windows, and the gap between them (the spread, which is the evening price minus the midday price). The spread is a rough indicator of the value of moving energy from midday to the evening, which is what batteries do. Numbered dotted lines mark major events in Australia (grey) and in global energy markets (purple), listed below the chart.</p>
+            <div id="c-trend"></div>
+            <ol class="small text-body-secondary mt-2 mb-0" id="event-list"></ol>
+          </div>
+        </section>
+
+        <section class="card mb-4">
+          <div class="card-header"><span class="measure-name">Average</span> price by hour of day, by year <span class="season-label text-body-secondary"></span></div>
+          <div class="card-body">
+            <p class="text-body-secondary mb-2">Each line is one year. The shaded bands mark the midday window (10:00 to 15:00) and the evening window (17:00 to 21:00). Compare how the midday dip and the evening peak change from year to year. The daily pattern in winter is quite different from spring, so the Season menu lets you compare like with like.</p>
+            <div id="c-hourly" class="pchart"></div>
+          </div>
+        </section>
+
+        <section class="card mb-4">
+          <div class="card-header">Annual price</div>
+          <div class="card-body">
+            <p class="text-body-secondary mb-2">This table always shows all three measures side by side, so you can compare them. The highlighted column matches the Measure menu. The simple average counts every 5 minute interval equally. The demand weighted average gives more weight to times when more electricity is used, so it is closer to what buyers pay on average. It is usually higher, because expensive periods tend to be busy ones.</p>
+            <div class="table-responsive"><table class="table table-sm mb-0" id="annual-table"></table></div>
+          </div>
+        </section>
+
+        <section class="card mb-4">
+          <div class="card-header">How often prices go below zero, by hour of day <span class="season-label text-body-secondary"></span></div>
+          <div class="card-body">
+            <p class="text-body-secondary mb-2">The share of 5 minute intervals with a negative price. A negative price means some generators would rather pay than switch off. It tends to happen when solar and wind output is high and demand is low.</p>
+            <div id="c-negative" class="pchart"></div>
+          </div>
+        </section>
+
+
+        <section class="card mb-4">
+          <div class="card-header">Price by hour and month</div>
+          <div class="card-body">
+            <p class="text-body-secondary mb-2">Each column is a month and each row an hour of the day. Blue is cheap and red is expensive. The colour scale is capped at the 95th percentile so a few extreme months don't wash out the pattern.</p>
+            <div id="c-heat"></div>
+          </div>
+        </section>
+
+        <section class="card mb-4">
+          <div class="card-header">Price duration curves</div>
+          <div class="card-body">
+            <p class="text-body-secondary mb-2">Every 5 minute price in the year, sorted from highest to lowest. The further right the line dips below zero, the more often prices were negative. The chart is cut at $600/MWh, and real spikes go much higher.</p>
+            <div id="c-duration" class="pchart"></div>
+          </div>
+        </section>
+
+        <section class="mb-4">
+          <h2 class="h5">Data and definitions</h2>
+          <ul class="text-body-secondary">
+            <li>Source: AEMO dispatch prices (MMSDM <code>DISPATCHPRICE</code>), excluding intervention pricing runs.</li>
+            <li>Times are NEM time (AEST, with no daylight saving). Each 5 minute interval is counted in the hour it starts.</li>
+            <li>Yearly charts use full calendar years only. The monthly charts use every month available.</li>
+            <li>Seasons follow the Southern Hemisphere. Summer is December to February, autumn is March to May, winter is June to August and spring is September to November. Within each calendar year, summer means January, February and December of that year.</li>
+            <li>Simple average is the plain average of the 5 minute prices. Demand weighted average weights each price by grid demand at that time (AEMO <code>TOTALDEMAND</code>, which excludes electricity people use from their own rooftop solar). Median is the middle value, which is not pulled up by price spikes.</li>
+            <li>Prices are nominal and not adjusted for inflation.</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Shaheed.</footer>
+
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script src="data/prices_data.js"></script>
+  <script>
+  (function () {
+    const P = window.PRICE_DATA;
+    document.getElementById("year").textContent = new Date().getFullYear();
+    if (!P) { document.querySelector("main").insertAdjacentHTML("afterbegin",
+      '<div class="alert alert-warning">The price data file (data/prices_data.js) is missing.</div>'); return; }
+
+    const fmtDate = (s) => new Date(s + "T00:00").toLocaleDateString("en-AU", { month: "short", year: "numeric" });
+    document.getElementById("period").textContent =
+      `Data covers ${fmtDate(P.first)} to ${fmtDate(P.last)}. Yearly charts cover ${P.years[0]} to ${P.years[P.years.length - 1]}.`;
+
+    // Major events marked on the "over time" chart
+    const EVENTS = [
+      { date: "2021-05-25", label: "Callide C explosion", where: "Australia", note: "Unit at Callide C power station in Queensland fails, causing supply shortfalls" },
+      { date: "2022-02-24", label: "Russia invades Ukraine", where: "Global", note: "Start of the global energy crisis, with gas and coal prices surging" },
+      { date: "2022-06-15", label: "NEM market suspended", where: "Australia", note: "AEMO suspends the wholesale spot market across the NEM" },
+      { date: "2022-08-26", label: "European gas price record", where: "Global", note: "European wholesale gas prices reach their peak" },
+      { date: "2022-12-23", label: "Gas and coal price caps", where: "Australia", note: "Federal caps on wholesale gas and coal prices take effect" },
+      { date: "2023-04-28", label: "Liddell closes", where: "Australia", note: "Liddell coal power station in NSW shuts its last unit" },
+      { date: "2026-02-28", label: "Iran war begins", where: "Global", note: "US and Israeli strikes on Iran, followed by the closure of the Strait of Hormuz, disrupt global oil and gas supply" },
+    ];
+    const fullDate = (s) => new Date(s + "T00:00").toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
+    document.getElementById("event-list").innerHTML = EVENTS.map((e) =>
+      `<li><strong>${fullDate(e.date)}</strong>, ${e.label} (${e.where === "Global" ? "global" : "Australia"}). ${e.note}.</li>`).join("");
+
+    const css = getComputedStyle(document.documentElement);
+    const v = (n, d) => css.getPropertyValue(n).trim() || d;
+    const text = v("--chart-text", "#333"), grid = v("--chart-grid", "#eee"), bg = v("--chart-bg", "#fff");
+    const config = { displayModeBar: false, responsive: true };
+    const base = () => ({
+      font: { family: getComputedStyle(document.body).fontFamily, color: text, size: 12 },
+      paper_bgcolor: bg, plot_bgcolor: bg, margin: { l: 60, r: 20, t: 10, b: 50 },
+      hovermode: "x unified", legend: { orientation: "h", y: -0.2 },
+      xaxis: { gridcolor: grid, zeroline: false }, yaxis: { gridcolor: grid, zerolinecolor: "#999" },
+    });
+
+    const VIR = ["#440154", "#3b528b", "#21918c", "#5ec962", "#fde725"];
+    const yc = (i, n) => {
+      if (n <= 1) return VIR[2];
+      const t = (i / (n - 1)) * (VIR.length - 1), k = Math.min(Math.floor(t), VIR.length - 2), f = t - k;
+      const a = VIR[k].match(/\w\w/g).map((x) => parseInt(x, 16)), b = VIR[k + 1].match(/\w\w/g).map((x) => parseInt(x, 16));
+      return "rgb(" + a.map((x, j) => Math.round(x + (b[j] - x) * f)).join(",") + ")";
+    };
+    const hours = [...Array(24).keys()];
+    const windows = [
+      { type: "rect", xref: "x", yref: "paper", x0: 9.5, x1: 14.5, y0: 0, y1: 1, fillcolor: "gold", opacity: 0.12, line: { width: 0 }, layer: "below" },
+      { type: "rect", xref: "x", yref: "paper", x0: 16.5, x1: 20.5, y0: 0, y1: 1, fillcolor: "red", opacity: 0.06, line: { width: 0 }, layer: "below" },
+    ];
+    const hourAxis = { title: { text: "Hour of day (NEM time)" }, tickmode: "array", tickvals: [0, 3, 6, 9, 12, 15, 18, 21], ticktext: ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"] };
+    const pct = (a, q) => { const s = a.filter((x) => x != null).sort((x, y) => x - y); return s[Math.floor((s.length - 1) * q)]; };
+    const bySeason = (obj, reg, season) => (P.seasons ? obj[reg][season] : obj[reg]);
+    const money = (x) => (x < 0 ? "−$" : "$") + Math.abs(x).toFixed(0);
+
+    function draw(reg, season, measure) {
+      const ys = P.years.map(String);
+      document.querySelectorAll(".season-label").forEach((el) => { el.textContent = season === "All year" ? "" : "(" + season.toLowerCase() + " only)"; });
+      const NG = bySeason(P.negative, reg, season);
+      let HR = bySeason(P.hourly, reg, season);
+      if (P.measures) HR = HR[measure];
+      const mName = { simple: "Average", weighted: "Demand weighted average", median: "Median" }[measure];
+      document.querySelectorAll(".measure-name").forEach((el) => { el.textContent = P.measures ? mName : "Average"; });
+      document.querySelectorAll(".measure-label").forEach((el) => { el.textContent = P.measures ? "(" + mName.toLowerCase() + ")" : ""; });
+
+      // Annual table (all measures, selected one highlighted)
+      const tbl = document.getElementById("annual-table");
+      if (P.annual) {
+        const A = P.annual[reg];
+        const c = (m) => (m === measure ? ' class="text-end sel"' : ' class="text-end"');
+        tbl.innerHTML = `<thead><tr><th>Year</th><th${c("simple")}>Simple average</th><th${c("weighted")}>Demand weighted</th><th class="text-end">Difference</th><th${c("median")}>Median</th></tr></thead><tbody>` +
+          ys.map((y) => `<tr><td>${y}</td><td${c("simple")}>${money(A.simple[y])}</td><td${c("weighted")}>${money(A.weighted[y])}</td><td class="text-end">${A.weighted[y] - A.simple[y] >= 0 ? "+" : ""}${money(A.weighted[y] - A.simple[y])}</td><td${c("median")}>${money(A.median[y])}</td></tr>`).join("") +
+          "</tbody><caption class='small'>Prices in $/MWh for full calendar years, not adjusted for inflation. Difference is demand weighted minus simple average.</caption>";
+      } else {
+        tbl.innerHTML = "<caption>Re-run make_price_data.py to show this table.</caption>";
+      }
+
+      // 1. Hourly by year
+      Plotly.react("c-hourly", ys.map((y, i) => ({
+        x: hours, y: HR[y], name: y, type: "scatter", mode: "lines",
+        line: { color: yc(i, ys.length), width: 2.5 }, hovertemplate: "%{y:$,.0f}/MWh",
+      })), { ...base(), shapes: windows, xaxis: { ...base().xaxis, ...hourAxis }, yaxis: { ...base().yaxis, title: { text: "Price ($/MWh)" } } }, config);
+
+      // 2. Negative by hour
+      Plotly.react("c-negative", ys.map((y, i) => ({
+        x: hours, y: NG[y], name: y, type: "scatter", mode: "lines",
+        line: { color: yc(i, ys.length), width: 2.5 }, hovertemplate: "%{y:.1f}%",
+      })), { ...base(), shapes: windows, xaxis: { ...base().xaxis, ...hourAxis }, yaxis: { ...base().yaxis, title: { text: "% of intervals below $0" }, rangemode: "tozero" } }, config);
+
+      // 3. Trend, with events
+      const mx = P.months.map((m) => m + "-01");
+      const T = P.measures ? P.trend[reg][measure] : P.trend[reg];
+      const evShapes = EVENTS.map((e) => ({ type: "line", xref: "x", yref: "paper", x0: e.date, x1: e.date, y0: 0, y1: 1,
+        line: { color: e.where === "Global" ? "#6f42c1" : "#555", width: 1, dash: "dot" } }));
+      const evNotes = EVENTS.map((e, i) => ({ x: e.date, xref: "x", yref: "paper", y: 1.0, yanchor: "bottom",
+        text: "<b>" + (i + 1) + "</b>", showarrow: false, font: { size: 11, color: e.where === "Global" ? "#6f42c1" : "#555" },
+        hovertext: fullDate(e.date) + ": " + e.label }));
+      Plotly.react("c-trend", [
+        { x: mx, y: T.evening, name: "Evening (17:00 to 21:00)", type: "scatter", mode: "lines", line: { color: "#C8372D", width: 2 }, hovertemplate: "%{y:$,.0f}" },
+        { x: mx, y: T.midday, name: "Midday (10:00 to 15:00)", type: "scatter", mode: "lines", line: { color: "#E3A008", width: 2 }, hovertemplate: "%{y:$,.0f}" },
+        { x: mx, y: T.spread, name: "Spread (evening minus midday)", type: "scatter", mode: "lines", line: { color: "#2563EB", width: 2, dash: "dot" }, hovertemplate: "%{y:$,.0f}" },
+      ], { ...base(), margin: { l: 60, r: 20, t: 25, b: 50 }, shapes: evShapes, annotations: evNotes, legend: { orientation: "h", y: -0.15 },
+        xaxis: { ...base().xaxis, type: "date" }, yaxis: { ...base().yaxis, title: { text: "$/MWh" } } }, config);
+
+      // 4. Heatmap
+      const z = P.heatmap[reg], flat = z.flat();
+      Plotly.react("c-heat", [{
+        z, x: mx, y: hours, type: "heatmap", colorscale: "RdBu",
+        zmin: Math.min(pct(flat, 0.02), 0), zmax: pct(flat, 0.95),
+        colorbar: { title: { text: "$/MWh" } },
+        hovertemplate: "%{x|%b %Y}, %{y}:00<br>%{z:$,.0f}/MWh<extra></extra>",
+      }], { ...base(), hovermode: "closest", margin: { l: 60, r: 20, t: 10, b: 40 },
+        xaxis: { ...base().xaxis, type: "date" },
+        yaxis: { ...base().yaxis, title: { text: "Hour of day" }, tickvals: [0, 3, 6, 9, 12, 15, 18, 21], ticktext: hourAxis.ticktext } }, config);
+
+      // 5. Duration curves
+      Plotly.react("c-duration", ys.map((y, i) => {
+        const d = P.duration[reg][y];
+        return { x: P.pcts, y: d.values, name: `${y}: ${d.below0}% below $0, ${d.above300}% above $300`,
+          type: "scatter", mode: "lines", line: { color: yc(i, ys.length), width: 2 }, hovertemplate: "%{y:$,.0f}/MWh" };
+      }), { ...base(), hovermode: "closest",
+        xaxis: { ...base().xaxis, title: { text: "% of the year (prices sorted from highest to lowest)" }, ticksuffix: "%" },
+        yaxis: { ...base().yaxis, title: { text: "Price ($/MWh)" }, range: [-150, 600] }, legend: { orientation: "h", y: -0.25 } }, config);
+    }
+
+    const sel = document.getElementById("region"), ssel = document.getElementById("season"), msel = document.getElementById("measure");
+    if (!P.seasons) { ssel.disabled = true; ssel.title = "Re-run make_price_data.py to enable seasons"; }
+    if (!P.measures) { msel.disabled = true; msel.title = "Re-run make_price_data.py to enable this"; }
+    const redraw = () => draw(sel.value, ssel.value, msel.value);
+    [sel, ssel, msel].forEach((el) => el.addEventListener("change", redraw));
+    redraw();
+  })();
+  </script>
+</body>
+</html>

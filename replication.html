@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Replication: October 2024 | Shaheed</title>
+  <!-- The site theme is set in css/theme.css -->
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    .rchart { height: 360px; }
+    #rep-table td, #rep-table th, #res-table td, #res-table th { white-space: nowrap; }
+    .diff-ok { color: var(--bs-success); font-weight: 600; }
+    .diff-mid { color: #b07d00; font-weight: 600; }
+    .diff-big { color: var(--bs-danger); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand bg-primary" data-bs-theme="dark">
+    <div class="container-xl">
+      <a class="navbar-brand" href="index.html">Shaheed</a>
+      <div class="navbar-nav ms-auto flex-wrap">
+        <a class="nav-link" href="index.html">About</a>
+        <a class="nav-link active" href="simulator.html">NEM storage simulator</a>
+        <a class="nav-link" href="prices.html">NEM price patterns</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container-xl py-4" style="max-width: 1100px;">
+    <ul class="nav nav-pills mb-3" aria-label="Simulator sections">
+      <li class="nav-item"><a class="nav-link" href="simulator.html">Simulator</a></li>
+      <li class="nav-item"><a class="nav-link active" aria-current="page" href="replication.html">Replication: October 2024</a></li>
+    </ul>
+    <h1 class="mb-2">Replication: October 2024</h1>
+    <p class="lead">Andrew Grogan's spreadsheet, shared in his <a href="https://www.linkedin.com/posts/andrew-grogan-be-phd-a56b5816_what-would-happen-if-the-nem-had-a-lot-more-share-7258764364134899712-KhCt" target="_blank" rel="noopener">LinkedIn post</a>, uses data from Open Electricity. To check it independently, I rebuilt the same month from AEMO's raw data for every generating unit, using the NEMOSIS Python package, and ran his model on both versions.</p>
+    <div id="missing" class="alert alert-warning d-none">The AEMO version of the data (data/nem_2024-10.js) has not been uploaded yet, so the comparison cannot be shown.</div>
+    <p class="text-body-secondary" id="period"></p>
+
+    <section class="card mb-4">
+      <div class="card-header">1. Electricity by source over the month</div>
+      <div class="card-body">
+        <p class="text-body-secondary mb-2" id="summary1"></p>
+        <div class="table-responsive"><table class="table table-sm mb-0" id="rep-table"></table></div>
+        <p class="small text-body-secondary mt-2 mb-0">GWh over the month. Green means within 2%, amber within 10%, red more than 10%. Charging and pumping are shown as negative numbers because they take electricity from the grid.</p>
+      </div>
+    </section>
+
+    <section class="card mb-4">
+      <div class="card-header">2. Demand every half hour</div>
+      <div class="card-body">
+        <p class="text-body-secondary mb-2" id="summary2"></p>
+        <div id="c-demand" class="rchart"></div>
+      </div>
+    </section>
+
+    <section class="card mb-4">
+      <div class="card-header">3. The same scenario on both datasets</div>
+      <div class="card-body">
+        <p class="text-body-secondary mb-3">Andrew's model, run once on his data and once on the AEMO data, with the same settings. Change the settings to see whether the two still agree.</p>
+        <div class="row g-3 mb-3">
+          <div class="col-6 col-md-3"><label class="form-label mb-1" for="r-wind">Wind <output id="r-wind-out" class="fw-bold"></output></label><input type="range" class="form-range" id="r-wind" min="0" max="6" step="0.1" value="2.5"></div>
+          <div class="col-6 col-md-3"><label class="form-label mb-1" for="r-solar">Solar <output id="r-solar-out" class="fw-bold"></output></label><input type="range" class="form-range" id="r-solar" min="0" max="6" step="0.1" value="2.5"></div>
+          <div class="col-6 col-md-3"><label class="form-label mb-1" for="r-store">New storage <output id="r-store-out" class="fw-bold"></output></label><input type="range" class="form-range" id="r-store" min="0" max="500000" step="5000" value="120000"></div>
+          <div class="col-6 col-md-3"><label class="form-label mb-1" for="r-method">Calculation</label>
+            <select class="form-select form-select-sm" id="r-method"><option value="andrew">Andrew's original</option><option value="improved">Improved</option></select></div>
+        </div>
+        <div class="table-responsive"><table class="table table-sm" id="res-table"></table></div>
+        <div id="c-level" class="rchart"></div>
+        <p class="small text-body-secondary mt-2 mb-0">Coal is switched off and gas is kept at Andrew's settings in both runs. Existing batteries keep their real behaviour from each dataset.</p>
+      </div>
+    </section>
+
+    <section class="mb-4">
+      <h2 class="h5">Why the two versions differ</h2>
+      <ul class="text-body-secondary">
+        <li><strong>Batteries.</strong> AEMO's unit data records much more battery charging and discharging than the extract in the spreadsheet. Many batteries were being moved onto new AEMO registration rules in 2024, and some may be missing from the older extract. The AEMO figures are consistent with real battery losses, with about 78% of charged energy returned. They also line up with AEMO's own reporting: its Quarterly Energy Dynamics report puts average battery output at 90 MW for October to December 2024. The AEMO rebuild gives about 81 MW for this month, while the spreadsheet extract gives about 14 MW.</li>
+        <li><strong>A new wind farm.</strong> Port Augusta's wind farm was ramping up in October 2024. It appears in AEMO's unit data and accounts for most of the small extra wind.</li>
+        <li><strong>Gas labels.</strong> Total gas matches closely, but AEMO and Open Electricity label a few gas units differently, so some output moves between combined cycle and open cycle gas.</li>
+        <li><strong>Bioenergy.</strong> Sugar mill and landfill gas plants are grouped together in the AEMO version.</li>
+        <li><strong>Small generators.</strong> Some very small generators are not in AEMO's unit data, and Open Electricity estimates some of these.</li>
+      </ul>
+      <h2 class="h5 mt-4">Method</h2>
+      <ul class="text-body-secondary">
+        <li>AEMO tables: <code>DISPATCH_UNIT_SCADA</code> (output of every unit every 5 minutes) and <code>ROOFTOP_PV_ACTUAL</code> (rooftop solar every 30 minutes), downloaded with NEMOSIS.</li>
+        <li>Each unit is matched to a fuel type using AEMO's registration list, with a short manual list for units that have closed or changed registration.</li>
+        <li>5 minute values are averaged into half hours. Demand is total generation minus battery charging and pumped hydro pumping, the same as in Andrew's sheet.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="container-xl py-3 border-top small text-body-secondary" style="max-width: 1100px;">© <span id="year"></span> Shaheed. Based on Andrew Grogan's Open Electricity Simulation spreadsheet (2024), shared in his <a href="https://www.linkedin.com/posts/andrew-grogan-be-phd-a56b5816_what-would-happen-if-the-nem-had-a-lot-more-share-7258764364134899712-KhCt" target="_blank" rel="noopener">LinkedIn post</a>.</footer>
+
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script src="data/nem_data.js"></script>
+  <script src="data/nem_2024-10.js"></script>
+  <script>
+/* ---- model.js (built into this page) ---- */
+// model.js — the storage simulation, based on Andrew Grogan's spreadsheet.
+// Pure calculation: no charts, no page code. Works in the browser and in Node.
+
+const GAS_KEYS = ["distillate", "gas_steam", "gas_ccgt", "gas_ocgt", "gas_recip", "gas_wcmg"];
+
+// Andrew's saved scenario (his row 3 multipliers)
+const ANDREW_PRESET = {
+  demand: 1, coal: 0, hydro: 1, bio: 1, wind: 2.5, solar: 2.5,
+  gas: { distillate: 0.3, gas_steam: 0.8, gas_ccgt: 0.2, gas_ocgt: 0.2, gas_recip: 0.3, gas_wcmg: 1 },
+  storageMWh: 120000, storageMW: Infinity, loss: 0.15, method: "andrew",
+};
+
+function simulate(series, s, stepHours = 0.5) {
+  const n = series.demand.length;
+  const eff = 1 - s.loss;
+  const out = {
+    demand: new Float64Array(n), coal: new Float64Array(n), gas: new Float64Array(n),
+    bio: new Float64Array(n), hydro: new Float64Array(n), wind: new Float64Array(n),
+    solarUtility: new Float64Array(n), solarRooftop: new Float64Array(n),
+    existingBattery: new Float64Array(n), charge: new Float64Array(n),
+    discharge: new Float64Array(n), unmet: new Float64Array(n),
+    curtailed: new Float64Array(n), level: new Float64Array(n),
+  };
+  let G = s.storageMWh; // starts full, as in Andrew's sheet
+  for (let i = 0; i < n; i++) {
+    const coal = s.coal * (series.coal_brown[i] + series.coal_black[i]);
+    let gas = 0;
+    for (const k of GAS_KEYS) gas += s.gas[k] * series[k][i];
+    const bio = s.bio * (series.bio_biogas[i] + series.bio_biomass[i]);
+    const hydro = s.hydro * series.hydro[i];
+    const wind = s.wind * series.wind[i];
+    const su = s.solar * series.solar_utility[i];
+    const sr = s.solar * series.solar_rooftop[i];
+    const eb = series.battery_discharging[i]; // existing batteries: real history, not scaled
+    const demand = s.demand * series.demand[i];
+    const supply = coal + gas + bio + hydro + wind + su + sr + eb;
+    const gap = supply - demand;
+
+    out.level[i] = G; // level at the start of this half hour
+    let ch = 0, dis = 0, un = 0, cur = 0;
+
+    if (s.method === "andrew") {
+      // Exact replica of the spreadsheet formulas (no power limit).
+      if (gap > 0) {
+        ch = gap;
+        const raw = G + gap * stepHours;
+        cur = Math.max(raw - s.storageMWh, 0) / stepHours;
+        G = Math.min(raw, s.storageMWh);
+      } else {
+        dis = Math.min(-gap, G); // Andrew caps MW by the MWh level
+        un = -gap - dis;
+        G = Math.max(G - (dis / eff) * stepHours, 0);
+      }
+    } else {
+      // Improved: power limit (MW) + energy limit (MWh), units handled consistently.
+      if (gap > 0) {
+        ch = Math.min(gap, s.storageMW, (s.storageMWh - G) / stepHours);
+        cur = gap - ch;
+        G += ch * stepHours;
+      } else {
+        const deliverable = (G * eff) / stepHours;
+        dis = Math.min(-gap, s.storageMW, deliverable);
+        un = -gap - dis;
+        G = Math.max(G - (dis / eff) * stepHours, 0);
+      }
+    }
+    out.demand[i] = demand; out.coal[i] = coal; out.gas[i] = gas; out.bio[i] = bio;
+    out.hydro[i] = hydro; out.wind[i] = wind; out.solarUtility[i] = su; out.solarRooftop[i] = sr;
+    out.existingBattery[i] = eb; out.charge[i] = -ch; out.discharge[i] = dis;
+    out.unmet[i] = un; out.curtailed[i] = cur;
+  }
+
+  // Headline numbers
+  let demandE = 0, unmetE = 0, curE = 0, worst = 0, shortSteps = 0, peakDis = 0, peakCh = 0, minLevel = Infinity, renewE = 0, supplyE = 0;
+  for (let i = 0; i < n; i++) {
+    demandE += out.demand[i] * stepHours;
+    unmetE += out.unmet[i] * stepHours;
+    curE += out.curtailed[i] * stepHours;
+    if (out.unmet[i] > 1) shortSteps++;
+    worst = Math.max(worst, out.unmet[i]);
+    peakDis = Math.max(peakDis, out.discharge[i]);
+    peakCh = Math.max(peakCh, -out.charge[i]);
+    minLevel = Math.min(minLevel, out.level[i]);
+  }
+  out.summary = {
+    demandMetPct: 100 * (1 - unmetE / demandE),
+    unmetMWh: unmetE,
+    hoursShort: shortSteps * stepHours,
+    worstShortfallMW: worst,
+    curtailedMWh: curE,
+    peakDischargeMW: peakDis,
+    peakChargeMW: peakCh,
+    minLevelMWh: minLevel,
+  };
+  return out;
+}
+
+if (typeof module !== "undefined") module.exports = { simulate, ANDREW_PRESET, GAS_KEYS };
+
+  </script>
+  <script>
+  (function () {
+    document.getElementById("year").textContent = new Date().getFullYear();
+    const A = window.NEM_DATA;
+    const B = window.NEM_PERIODS && window.NEM_PERIODS["2024-10"];
+    if (!A || !B) { document.getElementById("missing").classList.remove("d-none"); return; }
+    const SA = A.series, SB = B.series;
+    const n = Math.min(SA.demand.length, SB.demand.length);
+    const step = 0.5;
+    const t0 = new Date(A.start);
+    const times = Array.from({ length: n }, (_, i) => new Date(t0.getTime() + i * 1800000));
+    const dfmt = (d) => d.toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
+    document.getElementById("period").textContent = `Period: ${dfmt(times[0])} to ${dfmt(times[n - 1])}, ${n.toLocaleString()} half hours.`;
+
+    const sum = (s, keys) => { let t = 0; for (const k of keys) { const a = s[k]; if (!a) continue; for (let i = 0; i < n; i++) t += a[i] || 0; } return t * step / 1000; };
+    const GROUPS = [
+      ["Brown coal", ["coal_brown"]], ["Black coal", ["coal_black"]],
+      ["Gas (all types)", ["gas_steam", "gas_ccgt", "gas_ocgt", "gas_recip", "gas_wcmg"]],
+      ["Distillate", ["distillate"]], ["Bioenergy", ["bio_biogas", "bio_biomass"]],
+      ["Hydro", ["hydro"]], ["Wind", ["wind"]], ["Utility solar", ["solar_utility"]], ["Rooftop solar", ["solar_rooftop"]],
+      ["Batteries discharging", ["battery_discharging"]], ["Batteries charging", ["battery_charging"]],
+      ["Pumped hydro pumping", ["phes_pumps"]], ["Demand", ["demand"]],
+    ];
+    const cls = (p) => (Math.abs(p) <= 2 ? "diff-ok" : Math.abs(p) <= 10 ? "diff-mid" : "diff-big");
+    const pctTxt = (p) => (Math.abs(p) < 0.05 ? "" : p > 0 ? "+" : "−") + Math.abs(p).toFixed(1) + "%";
+    const num = (x, d = 1) => (x < 0 ? "−" : "") + Math.abs(x).toLocaleString("en-AU", { minimumFractionDigits: d, maximumFractionDigits: d });
+    let rows = "", within2 = 0, demandPct = 0;
+    for (const [name, keys] of GROUPS) {
+      const a = sum(SA, keys), b = sum(SB, keys);
+      const p = a ? (b / a - 1) * 100 : 0;
+      if (Math.abs(p) <= 2) within2++;
+      if (name === "Demand") demandPct = p;
+      rows += `<tr${name === "Demand" ? ' class="fw-bold"' : ""}><td>${name}</td><td class="text-end">${num(a)}</td><td class="text-end">${num(b)}</td><td class="text-end ${cls(p)}">${a ? pctTxt(p) : ""}</td></tr>`;
+    }
+    document.getElementById("rep-table").innerHTML =
+      '<thead><tr><th>Source</th><th class="text-end">Andrew (Open Electricity)</th><th class="text-end">My rebuild (AEMO)</th><th class="text-end">Difference</th></tr></thead><tbody>' + rows + "</tbody>";
+    document.getElementById("summary1").textContent =
+      `${within2} of ${GROUPS.length} rows match within 2%. Total demand differs by ${pctTxt(demandPct)}. Coal, hydro, solar and rooftop solar line up almost exactly, and wind is within 3%. The main gap is in batteries.`;
+
+    // Demand every half hour
+    let mad = 0, maxd = 0;
+    for (let i = 0; i < n; i++) { const d = Math.abs(SB.demand[i] - SA.demand[i]); mad += d; maxd = Math.max(maxd, d); }
+    mad /= n;
+    const avgDem = SA.demand.slice(0, n).reduce((x, y) => x + y, 0) / n;
+    document.getElementById("summary2").textContent =
+      `${mad / avgDem < 0.02 ? "The two lines sit almost on top of each other." : "The two lines follow each other closely."} The average gap is ${Math.round(mad).toLocaleString()} MW, about ${(mad / avgDem * 100).toFixed(1)}% of average demand, and the largest gap in any half hour is ${Math.round(maxd).toLocaleString()} MW.`;
+
+    const css = getComputedStyle(document.documentElement);
+    const v = (k, d) => css.getPropertyValue(k).trim() || d;
+    const base = () => ({ font: { family: getComputedStyle(document.body).fontFamily, color: v("--chart-text", "#333"), size: 12 },
+      paper_bgcolor: v("--chart-bg", "#fff"), plot_bgcolor: v("--chart-bg", "#fff"), margin: { l: 60, r: 20, t: 10, b: 40 },
+      hovermode: "x unified", legend: { orientation: "h", y: -0.15 },
+      xaxis: { type: "date", gridcolor: v("--chart-grid", "#eee") }, yaxis: { gridcolor: v("--chart-grid", "#eee") } });
+    const config = { displayModeBar: false, responsive: true };
+    Plotly.react("c-demand", [
+      { x: times, y: SA.demand.slice(0, n), name: "Andrew (Open Electricity)", type: "scatter", mode: "lines", line: { color: "#2563EB", width: 1.5 }, hovertemplate: "%{y:,.0f} MW" },
+      { x: times, y: SB.demand.slice(0, n), name: "My rebuild (AEMO)", type: "scatter", mode: "lines", line: { color: "#C8372D", width: 1.5, dash: "dot" }, hovertemplate: "%{y:,.0f} MW" },
+    ], { ...base(), yaxis: { ...base().yaxis, title: { text: "Demand (MW)" } } }, config);
+
+    // Same scenario
+    const $ = (id) => document.getElementById(id);
+    const fmt = (x, d = 0) => x.toLocaleString("en-AU", { minimumFractionDigits: d, maximumFractionDigits: d });
+    function scenario() {
+      return { ...ANDREW_PRESET, gas: { ...ANDREW_PRESET.gas }, wind: +$("r-wind").value, solar: +$("r-solar").value,
+        storageMWh: +$("r-store").value, method: $("r-method").value, storageMW: Infinity };
+    }
+    function run() {
+      $("r-wind-out").textContent = "× " + fmt(+$("r-wind").value, 1);
+      $("r-solar-out").textContent = "× " + fmt(+$("r-solar").value, 1);
+      $("r-store-out").textContent = fmt(+$("r-store").value) + " MWh";
+      const s = scenario();
+      const ra = simulate(SA, s, step), rb = simulate(SB, s, step);
+      const a = ra.summary, b = rb.summary;
+      const R = [
+        ["Demand met", a.demandMetPct, b.demandMetPct, 2, "%"],
+        ["Hours with shortfalls", a.hoursShort, b.hoursShort, 1, " hrs"],
+        ["Worst shortfall", a.worstShortfallMW, b.worstShortfallMW, 0, " MW"],
+        ["Surplus wasted", a.curtailedMWh / 1000, b.curtailedMWh / 1000, 0, " GWh"],
+        ["Peak output from new storage", a.peakDischargeMW, b.peakDischargeMW, 0, " MW"],
+      ];
+      $("res-table").innerHTML = '<thead><tr><th>Result</th><th class="text-end">Andrew\'s data</th><th class="text-end">AEMO data</th></tr></thead><tbody>' +
+        R.map(([k, x, y, d, u]) => `<tr><td>${k}</td><td class="text-end">${fmt(x, d)}${u}</td><td class="text-end">${fmt(y, d)}${u}</td></tr>`).join("") + "</tbody>";
+      Plotly.react("c-level", [
+        { x: times, y: Array.from(ra.level), name: "Storage level, Andrew's data", type: "scatter", mode: "lines", line: { color: "#2563EB", width: 1.5 }, hovertemplate: "%{y:,.0f} MWh" },
+        { x: times, y: Array.from(rb.level), name: "Storage level, AEMO data", type: "scatter", mode: "lines", line: { color: "#C8372D", width: 1.5, dash: "dot" }, hovertemplate: "%{y:,.0f} MWh" },
+      ], { ...base(), yaxis: { ...base().yaxis, title: { text: "Stored energy (MWh)" }, rangemode: "tozero" } }, config);
+    }
+    ["r-wind", "r-solar", "r-store", "r-method"].forEach((id) => $(id).addEventListener("input", run));
+    run();
+  })();
+  </script>
+</body>
+</html>
