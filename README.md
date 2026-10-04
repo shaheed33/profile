@@ -1,18 +1,28 @@
-# Abdulla Shaheed: profile and energy market side projects
+# Maldives National Debt Clock
 
-Live site: https://shaheed33.github.io/profile/
+A live estimate of Maldives public and publicly guaranteed debt, built from the
+[MMA Statistics Database](https://database.mma.gov.mv).
 
-## Pages
-* `index.html` About, with CV and MSc dissertation (`docs/`)
-* `simulator.html` NEM storage simulator. Choose a future grid of wind, solar and storage and test it against five years of real weather (August 2021 to July 2026), every half hour.
-* `replication.html` Replication of Andrew Grogan's Open Electricity Simulation spreadsheet for October 2024, comparing his data with a rebuild from AEMO data.
-* `prices.html` NEM price patterns by hour, season and region, 2021 to 2026.
+## Files
 
-## Data
-* `data/nem_aug20XX_jul20XX.js` half hourly NEM generation by fuel, one file per 12 months, built from AEMO data with NEMOSIS.
-* `data/nem_2024-10.js` the October 2024 replication month (AEMO rebuild).
-* `data/nem_data.js` Andrew Grogan's October 2024 data (Open Electricity), from his spreadsheet.
-* `data/prices_data.js` price summaries for the price patterns page.
-* `css/theme.css` the site theme.
+- `index.html`: the debt clock
+- `fuel.html`: monthly fuel imports, with crisis periods
+- `methodology.html`: how every figure is calculated
+- `about.html`: about and contact form (set `WEB3FORMS_KEY` near the bottom of the file)
+- `assets/site.css`, `assets/site.js`: shared styles, header toggles and charts
+- `population.json`: the citizen population estimate. Update it once a year when the
+  Department of National Registration publishes a new year-end figure.
+- `fetch_data.py`: downloads the latest figures from the MMA API into `data.json`
+- `.github/workflows/update-data.yml`: runs that script every morning
 
-Original data from the Australian Energy Market Operator (AEMO). Inspired by Andrew Grogan's Open Electricity Simulation spreadsheet (2024).
+The MMA API token lives only in the `MMA_TOKEN` repository secret.
+
+## Run locally
+
+```
+export MMA_TOKEN="your-token"
+pip install requests
+python fetch_data.py
+python -m http.server
+```
+Then open http://localhost:8000

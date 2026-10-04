@@ -1,79 +1,502 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Shaheed</title>
-  <meta name="description" content="Shaheed, PhD candidate in Economics, working on Australia's National Electricity Market and renewable energy.">
-  <!-- The site theme is set in css/theme.css -->
-  <link rel="stylesheet" href="css/theme.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#072f40">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<title>Maldives National Debt Clock</title>
+<meta name="description" content="A live estimate of the Maldives' public and publicly guaranteed debt, built from Maldives Monetary Authority statistics.">
+<meta property="og:title" content="Maldives National Debt Clock">
+<meta property="og:description" content="How much the Maldives government owes, right now.">
+<style>
+  .hero { position: relative; min-height: 70svh; overflow: hidden; background: linear-gradient(to bottom, var(--sky), var(--sky-low)); }
+  .water { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: linear-gradient(to bottom, var(--lagoon) 0, var(--deep) 6rem, var(--abyss) 100%); transition: height 2.4s cubic-bezier(.2,.7,.2,1); }
+  .wave { position: absolute; left: 0; top: -23px; width: 200%; height: 24px; animation: drift 14s linear infinite; }
+  .wave path { fill: var(--lagoon); }
+  .wave.back { top: -30px; height: 30px; animation-duration: 23s; animation-direction: reverse; opacity: .55; }
+  .wave.back path { fill: #2a9d96; }
+  @keyframes drift { to { transform: translateX(-50%); } }
+  .surface { position: absolute; left: 0; right: 0; height: 0; z-index: 3; pointer-events: none; transition: top 2.4s cubic-bezier(.2,.7,.2,1); }
+  .surface .front { position: absolute; left: 0; top: -10px; width: 200%; height: 22px; animation: drift 9s linear infinite; }
+  .surface .front path { fill: var(--lagoon); }
+  .surface .foam { position: absolute; left: 0; top: -12px; width: 200%; height: 8px; animation: drift 9s linear infinite; opacity: .7; }
+  .island { position: absolute; width: clamp(190px, 24vw, 330px); top: 0; left: 52%; transform: translateY(-76.5%); z-index: 3; }
+  .island .fronds { transform-box: fill-box; }
+  .sky { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .sun { position: absolute; top: 1.6rem; left: 74%; width: 3.4rem; height: 3.4rem; border-radius: 50%; background: radial-gradient(circle, #fff6d6 0 45%, #ffe9a8 60%, rgba(255,233,168,0) 72%); box-shadow: 0 0 60px 30px rgba(255,240,190,.45); }
+  .cloud { position: absolute; height: 1.4rem; border-radius: 999px; background: rgba(255,255,255,.85); filter: blur(.4px); animation: cloud 140s linear infinite; }
+  .cloud::before, .cloud::after { content: ""; position: absolute; background: inherit; border-radius: 50%; }
+  .cloud::before { width: 2.2rem; height: 2.2rem; left: 1rem; top: -1.1rem; }
+  .cloud::after { width: 1.6rem; height: 1.6rem; left: 2.8rem; top: -.7rem; }
+  .cloud.c1 { width: 6rem; top: 3.2rem; left: 30%; }
+  .cloud.c2 { width: 4.4rem; top: 1.6rem; left: 60%; opacity: .7; animation-duration: 190s; animation-delay: -70s; }
+  @keyframes cloud { from { transform: translateX(-60vw); } to { transform: translateX(70vw); } }
+  .rays { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .rays i { position: absolute; top: 0; width: 5rem; height: 26rem; background: linear-gradient(to bottom, rgba(255,255,255,.16), rgba(255,255,255,0)); transform: skewX(-18deg); transform-origin: top; animation: ray 9s ease-in-out infinite alternate; }
+  .rays i:nth-child(1) { left: 12%; } .rays i:nth-child(2) { left: 34%; width: 3rem; animation-delay: -3s; } .rays i:nth-child(3) { left: 63%; width: 6rem; animation-delay: -5s; } .rays i:nth-child(4) { left: 85%; width: 2.5rem; animation-delay: -7s; }
+  @keyframes ray { from { opacity: .35; } to { opacity: 1; } }
+  .island svg { display: block; width: 100%; height: auto; }
+  .critter { position: absolute; left: 0; top: 0; z-index: 4; will-change: transform; }
+  .critter.under { z-index: 1; }
+  .critter.boat { z-index: 2; }
+  .surface .front, .surface .foam { z-index: 2; }
+  .bubble { position: absolute; bottom: -10px; width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.35); animation: rise linear infinite; z-index: 1; }
+  @keyframes rise { to { transform: translateY(var(--rise)); opacity: 0; } }
+  .gauge { position: absolute; top: 0; bottom: 0; right: max(.6rem, env(safe-area-inset-right)); width: 3.4rem; z-index: 4; pointer-events: none; }
+  .gauge .pole { position: absolute; right: .4rem; top: 0; bottom: 0; width: 8px; background: repeating-linear-gradient(to bottom, #fff 0 10px, #e85a4f 10px 20px); border-radius: 2px; opacity: .9; box-shadow: 0 0 0 1px rgba(7,47,64,.25); }
+  .gauge .tick { position: absolute; right: 1.15rem; height: 0; border-top: 1px solid currentColor; width: 6px; }
+  .gauge .tick span { position: absolute; right: 9px; top: -.6rem; font-size: .72rem; font-weight: 700; white-space: nowrap; }
+  .gauge .now { position: absolute; right: 1.1rem; transform: translateY(-50%); background: var(--sun); color: var(--abyss); font: 800 .82rem var(--body); padding: .15rem .45rem; border-radius: 3px; white-space: nowrap; transition: top 2.4s cubic-bezier(.2,.7,.2,1); }
+  .gauge .now::after { content: ""; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); border: 6px solid transparent; border-right: 0; border-left-color: var(--sun); }
+  .gdp-line { position: absolute; left: 0; right: 0; height: 0; border-top: 2px dashed var(--sun); opacity: 0; transition: opacity .6s 1.8s; }
+  .surface-label { position: absolute; z-index: 5; left: var(--gutter); font-size: .8rem; font-weight: 700; color: var(--ink); transition: top 2.4s cubic-bezier(.2,.7,.2,1); }
+  .gdp-line { z-index: 4; transition: opacity .6s 1.2s, top 2.4s cubic-bezier(.2,.7,.2,1); }
+  .gdp-line span b { font-size: 1.05rem; margin-right: .45rem; }
+  .gdp-line span { position: absolute; left: var(--gutter); top: -2.05rem; font-size: .8rem; font-weight: 700; color: var(--abyss); background: var(--sun); padding: .1rem .5rem; border-radius: 3px; white-space: nowrap; }
+  .ratio-tag { position: absolute; z-index: 5; top: 1rem; left: var(--gutter); font-size: .95rem; color: var(--ink); max-width: 17rem; line-height: 1.35; }
+  .ratio-tag b { font-family: var(--display); font-size: 1.6rem; font-weight: 800; font-variation-settings: "wdth" 75; margin-right: .25rem; }
+  .ratio-tag small { display: block; font-size: .82rem; color: var(--muted); margin-top: .2rem; }
+  .readout { position: absolute; z-index: 4; left: 0; right: 0; padding: 0 calc(var(--gutter) + 3.2rem) 0 var(--gutter); max-width: 76rem; margin: 0 auto; color: var(--foam); }
+  .readout.dry { color: var(--ink); }
+  .readout p, .readout strong { color: inherit; }
+  .readout h1 { font: 700 clamp(1rem, 2.4vw, 1.3rem) var(--body); margin: 0 0 .3rem; }
+  .clock { font-family: var(--display); font-weight: 800; font-variation-settings: "wdth" 66; font-size: clamp(2.5rem, 11.2vw, 8.5rem); line-height: .95; letter-spacing: -.01em; margin: 0; white-space: nowrap; text-shadow: 0 2px 24px rgba(7,47,64,.35); }
+  .clock .cur { font-weight: 400; font-size: .4em; vertical-align: .95em; margin-right: .18em; }
+  .asof { margin: .8rem 0 0; font-size: clamp(.95rem, 2.2vw, 1.15rem); }
+  .asof time { font-weight: 700; }
+  .sub { font-size: clamp(.95rem, 2vw, 1.1rem); margin: .35rem 0 0; max-width: 40rem; opacity: .85; }
+  .hero-stats { margin-top: 2.25rem; }
+  .hero-stats .l { color: #cfe6ea; }
+  .pop { font-size: .82rem; color: #a9cdd6; margin-top: .6rem; max-width: 22rem; line-height: 1.4; }
+  .pop a { color: var(--sun); }
+  .why { margin: 2.25rem 0 .5rem; padding: 1.4rem 1.5rem; border-radius: 8px; background: rgba(244,201,93,.07); border: 1px solid rgba(244,201,93,.35); max-width: 52rem; }
+  .why h3 { margin: 0 0 .6rem !important; font-size: 1.15rem; color: var(--sun); }
+  .why p { margin: 0 0 .9rem; }
+  .why .sbar { display: flex; height: 1.6rem; border-radius: 4px; overflow: hidden; gap: 2px; margin: 1rem 0 .9rem; }
+  .why ul { list-style: none; padding: 0; margin: 0 0 .9rem; display: grid; gap: .55rem; }
+  .why li { display: grid; grid-template-columns: .9rem 1fr; gap: .7rem; align-items: baseline; color: var(--mist); }
+  .why li i { width: .9rem; height: .9rem; border-radius: 2px; transform: translateY(.12rem); }
+  .why li b { color: var(--foam); }
+  .why .small { font-size: .85rem; color: var(--mist); margin: 0; }
+  .l12 { display: flex; flex-wrap: wrap; gap: .5rem 2rem; margin-top: 1.25rem; padding: .9rem 1.1rem; background: rgba(255,255,255,.05); border-radius: 6px; font-size: .95rem; color: var(--mist); }
+  .l12 b { color: var(--foam); } .l12 b.red { color: var(--red); }
+  .notice { position: absolute; inset: auto 1.25rem 2rem 1.25rem; max-width: 36rem; margin: 0 auto; background: var(--foam); color: var(--ink); padding: 1rem 1.25rem; border-radius: 6px; display: none; }
+  .notice.on { display: block; }
+
+  .bar { display: flex; height: 3.25rem; border-radius: 4px; overflow: hidden; margin: 1.5rem 0 1.25rem; gap: 2px; }
+  .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem 2rem; list-style: none; padding: 0; margin: 0; }
+  .legend li { display: grid; grid-template-columns: .9rem 1fr; gap: .2rem .7rem; align-items: baseline; }
+  .legend i { width: .9rem; height: .9rem; border-radius: 2px; display: inline-block; transform: translateY(.1rem); }
+  .legend .v { grid-column: 2; color: var(--mist); font-size: .95rem; }
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.5rem 3rem; margin-top: 2rem; }
+  .split .big { font-family: var(--display); font-weight: 800; font-variation-settings: "wdth" 72; font-size: clamp(2.2rem, 5vw, 3rem); line-height: 1; }
+  .split .lbl { color: var(--mist); margin-top: .4rem; }
+  .hbars { display: grid; gap: .9rem; max-width: 46rem; }
+  .hbar .top { display: flex; justify-content: space-between; gap: 1rem; font-size: .95rem; }
+  .hbar .top span:last-child { color: var(--mist); white-space: nowrap; }
+  .hbar .track { height: .6rem; background: rgba(169,205,214,.12); border-radius: 3px; margin-top: .35rem; overflow: hidden; }
+  .hbar .fill { height: 100%; border-radius: 3px; }
+  .method-teaser { border-top: 1px solid rgba(169,205,214,.25); padding-top: 2rem; }
+  @media (max-width: 600px) {
+    .clock { font-size: clamp(2.2rem, 9.6vw, 8.5rem); }
+    .island { left: 40%; width: 190px; }
+    .sun { width: 2.4rem; height: 2.4rem; top: 1rem; left: 70%; }
+    .cloud.c1 { top: 2.6rem; }
+    .gdp-line span { font-size: .72rem; }
+    .ratio-tag b { font-size: 1.3rem; }
+    .legend { grid-template-columns: 1fr 1fr; gap: .9rem 1rem; }
+    .legend .v { font-size: .85rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .wave, .surface .front, .surface .foam, .cloud, .rays i { animation: none !important; } .bubble { display: none; } }
+</style>
 </head>
 <body>
-  <nav class="navbar navbar-expand bg-primary" data-bs-theme="dark">
-    <div class="container-xl">
-      <a class="navbar-brand" href="index.html">Shaheed</a>
-      <div class="navbar-nav ms-auto flex-wrap">
-        <a class="nav-link active" aria-current="page" href="index.html">About</a>
-        <a class="nav-link" href="simulator.html">NEM storage simulator</a>
-        <a class="nav-link" href="prices.html">NEM price patterns</a>
-      </div>
-    </div>
+<header class="site-head">
+  <a class="brand" href="./">MV <span>Debt Clock</span></a>
+  <nav class="site-nav" aria-label="Main">
+    <a href="./" data-page="clock" aria-current="page">Debt clock</a>
+    <a href="fuel.html" data-page="fuel">Fuel imports</a>
+    <a href="methodology.html" data-page="method">Methodology</a>
+    <a href="about.html" data-page="about">About</a>
   </nav>
+  <div class="prefs">
+    <div class="toggle" data-pref="cur" role="group" aria-label="Currency"><button type="button" data-v="MVR" aria-pressed="true">MVR</button><button type="button" data-v="USD" aria-pressed="false">US$</button></div>
+    <div class="toggle" data-pref="real" role="group" aria-label="Inflation adjustment" title="Real shows past amounts in today's prices, adjusted for inflation"><button type="button" data-v="0" aria-pressed="true">Nominal</button><button type="button" data-v="1" aria-pressed="false">Real</button></div>
+  </div>
+  <div class="real-note" role="status"></div>
+</header>
 
-  <main class="container py-5" style="max-width: 760px;">
-    <div class="d-flex align-items-center gap-4 mb-4">
-      <!-- Profile photo: images/profile.jpg -->
-      <img class="profile-photo" src="images/profile.jpg" alt="Photo of Shaheed" width="120" height="120">
-      <div>
-        <h1 class="mb-1">Shaheed</h1>
-        <p class="lead text-body-secondary mb-0">PhD student in Economics, University of York</p>
+<section class="hero" id="hero" aria-label="Debt clock">
+  <div class="ratio-tag" id="ratioTag" hidden><b id="ratioVal">…</b>of GDP</div>
+  <div class="sky" aria-hidden="true"><div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div></div>
+  <div class="water" id="water" aria-hidden="true">
+    <div class="rays"><i></i><i></i><i></i><i></i></div>
+    <svg class="wave back" viewBox="0 0 1200 30" preserveAspectRatio="none"><path d="M0 16 Q 100 2 200 16 T 400 16 T 600 16 T 800 16 T 1000 16 T 1200 16 V30 H0Z"/></svg>
+    <svg class="wave" viewBox="0 0 1200 24" preserveAspectRatio="none"><path d="M0 12 Q 75 0 150 12 T 300 12 T 450 12 T 600 12 T 750 12 T 900 12 T 1050 12 T 1200 12 V24 H0Z"/></svg>
+    <div id="bubbles"></div>
+  </div>
+  <div class="surface" id="surface" aria-hidden="true">
+    <div class="island"><svg viewBox="0 0 340 120" aria-hidden="true"><defs><radialGradient id="lagoon" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#c4f5ec"/><stop offset=".55" stop-color="#7fdcd0"/><stop offset="1" stop-color="#3fb8b0" stop-opacity="0"/></radialGradient><linearGradient id="sandg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf4df"/><stop offset="1" stop-color="#ead9ae"/></linearGradient></defs><ellipse cx="160" cy="98" rx="165" ry="20" fill="url(#lagoon)"/><g stroke="#7a5a3a" stroke-width="2"><line x1="232" y1="84" x2="314" y2="84"/><line x1="252" y1="78" x2="252" y2="96"/><line x1="262" y1="78" x2="262" y2="96"/><line x1="280" y1="78" x2="280" y2="96"/><line x1="290" y1="78" x2="290" y2="96"/><line x1="306" y1="78" x2="306" y2="96"/><line x1="316" y1="78" x2="316" y2="96"/></g><rect x="248" y="68" width="18" height="11" fill="#f3e6c8"/><path d="M244 69 L257 58 L270 69 Z" fill="#b8874f"/><rect x="276" y="68" width="18" height="11" fill="#f3e6c8"/><path d="M272 69 L285 58 L298 69 Z" fill="#b8874f"/><rect x="302" y="68" width="18" height="11" fill="#f3e6c8"/><path d="M298 69 L311 58 L324 69 Z" fill="#b8874f"/><path d="M40 92 Q 70 74 120 72 Q 170 68 215 74 Q 240 80 250 92 Z" fill="url(#sandg)"/><path d="M70 80 q 8 -14 22 -10 q 8 -12 22 -6 q 12 -10 26 -2 q 12 -8 24 0 q 12 -4 18 8 q -60 6 -112 10 Z" fill="#3c8f4f"/><path d="M84 80 q 10 -10 22 -6 q 10 -8 22 -2 q 10 -6 20 2 q -30 6 -64 6 Z" fill="#4fa35c"/><g stroke-linecap="round" fill="none"><path d="M100 76 Q 92 46 104 18" stroke="#8a6a44" stroke-width="4.5"/><path d="M140 74 Q 146 44 132 10" stroke="#7a5a3a" stroke-width="5"/><path d="M176 76 Q 186 52 196 30" stroke="#8a6a44" stroke-width="4"/><path d="M120 75 Q 116 58 122 42" stroke="#7a5a3a" stroke-width="3.5"/><path d="M200 80 Q 214 64 226 54" stroke="#8a6a44" stroke-width="3.5"/></g><g class="fronds" fill="#2f8a5b"><g transform="translate(104,18)"><path d="M0 0 C -12 -8 -26 -6 -36 4 C -24 -2 -12 -1 0 2 Z"/><path d="M0 0 C 10 -12 26 -12 34 -2 C 22 -6 10 -4 0 2 Z"/><path d="M0 0 C -6 -14 -2 -24 6 -30 C 2 -20 2 -10 2 0 Z"/><path d="M0 0 C 14 2 24 10 28 20 C 18 12 8 8 0 4 Z"/><path d="M0 0 C -14 4 -22 12 -24 22 C -16 14 -8 8 0 4 Z"/></g><g transform="translate(132,10)" fill="#36985f"><path d="M0 0 C -12 -8 -28 -6 -40 6 C -26 -2 -12 -1 0 2 Z"/><path d="M0 0 C 12 -12 30 -12 40 0 C 26 -6 12 -4 0 2 Z"/><path d="M0 0 C -4 -14 2 -24 10 -28 C 4 -18 4 -8 2 0 Z"/><path d="M0 0 C 16 2 28 12 30 24 C 20 14 10 8 0 4 Z"/><path d="M0 0 C -16 4 -26 14 -28 26 C -18 16 -8 8 0 4 Z"/></g><g transform="translate(196,30)"><path d="M0 0 C -10 -8 -24 -6 -32 4 C -22 -2 -10 -1 0 2 Z"/><path d="M0 0 C 10 -10 24 -10 32 0 C 22 -4 10 -3 0 2 Z"/><path d="M0 0 C 12 2 20 10 22 18 C 14 12 6 7 0 4 Z"/><path d="M0 0 C -12 4 -18 10 -20 18 C -12 12 -6 7 0 4 Z"/></g><g transform="translate(122,42)" fill="#3f9f63"><path d="M0 0 C -8 -6 -18 -5 -24 3 C -16 -1 -8 0 0 2 Z"/><path d="M0 0 C 8 -8 18 -8 24 0 C 16 -3 8 -2 0 2 Z"/><path d="M0 0 C 8 2 14 7 16 13 C 10 9 4 6 0 4 Z"/></g><g transform="translate(226,54)" fill="#3f9f63"><path d="M0 0 C -8 -6 -18 -5 -24 3 C -16 -1 -8 0 0 2 Z"/><path d="M0 0 C 8 -8 18 -8 24 0 C 16 -3 8 -2 0 2 Z"/><path d="M0 0 C 8 2 14 7 16 13 C 10 9 4 6 0 4 Z"/></g></g><g fill="#6b4a2a"><circle cx="102" cy="21" r="2.4"/><circle cx="106" cy="22" r="2.4"/><circle cx="131" cy="13" r="2.6"/><circle cx="135" cy="14" r="2.6"/><circle cx="195" cy="33" r="2.2"/></g></svg></div>
+    <svg class="front" viewBox="0 0 1200 22" preserveAspectRatio="none"><path d="M0 10 Q 60 2 120 10 T 240 10 T 360 10 T 480 10 T 600 10 T 720 10 T 840 10 T 960 10 T 1080 10 T 1200 10 V22 H0Z"/></svg>
+    <svg class="foam" viewBox="0 0 1200 8" preserveAspectRatio="none"><path d="M0 6 Q 60 0 120 6 T 240 6 T 360 6 T 480 6 T 600 6 T 720 6 T 840 6 T 960 6 T 1080 6 T 1200 6" stroke="#fff" stroke-width="1.5" fill="none" stroke-dasharray="14 22"/></svg>
+  </div>
+  <div class="gauge" id="gauge" aria-hidden="true"><div class="pole"></div></div>
+  <div class="gdp-line" id="gdpLine"><span id="lineLabel"></span></div>
+  <div class="readout" id="readout">
+    <h1>Maldives National Debt Clock</h1>
+    <p class="clock num"><span class="cur" id="clockCur">MVR</span><span id="clock">…</span></p>
+    <p class="asof">As of <time id="mvTime">…</time> in Malé</p>
+    <p class="sub" id="sub">Loading the latest figures from the Maldives Monetary Authority.</p>
+    <div class="stats hero-stats">
+      <div class="stat hot"><div class="n num" id="perPerson">…</div><div class="l">owed for every Maldivian citizen, rising every second</div><div class="pop" id="popLine"></div></div>
+      <div class="stat"><div class="n num" id="perSecond">…</div><div class="l" id="perSecondLbl">added to the debt each second, on the pace of the last year</div></div>
+      <div class="stat warn" id="interestStat"><div class="n num" id="interest">…</div><div class="l" id="interestLbl">spent on interest and financing costs every day</div></div>
+    </div>
+  </div>
+  <div class="notice" id="notice" role="status"></div>
+</section>
+
+<main class="dark">
+<div class="wrap">
+
+  <section id="growthSec" hidden>
+    <p class="callout" id="growthLine"></p>
+    <p id="quarterLine"></p>
+  </section>
+
+  <section>
+    <h2>Who it's owed to</h2>
+    <p>Domestic debt is owed to lenders inside the Maldives, mostly banks, the central bank and the pension fund. External debt is owed abroad, to other governments, development banks and bondholders. Guaranteed debt is borrowed by state companies, with the government promising to pay if they can't.</p>
+    <div class="bar" id="bar" role="img" aria-label="Debt breakdown"></div>
+    <ul class="legend" id="legend"></ul>
+    <div class="split" id="gdpSplit"></div>
+  </section>
+
+  <section>
+    <div class="chart-head">
+      <div><h2>How it got here</h2><p id="chartNote" style="margin:0"></p></div>
+      <div class="subtoggle" role="group" aria-label="Chart view">
+        <button type="button" data-view="amount" aria-pressed="true">Amount</button>
+        <button type="button" data-view="ratio" aria-pressed="false">% of GDP</button>
       </div>
     </div>
+    <div class="chart-box" id="chart"></div>
+    <div class="hint">Hover or tap the chart to see each quarter.</div>
+  </section>
 
-    <p>My background is in economics, econometrics and public finance, with experience across Maldivian government, state owned enterprises and research. I enjoy turning data into actionable insights that support better decision making, with particular interests in energy markets and economic policy.</p>
-    <p>More recently, I’ve been developing my energy market analysis skills through AEMO’s NEM Foundations course and PLEXOS training. This site is where I develop and share side projects using public data, beginning with Australia’s National Electricity Market and expanding into other energy markets, economic topics and policy questions.</p>
-    <p>I work with analytical tools including Stata, R and Python and have also used MATLAB in my doctoral research and GAUSS in earlier quantitative work. I’m continuing to broaden my technical skills and am currently working towards formal Power BI certification.</p>
-    <p>I’m interested in roles across data, economic analysis, research and policy, particularly where these intersect with energy and infrastructure. I hold Australian permanent residency with full work rights and am moving my PhD to part time remote study, allowing me to take on full time work in Australia.</p>
-    <div class="d-flex flex-wrap gap-2 my-3">
-      <a class="btn btn-primary" href="docs/Abdulla_Shaheed_CV.pdf" target="_blank" rel="noopener">View my CV (PDF)</a>
-      <a class="btn btn-outline-primary" href="mailto:shahydh33@gmail.com">Email me</a>
+  <section id="fiscalSec" hidden>
+    <h2>What the government collects and spends</h2>
+    <p id="fiscalNote"></p>
+    <div class="stats">
+      <div class="stat"><div class="n num" id="revPP">…</div><div class="l">collected per citizen in a year, in taxes, fees and grants</div></div>
+      <div class="stat red"><div class="n num" id="expPP">…</div><div class="l">spent per citizen in a year</div></div>
+      <div class="stat red"><div class="n num" id="gapPP">…</div><div class="l" id="gapLbl">gap per citizen, covered by borrowing</div></div>
     </div>
-    <p class="mb-3"><strong>Contact:</strong> <a href="mailto:shahydh33@gmail.com">shahydh33@gmail.com</a></p>
-    <p class="small text-body-secondary">Last updated 3 October 2026</p>
+    <div class="why" id="why" hidden></div>
+    <h3>Every second, the government</h3>
+    <div class="stats">
+      <div class="stat"><div class="n num" id="revSec">…</div><div class="l">collects</div></div>
+      <div class="stat red"><div class="n num" id="expSec">…</div><div class="l">spends</div></div>
+    </div>
 
+    <h3>Year by year</h3>
+    <p id="annualNote" style="margin-bottom:0"></p>
+    <div class="chart-box" id="annual"></div>
+    <div class="key"><span><i style="background:#3fb8b0"></i>Revenue</span><span><i style="background:#ff5f56"></i>Spending</span><span style="color:#ff5f56;font-weight:700">Red figure under each year shows the deficit</span></div>
+    <div class="l12 num" id="l12"></div>
 
-    <h2 class="h4 mt-5 mb-3">Side projects</h2>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h3 class="h5 card-title"><a href="simulator.html">NEM storage simulator</a></h3>
-        <p class="card-text text-body-secondary mb-0">Choose a future grid of wind, solar and storage, then test it against five years of real weather from the NEM, every half hour. Started as a <a href="replication.html">replication</a> of Andrew Grogan's spreadsheet, shared in his <a href="https://www.linkedin.com/posts/andrew-grogan-be-phd-a56b5816_what-would-happen-if-the-nem-had-a-lot-more-share-7258764364134899712-KhCt" target="_blank" rel="noopener">LinkedIn post</a>.</p>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <h3 class="h5 card-title"><a href="prices.html">NEM price patterns</a></h3>
-        <p class="card-text text-body-secondary mb-0">Five years of wholesale electricity prices by hour, season and region. See when power is cheap, how often prices go below zero, and how major events moved the market.</p>
-      </div>
-    </div>
-    <h2 class="h4 mt-5 mb-3">Research</h2>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h3 class="h5 card-title">PhD in Economics, University of York</h3>
-        <p class="card-text text-body-secondary mb-0">Thesis on sovereign debt, climate risk and energy markets, using panel data and time series econometrics.</p>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <h3 class="h5 card-title"><a href="docs/Shaheed_MSc_Dissertation_2021.pdf" target="_blank" rel="noopener">MSc dissertation: bubbles in energy and food commodity prices</a></h3>
-        <p class="card-text text-body-secondary mb-2">MSc Economics and Econometrics, University of Nottingham, 2021. Awarded a Distinction.</p>
-        <p class="card-text text-body-secondary mb-0">Tests 12 energy and agricultural commodity prices from 1970 to 2020 for explosive price episodes, dates when each began and ended, and checks whether they spread from one market to another, using right tailed unit root tests and a wild bootstrap test for co explosive behaviour.</p>
-      </div>
-    </div>
-    <h2 class="h4 mt-5 mb-3">Outside work</h2>
-    <p>I love long road trips. I've driven a full loop of Australia, from Sydney through Canberra, Melbourne, Alice Springs, Darwin, Cairns and Brisbane, as well as Perth to Albany and Esperance, around New Zealand, and across England, Wales and Scotland. Next on my list is Australia's hard to reach places, which may take a few years. I also enjoy researching new topics, and a weekly Netflix night.</p>
-  </main>
+    <p class="callout" id="interestShare" style="margin-top:2.5rem"></p>
+    <h3 id="spendHead">Where a year's spending goes</h3>
+    <div class="hbars" id="hbars"></div>
+  </section>
 
-  <footer class="container py-3 border-top small text-body-secondary" style="max-width: 760px;">© <span id="year"></span> Shaheed.</footer>
-  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+  <section class="method-teaser">
+    <h2>How the clock works</h2>
+    <p>Official debt figures come out once a quarter. The clock starts from the latest published total and adds debt at the average pace of the most recent four quarters, so the number between releases is an <b>estimate</b>. When a new quarter is published, the clock resets to the official figure. The site checks for new data every morning.</p>
+    <p id="methodDetail"></p>
+    <p id="popNote"></p>
+    <p>The <a href="methodology.html">full methodology</a> explains where every number comes from, how it's calculated, and what it leaves out.</p>
+  </section>
+
+</div>
+</main>
+<footer class="site-foot"><div class="wrap">
+  <span id="fetched">Source: Maldives Monetary Authority Statistics Database.</span>
+  <span class="foot-links"><a href="methodology.html">Methodology</a> <a href="about.html">About and contact</a> <span>Independent; not affiliated with the MMA.</span></span>
+</div></footer>
+
+<script src="assets/site.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const { fmt, sym, short, money, moneyNow, moneyFull, conv, convNow, ts, mLabel, qLabel, last, row, SEC_YEAR } = MV;
+  const COLORS = { domestic_cg: "#3fb8b0", domestic_guaranteed: "#9fe0d6", external_cg: "#f4c95d", external_guaranteed: "#f7e2a6" };
+  const LABELS = { domestic_cg: "Domestic, central government", domestic_guaranteed: "Domestic, guaranteed", external_cg: "External, central government", external_guaranteed: "External, guaranteed" };
+  const pct = v => v == null ? null : (v < 5 ? v * 100 : v);   // MMA stores some ratios as 1.23 rather than 123
+
+  // live Malé time
+  const mvFmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Indian/Maldives", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false, weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const mvTick = () => { const p = Object.fromEntries(mvFmt.formatToParts(new Date()).map(x => [x.type, x.value])); $("mvTime").textContent = `${p.hour}:${p.minute}:${p.second}, ${p.weekday} ${p.day} ${p.month} ${p.year}`; };
+  mvTick(); setInterval(mvTick, 1000);
+
+  Promise.all([MV.getJSON("data.json"), MV.getJSON("population.json").catch(() => null)])
+    .then(([d, p]) => { MV.checkStale(d); init(d, p); })
+    .catch(err => { console.error(err); const n = $("notice"); n.textContent = "No debt data yet. The repository owner needs to run the “Update debt data” workflow under the Actions tab."; n.classList.add("on"); $("sub").textContent = ""; });
+
+  function init(data, POP) {
+    const S = data.series; MV.setData(S); MV.paintPrefs();
+    const tot = S.total.points.filter(p => p.value > 0);
+    const latest = tot[tot.length - 1], back = tot[Math.max(0, tot.length - 5)];
+    const rate = (latest.value - back.value) / ((ts(latest.date) - ts(back.date)) / 1000 || 1);
+    const debtNow = () => latest.value + rate * (Date.now() - ts(latest.date)) / 1000;
+    const popNow = POP ? () => POP.base * Math.exp(POP.annual_growth * (Date.now() - ts(POP.base_date)) / 1000 / SEC_YEAR) : () => null;
+    const ratioPts = (S.debt_to_gdp?.points || []).map(p => ({ date: p.date, value: pct(p.value) }));
+    const ratio = ratioPts.length ? ratioPts[ratioPts.length - 1].value : null;
+
+    // monthly fiscal: months up to the latest month that revenue and spending both have
+    const fk = ["revenue", "expenditure", "interest_costs", "salaries_pensions", "subsidies", "capital_exp"];
+    const fiscalOK = S.revenue?.points?.length >= 12 && S.expenditure?.points?.length >= 12;
+    const fEnd = fiscalOK ? ["revenue", "expenditure"].map(k => last(S[k]).date).sort()[0] : null;
+    const months = k => (S[k]?.points || []).filter(p => p.date <= fEnd);
+    const sumNow = pts => pts.reduce((a, p) => a + convNow(p.value, p.date), 0);   // current figures: never inflation-adjusted
+    const sumReal = pts => pts.reduce((a, p) => a + conv(p.value, p.date), 0);     // comparisons over time: "Real" applies
+    const last12 = (k, f = sumNow) => { const m = months(k).slice(-12); return m.length === 12 ? f(m) : null; };
+    const disp = v => sym() + " " + short(v), dispFull = (v, d = 0) => sym() + " " + fmt(v, d);
+
+    // tickers
+    const tick = () => {
+      const v = debtNow(); $("clock").textContent = fmt(convNow(v));
+      const pop = popNow();
+      if (pop) { const pp = convNow(v / pop), dd = MV.state.cur === "USD" ? 5 : 4, s = pp.toFixed(dd).split("."); $("perPerson").innerHTML = `${sym()} ${fmt(Number(s[0]))}<small>.${s[1]}</small>`; }
+    };
+    setInterval(tick, 60);
+
+    // hero layout
+    const hero = $("hero"), water = $("water"), line = $("gdpLine"), readout = $("readout");
+    if (ratio) {
+      $("ratioVal").textContent = fmt(ratio, 1) + "%"; $("ratioTag").hidden = false;
+      $("lineLabel").innerHTML = ratio >= 100 ? `<b>${fmt(ratio, 1)}% of GDP</b> ${fmt(ratio - 100, 1)} points underwater` : `<b>${fmt(ratio, 1)}% of GDP</b> ${fmt(100 - ratio, 1)} points above water`;
+    }
+    // The sea surface is fixed at 100% of GDP (debt equal to a full year of the economy).
+    // Debt above 100% sits below the surface: the further down the yellow line, the deeper underwater.
+    // The hero is only as tall as it needs to be, with the readout just under the line.
+    function layout() {
+      const k = innerWidth < 600 ? 6 : 7;                                  // pixels per percentage point
+      const tag = $("ratioTag"), tagB = tag.offsetTop + tag.offsetHeight;
+      const y0 = Math.max(innerWidth < 600 ? 200 : 210, tagB + 100);          // the surface: 100% of GDP, with room in the sky for the scene
+      const markY = y0 + ((ratio || 100) - 100) * k;                         // today's debt
+      const rh = readout.offsetHeight, top = Math.max(markY, y0) + 48;
+      const H = Math.max(520, Math.ceil(top + rh + 56));
+      hero.style.height = H + "px";
+      water.style.height = (H - y0) + "px";
+      surfaceY = y0; $("surface").style.top = y0 + "px";
+      line.style.top = markY + "px"; line.style.opacity = ratio ? 1 : 0;
+      readout.style.top = top + "px";
+      // depth gauge: 100% at the surface, counting down into the water (and up into the sky for lower debt)
+      const g = $("gauge"); g.querySelectorAll(".tick").forEach(t => t.remove());
+      const vTop = 100 - Math.floor(y0 / k / 5) * 5, vBot = 100 + Math.floor((H - y0) / k / 5) * 5;
+      for (let v = Math.max(0, vTop); v <= vBot; v += 5) {
+        const y = y0 + (v - 100) * k, label = v % 10 === 0;
+        if (y < 12 || y > H - 8) continue;
+        const t = document.createElement("div"); t.className = "tick";
+        t.style.top = y + "px"; t.style.width = label ? "10px" : "5px";
+        t.style.color = y < y0 ? "#072f40" : "#cfe6ea";
+        if (label && Math.abs(markY - y) > 26) t.innerHTML = `<span>${v}%</span>`;
+        if (Math.abs(markY - y) <= 14) continue;
+        g.appendChild(t);
+      }
+      let now = g.querySelector(".now"); if (!now) { now = document.createElement("div"); now.className = "now"; g.appendChild(now); }
+      now.textContent = ratio ? fmt(ratio, 1) + "%" : ""; now.style.top = markY + "px"; now.hidden = !ratio;
+    }
+    let surfaceY = 0;
+
+    // sea life: every so often a dolphin leaps or a shark fin glides past
+    const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // spinner dolphin (two-tone), whale shark and dhoni, all drawn for this site
+    const DOLPHIN = `<svg width="92" height="38" viewBox="0 0 140 58"><path d="M10 31 C 24 21 48 15 76 16 C 88 12 100 12 110 17 C 117 18 126 20 135 22 C 129 25 121 26 113 26 C 106 32 92 37 74 38 C 54 39 32 37 18 34 C 13 38 8 43 3 46 C 6 40 7 35 6 31 C 7 27 6 22 3 16 C 8 20 12 25 14 30 Z" fill="#2f6f8a"/><path d="M113 26 C 106 32 92 37 74 38 C 56 39 40 37 28 35 C 46 33 70 31 92 28 C 100 27 107 26 113 26 Z" fill="#a9cfd9"/><path d="M62 17 C 64 11 68 5 75 2 C 73 8 73 13 77 17 Z" fill="#245a71"/><path d="M88 32 C 86 38 80 43 73 46 C 78 40 81 36 82 32 Z" fill="#245a71"/><circle cx="111" cy="21" r="1.6" fill="#0d2a36"/></svg>`;
+    const WHALESHARK = `<svg width="200" height="64" viewBox="0 0 230 74"><path d="M30 36 L 6 8 L 16 36 L 4 66 Z" fill="#244d5e"/><path d="M26 37 C 60 24 120 20 172 23 C 198 25 216 30 222 37 C 216 44 198 49 172 50 C 120 52 60 48 26 40 Z" fill="#2c5a6c"/><path d="M112 23 L 124 7 L 134 22 Z" fill="#244d5e"/><path d="M162 48 L 150 66 L 174 49 Z" fill="#244d5e"/><path d="M205 42 C 212 41 217 39 221 37" stroke="#1b3a47" stroke-width="2" fill="none"/><g fill="#d8f1f3" opacity=".75"><circle cx="190" cy="31" r="1.8"/><circle cx="178" cy="28" r="1.8"/><circle cx="184" cy="38" r="1.8"/><circle cx="166" cy="33" r="1.8"/><circle cx="152" cy="28" r="1.8"/><circle cx="158" cy="40" r="1.8"/><circle cx="140" cy="34" r="1.8"/><circle cx="126" cy="29" r="1.8"/><circle cx="130" cy="42" r="1.8"/><circle cx="112" cy="35" r="1.8"/><circle cx="98" cy="30" r="1.8"/><circle cx="100" cy="42" r="1.8"/><circle cx="84" cy="36" r="1.8"/><circle cx="70" cy="33" r="1.8"/><circle cx="58" cy="38" r="1.8"/></g><g stroke="#d8f1f3" stroke-width="1" opacity=".45"><line x1="146" y1="24" x2="146" y2="48"/><line x1="120" y1="23" x2="120" y2="48"/><line x1="92" y1="25" x2="92" y2="46"/><line x1="66" y1="28" x2="66" y2="44"/></g></svg>`;
+    const DHONI = `<svg width="104" height="76" viewBox="0 0 150 110"><path d="M62 10 L 62 74" stroke="#5a4030" stroke-width="2.5"/><path d="M64 14 L 64 66 L 100 66 Z" fill="#fbf7ec" stroke="#e2dccb" stroke-width="1"/><rect x="30" y="60" width="34" height="14" rx="1.5" fill="#f6efe0"/><rect x="27" y="56" width="40" height="5" rx="1" fill="#b83a2e"/><rect x="35" y="64" width="6" height="5" fill="#1d5f7a"/><rect x="45" y="64" width="6" height="5" fill="#1d5f7a"/><rect x="55" y="64" width="6" height="5" fill="#1d5f7a"/><path d="M6 74 L 114 74 C 122 74 126 66 128 50 C 130 36 134 28 140 24 C 143 23 144 25 142 27 C 137 32 135 42 134 54 C 132 76 124 90 108 92 L 26 92 C 16 92 9 84 6 74 Z" fill="#fdfbf5"/><path d="M10 82 C 40 84 90 84 126 80" stroke="#1d5f7a" stroke-width="3.5" fill="none"/></svg>`;
+    function splash(x) {
+      for (let i = 0; i < 8; i++) {
+        const d = document.createElement("div"); d.className = "critter";
+        d.style.cssText += "width:5px;height:5px;border-radius:50%;background:#e9f7f6;opacity:.9";
+        $("surface").appendChild(d);
+        const vx = (Math.random() - .5) * 60, vy = -40 - Math.random() * 50, t0 = performance.now();
+        (function step(t) { const k = (t - t0) / 700; if (k > 1) { d.remove(); return; }
+          d.style.transform = `translate(${x + vx * k}px, ${vy * k + 120 * k * k - 8}px)`; d.style.opacity = 1 - k; requestAnimationFrame(step); })(t0);
+      }
+    }
+    // one leap; spin = a full roll mid-air, as spinner dolphins do
+    function leap(x0, span, peak, delay, spin) {
+      setTimeout(() => {
+        const el = document.createElement("div"); el.className = "critter"; el.innerHTML = DOLPHIN; $("surface").appendChild(el);
+        const dur = 1500, t0 = performance.now(); splash(x0);
+        (function step(t) {
+          const k = (t - t0) / dur; if (k > 1) { el.remove(); splash(x0 + span); return; }
+          const x = x0 + span * k, y = -peak * Math.sin(Math.PI * k), ang = -Math.atan2(peak * Math.PI * Math.cos(Math.PI * k), span) * 180 / Math.PI;
+          const roll = spin ? Math.cos(Math.PI * 2 * Math.min(1, Math.max(0, (k - .2) / .6))) : 1;   // scaleY swings to -1 and back
+          el.style.transform = `translate(${x - 46}px, ${y - 24}px) rotate(${ang}deg) scaleY(${roll})`; requestAnimationFrame(step);
+        })(t0);
+      }, delay);
+    }
+    function dolphin() {   // a small pod, one of them spinning
+      const W = hero.clientWidth, x0 = W * (.06 + Math.random() * .2), n = W < 600 ? 2 : 3, spinner = Math.floor(Math.random() * n);
+      const maxPeak = Math.max(40, surfaceY - ($("ratioTag").offsetTop + $("ratioTag").offsetHeight) - 30);   // stay below the top label
+      for (let i = 0; i < n; i++) leap(x0 + i * 46, (W < 600 ? 170 : 220) + Math.random() * 60, Math.min(maxPeak, 64 + Math.random() * 34 + (i === spinner ? 16 : 0)), i * 320, i === spinner);
+    }
+    function glide(html, cls, dur, y, sway, flip) {
+      const W = hero.clientWidth, el = document.createElement("div"); el.className = "critter " + cls; el.innerHTML = html; $("surface").appendChild(el);
+      const w = el.firstChild.getAttribute("width") * 1, dir = flip ? -1 : 1, t0 = performance.now();
+      if (dir < 0) el.firstChild.style.transform = "scaleX(-1)";
+      (function step(t) {
+        const k = (t - t0) / dur; if (k > 1) { el.remove(); return; }
+        const x = dir > 0 ? -w - 20 + (W + w + 40) * k : W + 20 - (W + w + 40) * k;
+        el.style.transform = `translate(${x}px, ${y + Math.sin(t / 700) * sway}px)`; requestAnimationFrame(step);
+      })(t0);
+    }
+    const whaleShark = () => glide(WHALESHARK, "under", 30000, 26 + Math.random() * 30, 4, Math.random() < .5);
+    const dhoni = () => glide(DHONI, "boat", 38000, -58, 1.6, Math.random() < .5);
+    const shark = whaleShark;
+    window.__sea = { dolphin, whaleShark, dhoni };
+    if (!calm) {
+      const bb = $("bubbles");
+      for (let i = 0; i < 10; i++) { const b = document.createElement("div"); b.className = "bubble"; const sz = 4 + Math.random() * 6;
+        b.style.cssText = `left:${5 + Math.random() * 85}%;width:${sz}px;height:${sz}px;animation-duration:${9 + Math.random() * 10}s;animation-delay:${-Math.random() * 15}s;--rise:-${300 + Math.random() * 400}px`; bb.appendChild(b); }
+      const cast = [whaleShark, dolphin, dhoni, dolphin]; let turn = 0;
+      const next = () => setTimeout(() => { if (!document.hidden) cast[turn++ % cast.length](); next(); }, 18000 + Math.random() * 16000);
+      setTimeout(() => { dolphin(); next(); }, 4000);
+      setTimeout(() => { if (!document.hidden) dhoni(); }, 9000);
+    }
+
+    function render() {
+      $("clockCur").textContent = sym();
+      const other = MV.state.cur === "USD" ? "MVR " + short(debtNow()) : "US$ " + short(debtNow() / MV.USD);
+      $("sub").innerHTML = `Estimated from the official figure of ${moneyNow(latest.value, latest.date)} at the end of ${mLabel(latest.date)}. About <strong>${other}</strong> today.`;
+      $("perSecond").textContent = (rate < 0 ? "−" : "") + moneyFull(Math.abs(rate), MV.state.cur === "USD" ? 2 : 0);
+      $("perSecondLbl").textContent = rate >= 0 ? "added to the debt each second, on the pace of the last year" : "paid down each second, on the pace of the last year";
+
+      const int12 = fiscalOK ? last12("interest_costs") : null;
+      if (int12) { $("interest").textContent = disp(int12 / 365.25); $("interestLbl").textContent = `spent on interest and financing costs every day, over the 12 months to ${mLabel(fEnd)}`; }
+      else $("interestStat").hidden = true;
+
+      // growth story
+      const first = tot[0], prev = tot[tot.length - 2];
+      const rev12 = fiscalOK ? last12("revenue") : null, exp12 = fiscalOK ? last12("expenditure") : null;
+      const realOn = MV.isReal(), mult = conv(latest.value, latest.date) / conv(first.value, first.date);
+      $("growthLine").innerHTML = `Since ${mLabel(first.date)}, public debt has grown <b>${fmt(mult, 1)} times</b>${realOn ? " after inflation" : ""}, from ${money(first.value, first.date)} to ${money(latest.value, latest.date)}${realOn ? ` (in ${MV.baseLabel()})` : ""}.`
+        + (rev12 ? ` It now equals <b>${fmt(convNow(latest.value, latest.date) / rev12, 1)} years</b> of everything the government collects.` : "");
+      const ch = k => { const s = S[k]?.points; if (!s || s.length < 2) return null; const a = s[s.length - 2], b = s[s.length - 1]; return convNow(b.value, b.date) - convNow(a.value, a.date); };
+      const word = (v, up, down) => v >= 0 ? `${up} by ${disp(v)}` : `${down} by ${disp(-v)}`;
+      const dt = convNow(latest.value, latest.date) - convNow(prev.value, prev.date), dd = ch("domestic"), de = ch("external");
+      $("quarterLine").textContent = `In the three months to ${mLabel(latest.date)}, total debt ${word(dt, "rose", "fell")}` + (dd != null && de != null ? `: domestic debt ${word(dd, "rose", "fell")} and external debt ${word(de, "rose", "fell")}.` : ".");
+      $("growthSec").hidden = false;
+
+      // breakdown
+      const parts = ["domestic_cg", "domestic_guaranteed", "external_cg", "external_guaranteed"].map(k => ({ k, p: last(S[k]) })).filter(x => x.p?.value > 0);
+      const sum = parts.reduce((a, x) => a + x.p.value, 0);
+      $("bar").innerHTML = parts.map(x => `<div style="flex-grow:${x.p.value};background:${COLORS[x.k]}" title="${LABELS[x.k]}"></div>`).join("");
+      $("legend").innerHTML = parts.map(x => `<li><i style="background:${COLORS[x.k]}"></i><span>${LABELS[x.k]}</span><span class="v num">${moneyNow(x.p.value, x.p.date)}, ${fmt(100 * x.p.value / sum, 1)}% of debt</span></li>`).join("");
+      const dg = pct(last(S.domestic_to_gdp)?.value), eg = pct(last(S.external_to_gdp)?.value), dv = last(S.domestic), ev = last(S.external);
+      $("gdpSplit").innerHTML = [
+        dv && dg ? `<div><div class="big num" style="color:${COLORS.domestic_cg}">${fmt(dg, 1)}%</div><div class="lbl">of GDP is owed at home (${moneyNow(dv.value, dv.date)})</div></div>` : "",
+        ev && eg ? `<div><div class="big num" style="color:${COLORS.external_cg}">${fmt(eg, 1)}%</div><div class="lbl">of GDP is owed abroad (${moneyNow(ev.value, ev.date)})</div></div>` : "",
+        ratio ? `<div><div class="big num" style="color:var(--foam)">${fmt(ratio, 1)}%</div><div class="lbl">of GDP in total, at the end of ${mLabel(latest.date)}</div></div>` : ""].join("");
+
+      // fiscal
+      const pop = popNow();
+      if (fiscalOK && pop && rev12 && exp12) {
+        const gap = exp12 - rev12, firstM = months("revenue").slice(-12)[0].date;
+        $("fiscalNote").innerHTML = `Over the 12 months from <b>${mLabel(firstM)} to ${mLabel(fEnd)}</b>, the latest monthly figures published. Per-citizen figures use the same population estimate as the debt clock.`;
+        $("revPP").textContent = disp(rev12 / pop); $("expPP").textContent = disp(exp12 / pop); $("gapPP").textContent = disp(Math.abs(gap) / pop);
+        $("gapLbl").textContent = gap >= 0 ? "more spent than collected per citizen, covered by borrowing" : "more collected than spent per citizen";
+        $("revSec").textContent = dispFull(rev12 / SEC_YEAR, MV.state.cur === "USD" ? 2 : 0);
+        $("expSec").textContent = dispFull(exp12 / SEC_YEAR, MV.state.cur === "USD" ? 2 : 0);
+        $("interestShare").innerHTML = int12 ? `For every <b>${sym()} 100</b> the government collects, <b class="red">${sym()} ${fmt(100 * int12 / rev12, 0)}</b> goes on interest and financing costs.` : "";
+        const items = [["Salaries, wages and pensions", last12("salaries_pensions"), "#3fb8b0"], ["Grants, contributions and subsidies", last12("subsidies"), "#9fe0d6"],
+          ["Interest and financing costs", int12, "#ff8a6b"], ["Capital spending (building and equipment)", last12("capital_exp"), "#f4c95d"]].filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
+        $("hbars").innerHTML = items.map(([l, v, c]) => `<div class="hbar"><div class="top"><span>${l}</span><span class="num">${disp(v)}, ${fmt(100 * v / exp12, 0)}%</span></div><div class="track"><div class="fill" style="width:${100 * v / exp12}%;background:${c}"></div></div></div>`).join("");
+        $("spendHead").hidden = !items.length;
+        drawWhy(gap / pop);
+        $("fiscalSec").hidden = false;
+        drawAnnual();
+      }
+
+      $("methodDetail").innerHTML = `Right now that pace is <b>${moneyNow(rate * SEC_YEAR)} a year</b>, from the change between ${mLabel(back.date)} and ${mLabel(latest.date)}. Dollar figures use the MMA reference rate (MVR ${fmt(MV.USD, 2)} per US dollar today).`;
+      if (pop && POP) $("popLine").innerHTML = `Based on an estimated ${fmt(Math.round(pop))} citizens (national register, end of ${POP.base_date.slice(0, 4)}, grown at ${fmt(POP.annual_growth * 100, 2)}% a year). This will be updated when the government publishes new figures. <a href="methodology.html#population">How this is estimated</a>`;
+      if (pop && POP) $("popNote").innerHTML = `Per-citizen figures divide by an estimated <b>${fmt(Math.round(pop))}</b> Maldivian citizens today. That is the ${fmt(POP.base)} on the national register at the end of 2025, grown at ${fmt(POP.annual_growth * 100, 2)}% a year, the rate the Maldivian population grew between the last two censuses.`;
+      $("fetched").textContent = "Data last fetched " + MV.fetched(data.fetched_at) + ", Malé time. Figures from the MMA Statistics Database.";
+      tick(); drawChart();
+    }
+
+    // why debt per citizen is so much bigger than one year's gap: reconcile debt growth with the yearly gaps
+    function drawWhy(gapPP) {
+      const rv = S.revenue.points, ex = Object.fromEntries(S.expenditure.points.map(p => [p.date, p.value]));
+      const q0 = [...tot].reverse().find(p => p.date < rv[0].date);                 // last quarter before monthly data starts
+      const q1 = [...tot].reverse().find(p => p.date <= fEnd);                       // latest quarter the monthly data covers
+      if (!q0 || !q1 || q1.date <= q0.date) { $("why").hidden = true; return; }
+      const gaps = rv.filter(p => p.date > q0.date && p.date <= q1.date && ex[p.date] != null).reduce((a, p) => a + ex[p.date] - p.value, 0);
+      const gAt = d => ["domestic_guaranteed", "external_guaranteed"].reduce((a, k) => a + ((S[k]?.points || []).find(p => p.date === d)?.value || 0), 0);
+      const rise = q1.value - q0.value, guar = gAt(q1.date) - gAt(q0.date), other = rise - gaps - guar;
+      const n = v => moneyNow(v);
+      const segs = [["#ff5f56", gaps, `<b>${n(gaps)}</b> from the yearly gaps between spending and revenue, added up`],
+                    ["#f4c95d", guar, `<b>${n(guar)}</b> from extra borrowing by state-owned companies with a government guarantee, which doesn't appear as government spending`],
+                    ["#9fe0d6", other, `<b>${n(other)}</b> from other borrowing that isn't counted as spending, such as lending to and investing in state-owned companies, and changes in the government's cash balances`]].filter(x => x[1] > 0);
+      const pp = convNow(debtNow() / popNow());
+      $("why").innerHTML = `<h3>Why is the debt so much bigger than this gap?</h3>
+        <p>The ${sym()} ${fmt(convNow(Math.abs(gapPP)))} gap is just <b>one year's</b> shortfall. The ${sym()} ${fmt(pp)} debt per citizen is what has <b>built up over many years</b>, like a credit card balance compared with one month's overspending. And some borrowing never shows up as government spending at all.</p>
+        <p>Since ${mLabel(q0.date)}, debt has risen by <b>${n(rise)}</b>. This is where it came from.</p>
+        <div class="sbar" role="img" aria-label="Where the rise in debt came from">${segs.map(x => `<div style="flex-grow:${x[1]};background:${x[0]}"></div>`).join("")}</div>
+        <ul>${segs.map(x => `<li><i style="background:${x[0]}"></i><span>${x[2]}</span></li>`).join("")}</ul>
+        <p class="small">The ${n(q0.value)} owed in ${mLabel(q0.date)} came from earlier years. Yearly gaps are summed from monthly figures, ${mLabel(S.revenue.points.find(p => p.date > q0.date).date)} to ${mLabel(q1.date)}. <a href="methodology.html#fiscal">More on how this is worked out</a>.</p>`;
+      $("why").hidden = false;
+    }
+
+    // annual revenue vs spending
+    function drawAnnual() {
+      const rv = months("revenue"), ex = months("expenditure");
+      const years = [...new Set(rv.map(p => p.date.slice(0, 4)))].filter(y => rv.filter(p => p.date.startsWith(y)).length === 12 && ex.filter(p => p.date.startsWith(y)).length === 12);
+      const cats = years.map(y => ({ label: y }));
+      const R = years.map(y => sumReal(rv.filter(p => p.date.startsWith(y)))), E = years.map(y => sumReal(ex.filter(p => p.date.startsWith(y))));
+      const bn = v => fmt(v / 1e9, 1) + " bn";
+      $("annualNote").textContent = `Revenue and spending each full calendar year, in billions of ${MV.state.cur === "USD" ? "US dollars" : "rufiyaa"}${MV.isReal() ? `, in ${MV.baseLabel()}` : ""}. The red figure under each year is the deficit.`;
+      const r12 = last12("revenue", sumReal), e12 = last12("expenditure", sumReal), firstM = months("revenue").slice(-12)[0].date;
+      $("l12").innerHTML = `<span>In the last 12 months (${mLabel(firstM)} to ${mLabel(fEnd)}${MV.isReal() ? ", same prices as the chart" : ""})</span><span>Revenue <b>${sym()} ${bn(r12)}</b></span><span>Spending <b class="red">${sym()} ${bn(e12)}</b></span><span>${e12 >= r12 ? "Deficit" : "Surplus"} <b class="${e12 >= r12 ? "red" : ""}">${sym()} ${bn(Math.abs(e12 - r12))}</b></span>`;
+      MV.barChart($("annual"), {
+        cats, label: "Government revenue and spending by year",
+        groups: [{ color: "#3fb8b0", vals: R.map(v => v / 1e9) }, { color: "#ff5f56", vals: E.map(v => v / 1e9) }],
+        yFmt: v => fmt(v), below: i => { const g = E[i] - R[i]; return { text: (g >= 0 ? "−" : "+") + fmt(Math.abs(g) / 1e9, 1), color: g >= 0 ? "#ff5f56" : "#3fb8b0" }; },
+        tip: i => `<b>${cats[i].label}</b>` + row("Revenue", sym() + " " + bn(R[i])) + row("Spending", sym() + " " + bn(E[i])) +
+          row(E[i] >= R[i] ? "Deficit" : "Surplus", `<span style="color:${E[i] >= R[i] ? "#d63b33" : "#0b6b5f"}">${sym()} ${bn(Math.abs(E[i] - R[i]))}</span>`) + row("Spending per 100 collected", fmt(100 * E[i] / R[i], 0))
+      });
+    }
+
+    // debt chart
+    let view = "amount";
+    const byDate = k => Object.fromEntries((S[k]?.points || []).map(p => [p.date, p.value]));
+    const domD = byDate("domestic"), extD = byDate("external"), ratD = Object.fromEntries(ratioPts.map(p => [p.date, p.value]));
+    const rows = tot.map(p => ({ date: p.date, total: p.value, dom: domD[p.date], ext: extD[p.date], ratio: ratD[p.date] }));
+    function drawChart() {
+      const useRatio = view === "ratio";
+      $("chartNote").textContent = useRatio ? "Total public debt as a share of the economy (GDP), each quarter. Inflation doesn't affect this view." :
+        `Total public and publicly guaranteed debt at the end of each quarter, in billions of ${MV.state.cur === "USD" ? "US dollars" : "rufiyaa"}${MV.isReal() ? `, in ${MV.baseLabel()}` : ""}.`;
+      MV.lineChart($("chart"), {
+        rows: useRatio ? rows.filter(r => r.ratio != null) : rows, label: "Debt by quarter",
+        series: [{ val: r => useRatio ? r.ratio : conv(r.total, r.date) / 1e9, color: "#3fb8b0", area: true }],
+        ref: useRatio ? { value: 100, color: "#f4c95d" } : null, yFmt: v => fmt(v) + (useRatio ? "%" : ""),
+        tip: r => `<b>${qLabel(r.date)}</b>` + row("Total", money(r.total, r.date)) + row("Domestic", r.dom != null ? money(r.dom, r.date) : null) + row("External", r.ext != null ? money(r.ext, r.date) : null) + row("Share of GDP", r.ratio != null ? fmt(r.ratio, 1) + "%" : null)
+      });
+    }
+    document.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => { view = b.dataset.view; document.querySelectorAll("[data-view]").forEach(x => x.setAttribute("aria-pressed", x === b)); drawChart(); }));
+    MV.onPrefs(render);
+    MV.onResize(() => { layout(); drawChart(); if (!$("fiscalSec").hidden) drawAnnual(); });
+    render(); requestAnimationFrame(layout); document.fonts?.ready.then(layout);
+  }
+})();
+</script>
 </body>
 </html>

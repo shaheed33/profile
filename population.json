@@ -1,0 +1,10 @@
+{
+  "_readme": "Edit this file once a year when the Department of National Registration publishes a new registered population figure. Both pages read it.",
+  "base": 415294,
+  "base_date": "2025-12-31",
+  "base_source": "Registered Maldivian population, end of 2025. Department of National Registration, published by the Maldives Bureau of Statistics (Statistical Yearbook, table 3.4).",
+  "annual_growth": 0.01333,
+  "growth_source": "Average yearly growth of the Maldivian population between the September 2014 census (344,023) and the September 2022 census (382,751).",
+  "census_2022": 382751,
+  "census_2014": 344023
+}
