@@ -8,6 +8,7 @@ Personal site of Shaheed, served at https://shaheed.work through Cloudflare
 - `simulator.html` NEM storage simulator, based on Andrew Grogan's Open Electricity Simulation spreadsheet
 - `replication.html` October 2024 replication for the simulator
 - `prices.html` NEM wholesale price patterns
+- `roadmap.html` NSW Roadmap tracker. `scripts/download_aemo.py` fetches the AEMO files into `raw/` and `scripts/build_roadmap.py` turns them into `data/roadmap.js`
 
 ## Other files
 

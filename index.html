@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Abdulla Shaheed | Economist</title>
-  <meta name="description" content="Abdulla Shaheed is a Maldivian economist working on public debt, climate risk and energy markets.">
+  <title>Abdulla Shaheed</title>
+  <meta name="description" content="Abdulla Shaheed works on public debt, climate risk and energy markets.">
   <link rel="stylesheet" href="css/theme.css">
   <style>
     .hero { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; align-items: start; padding: 4.5rem 0 4rem; }
@@ -15,12 +15,12 @@
 
     .label { font-size: .95rem; font-weight: 500; color: var(--muted); margin-bottom: 1rem; }
 
-    .projects { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink); list-style: none; padding: 0; margin: 0 0 4.5rem; }
-    .projects li { border-left: 1px solid var(--line); }
-    .projects li:first-child { border-left: 0; }
-    .project { display: flex; flex-direction: column; height: 100%; padding: 1.4rem 1.6rem 1.6rem; color: inherit; text-decoration: none; }
-    .projects li:first-child .project { padding-left: 0; }
-    .projects li:last-child .project { padding-right: 0; }
+    .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--ink); list-style: none; padding: 0; margin: 0 0 4.5rem; }
+    .projects li { border-bottom: 1px solid var(--line); }
+    .projects li:nth-child(even) { border-left: 1px solid var(--line); }
+    .project { display: flex; flex-direction: column; height: 100%; padding: 1.6rem 2rem 1.8rem 0; color: inherit; text-decoration: none; }
+    .projects li:nth-child(even) .project { padding: 1.6rem 0 1.8rem 2rem; }
+    @media (min-width: 992px) { .projects li:nth-last-child(-n+2) { border-bottom: 0; } }
     .project h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.6rem; line-height: 1.15; letter-spacing: -.01em; margin: 0 0 .7rem; }
     .project p { color: var(--muted); margin: 0 0 1.1rem; flex: 1; }
     .project .where { font-size: .9rem; font-weight: 500; color: var(--accent); }
@@ -34,8 +34,8 @@
 
     @media (max-width: 991.98px) {
       .projects { grid-template-columns: 1fr; }
-      .projects li { border-left: 0; border-bottom: 1px solid var(--line); }
-      .project, .projects li .project { padding: 1.4rem 0; }
+      .projects li:nth-child(even) { border-left: 0; }
+      .project, .projects li:nth-child(even) .project { padding: 1.4rem 0; }
       .projects li:last-child { border-bottom: 0; }
       .projects { margin-bottom: 2.5rem; }
     }
@@ -63,11 +63,11 @@
     <section class="hero">
       <img src="images/profile.jpg" alt="Portrait of Abdulla Shaheed" width="280" height="280">
       <div>
-           <h1>Public debt, climate risk and energy markets.</h1>
+        <h1>Public debt, climate risk and energy markets.</h1>
         <p>I'm Shaheed, from Maldives. I've worked across economic development, statistics, tax and public finance in Maldives, in government ministries and state-owned enterprises.</p>
-<p>I'm completing a PhD in Economics at the University of York. The first chapter looks at debt sustainability, and the second at how climate change and climate-related disasters affect sovereign bond yields. The third explores Australia's National Electricity Market, and I'm currently researching how AEMO and the energy-only market work.</p>
-<p>I work with data every day, using Stata, Python, Power BI and LaTeX, and I have foundational training in PLEXOS energy modelling.<p>
-        <p>I'm looking for analytics, policy or research roles in energy markets or economic development.</p>
+        <p>I'm completing a PhD in Economics at the University of York. The first chapter looks at debt sustainability, and the second at how climate change and climate-related disasters affect sovereign bond yields. The third explores Australia's National Electricity Market, and I'm currently researching how AEMO and the energy-only market work.</p>
+        <p>I work with data every day, using Stata, Python, Power BI and LaTeX, and I have foundational training in PLEXOS energy modelling.</p>
+        <p>I hold Australian permanent residency and am moving to Sydney to work full time. My PhD is switching to remote part-time study, so it fits around my working week rather than competing with it. I'm looking for analytics, policy or research roles in energy markets or economic development.</p>
       </div>
     </section>
 
@@ -79,6 +79,13 @@
             <h2>Maldives National Debt Clock</h2>
             <p>A live tracker of what the government owes, what it pays in interest and where its revenue comes from, in plain language.</p>
             <span class="where">mvdebtclock.org</span>
+          </a>
+        </li>
+        <li>
+          <a class="project" href="roadmap.html">
+            <h2>Is NSW on track for 2030?</h2>
+            <p>New wind, solar and storage in NSW measured against the Electricity Infrastructure Roadmap targets, updated from AEMO's quarterly project register.</p>
+            <span class="where">NSW Roadmap tracker</span>
           </a>
         </li>
         <li>

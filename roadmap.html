@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Is NSW on track for 2030? | Abdulla Shaheed</title>
+  <meta name="description" content="New wind, solar and storage in NSW measured against the Electricity Infrastructure Roadmap, from AEMO's Generation Information data.">
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    .page { max-width: 1040px; }
+    .lead { max-width: 60ch; }
+    .gauge { margin: 2.5rem 0 3rem; }
+    .gauge h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.7rem; margin-bottom: .25rem; }
+    .gauge .big { font-size: 1.05rem; color: var(--muted); max-width: 62ch; margin-bottom: 1.4rem; }
+    .gauge .big strong { color: var(--ink); }
+    .track { position: relative; height: 44px; background: #F2F4F7; margin: 2.2rem 0 2rem; }
+    .seg { position: absolute; top: 0; bottom: 0; }
+    .s-op { background: #1F3D73; }
+    .s-co { background: #6E86B3; }
+    .s-an { background: #B7C4DC; }
+    .s-pr { background: repeating-linear-gradient(135deg, #DCE3EF 0 6px, #F2F4F7 6px 12px); }
+    .tmark { position: absolute; top: -26px; bottom: -6px; border-left: 2px solid var(--ink); }
+    .tmark span { position: absolute; top: 0; left: 6px; font-size: .82rem; white-space: nowrap; color: var(--ink); }
+    .tmark.alt { border-left-style: dashed; }
+    .tmark.alt span { color: var(--muted); top: auto; bottom: -22px; }
+    .tmark.flip span { left: auto; right: 6px; }
+    .keys { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; font-size: .9rem; color: var(--muted); }
+    .keys i { display: inline-block; width: 12px; height: 12px; margin-right: .4rem; vertical-align: -1px; }
+    .keys b { color: var(--ink); font-weight: 600; }
+    .section { border-top: 1px solid var(--line); padding: 2.2rem 0; }
+    .section h2 { font-size: 1.15rem; margin-bottom: .4rem; }
+    .section > p { color: var(--muted); max-width: 64ch; }
+    .chart { height: 360px; }
+    table { font-size: .95rem; }
+    .notes li { margin-bottom: .5rem; color: var(--muted); max-width: 70ch; }
+    @media (max-width: 575.98px) { .track { height: 36px; } .chart { height: 300px; } .tmark span { font-size: .75rem; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container-xl bar">
+      <a class="brand" href="index.html">Abdulla Shaheed</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html#projects">Projects</a>
+        <a href="docs/Abdulla_Shaheed_CV.pdf">CV</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container-xl py-4">
+    <div class="page">
+      <h1>Is NSW on track for 2030?</h1>
+      <p class="lead">The NSW Electricity Infrastructure Roadmap aims for at least 12 GW of new renewable generation and 2 GW of long-duration storage by 2030. This page measures progress using AEMO's register of every generation and storage project in the state. <span id="asof"></span></p>
+
+      <section class="gauge" aria-labelledby="g-gen">
+        <h2 id="g-gen">New wind and solar</h2>
+        <p class="big" id="gen-text"></p>
+        <div class="track" id="gen-track"></div>
+        <div class="keys" id="gen-keys"></div>
+      </section>
+
+      <section class="gauge" aria-labelledby="g-sto">
+        <h2 id="g-sto">New storage</h2>
+        <p class="big" id="sto-text"></p>
+        <div class="track" id="sto-track"></div>
+        <div class="keys" id="sto-keys"></div>
+      </section>
+
+      <section class="section">
+        <h2>What has been switched on each year</h2>
+        <p>New capacity in NSW by the year of the AEMO release in which it first appears as operating. The 2026 bar covers the first half of the year only.</p>
+        <div id="c-year" class="chart"></div>
+      </section>
+
+      <section class="section" id="history-wrap">
+        <h2>How the picture has changed</h2>
+        <p>Operating and committed wind and solar in each AEMO release since the Roadmap began.</p>
+        <div id="c-hist" class="chart"></div>
+      </section>
+
+      <section class="section">
+        <h2>Largest projects under way</h2>
+        <p>Committed and anticipated projects, largest first. Sites with several units are combined.</p>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead><tr><th>Project</th><th>Type</th><th>Status</th><th class="text-end">MW</th></tr></thead>
+            <tbody id="pipe"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>How the figures are worked out</h2>
+        <ul class="notes">
+          <li>Data comes from AEMO's NEM Generation Information, published each quarter, using one release about every six months since January 2021. Only projects in the NSW region of the market are counted, which includes Snowy Hydro.</li>
+          <li>New means any wind, solar, battery or pumped hydro unit that was not already operating in AEMO's January 2021 release, the first after the Electricity Infrastructure Investment Act was passed. Units are matched across releases by their AEMO unit code, or by site name where there is none. Operating includes units still being commissioned.</li>
+          <li>Committed projects have finance and approvals in place. Anticipated projects are well advanced but not yet committed. Proposed projects are publicly announced only, and many will not be built.</li>
+          <li>The official objectives count generation by expected annual output and storage by how many hours it can run, so this page is a guide to progress in capacity terms rather than the official measure. The storage figure includes batteries of any duration, while the Roadmap target is for long-duration storage of eight hours or more.</li>
+          <li>The 16 GW line is the more ambitious generation goal set by the Consumer Trustee in 2025.</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Source AEMO, NEM Generation Information.</footer>
+
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script src="data/roadmap.js"></script>
+  <script>
+  (function () {
+    document.getElementById("year").textContent = new Date().getFullYear();
+    const R = window.ROADMAP, S = R.summary;
+    const fmt = mw => (mw / 1000).toLocaleString("en-AU", { maximumFractionDigits: 1 }) + " GW";
+    const sum = (st, techs) => techs.reduce((a, t) => a + (S[st][t] || 0), 0);
+    const d = new Date(R.updated);
+    document.getElementById("asof").textContent = "Figures from AEMO's " + d.toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + " release.";
+
+    function gauge(id, techs, marks, scaleMax) {
+      const parts = [["Operating", "s-op"], ["Committed", "s-co"], ["Anticipated", "s-an"], ["Proposed", "s-pr"]]
+        .map(([st, cls]) => ({ st, cls, mw: sum(st, techs) }));
+      const total = parts.reduce((a, p) => a + p.mw, 0);
+      const max = Math.max(scaleMax, (parts[0].mw + parts[1].mw + parts[2].mw) * 1.05);
+      const track = document.getElementById(id + "-track");
+      let left = 0;
+      parts.forEach(p => {
+        const w = Math.min(p.mw / max * 100, 100 - left);
+        if (w <= 0) return;
+        const el = document.createElement("div");
+        el.className = "seg " + p.cls; el.style.left = left + "%"; el.style.width = w + "%";
+        el.title = p.st + " " + fmt(p.mw);
+        track.appendChild(el); left += w;
+      });
+      marks.forEach(m => {
+        const el = document.createElement("div");
+        const pos = Math.min(m.mw / max * 100, 99.5);
+        el.className = "tmark" + (m.alt ? " alt" : "") + (pos > 80 ? " flip" : "");
+        el.style.left = pos + "%";
+        el.innerHTML = "<span>" + m.label + "</span>";
+        track.appendChild(el);
+      });
+      document.getElementById(id + "-keys").innerHTML = parts.map(p =>
+        '<span><i class="' + p.cls + '"></i>' + p.st + " <b>" + fmt(p.mw) + "</b></span>").join("");
+      return parts;
+    }
+
+    const T = R.targets;
+    const g = gauge("gen", ["Wind", "Solar"], [{ mw: T.generation_min_gw * 1000, label: "12 GW" }, { mw: T.generation_ambition_gw * 1000, label: "16 GW", alt: true }], T.generation_ambition_gw * 1150);
+    const s = gauge("sto", ["Battery", "Pumped hydro"], [{ mw: T.storage_min_gw * 1000, label: "2 GW target" }], T.storage_min_gw * 1500);
+    const pct = (mw, t) => Math.round(mw / (t * 1000) * 100);
+    document.getElementById("gen-text").innerHTML = "<strong>" + fmt(g[0].mw) + "</strong> of new wind and solar is operating, " + pct(g[0].mw, 12) + "% of the 12 GW target. Counting committed projects, that rises to " + fmt(g[0].mw + g[1].mw) + ". The solid line marks the 12 GW target and the dashed line the 16 GW goal.";
+    document.getElementById("sto-text").innerHTML = "<strong>" + fmt(s[0].mw) + "</strong> of new storage is operating and " + fmt(s[1].mw) + " more is committed. Most of it is batteries, which may not all count as long-duration.";
+
+    const baseL = () => ({ margin: { l: 50, r: 10, t: 10, b: 40 }, font: { family: getComputedStyle(document.body).fontFamily, color: "#14233A", size: 12 },
+      paper_bgcolor: "#fff", plot_bgcolor: "#fff", legend: { orientation: "h", y: -0.2 }, xaxis: { showgrid: false },
+      yaxis: { gridcolor: "#EEF0F4", title: { text: "MW" }, rangemode: "tozero" } });
+    const cfg = { displayModeBar: false, responsive: true };
+    const colours = { Wind: "#1F3D73", Solar: "#C99A2E", Battery: "#6E86B3", "Pumped hydro": "#8FB3A2" };
+    const years = Object.keys(R.by_year).filter(y => +y >= 2021).sort();
+    Plotly.newPlot("c-year", ["Wind", "Solar", "Battery", "Pumped hydro"].map(t => ({
+      type: "bar", name: t, x: years, y: years.map(y => R.by_year[y][t] || 0), marker: { color: colours[t] },
+      hovertemplate: "%{y:,.0f} MW<extra>" + t + "</extra>" })), { ...baseL(), barmode: "stack" }, cfg);
+
+    if (R.history.length > 1) {
+      const x = R.history.map(h => h.date);
+      Plotly.newPlot("c-hist", [
+        { x, y: R.history.map(h => h.operating_gen_mw), name: "Operating", mode: "lines+markers", line: { color: "#1F3D73", width: 2.5 } },
+        { x, y: R.history.map(h => h.operating_gen_mw + h.committed_gen_mw), name: "Operating and committed", mode: "lines+markers", line: { color: "#6E86B3", width: 2, dash: "dot" } }
+      ], { ...baseL(), shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: 12000, y1: 12000, line: { color: "#14233A", width: 1 } }] }, cfg);
+    } else { document.getElementById("history-wrap").hidden = true; }
+
+    const rows = R.projects.filter(p => p.status === "Committed" || p.status === "Anticipated").slice(0, 15);
+    document.getElementById("pipe").innerHTML = rows.map(p =>
+      "<tr><td>" + p.name + "</td><td>" + p.tech + "</td><td>" + p.status + '</td><td class="text-end">' + p.mw.toLocaleString("en-AU") + "</td></tr>").join("");
+  })();
+  </script>
+</body>
+</html>
