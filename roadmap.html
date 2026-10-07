@@ -8,19 +8,46 @@
   <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
   <link rel="stylesheet" href="css/theme.css">
   <style>
+    :root { --time: #B07A12; --time-soft: #F6EBD3; --live: #1E8A5A; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14); }
+    [data-theme="dark"] { --time: #E0B45A; --time-soft: #2E2716; --live: #5FD39B; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
     .page { max-width: 1040px; }
     .lead { max-width: 60ch; }
+    .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
+    .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); position: relative; }
+    .live i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--live); animation: ping 1.8s ease-out infinite; }
+    @keyframes ping { from { transform: scale(1); opacity: .7; } to { transform: scale(3); opacity: 0; } }
+
     .clock { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); margin: 2.25rem 0 1rem; }
-    .clock div { padding: 1.1rem 1.25rem 1.2rem 0; }
-    .clock div + div { border-left: 1px solid var(--line); padding-left: 1.25rem; }
+    .clock > div { padding: 1.1rem 1.25rem 1.2rem 0; }
+    .clock > div + div { border-left: 1px solid var(--line); padding-left: 1.25rem; }
     .clock b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(2rem, 5vw, 3rem); line-height: 1; font-variant-numeric: tabular-nums; }
-    .clock span { color: var(--muted); font-size: .92rem; }
+    .clock .hms { display: block; font-variant-numeric: tabular-nums; font-size: .95rem; color: var(--ink); margin: .35rem 0 .15rem; letter-spacing: .02em; }
+    .clock .hms em { font-style: normal; color: var(--muted); font-size: .78rem; margin: 0 .35rem 0 .1rem; }
+    .clock span.l { color: var(--muted); font-size: .92rem; }
+
+    .dash { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1.5rem 0 .5rem; }
+    .meter { border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.1rem 1rem; display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 1rem; align-items: center; background: var(--surface); transition: border-color .2s, transform .2s; }
+    .meter:hover { border-color: var(--muted); transform: translateY(-2px); }
+    .ring { position: relative; width: 112px; height: 112px; }
+    .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring circle { fill: none; stroke-width: 10; }
+    .ring .bg { stroke: var(--track); }
+    .ring .fg { stroke-linecap: round; transition: stroke-dashoffset 1.6s cubic-bezier(.2, .7, .2, 1); }
+    .ring .fg.gen { stroke: var(--seg-op); } .ring .fg.com { stroke: var(--seg-co); } .ring .fg.time { stroke: var(--time); }
+    .ring .v { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: "Newsreader", Georgia, serif !important; font-size: 1.65rem; font-variant-numeric: tabular-nums; }
+    .meter h3 { font-size: 1rem; margin: 0 0 .25rem; }
+    .meter p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.45; }
+    .meter p b { color: var(--ink); font-weight: 600; }
+    .verdict { margin: 1rem 0 0; padding: .9rem 1.1rem; border-left: 3px solid var(--time); background: var(--time-soft); border-radius: 0 8px 8px 0; font-size: .98rem; max-width: 80ch; }
+
     .gauge { margin: 2.75rem 0 2.5rem; }
     .gauge h2, .section h2.serif { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.7rem; margin-bottom: .25rem; }
     .gauge .big { font-size: 1.05rem; color: var(--muted); max-width: 62ch; margin-bottom: 1.2rem; }
     .gauge .big strong { color: var(--ink); }
-    .track { position: relative; height: 44px; background: var(--track); margin: 2.2rem 0 2rem; }
-    .seg { position: absolute; top: 0; bottom: 0; }
+    .track { position: relative; height: 44px; background: var(--track); margin: 2.2rem 0 2rem; border-radius: 4px; }
+    .seg { position: absolute; top: 0; bottom: 0; width: 0; transition: width 1.2s cubic-bezier(.2, .7, .2, 1); cursor: default; }
+    .seg + .seg { box-shadow: inset 2px 0 0 var(--bs-body-bg); }
+    .seg:hover { filter: brightness(1.12); }
     .s-op { background: var(--seg-op); } .s-co { background: var(--seg-co); } .s-an { background: var(--seg-an); }
     .s-pr { background: repeating-linear-gradient(135deg, var(--seg-pr) 0 6px, var(--track) 6px 12px); }
     .tmark { position: absolute; top: -26px; bottom: -6px; border-left: 2px solid var(--ink); }
@@ -29,35 +56,69 @@
     .tmark.alt span { color: var(--muted); top: auto; bottom: -22px; }
     .tmark.flip span { left: auto; right: 6px; }
     .keys { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; font-size: .9rem; color: var(--muted); }
-    .keys i { display: inline-block; width: 12px; height: 12px; margin-right: .4rem; vertical-align: -1px; }
+    .keys i { display: inline-block; width: 12px; height: 12px; margin-right: .4rem; vertical-align: -1px; border-radius: 2px; }
     .keys b { color: var(--ink); font-weight: 600; }
-    .pace { display: flex; flex-wrap: wrap; gap: .5rem 2.5rem; margin-top: 1.4rem; font-size: .95rem; color: var(--muted); }
-    .pace b { color: var(--ink); font-weight: 600; }
-    .aside { font-size: .88rem; color: var(--muted); margin-top: .6rem; }
+    .pace { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.6rem; }
+    .pace div { border-top: 2px solid var(--line); padding-top: .6rem; color: var(--muted); font-size: .9rem; }
+    .pace div.need { border-top-color: var(--time); } .pace div.got { border-top-color: var(--seg-op); }
+    .pace b { display: block; color: var(--ink); font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.6rem; line-height: 1.15; font-variant-numeric: tabular-nums; }
+    .aside { font-size: .88rem; color: var(--muted); margin-top: .8rem; max-width: 80ch; }
     .section { border-top: 1px solid var(--line); padding: 2.2rem 0; }
     .section h2 { font-size: 1.15rem; margin-bottom: .4rem; }
     .section > p { color: var(--muted); max-width: 64ch; }
     .chart { height: 360px; }
-    .coal { display: grid; gap: .9rem; margin-top: 1.25rem; }
-    .coal-row { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 4.5rem; gap: 1rem; align-items: center; font-size: .95rem; }
-    .coal-row .bar { position: relative; height: 14px; background: var(--track); }
-    .coal-row .bar span { position: absolute; left: 0; top: 0; bottom: 0; background: var(--muted); }
+
+    .coal-wrap { position: relative; margin-top: 1.25rem; }
+    .coal { display: grid; gap: .5rem; }
+    .coal-row { display: grid; grid-template-columns: 10.5rem minmax(0, 1fr) 4.5rem; gap: 1rem; align-items: center; font-size: .95rem; padding: .45rem .5rem; margin: 0 -.5rem; border-radius: 8px; cursor: pointer; transition: background .15s; }
+    .coal-row:hover, .coal-row:focus-visible, .coal-row.on { background: var(--accent-soft); outline: none; }
+    .coal-row .bar { position: relative; height: 16px; background: var(--track); border-radius: 0 4px 4px 0; }
+    .coal-row .bar > span { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--muted); border-radius: 0 4px 4px 0; transition: width 1.2s cubic-bezier(.2, .7, .2, 1); }
+    .coal-row:hover .bar > span, .coal-row.on .bar > span { background: var(--ink); }
+    .coal-row .y30 { position: absolute; top: -6px; bottom: -6px; border-left: 1px dashed var(--time); }
     .coal-row .yr { text-align: right; font-variant-numeric: tabular-nums; }
-    .coal-axis { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 4.5rem; gap: 1rem; font-size: .8rem; color: var(--muted); }
-    .coal-axis div { display: flex; justify-content: space-between; }
+    .coal-row .hint { color: var(--muted); font-size: .8rem; }
+    .coal-axis { display: grid; grid-template-columns: 10.5rem minmax(0, 1fr) 4.5rem; gap: 1rem; font-size: .8rem; color: var(--muted); margin-top: .3rem; }
+    .coal-axis div { position: relative; height: 1.2rem; }
+    .coal-axis div span { position: absolute; transform: translateX(-50%); }
+    .coal-axis div span.t30 { color: var(--time); font-weight: 600; }
+    .tip { box-sizing: border-box; position: absolute; left: 0; top: 0; visibility: hidden; z-index: 5; width: min(360px, calc(100% - 1rem)); background: var(--tip-bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--tip-shadow); padding: 1rem 1.1rem; font-size: .9rem; opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .15s, transform .15s; }
+    .tip.show { opacity: 1; transform: none; visibility: visible; }
+    .tip h4 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.35rem; margin: 0; }
+    .tip .own { color: var(--muted); font-size: .85rem; margin-bottom: .6rem; }
+    .tip dl { display: grid; grid-template-columns: auto 1fr; gap: .2rem .9rem; margin: 0 0 .6rem; }
+    .tip dt { color: var(--muted); font-weight: 400; } .tip dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 600; }
+    .tip p { margin: 0; color: var(--soft); line-height: 1.5; }
+    .coal-sum { display: flex; flex-wrap: wrap; gap: .4rem 2rem; margin-top: 1.4rem; font-size: .92rem; color: var(--muted); }
+    .coal-sum b { color: var(--ink); }
+
     .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2rem; margin-top: 1.25rem; }
     .facts b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 2.1rem; line-height: 1.05; margin-bottom: .35rem; }
     .facts p { color: var(--muted); margin: 0; font-size: .95rem; }
     .filters { display: grid; grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr)); gap: .75rem; margin: 1.25rem 0 .75rem; }
     .count { font-size: .9rem; color: var(--muted); margin-bottom: .5rem; }
     table { font-size: .95rem; }
+    td .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: .45rem; vertical-align: 0; }
+    td .exp { color: var(--muted); font-style: italic; }
+    tbody tr { transition: background .15s; }
+    tbody tr:hover { background: var(--accent-soft); }
     .notes li { margin-bottom: .45rem; color: var(--muted); max-width: 70ch; }
+
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .seg, .coal-row .bar > span, .ring .fg, .meter { transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+      .live i::after { animation: none; }
+    }
+    @media (max-width: 899.98px) { .dash { grid-template-columns: 1fr; } }
     @media (max-width: 767.98px) {
       .clock { grid-template-columns: 1fr; }
-      .clock div + div { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
-      .facts { grid-template-columns: 1fr; }
+      .clock > div + div { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
+      .facts, .pace { grid-template-columns: 1fr; }
       .filters { grid-template-columns: 1fr 1fr; } .filters input { grid-column: 1 / -1; }
       .coal-row, .coal-axis { grid-template-columns: 7rem minmax(0, 1fr) 3.2rem; gap: .6rem; }
+      .coal-row .hint { display: none; }
       .track { height: 36px; } .chart { height: 300px; } .tmark span { font-size: .75rem; }
       .hide-sm { display: none; }
     }
@@ -78,25 +139,43 @@
 
   <main class="container-xl py-4">
     <div class="page">
+      <div class="live"><i></i>Live tracker</div>
       <h1>Is NSW on track for 2030?</h1>
       <p class="lead">Progress on the NSW Electricity Infrastructure Roadmap, from AEMO's register of every generation and storage project. <span id="asof"></span></p>
 
       <div class="clock" aria-label="Countdowns">
-        <div><b id="d2030">…</b><span>days until the 2030 targets</span></div>
-        <div><b id="dcoal">…</b><span id="dcoal-label">days until Eraring is due to close</span></div>
-        <div><b id="d2035">…</b><span>days until the 2035 emissions target</span></div>
+        <div><b id="d2030">…</b><span class="hms" id="t2030" aria-hidden="true"></span><span class="l">days until the 2030 targets</span></div>
+        <div><b id="dcoal">…</b><span class="hms" id="tcoal" aria-hidden="true"></span><span class="l" id="dcoal-label">days until Eraring is due to close</span></div>
+        <div><b id="d2035">…</b><span class="hms" id="t2035" aria-hidden="true"></span><span class="l">days until the 2035 emissions target</span></div>
       </div>
 
-      <section class="gauge" aria-labelledby="g-gen">
+      <div class="dash reveal" aria-label="Progress against time">
+        <div class="meter">
+          <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg com" id="r-com" cx="60" cy="60" r="52"/><circle class="fg gen" id="r-gen" cx="60" cy="60" r="52"/></svg><div class="v" id="v-gen">0%</div></div>
+          <div><h3>Wind and solar target</h3><p id="m-gen"></p></div>
+        </div>
+        <div class="meter">
+          <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg time" id="r-time" cx="60" cy="60" r="52"/></svg><div class="v" id="v-time">0%</div></div>
+          <div><h3>Time used</h3><p id="m-time"></p></div>
+        </div>
+        <div class="meter">
+          <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg gen" id="r-sto" cx="60" cy="60" r="52"/></svg><div class="v" id="v-sto">0%</div></div>
+          <div><h3>Storage target</h3><p id="m-sto"></p></div>
+        </div>
+      </div>
+      <p class="verdict reveal" id="verdict"></p>
+
+      <section class="gauge reveal" aria-labelledby="g-gen">
         <h2 id="g-gen">New wind and solar</h2>
         <p class="big" id="gen-text"></p>
         <div class="track" id="gen-track"></div>
         <div class="keys" id="gen-keys"></div>
         <div class="pace" id="pace"></div>
+        <p class="aside" id="recon"></p>
         <p class="aside">The Net Zero Commission put the gap to 12 GW at 7.9 GW in December 2025, counting projects the official way.</p>
       </section>
 
-      <section class="gauge" aria-labelledby="g-sto">
+      <section class="gauge reveal" aria-labelledby="g-sto">
         <h2 id="g-sto">New storage</h2>
         <p class="big" id="sto-text"></p>
         <div class="track" id="sto-track"></div>
@@ -111,14 +190,18 @@
 
       <section class="section" id="history-wrap">
         <h2>How the picture has changed</h2>
-        <p>New wind and solar in each AEMO release since 2021, against the 12 GW target.</p>
+        <p>New wind and solar in each AEMO release since 2021, against the 12 GW target. The dashed lines run to 2030 at the pace needed and at the pace of the last two years.</p>
         <div id="c-hist" class="chart"></div>
       </section>
 
       <section class="section">
         <h2 class="serif">Coal still to close</h2>
-        <p>Coal produced 97% of NSW electricity sector emissions in 2022–23. Expected closure years as reported to AEMO.</p>
-        <div class="coal" id="coal"></div>
+        <p>Coal produced 97% of NSW electricity sector emissions in 2022–23. Each bar runs from today to the closure year reported to AEMO. Hover over or tap a station for details.</p>
+        <div class="coal-wrap reveal" id="coal-wrap">
+          <div class="coal" id="coal"></div>
+          <div class="tip" id="tip" role="status" aria-live="polite"></div>
+        </div>
+        <div class="coal-sum" id="coal-sum"></div>
       </section>
 
       <section class="section">
@@ -145,7 +228,7 @@
         <p class="count" id="count"></p>
         <div class="table-responsive">
           <table class="table table-sm align-middle">
-            <thead><tr><th>Project</th><th>Type</th><th>Status</th><th class="hide-sm">Operating from</th><th class="text-end">MW</th></tr></thead>
+            <thead><tr><th>Project</th><th>Type</th><th>Status</th><th class="hide-sm" title="Year first operating, or AEMO's expected full commercial use year">Year</th><th class="text-end">MW</th></tr></thead>
             <tbody id="rows"></tbody>
           </table>
         </div>
@@ -158,6 +241,8 @@
           <li>New means a wind, solar, battery or pumped hydro unit that was not operating in AEMO's January 2021 release, the first after the Roadmap became law. Operating includes units being commissioned.</li>
           <li>Committed projects have finance and approvals. Anticipated ones are well advanced. Proposed ones are announced only, and many will not be built.</li>
           <li>The official objectives count generation by annual output and storage by duration, so this page measures capacity as a guide. The storage bar includes batteries of any duration.</li>
+          <li>The Year column shows when an operating project first appeared as operating in an AEMO release. For other projects it shows the full commercial use year the developer reported, in italics. Many proposed projects have not reported one.</li>
+          <li>AEMO's NSW region includes the ACT, so ACT projects such as the Capital Battery are counted here.</li>
           <li>The page checks AEMO every week and rebuilds itself when a new release appears.</li>
           <li>Sources <a href="https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information">AEMO Generation Information</a>, <a href="https://www.netzerocommission.nsw.gov.au/">NSW Net Zero Commission 2026 Annual Progress Report</a> and <a href="https://www.energy.nsw.gov.au/nsw-plans-and-progress/major-state-projects/electricity-infrastructure-roadmap">NSW Electricity Infrastructure Roadmap</a>.</li>
         </ul>
@@ -174,33 +259,89 @@
     document.getElementById("year").textContent = new Date().getFullYear();
     const R = window.ROADMAP, S = R.summary, T = R.targets;
     const gw = mw => (mw / 1000).toLocaleString("en-AU", { maximumFractionDigits: 1 }) + " GW";
+    const num = (n, d = 0) => n.toLocaleString("en-AU", { minimumFractionDigits: d, maximumFractionDigits: d });
     const sum = (st, techs) => techs.reduce((a, t) => a + (S[st][t] || 0), 0);
     const cv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
     const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-    document.getElementById("asof").textContent = "Latest data from AEMO's " + new Date(R.updated).toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + " release.";
+    const $ = id => document.getElementById(id);
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const YEAR = 365.25 * 864e5;
+    $("asof").textContent = "Latest data from AEMO's " + new Date(R.updated).toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + " release.";
 
-    // Countdowns
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const days = d => Math.max(0, Math.ceil((new Date(d) - today) / 864e5)).toLocaleString("en-AU");
-    document.getElementById("d2030").textContent = days("2030-01-01T00:00:00");
-    document.getElementById("d2035").textContent = days("2035-01-01T00:00:00");
-    const next = R.coal.filter(c => (c.date ? new Date(c.date) : new Date(c.year + "-12-31")) > today)[0];
-    if (next) {
-      document.getElementById("dcoal").textContent = days((next.date || next.year + "-12-31") + "T00:00:00");
-      document.getElementById("dcoal-label").textContent = "days until " + next.name + " is due to close";
+    // Key dates, in Sydney time
+    const T2030 = new Date("2030-01-01T00:00:00+11:00"), T2035 = new Date("2035-01-01T00:00:00+11:00"), T0 = new Date(R.baseline + "T00:00:00+11:00");
+    const closeDate = c => new Date(c.date ? c.date + "T00:00:00+10:00" : c.year + "-12-31T00:00:00+11:00");
+    const next = R.coal.filter(c => closeDate(c) > new Date())[0];
+    if (next) $("dcoal-label").textContent = "days until " + next.name + " is due to close";
+
+    // Figures used across the page
+    const op = sum("Operating", ["Wind", "Solar"]), co = sum("Committed", ["Wind", "Solar"]);
+    const sop = sum("Operating", ["Battery", "Pumped hydro"]), sco = sum("Committed", ["Battery", "Pumped hydro"]);
+    const target = T.generation_min_gw * 1000, stoTarget = T.storage_min_gw * 1000;
+    const H = R.history, last = H[H.length - 1];
+    const back = H.find(h => (new Date(last.date) - new Date(h.date)) / YEAR <= 2.01) || H[0];
+    const yrsPast = (new Date(last.date) - new Date(back.date)) / YEAR;
+    const pastRate = yrsPast > 0 ? (last.operating_gen_mw - back.operating_gen_mw) / yrsPast : 0;
+    const now0 = new Date();
+    const yrsLeft = Math.max((T2030 - now0) / YEAR, 0.1);
+    const need = Math.max(0, target - op) / yrsLeft;
+    const arrive = pastRate > 0 ? new Date(new Date(last.date).getTime() + (target - op) / pastRate * YEAR) : null;
+
+    // Live countdowns and the time-used meter, updated every second
+    const C = 2 * Math.PI * 52;
+    const ring = (id, frac) => { const el = $(id); el.style.strokeDasharray = C; el.style.strokeDashoffset = C * (1 - Math.max(0, Math.min(frac, 1))); };
+    const pad = n => String(n).padStart(2, "0");
+    function clock(idDays, idHms, when, now) {
+      const ms = Math.max(0, when - now), d = Math.floor(ms / 864e5);
+      $(idDays).textContent = num(d);
+      $(idHms).innerHTML = pad(Math.floor(ms / 36e5) % 24) + "<em>h</em>" + pad(Math.floor(ms / 6e4) % 60) + "<em>m</em>" + pad(Math.floor(ms / 1e3) % 60) + "<em>s</em>";
     }
+    function tick() {
+      const now = new Date();
+      clock("d2030", "t2030", T2030, now);
+      clock("d2035", "t2035", T2035, now);
+      if (next) clock("dcoal", "tcoal", closeDate(next), now);
+      const used = Math.min(1, Math.max(0, (now - T0) / (T2030 - T0)));
+      const live = $("time-live");
+      if (live) live.textContent = (used * 100).toFixed(6) + "%";
+      return used;
+    }
+    const used = tick();
+    setInterval(tick, 1000);
+
+    // Rings and numbers fill in when they scroll into view
+    function countUp(el, to, fmt, done) {
+      if (calm) { el.textContent = fmt(to); if (done) done(); return; }
+      const t0 = performance.now(), dur = 1400;
+      (function step(t) {
+        const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = fmt(to * e);
+        if (k < 1) requestAnimationFrame(step); else if (done) done();
+      })(t0);
+    }
+    const pct = v => Math.round(v) + "%";
+    const genPct = op / target * 100, stoPct = sop / stoTarget * 100;
+    ["r-gen", "r-com", "r-time", "r-sto"].forEach(id => ring(id, 0));
+    $("m-gen").innerHTML = "<b>" + gw(op) + "</b> of new wind and solar operating, of the " + T.generation_min_gw + " GW needed by 2030. With committed projects, <b>" + pct((op + co) / target * 100) + "</b>.";
+    $("m-time").innerHTML = '<b id="time-live">…</b> of the time from January ' + R.baseline.slice(0, 4) + " to the end of 2029 has passed, ticking up every second. <b>" + num(Math.ceil((T2030 - now0) / 864e5)) + " days</b> are left.";
+    tick();
+    $("m-sto").innerHTML = "<b>" + gw(sop) + "</b> of new storage operating against the " + T.storage_min_gw + " GW goal, counting batteries of any duration.";
+    const gap = Math.round(used * 100 - genPct);
+    $("verdict").innerHTML = gap > 0
+      ? "<b>" + pct(used * 100) + " of the time has gone, but only " + pct(genPct) + " of the wind and solar is built.</b> NSW is about " + gap + " points behind a straight line to the target."
+      : "<b>New wind and solar is keeping pace with the calendar.</b> " + pct(genPct) + " is built with " + pct(used * 100) + " of the time gone.";
 
     // Gauges
     function gauge(id, techs, marks, scaleMax) {
       const parts = [["Operating", "s-op"], ["Committed", "s-co"], ["Anticipated", "s-an"], ["Proposed", "s-pr"]].map(([st, cls]) => ({ st, cls, mw: sum(st, techs) }));
       const max = Math.max(scaleMax, (parts[0].mw + parts[1].mw + parts[2].mw) * 1.05);
-      const track = document.getElementById(id + "-track");
+      const track = $(id + "-track");
       let left = 0;
       parts.forEach(p => {
         const w = Math.min(p.mw / max * 100, 100 - left);
         if (w <= 0) return;
         const el = document.createElement("div");
-        el.className = "seg " + p.cls; el.style.left = left + "%"; el.style.width = w + "%"; el.title = p.st + " " + gw(p.mw);
+        el.className = "seg " + p.cls; el.style.left = left + "%"; el.dataset.w = w + "%"; el.title = p.st + " " + gw(p.mw);
         track.appendChild(el); left += w;
       });
       marks.forEach(m => {
@@ -209,36 +350,97 @@
         el.style.left = pos + "%"; el.innerHTML = "<span>" + m.label + "</span>";
         track.appendChild(el);
       });
-      document.getElementById(id + "-keys").innerHTML = parts.map(p => '<span><i class="' + p.cls + '"></i>' + p.st + " <b>" + gw(p.mw) + "</b></span>").join("");
+      $(id + "-keys").innerHTML = parts.map(p => '<span><i class="' + p.cls + '"></i>' + p.st + " <b>" + gw(p.mw) + "</b></span>").join("");
       return parts;
     }
-    const g = gauge("gen", ["Wind", "Solar"], [{ mw: T.generation_min_gw * 1000, label: "12 GW" }, { mw: T.generation_ambition_gw * 1000, label: "16 GW", alt: true }], T.generation_ambition_gw * 1150);
-    const s = gauge("sto", ["Battery", "Pumped hydro"], [{ mw: T.storage_min_gw * 1000, label: "2 GW target" }], T.storage_min_gw * 1500);
-    document.getElementById("gen-text").innerHTML = "<strong>" + gw(g[0].mw) + "</strong> operating, " + Math.round(g[0].mw / 120) + "% of the 12 GW target. With committed projects, " + gw(g[0].mw + g[1].mw) + ". The dashed line is the 16 GW goal.";
-    document.getElementById("sto-text").innerHTML = "<strong>" + gw(s[0].mw) + "</strong> operating and " + gw(s[1].mw) + " committed. Most is batteries, which may not all count as long-duration.";
+    const g = gauge("gen", ["Wind", "Solar"], [{ mw: target, label: "12 GW" }, { mw: T.generation_ambition_gw * 1000, label: "16 GW", alt: true }], T.generation_ambition_gw * 1150);
+    const s = gauge("sto", ["Battery", "Pumped hydro"], [{ mw: stoTarget, label: "2 GW target" }], T.storage_min_gw * 1500);
+    $("gen-text").innerHTML = "<strong>" + gw(op) + "</strong> operating, " + pct(genPct) + " of the 12 GW target. With committed projects, " + gw(op + co) + ". The dashed line is the 16 GW goal.";
+    $("sto-text").innerHTML = "<strong>" + gw(sop) + "</strong> operating and " + gw(sco) + " committed. Most is batteries, which may not all count as long-duration.";
 
     // Pace needed against pace achieved
-    const H = R.history, last = H[H.length - 1];
-    const back = H.find(h => (new Date(last.date) - new Date(h.date)) / 3.156e10 <= 2.01) || H[0];
-    const yrsPast = (new Date(last.date) - new Date(back.date)) / 3.156e10;
-    const pastRate = yrsPast > 0 ? (last.operating_gen_mw - back.operating_gen_mw) / yrsPast : 0;
-    const yrsLeft = (new Date("2030-01-01") - today) / 3.156e10;
-    const need = Math.max(0, 12000 - g[0].mw) / Math.max(yrsLeft, 0.1);
-    document.getElementById("pace").innerHTML = "<span>Needed from now <b>" + gw(need) + " a year</b></span><span>Average over the last two years <b>" + gw(pastRate) + " a year</b></span>";
+    $("pace").innerHTML =
+      '<div class="need">Needed from now<b>' + gw(need) + " a year</b>" + num(need / 365.25, 1) + " MW every day</div>" +
+      '<div class="got">Average over the last two years<b>' + gw(pastRate) + " a year</b>" + num(pastRate / 365.25, 1) + " MW every day</div>" +
+      "<div>At that pace, 12 GW arrives in<b>" + (arrive ? arrive.toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "never") + "</b>" +
+      (arrive && arrive > T2030 ? "about " + num((arrive - T2030) / YEAR, 1) + " years late" : "on time") + "</div>";
+    if (R.aemo_total) $("recon").textContent = "Why AEMO's file shows more: it lists " + gw(R.aemo_total.gen_mw) + " of wind and solar operating in NSW. " +
+      gw(R.aemo_total.gen_mw - op) + " of that was already running before the Roadmap began in January " + R.baseline.slice(0, 4) + ", so it does not count towards the target.";
 
     // Coal
-    const y0 = new Date().getFullYear(), y1 = Math.max(...R.coal.map(c => c.year || y0)) + 1;
-    document.getElementById("coal").innerHTML = R.coal.map(c => {
-      const w = Math.max(2, ((c.year || y0) - y0 + 0.5) / (y1 - y0) * 100);
-      return '<div class="coal-row" title="' + esc(c.name) + ", " + c.mw.toLocaleString("en-AU") + ' MW"><span>' + esc(c.name) + ' <span class="text-body-secondary small">' + gw(c.mw) + '</span></span><div class="bar"><span style="width:' + w + '%"></span></div><span class="yr">' + (c.year || "") + "</span></div>";
-    }).join("") + '<div class="coal-axis"><span></span><div><span>' + y0 + "</span><span>" + y1 + "</span></div><span></span></div>";
-    const by35 = R.coal.filter(c => c.year && c.year <= 2035);
-    document.getElementById("coal35").textContent = gw(by35.reduce((a, c) => a + c.mw, 0));
-    document.getElementById("coal35-text").textContent = "of coal is due to close by 2035, at " + by35.map(c => c.name).join(", ").replace(/, ([^,]*)$/, " and $1") + ".";
+    const coalTotal = R.coal.reduce((a, c) => a + c.mw, 0);
+    const NOTES = {
+      "Eraring": "Australia's largest power station, on Lake Macquarie. Origin first planned to close it in 2025 and has since pushed the date back. A big battery now runs on the site.",
+      "Bayswater": "AGL's station in the Hunter Valley near Muswellbrook. AGL plans to close it between 2030 and 2033.",
+      "Vales Point B": "Delta Electricity's station on Lake Macquarie. Its closure has been put back from 2029 to 2033.",
+      "Mt Piper": "EnergyAustralia's station near Lithgow, the last NSW coal station on AEMO's list."
+    };
+    const start = new Date(), end = new Date((Math.max(...R.coal.map(c => c.year || start.getFullYear())) + 1) + "-07-01");
+    const xpos = d => Math.max(0, Math.min(100, (d - start) / (end - start) * 100));
+    const owner = o => String(o || "").replace(/\s+(Pty\.?\s*)?(Ltd|Limited)\.?$/i, "").replace(/\s+Pty$/i, "");
+    $("coal").innerHTML = R.coal.map((c, i) =>
+      '<div class="coal-row" tabindex="0" role="button" aria-expanded="false" data-i="' + i + '"><span>' + esc(c.name) + ' <span class="text-body-secondary small">' + gw(c.mw) + '</span></span>' +
+      '<div class="bar"><span data-w="' + Math.max(1.5, xpos(closeDate(c))) + '%"></span><i class="y30" style="left:' + xpos(T2030) + '%"></i></div><span class="yr">' + (c.year || "") + "</span></div>").join("") +
+      '<div class="coal-axis"><span></span><div>' + [start.getFullYear() + 1, 2030, 2035, 2040].filter(y => y > start.getFullYear() && y < end.getFullYear() + 1)
+        .map(y => '<span class="' + (y === 2030 ? "t30" : "") + '" style="left:' + xpos(new Date(y + "-01-01")) + '%">' + y + "</span>").join("") + "</div><span></span></div>";
+    const tip = $("tip"), wrap = $("coal-wrap");
+    let pinned = null;
+    function showTip(row) {
+      const c = R.coal[+row.dataset.i], d = closeDate(c), days = Math.ceil((d - new Date()) / 864e5);
+      const size = c.units ? c.units + " × " + num(Math.round(c.mw / c.units)) + " MW" : "";
+      tip.innerHTML = "<h4>" + esc(c.name) + '</h4><div class="own">' + esc(owner(c.owner)) + "</div><dl>" +
+        "<dt>Capacity</dt><dd>" + num(c.mw) + " MW" + (size ? ' <span class="text-body-secondary fw-normal">(' + size + ")</span>" : "") + "</dd>" +
+        "<dt>Share of NSW coal</dt><dd>" + Math.round(c.mw / coalTotal * 100) + "%</dd>" +
+        "<dt>Due to close</dt><dd>" + (c.date ? d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Australia/Sydney" }) : c.year) + "</dd>" +
+        "<dt>Time left</dt><dd>" + num(Math.max(0, days)) + " days</dd>" +
+        (d < T2030 ? "<dt>Against 2030</dt><dd>Closes " + num((T2030 - d) / YEAR * 12) + " months before the target date</dd>" : "") + "</dl>" +
+        (NOTES[c.name] ? "<p>" + esc(NOTES[c.name]) + "</p>" : "");
+      document.querySelectorAll(".coal-row").forEach(r => { r.classList.toggle("on", r === row); r.setAttribute("aria-expanded", r === row); });
+      const wr = wrap.getBoundingClientRect(), rr = row.getBoundingClientRect(), bar = row.querySelector(".bar").getBoundingClientRect();
+      const left = Math.max(0, Math.min(bar.left - wr.left + 8, wr.width - tip.offsetWidth));
+      tip.style.left = left + "px";
+      tip.style.top = (rr.bottom - wr.top + 6) + "px";
+      tip.classList.add("show");
+    }
+    function hideTip() {
+      if (pinned) return showTip(pinned);
+      tip.classList.remove("show");
+      document.querySelectorAll(".coal-row").forEach(r => { r.classList.remove("on"); r.setAttribute("aria-expanded", "false"); });
+    }
+    document.querySelectorAll(".coal-row").forEach(row => {
+      row.addEventListener("mouseenter", () => showTip(row));
+      row.addEventListener("mouseleave", hideTip);
+      row.addEventListener("focus", () => showTip(row));
+      row.addEventListener("blur", () => { if (pinned === row) pinned = null; hideTip(); });
+      const toggle = () => { pinned = pinned === row ? null : row; pinned ? showTip(row) : hideTip(); };
+      row.addEventListener("click", toggle);
+      row.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } if (e.key === "Escape") { pinned = null; hideTip(); } });
+    });
+    document.addEventListener("click", e => { if (pinned && !wrap.contains(e.target)) { pinned = null; hideTip(); } });
+    const by30 = R.coal.filter(c => closeDate(c) < T2030), by35 = R.coal.filter(c => c.year && c.year <= 2035);
+    $("coal-sum").innerHTML = "<span>Coal in NSW today <b>" + gw(coalTotal) + "</b></span><span>Closing before 2030 <b>" + gw(by30.reduce((a, c) => a + c.mw, 0)) + "</b></span>" +
+      "<span>Left after 2035 <b>" + gw(coalTotal - by35.reduce((a, c) => a + c.mw, 0)) + "</b></span><span>Liddell closed in April 2023 and a battery now runs on its site.</span>";
+    $("coal35").textContent = gw(by35.reduce((a, c) => a + c.mw, 0));
+    $("coal35-text").textContent = "of coal is due to close by 2035, at " + by35.map(c => c.name).join(", ").replace(/, ([^,]*)$/, " and $1") + ".";
+
+    // Animate things in as they reach the screen
+    function fill(el) {
+      el.querySelectorAll("[data-w]").forEach(x => { x.style.width = x.dataset.w; });
+      if (el.classList.contains("dash")) {
+        ring("r-com", (op + co) / target); ring("r-gen", op / target); ring("r-time", used); ring("r-sto", sop / stoTarget);
+        countUp($("v-gen"), genPct, pct); countUp($("v-sto"), stoPct, pct);
+        countUp($("v-time"), used * 100, pct);
+      }
+    }
+    const items = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window && !calm) {
+      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); setTimeout(() => fill(e.target), 150); io.unobserve(e.target); } }), { threshold: 0.2 });
+      items.forEach(el => io.observe(el));
+    } else items.forEach(el => { el.classList.add("in"); fill(el); });
 
     // Charts, drawn again when the theme changes
     function draw() {
-      const ink = cv("--chart-text"), grid = cv("--chart-grid"), bg = cv("--chart-bg");
+      const ink = cv("--chart-text"), grid = cv("--chart-grid"), bg = cv("--chart-bg"), muted = cv("--muted"), time = cv("--time");
       const base = () => ({ margin: { l: 50, r: 10, t: 10, b: 40 }, font: { family: getComputedStyle(document.body).fontFamily, color: ink, size: 12 },
         paper_bgcolor: bg, plot_bgcolor: bg, legend: { orientation: "h", y: -0.2 }, xaxis: { showgrid: false },
         yaxis: { gridcolor: grid, title: { text: "MW" }, rangemode: "tozero" }, hoverlabel: { align: "left", bgcolor: bg, bordercolor: grid, font: { color: ink } } });
@@ -251,36 +453,40 @@
         return l.slice(0, 10).map(esc).join("<br>") + (l.length > 10 ? "<br>and " + (l.length - 10) + " more" : "");
       };
       Plotly.react("c-year", ["Wind", "Solar", "Battery", "Pumped hydro"].map(t => ({
-        type: "bar", name: t, x: years, y: years.map(y => R.by_year[y][t] || 0), marker: { color: colours[t] },
+        type: "bar", name: t, x: years, y: years.map(y => R.by_year[y][t] || 0), marker: { color: colours[t], line: { color: bg, width: 1 } },
         customdata: years.map(y => names(y, t)),
         hovertemplate: "<b>" + t + " %{x}, %{y:,.0f} MW</b><br>%{customdata}<extra></extra>" })), { ...base(), barmode: "stack", hovermode: "closest" }, cfg);
       if (H.length > 1) {
-        const x = H.map(h => h.date);
+        const x = H.map(h => h.date), end = "2030-01-01", gone = Math.max(0, (T2030 - new Date(last.date)) / YEAR);
         Plotly.react("c-hist", [
-          { x, y: H.map(h => h.operating_gen_mw), name: "Operating", mode: "lines+markers", line: { color: colours.Wind, width: 2.5 }, hovertemplate: "%{y:,.0f} MW operating<extra></extra>" },
-          { x, y: H.map(h => h.operating_gen_mw + h.committed_gen_mw), name: "Operating and committed", mode: "lines+markers", line: { color: colours.Battery, width: 2, dash: "dot" }, hovertemplate: "%{y:,.0f} MW with committed<extra></extra>" }
-        ], { ...base(), hovermode: "x unified", shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: 12000, y1: 12000, line: { color: ink, width: 1 } }],
-             annotations: [{ xref: "paper", x: 0, y: 12000, text: "12 GW target", showarrow: false, yshift: 10, xanchor: "left", font: { size: 11, color: ink } }] }, cfg);
-      } else document.getElementById("history-wrap").hidden = true;
+          { x, y: H.map(h => h.operating_gen_mw), name: "Operating", mode: "lines+markers", line: { color: colours.Wind, width: 2.5 }, marker: { size: 8 }, hovertemplate: "%{y:,.0f} MW operating<extra></extra>" },
+          { x, y: H.map(h => h.operating_gen_mw + h.committed_gen_mw), name: "Operating and committed", mode: "lines+markers", line: { color: colours.Battery, width: 2, dash: "dot" }, marker: { size: 8 }, hovertemplate: "%{y:,.0f} MW with committed<extra></extra>" },
+          { x: [last.date, end], y: [last.operating_gen_mw, target], name: "Pace needed", mode: "lines", line: { color: time, width: 2, dash: "dash" }, hovertemplate: "%{y:,.0f} MW on the path needed<extra></extra>" },
+          { x: [last.date, end], y: [last.operating_gen_mw, last.operating_gen_mw + pastRate * gone], name: "Pace of last two years", mode: "lines", line: { color: muted, width: 2, dash: "dash" }, hovertemplate: "%{y:,.0f} MW at the recent pace<extra></extra>" }
+        ], { ...base(), hovermode: "x unified", shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: target, y1: target, line: { color: ink, width: 1 } }],
+             annotations: [{ xref: "paper", x: 0, y: target, text: "12 GW target", showarrow: false, yshift: 10, xanchor: "left", font: { size: 11, color: ink } }] }, cfg);
+      } else $("history-wrap").hidden = true;
     }
     draw();
     window.onThemeChange = draw;
 
     // Project explorer
-    const q = document.getElementById("f-q"), fs = document.getElementById("f-status"), ft = document.getElementById("f-tech");
+    const q = $("f-q"), fs = $("f-status"), ft = $("f-tech");
+    const swatch = { Operating: "s-op", Committed: "s-co", Anticipated: "s-an", Proposed: "s-pr" };
     let shown = 25;
     function render() {
       const term = q.value.trim().toLowerCase();
       const list = R.projects.filter(p => (!term || p.name.toLowerCase().includes(term)) && (!fs.value || p.status === fs.value) && (!ft.value || p.tech === ft.value));
       const total = list.reduce((a, p) => a + p.mw, 0);
-      document.getElementById("count").textContent = list.length + " projects, " + gw(total) + " in total";
-      document.getElementById("rows").innerHTML = list.slice(0, shown).map(p =>
-        "<tr><td>" + esc(p.name) + "</td><td>" + p.tech + "</td><td>" + p.status + '</td><td class="hide-sm">' + (p.year || "") + '</td><td class="text-end">' + p.mw.toLocaleString("en-AU") + "</td></tr>").join("") ||
+      $("count").textContent = list.length + " projects, " + gw(total) + " in total";
+      $("rows").innerHTML = list.slice(0, shown).map(p =>
+        "<tr><td>" + esc(p.name) + "</td><td>" + p.tech + '</td><td><i class="sw ' + swatch[p.status] + '"></i>' + p.status + '</td><td class="hide-sm">' +
+        (p.year ? (p.status === "Operating" ? p.year : '<span class="exp">' + p.year + "</span>") : "") + '</td><td class="text-end">' + p.mw.toLocaleString("en-AU") + "</td></tr>").join("") ||
         '<tr><td colspan="5">No projects match. Try a different name or filter.</td></tr>';
-      document.getElementById("more").hidden = list.length <= shown;
+      $("more").hidden = list.length <= shown;
     }
     [q, fs, ft].forEach(el => el.addEventListener("input", () => { shown = 25; render(); }));
-    document.getElementById("more").addEventListener("click", () => { shown += 50; render(); });
+    $("more").addEventListener("click", () => { shown += 50; render(); });
     render();
   })();
   </script>
