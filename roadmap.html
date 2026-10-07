@@ -14,16 +14,35 @@
   <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="css/theme.css">
   <style>
-    :root { --time: #B07A12; --time-soft: #F6EBD3; --live: #1E8A5A; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14); }
-    [data-theme="dark"] { --time: #E0B45A; --time-soft: #2E2716; --live: #5FD39B; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
+    :root {
+      --time: #B07A12; --time-soft: #F6EBD3; --live: #1E8A5A; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14);
+      --c-wind: #2a78d6; --c-solar: #eda100; --c-battery: #e87ba4; --c-hydro: #008300; --c-coal: #6B7280;
+      --k-wind: #E4EEFB; --k-solar: #FDF1D6; --k-battery: #FCE8F0; --k-hydro: #DDF0DD; --k-coal: #ECEDEF;
+    }
+    [data-theme="dark"] {
+      --time: #E0B45A; --time-soft: #2E2716; --live: #5FD39B; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+      --c-wind: #3987e5; --c-solar: #c98500; --c-battery: #d55181; --c-hydro: #008300; --c-coal: #8B93A1;
+      --k-wind: #16263D; --k-solar: #2E2510; --k-battery: #321A26; --k-hydro: #102A14; --k-coal: #1E2633;
+    }
     .page { max-width: 1040px; }
-    .lead { max-width: 60ch; }
+    .lead { max-width: 52ch; margin-bottom: .6rem; }
+    .src { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .7rem; }
     .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
     .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); position: relative; }
     .live i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--live); animation: ping 1.8s ease-out infinite; }
     @keyframes ping { from { transform: scale(1); opacity: .7; } to { transform: scale(3); opacity: 0; } }
 
-    .clock { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); margin: 2.25rem 0 1rem; }
+    /* Icons */
+    .ic { display: inline-flex; align-items: center; justify-content: center; width: 2.4rem; height: 2.4rem; border-radius: 10px; flex: none; }
+    .ic svg { width: 62%; height: 62%; }
+    .ic.sm { width: 1.5rem; height: 1.5rem; border-radius: 6px; vertical-align: middle; }
+    .ic.wind { background: var(--k-wind); color: var(--c-wind); } .ic.solar { background: var(--k-solar); color: var(--c-solar); }
+    .ic.battery { background: var(--k-battery); color: var(--c-battery); } .ic.hydro { background: var(--k-hydro); color: var(--c-hydro); }
+    .ic.coal { background: var(--k-coal); color: var(--c-coal); } .ic.time { background: var(--time-soft); color: var(--time); }
+    .ics { display: flex; gap: .35rem; }
+    .h-ic { display: flex; align-items: center; gap: .7rem; }
+
+    .clock { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); margin: 2rem 0 1rem; }
     .clock > div { padding: 1.1rem 1.25rem 1.2rem 0; }
     .clock > div + div { border-left: 1px solid var(--line); padding-left: 1.25rem; }
     .clock b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(2rem, 5vw, 3rem); line-height: 1; font-variant-numeric: tabular-nums; }
@@ -31,35 +50,52 @@
     .clock .hms em { font-style: normal; color: var(--muted); font-size: .78rem; margin: 0 .35rem 0 .1rem; }
     .clock span.l { color: var(--muted); font-size: .92rem; }
 
+    /* Progress cards */
     .dash { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1.5rem 0 .5rem; }
-    .meter { border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.1rem 1rem; display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 1rem; align-items: center; background: var(--surface); transition: border-color .2s, transform .2s; }
-    .meter:hover { border-color: var(--muted); transform: translateY(-2px); }
+    .meter { position: relative; border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem 1.2rem; background: var(--surface); transition: border-color .2s, transform .2s, box-shadow .2s; }
+    .meter:hover { border-color: var(--muted); transform: translateY(-2px); box-shadow: var(--tip-shadow); }
+    .meter .top { display: flex; align-items: center; gap: .7rem; margin-bottom: .9rem; }
+    .meter h3 { font-size: 1rem; margin: 0; line-height: 1.25; }
+    .meter .body { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 1rem; align-items: center; }
     .ring { position: relative; width: 112px; height: 112px; }
     .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
     .ring circle { fill: none; stroke-width: 10; }
     .ring .bg { stroke: var(--track); }
     .ring .fg { stroke-linecap: round; transition: stroke-dashoffset 1.6s cubic-bezier(.2, .7, .2, 1); }
     .ring .fg.gen { stroke: var(--seg-op); } .ring .fg.com { stroke: var(--seg-co); } .ring .fg.time { stroke: var(--time); }
-    .ring .v { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: "Newsreader", Georgia, serif !important; font-size: 1.65rem; font-variant-numeric: tabular-nums; }
-    .meter h3 { font-size: 1rem; margin: 0 0 .25rem; }
-    .meter p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.45; }
-    .meter p b { color: var(--ink); font-weight: 600; }
-    .verdict { margin: 1rem 0 0; padding: .9rem 1.1rem; border-left: 3px solid var(--time); background: var(--time-soft); border-radius: 0 8px 8px 0; font-size: .98rem; max-width: 80ch; }
+    .ring .v { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+    .ring .v b { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.75rem; font-variant-numeric: tabular-nums; }
+    .ring .v small { font-size: .7rem; color: var(--muted); margin-top: .25rem; text-align: center; max-width: 70px; line-height: 1.2; }
+    .meter ul { list-style: none; padding: 0; margin: 0; font-size: .86rem; color: var(--muted); display: grid; gap: .35rem; line-height: 1.35; }
+    .meter ul b { color: var(--ink); font-weight: 600; }
+    .meter ul i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: .4rem; vertical-align: 0; }
+    .verdict { margin: 1rem 0 0; padding: 1rem 1.2rem; border-left: 3px solid var(--time); background: var(--time-soft); border-radius: 0 10px 10px 0; font-size: 1.02rem; max-width: 80ch; line-height: 1.55; }
+
+    /* Info pop-ups */
+    .info { all: unset; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 1.25rem; height: 1.25rem; border-radius: 50%; border: 1px solid var(--muted); color: var(--muted); font-size: .72rem; font-weight: 700; font-style: italic; font-family: Georgia, serif !important; margin-left: .35rem; vertical-align: 1px; flex: none; }
+    .info:hover, .info:focus-visible, .info[aria-expanded="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+    .pop { position: absolute; z-index: 6; left: 1rem; right: 1rem; top: 3.6rem; background: var(--tip-bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--tip-shadow); padding: .9rem 1rem; font-size: .88rem; line-height: 1.5; color: var(--soft); }
+    .pop[hidden] { display: none; }
+    .pop p { margin: 0 0 .5rem; } .pop p:last-child { margin: 0; }
+    .pop b { color: var(--ink); }
 
     .gauge { margin: 2.75rem 0 2.5rem; }
-    .gauge h2, .section h2.serif { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.7rem; margin-bottom: .25rem; }
-    .gauge .big { font-size: 1.05rem; color: var(--muted); max-width: 62ch; margin-bottom: 1.2rem; }
+    .gauge h2, .section h2.serif { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.7rem; margin: 0; }
+    .gauge .big { font-size: 1.05rem; color: var(--muted); max-width: 66ch; margin: .6rem 0 1.2rem; }
     .gauge .big strong { color: var(--ink); }
+    .gauge h3 { font-size: 1rem; margin: 2rem 0 0; }
     .track { position: relative; height: 44px; background: var(--track); margin: 2.2rem 0 2rem; border-radius: 4px; }
+    .track.thin { height: 28px; }
     .seg { position: absolute; top: 0; bottom: 0; width: 0; transition: width 1.2s cubic-bezier(.2, .7, .2, 1); cursor: default; }
     .seg + .seg { box-shadow: inset 2px 0 0 var(--bs-body-bg); }
     .seg:hover { filter: brightness(1.12); }
     .s-op { background: var(--seg-op); } .s-co { background: var(--seg-co); } .s-an { background: var(--seg-an); }
     .s-pr { background: repeating-linear-gradient(135deg, var(--seg-pr) 0 6px, var(--track) 6px 12px); }
+    .s-old { background: var(--c-coal); opacity: .5; }
     .tmark { position: absolute; top: -26px; bottom: -6px; border-left: 2px solid var(--ink); }
     .tmark span { position: absolute; top: 0; left: 6px; font-size: .82rem; white-space: nowrap; color: var(--ink); }
     .tmark.alt { border-left-style: dashed; }
-    .tmark.alt span { color: var(--muted); top: auto; bottom: -22px; }
+    .tmark.alt span { color: var(--ink); top: auto; bottom: -22px; }
     .tmark.flip span { left: auto; right: 6px; }
     .keys { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; font-size: .9rem; color: var(--muted); }
     .keys i { display: inline-block; width: 12px; height: 12px; margin-right: .4rem; vertical-align: -1px; border-radius: 2px; }
@@ -69,22 +105,35 @@
     .pace div.need { border-top-color: var(--time); } .pace div.got { border-top-color: var(--seg-op); }
     .pace b { display: block; color: var(--ink); font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.6rem; line-height: 1.15; font-variant-numeric: tabular-nums; }
     .aside { font-size: .88rem; color: var(--muted); margin-top: .8rem; max-width: 80ch; }
+    .callout { display: flex; gap: .9rem; align-items: flex-start; border: 1px solid var(--line); border-radius: 12px; padding: .9rem 1rem; margin-top: 1.4rem; font-size: .92rem; color: var(--soft); max-width: 80ch; }
+    .callout b { color: var(--ink); }
     .section { border-top: 1px solid var(--line); padding: 2.2rem 0; }
     .section h2 { font-size: 1.15rem; margin-bottom: .4rem; }
-    .section > p { color: var(--muted); max-width: 64ch; }
+    .section > p { color: var(--muted); max-width: 66ch; }
     .chart { height: 360px; }
 
+    /* Map */
+    .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1rem 0 .8rem; }
+    .chip { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; border: 1px solid var(--line); border-radius: 999px; padding: .25rem .75rem; color: var(--muted); transition: background .15s, color .15s, border-color .15s; }
+    .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+    .chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .chip span { font-variant-numeric: tabular-nums; opacity: .75; }
+    #map { height: 540px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--track); }
+    .map-keys { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .8rem; font-size: .88rem; color: var(--muted); align-items: center; }
+    .map-keys .dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; }
+
+    /* Coal */
     .coal-wrap { position: relative; margin-top: 1.25rem; }
     .coal { display: grid; gap: .5rem; }
-    .coal-row { display: grid; grid-template-columns: 10.5rem minmax(0, 1fr) 4.5rem; gap: 1rem; align-items: center; font-size: .95rem; padding: .45rem .5rem; margin: 0 -.5rem; border-radius: 8px; cursor: pointer; transition: background .15s; }
+    .coal-row { display: grid; grid-template-columns: 11.5rem minmax(0, 1fr) 4.5rem; gap: 1rem; align-items: center; font-size: .95rem; padding: .45rem .5rem; margin: 0 -.5rem; border-radius: 8px; cursor: pointer; transition: background .15s; }
+    .coal-row > span:first-child { display: flex; align-items: center; gap: .5rem; }
     .coal-row:hover, .coal-row:focus-visible, .coal-row.on { background: var(--accent-soft); outline: none; }
     .coal-row .bar { position: relative; height: 16px; background: var(--track); border-radius: 0 4px 4px 0; }
-    .coal-row .bar > span { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--muted); border-radius: 0 4px 4px 0; transition: width 1.2s cubic-bezier(.2, .7, .2, 1); }
+    .coal-row .bar > span { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--c-coal); border-radius: 0 4px 4px 0; transition: width 1.2s cubic-bezier(.2, .7, .2, 1); }
     .coal-row:hover .bar > span, .coal-row.on .bar > span { background: var(--ink); }
     .coal-row .y30 { position: absolute; top: -6px; bottom: -6px; border-left: 1px dashed var(--time); }
     .coal-row .yr { text-align: right; font-variant-numeric: tabular-nums; }
-    .coal-row .hint { color: var(--muted); font-size: .8rem; }
-    .coal-axis { display: grid; grid-template-columns: 10.5rem minmax(0, 1fr) 4.5rem; gap: 1rem; font-size: .8rem; color: var(--muted); margin-top: .3rem; }
+    .coal-axis { display: grid; grid-template-columns: 11.5rem minmax(0, 1fr) 4.5rem; gap: 1rem; font-size: .8rem; color: var(--muted); margin-top: .3rem; }
     .coal-axis div { position: relative; height: 1.2rem; }
     .coal-axis div span { position: absolute; transform: translateX(-50%); }
     .coal-axis div span.t30 { color: var(--time); font-weight: 600; }
@@ -101,24 +150,38 @@
     .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2rem; margin-top: 1.25rem; }
     .facts b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 2.1rem; line-height: 1.05; margin-bottom: .35rem; }
     .facts p { color: var(--muted); margin: 0; font-size: .95rem; }
+
+    /* Project table */
     .filters { display: grid; grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr)); gap: .75rem; margin: 1.25rem 0 .75rem; }
+    .ms { position: relative; }
+    .ms > button { text-align: left; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ms-menu { position: absolute; z-index: 7; left: 0; right: 0; top: calc(100% + 4px); background: var(--tip-bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--tip-shadow); padding: .4rem; }
+    .ms-menu[hidden] { display: none; }
+    .ms-menu label { display: flex; align-items: center; gap: .55rem; padding: .4rem .5rem; border-radius: 6px; cursor: pointer; font-size: .92rem; }
+    .ms-menu label:hover { background: var(--accent-soft); }
+    .ms-menu input { accent-color: var(--accent); width: 1rem; height: 1rem; }
+    .ms-menu .n { margin-left: auto; color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; }
+    .ms-menu .act { display: flex; justify-content: space-between; border-top: 1px solid var(--line); margin-top: .3rem; padding: .4rem .3rem 0; }
+    .ms-menu .act button { all: unset; cursor: pointer; font-size: .85rem; color: var(--accent); }
     .count { font-size: .9rem; color: var(--muted); margin-bottom: .5rem; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; }
     .why { font-size: .9rem; color: var(--muted); margin: 0 0 1rem; }
     .why summary { cursor: pointer; color: var(--accent); width: fit-content; }
     .why ol { list-style: none; padding: 0; margin: .6rem 0 0; display: grid; grid-template-columns: auto auto; justify-content: start; gap: .15rem 1.5rem; font-variant-numeric: tabular-nums; }
     .why li:nth-child(even) { text-align: right; color: var(--ink); }
     .why li.tot { border-top: 1px solid var(--line); padding-top: .2rem; font-weight: 600; color: var(--ink); }
+    table { font-size: .95rem; }
+    td .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: .45rem; vertical-align: 0; }
+    td .exp, td .hrs { color: var(--muted); }
+    td .exp { font-style: italic; }
+    td .ic.sm { margin-right: .45rem; }
+    tbody tr { transition: background .15s; }
+    tbody tr:hover { background: var(--accent-soft); }
     th button { all: unset; cursor: pointer; white-space: nowrap; }
     th button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
     th button::after { content: "↕"; margin-left: .3rem; color: var(--line); font-size: .85em; }
     th[aria-sort="ascending"] button::after { content: "↑"; color: var(--ink); }
     th[aria-sort="descending"] button::after { content: "↓"; color: var(--ink); }
-    table { font-size: .95rem; }
-    td .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: .45rem; vertical-align: 0; }
-    td .exp { color: var(--muted); font-style: italic; }
-    tbody tr { transition: background .15s; }
-    tbody tr:hover { background: var(--accent-soft); }
-    .notes li { margin-bottom: .45rem; color: var(--muted); max-width: 70ch; }
+    .notes li { margin-bottom: .45rem; color: var(--muted); max-width: 72ch; }
 
     .reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
     .reveal.in { opacity: 1; transform: none; }
@@ -133,14 +196,23 @@
       .clock > div + div { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
       .facts, .pace { grid-template-columns: 1fr; }
       .filters { grid-template-columns: 1fr 1fr; } .filters input { grid-column: 1 / -1; }
-      .coal-row, .coal-axis { grid-template-columns: 7rem minmax(0, 1fr) 3.2rem; gap: .6rem; }
-      .coal-row .hint { display: none; }
-      .track { height: 36px; } .chart { height: 300px; } .tmark span { font-size: .75rem; }
+      .coal-row, .coal-axis { grid-template-columns: 8.5rem minmax(0, 1fr) 3.2rem; gap: .6rem; }
+      .coal-row .gwv { display: none; }
+      .track { height: 36px; } .chart { height: 300px; } #map { height: 440px; } .tmark span { font-size: .75rem; }
       .hide-sm { display: none; }
     }
   </style>
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-wind" viewBox="0 0 24 24"><path d="M11.2 10.6 12 22h0l.8-11.4" fill="currentColor"/><circle cx="12" cy="9" r="1.7" fill="currentColor"/><path d="M12 7.3c-.4-2.2-.2-4.4.6-6.3.9 2 .9 4.2-.6 6.3zM13.5 9.9c2.1.8 3.8 2.2 5 3.9-2.2.1-4.1-1-5-3.9zM10.5 9.9c-1.7 1.4-3.8 2.2-5.9 2.2 1.1-1.9 3-3 5.9-2.2z" fill="currentColor"/></symbol>
+    <symbol id="i-solar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"/></g></symbol>
+    <symbol id="i-battery" viewBox="0 0 24 24"><rect x="3" y="6.5" width="16" height="11" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19.6" y="10" width="2" height="4" rx=".8" fill="currentColor"/><path d="M11.8 8.3 8 12.6h3l-.8 3.2 3.8-4.4h-3z" fill="currentColor"/></symbol>
+    <symbol id="i-hydro" viewBox="0 0 24 24"><path d="M12 2.5c3.2 4.2 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.8-6.8 6-11z" fill="currentColor"/><path d="M9.2 14.2a2.9 2.9 0 0 0 2.6 2.9" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></symbol>
+    <symbol id="i-coal" viewBox="0 0 24 24"><path d="M3 21V12l5 3V12l5 3V8h3V4h3v17z" fill="currentColor"/><circle cx="17.5" cy="2.6" r="1.3" fill="currentColor" opacity=".5"/></symbol>
+    <symbol id="i-time" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 9v4.4l2.8 1.8M9.5 2.5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  </svg>
+
   <header class="site-header">
     <div class="container-xl bar">
       <a class="brand" href="index.html">Abdulla Shaheed</a>
@@ -157,7 +229,8 @@
     <div class="page">
       <div class="live"><i></i>Live tracker</div>
       <h1>Is NSW on track for 2030?</h1>
-      <p class="lead">Progress on the NSW Electricity Infrastructure Roadmap, from AEMO's register of every generation and storage project. <span id="asof"></span></p>
+      <p class="lead">A live check on whether NSW is building enough wind, solar and storage to replace its coal power stations.</p>
+      <span class="src" id="asof"></span>
 
       <div class="clock" aria-label="Countdowns">
         <div><b id="d2030">…</b><span class="hms" id="t2030" aria-hidden="true"></span><span class="l">days until the 2030 targets</span></div>
@@ -167,22 +240,35 @@
 
       <div class="dash reveal" aria-label="Progress against time">
         <div class="meter">
-          <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg com" id="r-com" cx="60" cy="60" r="52"/><circle class="fg gen" id="r-gen" cx="60" cy="60" r="52"/></svg><div class="v" id="v-gen">0%</div></div>
-          <div><h3>Wind and solar target</h3><p id="m-gen"></p></div>
+          <div class="top"><span class="ics"><span class="ic wind"><svg><use href="#i-wind"/></svg></span><span class="ic solar"><svg><use href="#i-solar"/></svg></span></span><h3>Wind and solar built</h3>
+            <button class="info" type="button" aria-expanded="false" aria-controls="p-gen" aria-label="What this means">i</button></div>
+          <div class="pop" id="p-gen" hidden></div>
+          <div class="body">
+            <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg com" id="r-com" cx="60" cy="60" r="52"/><circle class="fg gen" id="r-gen" cx="60" cy="60" r="52"/></svg><div class="v"><b id="v-gen">0%</b><small>of the 12 GW minimum</small></div></div>
+            <ul id="m-gen"></ul>
+          </div>
         </div>
         <div class="meter">
-          <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg time" id="r-time" cx="60" cy="60" r="52"/></svg><div class="v" id="v-time">0%</div></div>
-          <div><h3>Time used</h3><p id="m-time"></p></div>
+          <div class="top"><span class="ic time"><svg><use href="#i-time"/></svg></span><h3>Time used</h3></div>
+          <div class="body">
+            <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg time" id="r-time" cx="60" cy="60" r="52"/></svg><div class="v"><b id="v-time">0%</b><small>of the time to 2030</small></div></div>
+            <ul id="m-time"></ul>
+          </div>
         </div>
         <div class="meter">
-          <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg gen" id="r-sto" cx="60" cy="60" r="52"/></svg><div class="v" id="v-sto">0%</div></div>
-          <div><h3>Storage target</h3><p id="m-sto"></p></div>
+          <div class="top"><span class="ics"><span class="ic battery"><svg><use href="#i-battery"/></svg></span><span class="ic hydro"><svg><use href="#i-hydro"/></svg></span></span><h3>Long-duration storage built</h3>
+            <button class="info" type="button" aria-expanded="false" aria-controls="p-sto" aria-label="What long-duration storage means">i</button></div>
+          <div class="pop" id="p-sto" hidden></div>
+          <div class="body">
+            <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg com" id="r-sco" cx="60" cy="60" r="52"/><circle class="fg gen" id="r-sto" cx="60" cy="60" r="52"/></svg><div class="v"><b id="v-sto">0%</b><small>of the 2 GW minimum</small></div></div>
+            <ul id="m-sto"></ul>
+          </div>
         </div>
       </div>
       <p class="verdict reveal" id="verdict"></p>
 
       <section class="gauge reveal" aria-labelledby="g-gen">
-        <h2 id="g-gen">New wind and solar</h2>
+        <div class="h-ic"><span class="ics"><span class="ic wind"><svg><use href="#i-wind"/></svg></span><span class="ic solar"><svg><use href="#i-solar"/></svg></span></span><h2 id="g-gen">New wind and solar</h2></div>
         <p class="big" id="gen-text"></p>
         <div class="track" id="gen-track"></div>
         <div class="keys" id="gen-keys"></div>
@@ -192,10 +278,25 @@
       </section>
 
       <section class="gauge reveal" aria-labelledby="g-sto">
-        <h2 id="g-sto">New storage</h2>
+        <div class="h-ic"><span class="ics"><span class="ic battery"><svg><use href="#i-battery"/></svg></span><span class="ic hydro"><svg><use href="#i-hydro"/></svg></span></span><h2 id="g-sto">New long-duration storage</h2></div>
         <p class="big" id="sto-text"></p>
+        <h3>Power, against the 2030 goal</h3>
         <div class="track" id="sto-track"></div>
         <div class="keys" id="sto-keys"></div>
+        <h3>Energy, against the 2034 goal</h3>
+        <div class="track thin" id="gwh-track"></div>
+        <div class="keys" id="gwh-keys"></div>
+        <div class="callout" id="snowy"></div>
+        <p class="aside" id="sto-all"></p>
+      </section>
+
+      <section class="section">
+        <h2>Where the projects are</h2>
+        <p id="map-text">Each circle is a project, sized by capacity. Pick the statuses to show, then hover over or tap a circle for details.</p>
+        <div class="chips" id="map-chips" role="group" aria-label="Statuses shown on the map"></div>
+        <div id="map" role="img" aria-label="Map of NSW generation and storage projects"></div>
+        <div class="map-keys" id="map-keys"></div>
+        <p class="aside" id="map-cover"></p>
       </section>
 
       <section class="section">
@@ -206,13 +307,13 @@
 
       <section class="section" id="history-wrap">
         <h2>How the picture has changed</h2>
-        <p>New wind and solar in each AEMO release since 2021, against the 12 GW target. The dashed lines run to 2030 at the pace needed and at the pace of the last two years.</p>
+        <p>New wind and solar in each AEMO release since 2021, against the 12 GW minimum. The dashed lines run to 2030 at the pace needed and at the pace of the last two years.</p>
         <div id="c-hist" class="chart"></div>
       </section>
 
       <section class="section">
-        <h2 class="serif">Coal still to close</h2>
-        <p>Coal produced 97% of NSW electricity sector emissions in 2022–23. Each bar runs from today to the closure year reported to AEMO. Hover over or tap a station for details.</p>
+        <div class="h-ic"><span class="ic coal"><svg><use href="#i-coal"/></svg></span><h2 class="serif">Coal still to close</h2></div>
+        <p class="mt-3">Coal produced 97% of NSW electricity sector emissions in 2022–23. Each bar runs from today to the closure year reported to AEMO. Hover over or tap a station for details.</p>
         <div class="coal-wrap reveal" id="coal-wrap">
           <div class="coal" id="coal"></div>
           <div class="tip" id="tip" role="status" aria-live="polite"></div>
@@ -224,7 +325,7 @@
         <h2 class="serif">Looking to 2035</h2>
         <div class="facts">
           <div><b>70%</b><p>cut in NSW emissions on 2005 levels by 2035, set in law. By 2022–23 the cut was 25%.</p></div>
-          <div><b>28 GWh</b><p>of long-duration storage targeted by 2034, with a goal of 42 GWh.</p></div>
+          <div><b>42 GWh</b><p>of long-duration storage targeted by 2034, raised in 2025 from the legal minimum of 28 GWh.</p></div>
           <div><b id="coal35">…</b><p id="coal35-text">of coal capacity is due to close by 2035.</p></div>
         </div>
       </section>
@@ -234,12 +335,8 @@
         <p>All new wind, solar, battery and pumped hydro projects in AEMO's latest release, grouped by site.</p>
         <div class="filters">
           <input id="f-q" class="form-control" type="search" placeholder="Search by name" aria-label="Search projects by name">
-          <select id="f-status" class="form-select" aria-label="Filter by status">
-            <option value="">All statuses</option><option>Operating</option><option>Committed</option><option>Anticipated</option><option>Proposed</option>
-          </select>
-          <select id="f-tech" class="form-select" aria-label="Filter by type">
-            <option value="">All types</option><option>Wind</option><option>Solar</option><option>Battery</option><option>Pumped hydro</option>
-          </select>
+          <div class="ms" id="f-status" data-all="All statuses" data-one="statuses"></div>
+          <div class="ms" id="f-tech" data-all="All types" data-one="types"></div>
         </div>
         <details class="why" id="why"></details>
         <div class="count"><span id="count"></span><button id="csv" class="btn btn-outline-primary btn-sm" type="button">Download CSV</button></div>
@@ -257,11 +354,14 @@
         <ul class="notes">
           <li>New means a wind, solar, battery or pumped hydro unit that was not operating in AEMO's January 2021 release, the first after the Roadmap became law. Operating includes units being commissioned.</li>
           <li>Committed projects have finance and approvals. Anticipated ones are well advanced. Proposed ones are announced only, and many will not be built.</li>
-          <li>The official objectives count generation by annual output and storage by duration, so this page measures capacity as a guide. The storage bar includes batteries of any duration.</li>
+          <li>Targets. The Electricity Infrastructure Investment Act sets minimums of 12 GW of new renewable generation and 2 GW of long-duration storage by 2030, and 28 GWh of long-duration storage by 2034. In its 2025 Infrastructure Investment Objectives Report, the NSW Consumer Trustee (ASL, formerly AEMO Services) raised the targets to 16 GW and 42 GWh, warning that the minimums alone would push prices up as coal closes.</li>
+          <li>Long-duration storage is storage that can run at full power for at least 8 hours. The page works out each unit's hours from the capacity and energy AEMO reports. Snowy 2.0 is shown separately because it was already committed when the Roadmap began.</li>
+          <li>The official objectives count generation by annual output, so this page measures capacity as a guide.</li>
           <li>The Year column shows when an operating project first appeared as operating in an AEMO release. For other projects it shows the full commercial use year the developer reported, in italics. Many proposed projects have not reported one.</li>
+          <li>AEMO's file has no coordinates, so map locations come from the Open Electricity station register and are matched by AEMO unit code or site name. Some projects borrow the location of a nearby station of the same name and are marked approximate.</li>
           <li>AEMO's NSW region includes the ACT, so ACT projects such as the Capital Battery are counted here.</li>
           <li>The page checks AEMO every week and rebuilds itself when a new release appears.</li>
-          <li>Sources <a href="https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information">AEMO Generation Information</a>, <a href="https://www.netzerocommission.nsw.gov.au/">NSW Net Zero Commission 2026 Annual Progress Report</a> and <a href="https://www.energy.nsw.gov.au/nsw-plans-and-progress/major-state-projects/electricity-infrastructure-roadmap">NSW Electricity Infrastructure Roadmap</a>.</li>
+          <li>Sources <a href="https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information">AEMO Generation Information</a>, <a href="https://www.netzerocommission.nsw.gov.au/">NSW Net Zero Commission 2026 Annual Progress Report</a>, <a href="https://www.energy.nsw.gov.au/nsw-plans-and-progress/major-state-projects/electricity-infrastructure-roadmap">NSW Electricity Infrastructure Roadmap</a>, ASL's 2025 Infrastructure Investment Objectives Report and <a href="https://github.com/opennem/opennem">Open Electricity</a> for locations.</li>
         </ul>
       </section>
     </div>
@@ -273,19 +373,21 @@
   <script src="data/roadmap.js"></script>
   <script>
   (function () {
-    document.getElementById("year").textContent = new Date().getFullYear();
+    $("year").textContent = new Date().getFullYear();
+    function $(id) { return document.getElementById(id); }
     const R = window.ROADMAP, S = R.summary, T = R.targets;
-    const gw = mw => (mw / 1000).toLocaleString("en-AU", { maximumFractionDigits: 1 }) + " GW";
+    const gw = mw => (mw / 1000).toLocaleString("en-AU", { maximumFractionDigits: mw < 1000 && mw > 0 ? 2 : 1 }) + " GW";
+    const gwh = mwh => (mwh / 1000).toLocaleString("en-AU", { maximumFractionDigits: 1 }) + " GWh";
     const num = (n, d = 0) => n.toLocaleString("en-AU", { minimumFractionDigits: d, maximumFractionDigits: d });
     const sum = (st, techs) => techs.reduce((a, t) => a + (S[st][t] || 0), 0);
     const cv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
     const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-    const $ = id => document.getElementById(id);
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const YEAR = 365.25 * 864e5;
-    const upd = new Date(R.updated + "T00:00:00"), lastYr = Object.keys(R.by_year).sort().pop();
-    $("partial").textContent = +lastYr === upd.getFullYear() && upd.getMonth() > 0 ? lastYr + " covers the year to the end of " + new Date(upd.getFullYear(), upd.getMonth() - 1, 1).toLocaleDateString("en-GB", { month: "long" }) + "." : "";
-    $("asof").textContent = "Latest data from AEMO's " + new Date(R.updated).toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + " release.";
+    const TECH = { Wind: "wind", Solar: "solar", Battery: "battery", "Pumped hydro": "hydro", Coal: "coal" };
+    const icon = t => '<span class="ic sm ' + TECH[t] + '" aria-hidden="true"><svg><use href="#i-' + TECH[t] + '"/></svg></span>';
+    const startYr = R.baseline.slice(0, 4);
+    $("asof").textContent = "AEMO data · " + new Date(R.updated).toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + " release";
 
     // Key dates, in Sydney time
     const T2030 = new Date("2030-01-01T00:00:00+11:00"), T2035 = new Date("2035-01-01T00:00:00+11:00"), T0 = new Date(R.baseline + "T00:00:00+11:00");
@@ -296,8 +398,8 @@
     // Figures used across the page
     const op = sum("Operating", ["Wind", "Solar"]), co = sum("Committed", ["Wind", "Solar"]);
     const sop = sum("Operating", ["Battery", "Pumped hydro"]), sco = sum("Committed", ["Battery", "Pumped hydro"]);
-    const target = T.generation_min_gw * 1000, stoTarget = T.storage_min_gw * 1000;
-    const H = R.history, last = H[H.length - 1];
+    const target = T.generation_min_gw * 1000, ambition = T.generation_ambition_gw * 1000, stoTarget = T.storage_min_gw * 1000;
+    const L = R.lds, H = R.history, last = H[H.length - 1];
     const back = H.find(h => (new Date(last.date) - new Date(h.date)) / YEAR <= 2.01) || H[0];
     const yrsPast = (new Date(last.date) - new Date(back.date)) / YEAR;
     const pastRate = yrsPast > 0 ? (last.operating_gen_mw - back.operating_gen_mw) / yrsPast : 0;
@@ -305,14 +407,16 @@
     const yrsLeft = Math.max((T2030 - now0) / YEAR, 0.1);
     const need = Math.max(0, target - op) / yrsLeft;
     const arrive = pastRate > 0 ? new Date(new Date(last.date).getTime() + (target - op) / pastRate * YEAR) : null;
+    const used = Math.min(1, Math.max(0, (now0 - T0) / (T2030 - T0)));
+    const pct = v => Math.round(v) + "%";
 
-    // Live countdowns and the time-used meter, updated every second
+    // Live countdowns, updated every second
     const C = 2 * Math.PI * 52;
     const ring = (id, frac) => { const el = $(id); el.style.strokeDasharray = C; el.style.strokeDashoffset = C * (1 - Math.max(0, Math.min(frac, 1))); };
     const pad = n => String(n).padStart(2, "0");
     function clock(idDays, idHms, when, now) {
-      const ms = Math.max(0, when - now), d = Math.floor(ms / 864e5);
-      $(idDays).textContent = num(d);
+      const ms = Math.max(0, when - now);
+      $(idDays).textContent = num(Math.floor(ms / 864e5));
       $(idHms).innerHTML = pad(Math.floor(ms / 36e5) % 24) + "<em>h</em>" + pad(Math.floor(ms / 6e4) % 60) + "<em>m</em>" + pad(Math.floor(ms / 1e3) % 60) + "<em>s</em>";
     }
     function tick() {
@@ -320,62 +424,84 @@
       clock("d2030", "t2030", T2030, now);
       clock("d2035", "t2035", T2035, now);
       if (next) clock("dcoal", "tcoal", closeDate(next), now);
-      const used = Math.min(1, Math.max(0, (now - T0) / (T2030 - T0)));
-      const live = $("time-live");
-      if (live) live.textContent = (used * 100).toFixed(6) + "%";
-      return used;
     }
-    const used = tick();
+    tick();
     setInterval(tick, 1000);
 
-    // Rings and numbers fill in when they scroll into view
-    function countUp(el, to, fmt, done) {
-      if (calm) { el.textContent = fmt(to); if (done) done(); return; }
-      const t0 = performance.now(), dur = 1400;
-      (function step(t) {
-        const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-        el.textContent = fmt(to * e);
-        if (k < 1) requestAnimationFrame(step); else if (done) done();
-      })(t0);
+    // Progress cards
+    const genPct = op / target * 100, ldsOp = L.Operating.mw, ldsCo = L.Committed.mw, stoPct = ldsOp / stoTarget * 100;
+    ["r-gen", "r-com", "r-time", "r-sto", "r-sco"].forEach(id => ring(id, 0));
+    $("m-gen").innerHTML =
+      '<li><i class="s-op"></i>Built <b>' + gw(op) + "</b> of 12 GW</li>" +
+      '<li><i class="s-co"></i>With committed projects <b>' + pct((op + co) / target * 100) + "</b></li>" +
+      "<li>Against the 16 GW target set in 2025 <b>" + pct(op / ambition * 100) + "</b></li>";
+    $("m-time").innerHTML =
+      "<li>From January " + startYr + " to the end of 2029</li>" +
+      "<li><b>" + num(Math.ceil((T2030 - now0) / 864e5)) + " days</b> left</li>";
+    $("m-sto").innerHTML =
+      '<li><i class="s-op"></i>Built <b>' + gw(ldsOp) + "</b> of 2 GW</li>" +
+      '<li><i class="s-co"></i>With committed projects <b>' + pct((ldsOp + ldsCo) / stoTarget * 100) + "</b></li>" +
+      "<li>Not counting Snowy 2.0. Tap <b>i</b> to see why</li>";
+    $("p-gen").innerHTML =
+      "<p><b>" + pct(genPct) + "</b> is how far NSW has got towards the 12 GW of new wind and solar the law requires by 2030. It counts only projects that started running after January " + startYr + ".</p>" +
+      "<p>The lighter arc adds projects that are <b>committed</b>, with finance and approvals in place but not yet running.</p>" +
+      "<p>In 2025 the NSW Consumer Trustee raised the target to <b>16 GW</b>, warning that the 12 GW minimum alone would push prices up as coal closes.</p>";
+    $("p-sto").innerHTML =
+      "<p><b>Long-duration storage</b> can run at full power for " + R.lds_hours + " hours or more, long enough to cover an evening peak and a windless night. Pumped hydro and long batteries qualify.</p>" +
+      "<p><b>The 2 GW goal</b> is the legal minimum of long-duration storage NSW must have by 2030. The bar shows how much of that is running.</p>" +
+      "<p>Most new NSW batteries store about " + R.typical_battery_hours + " hours. They help the grid every day but don't count here. <b>Snowy 2.0</b> is left out because it was already committed before the Roadmap began.</p>";
+    document.querySelectorAll(".info").forEach(btn => {
+      const pop = $(btn.getAttribute("aria-controls"));
+      const set = open => { pop.hidden = !open; btn.setAttribute("aria-expanded", open); };
+      btn.addEventListener("click", e => { e.stopPropagation(); set(true); });
+      btn.addEventListener("mouseenter", () => set(true));
+      btn.closest(".meter").addEventListener("mouseleave", () => set(false));
+      btn.addEventListener("keydown", e => { if (e.key === "Escape") set(false); });
+      document.addEventListener("click", e => { if (!pop.contains(e.target)) set(false); });
+    });
+
+    // A plain-English verdict
+    function share(x) {
+      const parts = [[1 / 4, "a quarter"], [1 / 3, "a third"], [1 / 2, "half"], [2 / 3, "two-thirds"], [3 / 4, "three-quarters"], [1, "all"]];
+      const [v, w] = parts.reduce((b, p) => Math.abs(p[0] - x) < Math.abs(b[0] - x) ? p : b);
+      return (Math.abs(v - x) < 0.015 ? "about " : x < v ? "nearly " : "just over ") + w;
     }
-    const pct = v => Math.round(v) + "%";
-    const genPct = op / target * 100, stoPct = sop / stoTarget * 100;
-    ["r-gen", "r-com", "r-time", "r-sto"].forEach(id => ring(id, 0));
-    $("m-gen").innerHTML = "<b>" + gw(op) + "</b> of new wind and solar operating, of the " + T.generation_min_gw + " GW needed by 2030. With committed projects, <b>" + pct((op + co) / target * 100) + "</b>.";
-    $("m-time").innerHTML = '<b id="time-live">…</b> of the time from January ' + R.baseline.slice(0, 4) + " to the end of 2029 has passed, ticking up every second. <b>" + num(Math.ceil((T2030 - now0) / 864e5)) + " days</b> are left.";
-    tick();
-    $("m-sto").innerHTML = "<b>" + gw(sop) + "</b> of new storage operating against the " + T.storage_min_gw + " GW goal, counting batteries of any duration.";
-    const gap = Math.round(used * 100 - genPct);
-    $("verdict").innerHTML = gap > 0
-      ? "<b>" + pct(used * 100) + " of the time has gone, but only " + pct(genPct) + " of the wind and solar is built.</b> NSW is about " + gap + " points behind a straight line to the target."
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const ratio = pastRate > 0 ? need / pastRate : 0;
+    $("verdict").innerHTML = genPct / 100 < used
+      ? "<b>" + cap(share(used)) + " of the time to 2030 has gone, but " + (genPct < 50 ? "less than half" : share(genPct / 100)) + " of the wind and solar is built.</b> " +
+        (ratio > 1.05 ? "To reach 12 GW, NSW needs to connect new projects about " + num(ratio, 1) + " times as fast as it has over the past two years." : "")
       : "<b>New wind and solar is keeping pace with the calendar.</b> " + pct(genPct) + " is built with " + pct(used * 100) + " of the time gone.";
 
     // Gauges
-    function gauge(id, techs, marks, scaleMax) {
-      const parts = [["Operating", "s-op"], ["Committed", "s-co"], ["Anticipated", "s-an"], ["Proposed", "s-pr"]].map(([st, cls]) => ({ st, cls, mw: sum(st, techs) }));
-      const max = Math.max(scaleMax, (parts[0].mw + parts[1].mw + parts[2].mw) * 1.05);
+    function gauge(id, values, marks, scaleMax, fmt) {
+      const parts = [["Operating", "s-op"], ["Committed", "s-co"], ["Anticipated", "s-an"], ["Proposed", "s-pr"]].map(([st, cls]) => ({ st, cls, v: values(st) }));
+      const max = Math.max(scaleMax, (parts[0].v + parts[1].v + parts[2].v) * 1.05);
       const track = $(id + "-track");
       let left = 0;
       parts.forEach(p => {
-        const w = Math.min(p.mw / max * 100, 100 - left);
+        const w = Math.min(p.v / max * 100, 100 - left);
         if (w <= 0) return;
         const el = document.createElement("div");
-        el.className = "seg " + p.cls; el.style.left = left + "%"; el.dataset.w = w + "%"; el.title = p.st + " " + gw(p.mw);
+        el.className = "seg " + p.cls; el.style.left = left + "%"; el.dataset.w = w + "%"; el.title = p.st + " " + fmt(p.v);
         track.appendChild(el); left += w;
       });
       marks.forEach(m => {
-        const el = document.createElement("div"), pos = Math.min(m.mw / max * 100, 99.5);
-        el.className = "tmark" + (m.alt ? " alt" : "") + (pos > 80 ? " flip" : "");
+        const el = document.createElement("div"), pos = Math.min(m.v / max * 100, 99.5);
+        el.className = "tmark" + (m.alt ? " alt" : "") + (pos > 75 ? " flip" : "");
         el.style.left = pos + "%"; el.innerHTML = "<span>" + m.label + "</span>";
         track.appendChild(el);
       });
-      $(id + "-keys").innerHTML = parts.map(p => '<span><i class="' + p.cls + '"></i>' + p.st + " <b>" + gw(p.mw) + "</b></span>").join("");
-      return parts;
+      $(id + "-keys").innerHTML = parts.map(p => '<span><i class="' + p.cls + '"></i>' + p.st + " <b>" + fmt(p.v) + "</b></span>").join("");
     }
-    const g = gauge("gen", ["Wind", "Solar"], [{ mw: target, label: "12 GW" }, { mw: T.generation_ambition_gw * 1000, label: "16 GW", alt: true }], T.generation_ambition_gw * 1150);
-    const s = gauge("sto", ["Battery", "Pumped hydro"], [{ mw: stoTarget, label: "2 GW target" }], T.storage_min_gw * 1500);
-    $("gen-text").innerHTML = "<strong>" + gw(op) + "</strong> operating, " + pct(genPct) + " of the 12 GW target. With committed projects, " + gw(op + co) + ". The dashed line is the 16 GW goal.";
-    $("sto-text").innerHTML = "<strong>" + gw(sop) + "</strong> operating and " + gw(sco) + " committed. Most is batteries, which may not all count as long-duration.";
+    gauge("gen", st => sum(st, ["Wind", "Solar"]), [{ v: target, label: "12 GW legal minimum" }, { v: ambition, label: "16 GW target (2025)", alt: true }], ambition * 1.15, gw);
+    gauge("sto", st => L[st].mw, [{ v: stoTarget, label: "2 GW legal minimum" }], stoTarget * 1.5, gw);
+    gauge("gwh", st => L[st].mwh, [{ v: T.storage_min_gwh_2034 * 1000, label: "28 GWh minimum" }, { v: T.storage_ambition_gwh_2034 * 1000, label: "42 GWh target (2025)", alt: true }], T.storage_ambition_gwh_2034 * 1150, gwh);
+    $("gen-text").innerHTML = "<strong>" + gw(op) + "</strong> is running, " + pct(genPct) + " of the 12 GW legal minimum and " + pct(op / ambition * 100) + " of the 16 GW target set in 2025. Committed projects would take it to " + gw(op + co) + ".";
+    $("sto-text").innerHTML = "Only storage that can run at full power for " + R.lds_hours + " hours or more counts. <strong>" + gw(ldsOp) + "</strong> of it is running and " + gw(ldsCo) + " is committed. Another " + gw(L.Anticipated.mw) + " is well advanced.";
+    if (R.snowy) $("snowy").innerHTML = '<span class="ic hydro"><svg><use href="#i-hydro"/></svg></span><div><b>Snowy 2.0</b>, the biggest storage project in the country, adds ' + gw(R.snowy.mw) + " and about " + num(Math.round(R.snowy.mwh / 1000)) + " GWh when it opens" + (R.snowy.year ? ", expected in " + R.snowy.year : "") + ". It is shown apart from the bars because it was already committed when the Roadmap began in " + startYr + ".</div>";
+    else $("snowy").hidden = true;
+    $("sto-all").textContent = "Counting batteries of any length, " + gw(sop) + " of new storage is running and " + gw(sco) + " is committed. Most of it stores about " + R.typical_battery_hours + " hours.";
 
     // Pace needed against pace achieved
     $("pace").innerHTML =
@@ -383,8 +509,8 @@
       '<div class="got">Average over the last two years<b>' + gw(pastRate) + " a year</b>" + num(pastRate / 365.25, 1) + " MW every day</div>" +
       "<div>At that pace, 12 GW arrives in<b>" + (arrive ? arrive.toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "never") + "</b>" +
       (arrive && arrive > T2030 ? "about " + num((arrive - T2030) / YEAR, 1) + " years late" : "on time") + "</div>";
-    if (R.aemo_total) $("recon").textContent = "Why AEMO's file shows more: it lists " + gw(R.aemo_total.gen_mw) + " of wind and solar operating in NSW. " +
-      gw(R.aemo_total.gen_mw - op) + " of that was already running before the Roadmap began in January " + R.baseline.slice(0, 4) + ", so it does not count towards the target.";
+    if (R.aemo_total) $("recon").textContent = "Why AEMO's file shows more: it lists " + gw(R.aemo_total.gen_mw) + " of wind and solar running in NSW. " +
+      gw(R.aemo_total.gen_mw - op) + " of that was already running before the Roadmap began in January " + startYr + ", so it does not count towards the target.";
 
     // Coal
     const coalTotal = R.coal.reduce((a, c) => a + c.mw, 0);
@@ -398,7 +524,7 @@
     const xpos = d => Math.max(0, Math.min(100, (d - start) / (end - start) * 100));
     const owner = o => String(o || "").replace(/\s+(Pty\.?\s*)?(Ltd|Limited)\.?$/i, "").replace(/\s+Pty$/i, "");
     $("coal").innerHTML = R.coal.map((c, i) =>
-      '<div class="coal-row" tabindex="0" role="button" aria-expanded="false" data-i="' + i + '"><span>' + esc(c.name) + ' <span class="text-body-secondary small">' + gw(c.mw) + '</span></span>' +
+      '<div class="coal-row" tabindex="0" role="button" aria-expanded="false" data-i="' + i + '"><span>' + icon("Coal") + esc(c.name) + ' <span class="text-body-secondary small gwv">' + gw(c.mw) + '</span></span>' +
       '<div class="bar"><span data-w="' + Math.max(1.5, xpos(closeDate(c))) + '%"></span><i class="y30" style="left:' + xpos(T2030) + '%"></i></div><span class="yr">' + (c.year || "") + "</span></div>").join("") +
       '<div class="coal-axis"><span></span><div>' + [start.getFullYear() + 1, 2030, 2035, 2040].filter(y => y > start.getFullYear() && y < end.getFullYear() + 1)
         .map(y => '<span class="' + (y === 2030 ? "t30" : "") + '" style="left:' + xpos(new Date(y + "-01-01")) + '%">' + y + "</span>").join("") + "</div><span></span></div>";
@@ -416,8 +542,7 @@
         (NOTES[c.name] ? "<p>" + esc(NOTES[c.name]) + "</p>" : "");
       document.querySelectorAll(".coal-row").forEach(r => { r.classList.toggle("on", r === row); r.setAttribute("aria-expanded", r === row); });
       const wr = wrap.getBoundingClientRect(), rr = row.getBoundingClientRect(), bar = row.querySelector(".bar").getBoundingClientRect();
-      const left = Math.max(0, Math.min(bar.left - wr.left + 8, wr.width - tip.offsetWidth));
-      tip.style.left = left + "px";
+      tip.style.left = Math.max(0, Math.min(bar.left - wr.left + 8, wr.width - tip.offsetWidth)) + "px";
       tip.style.top = (rr.bottom - wr.top + 6) + "px";
       tip.classList.add("show");
     }
@@ -442,14 +567,66 @@
     $("coal35").textContent = gw(by35.reduce((a, c) => a + c.mw, 0));
     $("coal35-text").textContent = "of coal is due to close by 2035, at " + by35.map(c => c.name).join(", ").replace(/, ([^,]*)$/, " and $1") + ".";
 
+    // Map
+    const oldLabel = "Before " + startYr;
+    const MAP_ST = ["Operating", "Committed", "Anticipated", "Proposed", oldLabel, "Coal"];
+    const mapPts = (R.points || []).concat(R.coal.filter(c => c.ll).map(c => ({ n: c.name, t: "Coal", s: "Coal", mw: c.mw, ll: c.ll, y: c.year })));
+    const shownSt = new Set(["Operating", "Committed", "Anticipated", "Coal"]);
+    const stCount = s => mapPts.filter(p => p.s === s).length;
+    $("map-chips").innerHTML = MAP_ST.filter(stCount).map(s => '<button class="chip" type="button" data-s="' + esc(s) + '" aria-pressed="' + shownSt.has(s) + '">' + esc(s === "Coal" ? "Coal stations" : s === oldLabel ? "Running before " + startYr : s) + " <span>" + stCount(s) + "</span></button>").join("");
+    document.querySelectorAll("#map-chips .chip").forEach(b => b.addEventListener("click", () => {
+      const s = b.dataset.s; shownSt.has(s) ? shownSt.delete(s) : shownSt.add(s);
+      b.setAttribute("aria-pressed", shownSt.has(s)); drawMap();
+    }));
+    $("map-keys").innerHTML = ["Wind", "Solar", "Battery", "Pumped hydro", "Coal"].map(t => '<span><i class="dot" style="background:var(--c-' + TECH[t] + ')"></i>' + t + "</span>").join("") + "<span>Larger circles are bigger projects. Faded circles were running before " + startYr + ".</span>";
+    if (R.map_cover) {
+      const mc = R.map_cover;
+      $("map-cover").textContent = "AEMO doesn't publish locations, so the map shows the projects that can be placed: " + mc.Operating[0] + " of " + mc.Operating[1] + " new operating projects, " +
+        (mc.Committed[0] + mc.Anticipated[0]) + " of " + (mc.Committed[1] + mc.Anticipated[1]) + " committed and anticipated, and " + mc.Proposed[0] + " of " + mc.Proposed[1] + " proposed. Use the table below for the full list.";
+    }
+    let mapReady = false;
+    function drawMap() {
+      if (typeof Plotly === "undefined") return;
+      const dark = document.documentElement.getAttribute("data-theme") === "dark", ink = cv("--chart-text"), bg = cv("--chart-bg");
+      const pts = mapPts.filter(p => shownSt.has(p.s));
+      const maxMw = Math.max(...mapPts.map(p => p.mw));
+      const traces = ["Coal", "Wind", "Solar", "Battery", "Pumped hydro"].map(t => {
+        const g = pts.filter(p => p.t === t);
+        return {
+          type: "scattermapbox", mode: "markers", name: t,
+          lat: g.map(p => p.ll[0]), lon: g.map(p => p.ll[1]),
+          marker: { size: g.map(p => 7 + 26 * Math.sqrt(p.mw / maxMw)), color: cv("--c-" + TECH[t]), opacity: g.map(p => p.s === oldLabel ? 0.35 : p.s === "Proposed" ? 0.6 : 0.88) },
+          customdata: g.map(p => [esc(p.n), p.s === "Coal" ? "Closing " + (p.y || "") : p.s, num(p.mw), p.a ? "<br><i>Approximate location</i>" : ""]),
+          hovertemplate: "<b>%{customdata[0]}</b><br>" + t + " · %{customdata[1]}<br>%{customdata[2]} MW%{customdata[3]}<extra></extra>"
+        };
+      });
+      const wide = $("map").clientWidth > 700;
+      Plotly.react("map", traces, {
+        margin: { l: 0, r: 0, t: 0, b: 0 }, paper_bgcolor: bg, showlegend: false,
+        font: { family: getComputedStyle(document.body).fontFamily, color: ink },
+        hoverlabel: { bgcolor: bg, bordercolor: cv("--chart-grid"), font: { color: ink } },
+        mapbox: { style: dark ? "carto-darkmatter" : "carto-positron", center: { lat: -33.1, lon: 147.6 }, zoom: wide ? 4.9 : 4.2 }
+      }, { displayModeBar: false, responsive: true, scrollZoom: false });
+      mapReady = true;
+    }
+
     // Animate things in as they reach the screen
     function fill(el) {
       el.querySelectorAll("[data-w]").forEach(x => { x.style.width = x.dataset.w; });
       if (el.classList.contains("dash")) {
-        ring("r-com", (op + co) / target); ring("r-gen", op / target); ring("r-time", used); ring("r-sto", sop / stoTarget);
-        countUp($("v-gen"), genPct, pct); countUp($("v-sto"), stoPct, pct);
-        countUp($("v-time"), used * 100, pct);
+        ring("r-com", (op + co) / target); ring("r-gen", op / target); ring("r-time", used);
+        ring("r-sco", (ldsOp + ldsCo) / stoTarget); ring("r-sto", ldsOp / stoTarget);
+        countUp($("v-gen"), genPct); countUp($("v-time"), used * 100); countUp($("v-sto"), stoPct);
       }
+    }
+    function countUp(el, to) {
+      if (calm) { el.textContent = pct(to); return; }
+      const t0 = performance.now(), dur = 1400;
+      (function step(t) {
+        const k = Math.min(1, (t - t0) / dur);
+        el.textContent = pct(to * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(step);
+      })(t0);
     }
     const items = document.querySelectorAll(".reveal");
     if ("IntersectionObserver" in window && !calm) {
@@ -459,48 +636,71 @@
 
     // Charts, drawn again when the theme changes
     function draw() {
+      if (typeof Plotly === "undefined") return;
       const ink = cv("--chart-text"), grid = cv("--chart-grid"), bg = cv("--chart-bg"), muted = cv("--muted"), time = cv("--time");
       const base = () => ({ margin: { l: 50, r: 10, t: 10, b: 40 }, font: { family: getComputedStyle(document.body).fontFamily, color: ink, size: 12 },
         paper_bgcolor: bg, plot_bgcolor: bg, legend: { orientation: "h", y: -0.2 }, xaxis: { showgrid: false },
         yaxis: { gridcolor: grid, title: { text: "MW" }, rangemode: "tozero" }, hoverlabel: { align: "left", bgcolor: bg, bordercolor: grid, font: { color: ink } } });
       const cfg = { displayModeBar: false, responsive: true };
-      const dark = document.documentElement.getAttribute("data-theme") === "dark";
-      const colours = { Wind: dark ? "#A9C1EE" : "#1F3D73", Solar: "#D3A33A", Battery: dark ? "#6D88BC" : "#6E86B3", "Pumped hydro": "#8FB3A2" };
       const years = Object.keys(R.by_year).filter(y => +y >= 2021).sort();
       const names = (y, t) => {
         const l = (R.by_year_names[y] || {})[t] || [];
         return l.slice(0, 10).map(esc).join("<br>") + (l.length > 10 ? "<br>and " + (l.length - 10) + " more" : "");
       };
       Plotly.react("c-year", ["Wind", "Solar", "Battery", "Pumped hydro"].map(t => ({
-        type: "bar", name: t, x: years, y: years.map(y => R.by_year[y][t] || 0), marker: { color: colours[t], line: { color: bg, width: 1 } },
+        type: "bar", name: t, x: years, y: years.map(y => R.by_year[y][t] || 0), marker: { color: cv("--c-" + TECH[t]), line: { color: bg, width: 1.5 } },
         customdata: years.map(y => names(y, t)),
         hovertemplate: "<b>" + t + " %{x}, %{y:,.0f} MW</b><br>%{customdata}<extra></extra>" })), { ...base(), barmode: "stack", hovermode: "closest" }, cfg);
       if (H.length > 1) {
         const x = H.map(h => h.date), end = "2030-01-01", gone = Math.max(0, (T2030 - new Date(last.date)) / YEAR);
         Plotly.react("c-hist", [
-          { x, y: H.map(h => h.operating_gen_mw), name: "Operating", mode: "lines+markers", line: { color: colours.Wind, width: 2.5 }, marker: { size: 8 }, hovertemplate: "%{y:,.0f} MW operating<extra></extra>" },
-          { x, y: H.map(h => h.operating_gen_mw + h.committed_gen_mw), name: "Operating and committed", mode: "lines+markers", line: { color: colours.Battery, width: 2, dash: "dot" }, marker: { size: 8 }, hovertemplate: "%{y:,.0f} MW with committed<extra></extra>" },
+          { x, y: H.map(h => h.operating_gen_mw), name: "Operating", mode: "lines+markers", line: { color: cv("--seg-op"), width: 2.5 }, marker: { size: 8 }, hovertemplate: "%{y:,.0f} MW operating<extra></extra>" },
+          { x, y: H.map(h => h.operating_gen_mw + h.committed_gen_mw), name: "Operating and committed", mode: "lines+markers", line: { color: cv("--seg-co"), width: 2, dash: "dot" }, marker: { size: 8 }, hovertemplate: "%{y:,.0f} MW with committed<extra></extra>" },
           { x: [last.date, end], y: [last.operating_gen_mw, target], name: "Pace needed", mode: "lines", line: { color: time, width: 2, dash: "dash" }, hovertemplate: "%{y:,.0f} MW on the path needed<extra></extra>" },
           { x: [last.date, end], y: [last.operating_gen_mw, last.operating_gen_mw + pastRate * gone], name: "Pace of last two years", mode: "lines", line: { color: muted, width: 2, dash: "dash" }, hovertemplate: "%{y:,.0f} MW at the recent pace<extra></extra>" }
         ], { ...base(), hovermode: "x unified", shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: target, y1: target, line: { color: ink, width: 1 } }],
-             annotations: [{ xref: "paper", x: 0, y: target, text: "12 GW target", showarrow: false, yshift: 10, xanchor: "left", font: { size: 11, color: ink } }] }, cfg);
+             annotations: [{ xref: "paper", x: 0, y: target, text: "12 GW minimum", showarrow: false, yshift: 10, xanchor: "left", font: { size: 11, color: ink } }] }, cfg);
       } else $("history-wrap").hidden = true;
+      drawMap();
     }
     draw();
     window.onThemeChange = draw;
 
     // Project explorer
-    const q = $("f-q"), fs = $("f-status"), ft = $("f-tech");
+    const q = $("f-q");
     const swatch = { Operating: "s-op", Committed: "s-co", Anticipated: "s-an", Proposed: "s-pr" };
     const order = { Operating: 0, Committed: 1, Anticipated: 2, Proposed: 3 };
     let shown = 25, sortK = "mw", sortDir = -1, list = [];
+    function multi(id, options) {
+      const box = $(id), sel = new Set();
+      const count = o => R.projects.filter(p => p[id === "f-status" ? "status" : "tech"] === o).length;
+      box.innerHTML = '<button class="form-select" type="button" aria-haspopup="true" aria-expanded="false"></button><div class="ms-menu" hidden>' +
+        options.map(o => '<label><input type="checkbox" value="' + esc(o) + '">' + (TECH[o] ? icon(o) : '<i class="sw ' + swatch[o] + '" style="display:inline-block;width:10px;height:10px;border-radius:2px"></i>') + esc(o) + '<span class="n">' + count(o) + "</span></label>").join("") +
+        '<div class="act"><button type="button" data-a="all">Select all</button><button type="button" data-a="none">Clear</button></div></div>';
+      const btn = box.querySelector("button"), menu = box.querySelector(".ms-menu");
+      const label = () => { btn.textContent = !sel.size || sel.size === options.length ? box.dataset.all : sel.size <= 2 ? [...sel].join(", ") : sel.size + " " + box.dataset.one; };
+      const open = o => { menu.hidden = !o; btn.setAttribute("aria-expanded", o); };
+      btn.addEventListener("click", e => { e.stopPropagation(); open(menu.hidden); });
+      menu.addEventListener("click", e => e.stopPropagation());
+      menu.addEventListener("change", e => { e.target.checked ? sel.add(e.target.value) : sel.delete(e.target.value); label(); shown = 25; render(); });
+      menu.querySelectorAll(".act button").forEach(b => b.addEventListener("click", () => {
+        menu.querySelectorAll("input").forEach(i => { i.checked = b.dataset.a === "all"; i.checked ? sel.add(i.value) : sel.delete(i.value); });
+        label(); shown = 25; render();
+      }));
+      document.addEventListener("click", () => open(false));
+      box.addEventListener("keydown", e => { if (e.key === "Escape") { open(false); btn.focus(); } });
+      label();
+      return sel;
+    }
+    const fs = multi("f-status", ["Operating", "Committed", "Anticipated", "Proposed"]);
+    const ft = multi("f-tech", ["Wind", "Solar", "Battery", "Pumped hydro"]);
     if (R.counts) {
       const k = R.counts;
       $("why").innerHTML = "<summary>Why " + num(k.projects) + " projects when AEMO's file has " + num(k.rows) + " NSW rows?</summary><ol>" +
         "<li>NSW rows in AEMO's file</li><li>" + num(k.rows) + "</li>" +
         "<li>Coal, gas, conventional hydro and other</li><li>−" + num(k.other_tech) + "</li>" +
         "<li>Withdrawn or with no capacity</li><li>−" + num(k.dropped) + "</li>" +
-        "<li>Already running before January " + R.baseline.slice(0, 4) + "</li><li>−" + num(k.pre_roadmap) + "</li>" +
+        "<li>Already running before January " + startYr + "</li><li>−" + num(k.pre_roadmap) + "</li>" +
         "<li>New units</li><li>" + num(k.units) + "</li>" +
         '<li class="tot">Projects, after combining units at the same site</li><li class="tot">' + num(k.projects) + "</li></ol>";
     } else $("why").hidden = true;
@@ -513,11 +713,11 @@
     }
     function render() {
       const term = q.value.trim().toLowerCase();
-      list = R.projects.filter(p => (!term || p.name.toLowerCase().includes(term)) && (!fs.value || p.status === fs.value) && (!ft.value || p.tech === ft.value)).sort(cmp);
+      list = R.projects.filter(p => (!term || p.name.toLowerCase().includes(term)) && (!fs.size || fs.has(p.status)) && (!ft.size || ft.has(p.tech))).sort(cmp);
       const total = list.reduce((a, p) => a + p.mw, 0);
       $("count").textContent = num(list.length) + " projects, " + gw(total) + " in total";
       $("rows").innerHTML = list.slice(0, shown).map(p =>
-        "<tr><td>" + esc(p.name) + "</td><td>" + p.tech + '</td><td><i class="sw ' + swatch[p.status] + '"></i>' + p.status + '</td><td class="hide-sm">' +
+        "<tr><td>" + esc(p.name) + "</td><td>" + icon(p.tech) + p.tech + (p.h ? ' <span class="hrs">· ' + num(p.h, p.h < 10 ? 1 : 0) + " h</span>" : "") + '</td><td><i class="sw ' + swatch[p.status] + '"></i>' + p.status + '</td><td class="hide-sm">' +
         (p.year ? (p.status === "Operating" ? p.year : '<span class="exp">' + p.year + "</span>") : "") + '</td><td class="text-end">' + p.mw.toLocaleString("en-AU") + "</td></tr>").join("") ||
         '<tr><td colspan="5">No projects match. Try a different name or filter.</td></tr>';
       $("more").hidden = list.length <= shown;
@@ -531,16 +731,19 @@
     }));
     $("csv").addEventListener("click", () => {
       const cell = v => /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : v;
-      const rows = [["Project", "Type", "Status", "Year", "Year basis", "MW"]].concat(list.map(p =>
-        [p.name, p.tech, p.status, p.year || "", p.year ? (p.status === "Operating" ? "First operating" : "Expected") : "", p.mw]));
+      const rows = [["Project", "Type", "Status", "Year", "Year basis", "MW", "Storage hours"]].concat(list.map(p =>
+        [p.name, p.tech, p.status, p.year || "", p.year ? (p.status === "Operating" ? "First operating" : "Expected") : "", p.mw, p.h || ""]));
       const url = URL.createObjectURL(new Blob([rows.map(r => r.map(cell).join(",")).join("\n")], { type: "text/csv" }));
       const a = document.createElement("a");
       a.href = url; a.download = "nsw-roadmap-projects-" + R.updated.slice(0, 7) + ".csv";
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     });
-    [q, fs, ft].forEach(el => el.addEventListener("input", () => { shown = 25; render(); }));
+    q.addEventListener("input", () => { shown = 25; render(); });
     $("more").addEventListener("click", () => { shown += 50; render(); });
     render();
+
+    const upd = new Date(R.updated + "T00:00:00"), lastYr = Object.keys(R.by_year).sort().pop();
+    $("partial").textContent = +lastYr === upd.getFullYear() && upd.getMonth() > 0 ? lastYr + " covers the year to the end of " + new Date(upd.getFullYear(), upd.getMonth() - 1, 1).toLocaleDateString("en-GB", { month: "long" }) + "." : "";
   })();
   </script>
   <script src="js/theme.js"></script>
