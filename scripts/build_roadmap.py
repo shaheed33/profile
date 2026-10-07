@@ -24,7 +24,6 @@ TARGETS = {
     "storage_min_gwh_2034": 28, "storage_ambition_gwh_2034": 42,
 }
 
-# (old column finder kept for reference, not used)
 # Column finders: first header containing any of these words (lower case) wins
 COLS = {
     "region":   ["region"],
@@ -90,7 +89,9 @@ def load(path, inspect=False):
     closure = next((c for c in ["Expected Closure Year"] if c in df.columns), None)
     coal = df[df["Region"].astype(str).str.strip().str.upper().str.startswith("NSW") &
               (df[lay["tech"][0]].astype(str) + " " + df[lay["tech"][1]].astype(str)).str.lower().str.contains("coal")]
+    owner = next((c for c in ["Site Owner", "Owner"] if c in df.columns), None)
     coal = pd.DataFrame({"name": coal["Site Name"].astype(str).str.strip(),
+                         "owner": coal[owner].astype(str).str.strip() if owner else "",
                          "mw": pd.to_numeric(coal[mwcol], errors="coerce"),
                          "year": pd.to_numeric(coal[closure], errors="coerce") if closure else float("nan"),
                          "status": coal[lay["status"]].astype(str),
@@ -103,6 +104,7 @@ def load(path, inspect=False):
         "tech": (df[lay["tech"][0]].astype(str) + " " + df[lay["tech"][1]].astype(str)).map(tech_of),
         "status": df[lay["status"]].map(status_of),
         "mw": pd.to_numeric(df[mwcol], errors="coerce"),
+        "fcu": pd.to_datetime(df["Full Commercial Use Date"], errors="coerce", format="mixed").dt.year if "Full Commercial Use Date" in df.columns else float("nan"),
     })
     out = out[out.region.str.startswith("NSW") & out.tech.notna() & out.status.notna() & (out.mw > 0)].copy()
     out.attrs["coal"] = coal
@@ -136,7 +138,9 @@ def main():
     base_keys = set(base[base.status == "Operating"].key)
     base_sites = set(norm(n) for n in base[base.status == "Operating"].name)
     def is_new(df):
-        old = df.key.isin(base_keys) | (df.key.str.startswith("site:") & df.name.map(norm).isin(base_sites))
+        # Units without a DUID are matched on site name, but only when operating, so a new stage
+        # at an old site (such as a proposed extension) still counts as new
+        old = df.key.isin(base_keys) | ((df.status == "Operating") & df.key.str.startswith("site:") & df.name.map(norm).isin(base_sites))
         return ~old
 
     history, first_seen = [], {}
@@ -153,6 +157,9 @@ def main():
         if inspect: print(f"{d}: new operating wind+solar {history[-1]['operating_gen_mw']} MW, storage {history[-1]['operating_storage_mw']} MW")
 
     latest_date, latest = frames[-1]
+    every = latest[latest.status == "Operating"]
+    aemo_total = {"gen_mw": int(round(every[every.tech.isin(["Wind", "Solar"])].mw.sum())),
+                  "storage_mw": int(round(every[every.tech.isin(["Battery", "Pumped hydro"])].mw.sum()))}
     latest = latest[is_new(latest) & (latest.status != "Closing")].copy()
     op = latest[latest.status == "Operating"].copy()
     op["year"] = op.key.map(lambda k: first_seen.get(k, latest_date).year)
@@ -162,21 +169,25 @@ def main():
         sites = g.groupby("name").mw.sum().sort_values(ascending=False)
         by_year_names.setdefault(int(y), {})[t] = [f"{n} ({int(round(m))} MW)" for n, m in sites.items()]
 
-    # Combine units into sites for the project table
-    latest["year"] = latest.key.map(lambda k: first_seen[k].year if k in first_seen else None)
+    # Combine units into sites for the project table. Operating sites show the year they first
+    # appeared as operating, the rest show AEMO's expected full commercial use year.
+    latest["year"] = [first_seen[k].year if s == "Operating" and k in first_seen else f
+                      for k, s, f in zip(latest.key, latest.status, latest.fcu)]
     sites = (latest.groupby(["name", "tech", "status"], as_index=False)
              .agg(mw=("mw", "sum"), year=("year", "min")).sort_values("mw", ascending=False))
     projects = [{"name": r.name, "tech": r.tech, "status": r.status, "mw": int(round(r.mw)),
-                 "year": int(r.year) if pd.notna(r.year) else None} for r in sites.itertuples()]
+                 "year": int(r.year) if pd.notna(r.year) else None} for r in sites.itertuples() if r.mw >= 0.5]
     operating_sites = [p for p in projects if p["status"] == "Operating"]
     coal = frames[-1][1].attrs["coal"]
-    coal = (coal.groupby("name", as_index=False).agg(mw=("mw", "sum"), year=("year", "max"), date=("date", "max"))
+    coal = (coal.groupby("name", as_index=False).agg(mw=("mw", "sum"), year=("year", "max"), date=("date", "max"),
+                                                    owner=("owner", "first"), units=("mw", "size"))
             .sort_values("year"))
-    coal = [{"name": r.name, "mw": int(round(r.mw)), "year": int(r.year) if pd.notna(r.year) else None,
+    coal = [{"name": r.name, "owner": r.owner, "units": int(r.units), "mw": int(round(r.mw)),
+             "year": int(r.year) if pd.notna(r.year) else None,
              "date": r.date.strftime("%Y-%m-%d") if pd.notna(r.date) else None} for r in coal.itertuples()]
 
     data = {"updated": latest_date.isoformat(), "source_file": os.path.basename(files[-1]),
-            "baseline": frames[0][0].isoformat(), "targets": TARGETS, "summary": summarise(latest),
+            "baseline": frames[0][0].isoformat(), "targets": TARGETS, "aemo_total": aemo_total, "summary": summarise(latest),
             "by_year": by_year, "by_year_names": by_year_names, "history": history,
             "projects": projects, "coal": coal}
     s = data["summary"]
