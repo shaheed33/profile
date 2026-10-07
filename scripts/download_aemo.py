@@ -3,9 +3,12 @@ download_aemo.py
 Downloads AEMO's NEM Generation Information workbooks into the raw folder,
 named so build_roadmap.py can read the date from each file name.
 
-Usage (from the site folder):  python scripts/download_aemo.py
+Usage (from the site folder):
+  python scripts/download_aemo.py           downloads the fixed list below
+  python scripts/download_aemo.py --latest  checks AEMO's page and downloads the newest release if it is new
+                                            (prints NEW or NO CHANGE, used by the GitHub workflow)
 """
-import os, time, urllib.request
+import os, re, sys, time, urllib.request
 
 BASE = "https://www.aemo.com.au/-/media/files/electricity/nem/planning_and_forecasting/generation_information/"
 
@@ -30,7 +33,41 @@ HEADERS = {
     "Accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*",
 }
 
+PAGE = "https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information"
+MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+
+def fetch(url):
+    req = urllib.request.Request(url, headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return r.read()
+
+def latest():
+    html = fetch(PAGE).decode("utf-8", "ignore")
+    links = set(re.findall(r'(/-/media/files/electricity/nem/planning_and_forecasting/generation_information/20\d\d/nem-generation-information-[^"?<> ]+\.xlsx)', html))
+    found = []
+    for link in links:
+        m = re.search(r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*-(20\d\d)\.xlsx$", link)
+        if m: found.append((int(m.group(2)), MONTHS.index(m.group(1)) + 1, link))
+    if not found:
+        raise SystemExit("No Generation Information files found on AEMO's page. The page layout may have changed.")
+    year, month, link = max(found)
+    label = f"{MONTHS[month - 1].title()} {year}"
+    out = os.path.join("raw", f"NEM Generation Information {label}.xlsx")
+    have = {re.sub(r"[_ ]", "", f.lower()) for f in os.listdir("raw")} if os.path.isdir("raw") else set()
+    if re.sub(r"[_ ]", "", os.path.basename(out).lower()) in have:
+        print(f"NO CHANGE  newest release is still {label}")
+        return
+    os.makedirs("raw", exist_ok=True)
+    data = fetch("https://www.aemo.com.au" + link)
+    if not data.startswith(b"PK"):
+        raise SystemExit("AEMO returned something that is not an Excel file.")
+    with open(out, "wb") as fh:
+        fh.write(data)
+    print(f"NEW  saved {label}")
+
 def main():
+    if "--latest" in sys.argv:
+        return latest()
     os.makedirs("raw", exist_ok=True)
     failed = []
     for label, path in FILES.items():

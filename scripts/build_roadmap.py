@@ -87,6 +87,15 @@ def load(path, inspect=False):
     missing = [c for c in need if c not in df.columns]
     if inspect: print("Missing columns:", missing or "none")
     if missing: raise SystemExit(f"{path}: missing {missing}. Send me the output above.")
+    closure = next((c for c in ["Expected Closure Year"] if c in df.columns), None)
+    coal = df[df["Region"].astype(str).str.strip().str.upper().str.startswith("NSW") &
+              (df[lay["tech"][0]].astype(str) + " " + df[lay["tech"][1]].astype(str)).str.lower().str.contains("coal")]
+    coal = pd.DataFrame({"name": coal["Site Name"].astype(str).str.strip(),
+                         "mw": pd.to_numeric(coal[mwcol], errors="coerce"),
+                         "year": pd.to_numeric(coal[closure], errors="coerce") if closure else float("nan"),
+                         "status": coal[lay["status"]].astype(str),
+                         "date": pd.to_datetime(coal["Closure Date"], errors="coerce") if "Closure Date" in coal.columns else pd.NaT})
+    coal = coal[~coal.status.str.lower().str.contains("withdrawn")]
     out = pd.DataFrame({
         "region": df["Region"].astype(str).str.strip().str.upper(),
         "name": df["Site Name"].astype(str).str.strip(),
@@ -96,6 +105,7 @@ def load(path, inspect=False):
         "mw": pd.to_numeric(df[mwcol], errors="coerce"),
     })
     out = out[out.region.str.startswith("NSW") & out.tech.notna() & out.status.notna() & (out.mw > 0)].copy()
+    out.attrs["coal"] = coal
     out["key"] = [d if d not in ("", "NAN") else "site:" + norm(n) + ":" + t for d, n, t in zip(out.duid, out.name, out.tech)]
     if inspect:
         print("Rows kept (NSW wind, solar, battery, pumped hydro):", len(out))
@@ -146,23 +156,34 @@ def main():
     latest = latest[is_new(latest) & (latest.status != "Closing")].copy()
     op = latest[latest.status == "Operating"].copy()
     op["year"] = op.key.map(lambda k: first_seen.get(k, latest_date).year)
-    by_year = op.groupby(["year", "tech"]).mw.sum().round().unstack(fill_value=0)
-    by_year = {int(y): {t: int(row.get(t, 0)) for t in TECHS} for y, row in by_year.iterrows()}
+    by_year, by_year_names = {}, {}
+    for (y, t), g in op.groupby(["year", "tech"]):
+        by_year.setdefault(int(y), {x: 0 for x in TECHS})[t] = int(round(g.mw.sum()))
+        sites = g.groupby("name").mw.sum().sort_values(ascending=False)
+        by_year_names.setdefault(int(y), {})[t] = [f"{n} ({int(round(m))} MW)" for n, m in sites.items()]
 
     # Combine units into sites for the project table
-    sites = (latest.groupby(["name", "tech", "status"], as_index=False).mw.sum()
-             .sort_values("mw", ascending=False))
-    projects = [{"name": r.name, "tech": r.tech, "status": r.status, "mw": int(round(r.mw))} for r in sites.head(400).itertuples()]
-    operating_sites = [{"name": r.name, "tech": r.tech, "mw": int(round(r.mw))}
-                       for r in sites[sites.status == "Operating"].itertuples()]
+    latest["year"] = latest.key.map(lambda k: first_seen[k].year if k in first_seen else None)
+    sites = (latest.groupby(["name", "tech", "status"], as_index=False)
+             .agg(mw=("mw", "sum"), year=("year", "min")).sort_values("mw", ascending=False))
+    projects = [{"name": r.name, "tech": r.tech, "status": r.status, "mw": int(round(r.mw)),
+                 "year": int(r.year) if pd.notna(r.year) else None} for r in sites.itertuples()]
+    operating_sites = [p for p in projects if p["status"] == "Operating"]
+    coal = frames[-1][1].attrs["coal"]
+    coal = (coal.groupby("name", as_index=False).agg(mw=("mw", "sum"), year=("year", "max"), date=("date", "max"))
+            .sort_values("year"))
+    coal = [{"name": r.name, "mw": int(round(r.mw)), "year": int(r.year) if pd.notna(r.year) else None,
+             "date": r.date.strftime("%Y-%m-%d") if pd.notna(r.date) else None} for r in coal.itertuples()]
 
     data = {"updated": latest_date.isoformat(), "source_file": os.path.basename(files[-1]),
             "baseline": frames[0][0].isoformat(), "targets": TARGETS, "summary": summarise(latest),
-            "by_year": by_year, "history": history, "projects": projects, "operating": operating_sites}
+            "by_year": by_year, "by_year_names": by_year_names, "history": history,
+            "projects": projects, "coal": coal}
     s = data["summary"]
     print(f"\nLatest release {latest_date}. New since {data['baseline']}:")
     for st in s: print(f"  {st:11s} " + ", ".join(f"{t} {v:,} MW" for t, v in s[st].items()))
     if inspect:
+        print("\nCoal:", coal)
         print("\nLargest new operating sites:")
         for p in operating_sites[:15]: print(f"  {p['name']} ({p['tech']}) {p['mw']} MW")
         print("\nLooks fine? Run again without --inspect to write", OUT); return
