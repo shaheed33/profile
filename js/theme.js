@@ -1,5 +1,12 @@
 (function () {
   var root = document.documentElement;
+  // A soft shadow under the pinned header once the page has scrolled
+  var hdr = document.querySelector(".site-header");
+  if (hdr) {
+    var onScroll = function () { hdr.classList.toggle("scrolled", window.scrollY > 4); };
+    window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+    root.style.setProperty("--hdr-h", hdr.offsetHeight + "px");
+  }
   var btn = document.querySelector(".theme-toggle");
   function label() {
     if (!btn) return;

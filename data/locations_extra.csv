@@ -1,3 +1,0 @@
-# Coordinates for projects the map cannot place. One row per site, using the site name exactly as AEMO writes it.
-# Rebuild with: python scripts/build_roadmap.py
-site,latitude,longitude

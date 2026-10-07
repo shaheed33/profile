@@ -15,8 +15,6 @@ import pandas as pd
 
 RAW = "raw"
 OUT = "data/roadmap.js"
-LOCATIONS = "data/locations.json"        # station coordinates from Open Electricity, keyed by DUID and site name
-LOCATIONS_EXTRA = "data/locations_extra.csv"  # add your own: site name, latitude, longitude
 LDS_HOURS = 8                            # long-duration storage runs at full power for at least this long
 ROADMAP_START = pd.Timestamp("2021-01-01")   # Electricity Infrastructure Investment Act passed Dec 2020
 SHEET_HINT = "ExistingGeneration"
@@ -111,7 +109,6 @@ def load(path, inspect=False):
                if any("storage capacity (mwh)" in c.lower() for c in df.columns) else float("nan"),
         "fcu": pd.to_datetime(df["Full Commercial Use Date"], errors="coerce", format="mixed").dt.year if "Full Commercial Use Date" in df.columns else float("nan"),
     })
-    out.attrs["all"] = out[out.region.str.startswith("NSW") & (out.mw > 0)].copy()
     nsw = out.region.str.startswith("NSW")
     counts = {"rows": int(nsw.sum()), "other_tech": int((nsw & out.tech.isna()).sum())}
     out = out[nsw & out.tech.notna() & out.status.notna() & (out.mw > 0)].copy()
@@ -188,8 +185,7 @@ def main():
     latest["year"] = [first_seen[k].year if s == "Operating" and k in first_seen else f
                       for k, s, f in zip(latest.key, latest.status, latest.fcu)]
     sites = (latest.groupby(["name", "tech", "status"], as_index=False)
-             .agg(mw=("mw", "sum"), mwh=("mwh", lambda x: x.sum(min_count=1)), year=("year", "min"),
-                  duids=("duid", lambda x: [d for d in x if d not in ("", "NAN")]))
+             .agg(mw=("mw", "sum"), mwh=("mwh", lambda x: x.sum(min_count=1)), year=("year", "min"))
              .sort_values("mw", ascending=False))
     def hours(r):
         return round(r.mwh / r.mw, 1) if r.tech in ("Battery", "Pumped hydro") and pd.notna(r.mwh) and r.mw > 0 else None
@@ -210,48 +206,20 @@ def main():
     short = sto[(sto.status == "Operating") & sto.hrs.notna()]
     typical_h = round(float((short.mwh.sum()) / short.mw.sum()), 1) if len(short) else None
 
-    # Map points: every site in the table plus older wind, solar and storage, and coal
-    loc = json.load(open(LOCATIONS)) if os.path.exists(LOCATIONS) else {"duid": {}, "name": {}}
-    if os.path.exists(LOCATIONS_EXTRA):
-        extra = pd.read_csv(LOCATIONS_EXTRA, comment="#")
-        for r in extra.dropna().itertuples(): loc["name"][norm(r[1])] = [float(r[2]), float(r[3])]
-    def where(name, duids):
-        """Coordinates for a site, and whether they are only approximate (borrowed from a nearby station of a similar name)."""
-        for d in duids:
-            if d in loc["duid"]: return loc["duid"][d], False
-        n = norm(name)
-        if n in loc["name"]: return loc["name"][n], False
-        best = max((k for k in loc["name"] if len(k) >= 8 and n.startswith(k)), key=len, default=None)
-        return (loc["name"][best], True) if best else (None, False)
-    points = []
-    for r in sites.itertuples():
-        if r.mw < 0.5: continue
-        p, approx = where(r.name, r.duids)
-        if p: points.append({"n": r.name, "t": r.tech, "s": r.status, "mw": int(round(r.mw)), "ll": p, **({"a": 1} if approx else {})})
-    every_new = set(latest.key)
-    allrows = frames[-1][1].attrs["all"]
-    allrows["key"] = [d if d not in ("", "NAN") else "site:" + norm(n) + ":" + str(t) for d, n, t in zip(allrows.duid, allrows.name, allrows.tech)]
-    old = allrows[~allrows.key.isin(every_new) & allrows.tech.notna() & (allrows.status == "Operating")]
-    for (n, t), g in old.groupby(["name", "tech"]):
-        p, approx = where(n, [d for d in g.duid if d not in ("", "NAN")])
-        if p: points.append({"n": n, "t": t, "s": "Before " + str(ROADMAP_START.year), "mw": int(round(g.mw.sum())), "ll": p, **({"a": 1} if approx else {})})
-    located = {(q["n"], q["t"], q["s"]) for q in points}
-    map_cover = {st: [sum(1 for x in projects if x["status"] == st and (x["name"], x["tech"], x["status"]) in located),
-                      sum(1 for x in projects if x["status"] == st)] for st in ["Operating", "Committed", "Anticipated", "Proposed"]}
     counts["projects"] = len(projects)
     operating_sites = [p for p in projects if p["status"] == "Operating"]
     coal = frames[-1][1].attrs["coal"]
     coal = (coal.groupby("name", as_index=False).agg(mw=("mw", "sum"), year=("year", "max"), date=("date", "max"),
                                                     owner=("owner", "first"), units=("mw", "size"))
             .sort_values("year"))
-    coal = [{"name": r.name, "ll": where(r.name, [])[0], "owner": r.owner, "units": int(r.units), "mw": int(round(r.mw)),
+    coal = [{"name": r.name, "owner": r.owner, "units": int(r.units), "mw": int(round(r.mw)),
              "year": int(r.year) if pd.notna(r.year) else None,
              "date": r.date.strftime("%Y-%m-%d") if pd.notna(r.date) else None} for r in coal.itertuples()]
 
     data = {"updated": latest_date.isoformat(), "source_file": os.path.basename(files[-1]),
             "baseline": frames[0][0].isoformat(), "targets": TARGETS, "aemo_total": aemo_total, "counts": counts,
             "lds": lds_summary, "lds_hours": LDS_HOURS, "snowy": snowy_info, "typical_battery_hours": typical_h,
-            "points": points, "map_cover": map_cover, "locations_source": loc.get("source"), "summary": summarise(latest),
+            "summary": summarise(latest),
             "by_year": by_year, "by_year_names": by_year_names, "history": history,
             "projects": projects, "coal": coal}
     s = data["summary"]

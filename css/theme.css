@@ -82,14 +82,22 @@ a { text-underline-offset: 3px; }
 .theme-toggle:hover { border-color: var(--muted); }
 .theme-toggle svg { width: 16px; height: 16px; }
 
-/* Header shared by every page */
-.site-header { border-bottom: 1px solid var(--line); background: var(--surface); }
+/* Header shared by every page, pinned to the top while scrolling */
+:root { --hdr-h: 65px; }
+.site-header { position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 86%, transparent); -webkit-backdrop-filter: saturate(1.4) blur(12px); backdrop-filter: saturate(1.4) blur(12px); transition: box-shadow .2s; }
+.site-header.scrolled { box-shadow: 0 6px 20px rgba(20, 35, 58, .08); }
+html { scroll-padding-top: calc(var(--hdr-h) + 1rem); }
 .site-header .bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 64px; }
 .site-header .brand { font-weight: 600; font-size: 1.05rem; color: var(--ink); text-decoration: none; letter-spacing: -.01em; }
 .site-nav { display: flex; gap: 1.5rem; align-items: center; }
 .site-nav a { color: var(--muted); text-decoration: none; font-weight: 500; padding: .5rem 0; }
+.site-nav a { position: relative; }
+.site-nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: .2rem; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+.site-nav a:hover::after { transform: scaleX(1); }
 .site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--ink); }
-@media (max-width: 480px) { .site-nav { gap: 1rem; } .site-header .brand { font-size: 1rem; } }
+.site-header .brand { white-space: nowrap; }
+@media (max-width: 480px) { .site-nav { gap: .9rem; } .site-header .brand { font-size: .95rem; } }
+@media (max-width: 370px) { .site-nav { gap: .6rem; } .site-nav a { font-size: .9rem; } }
 
 /* Bootstrap components in the site palette */
 .btn-primary { --bs-btn-bg: #1F3D73; --bs-btn-border-color: #1F3D73; --bs-btn-hover-bg: #14233A; --bs-btn-hover-border-color: #14233A; --bs-btn-active-bg: #14233A; --bs-btn-active-border-color: #14233A; }
@@ -116,3 +124,20 @@ footer { color: var(--muted); }
 .sens-chart { height: 300px; }
 @media (min-width: 992px) { .sticky-lg { position: sticky; top: 1rem; } }
 @media (max-width: 575.98px) { #gen-chart { height: 360px; } }
+
+/* Colours for each technology, shared by every page (checked for colour blind readers in both themes) */
+:root {
+  --c-wind: #2a78d6; --c-solar: #eda100; --c-battery: #e87ba4; --c-hydro: #008300; --c-coal: #6B7280; --c-gas: #A0785A;
+  --k-wind: #E4EEFB; --k-solar: #FDF1D6; --k-battery: #FCE8F0; --k-hydro: #DDF0DD; --k-coal: #ECEDEF;
+}
+[data-theme="dark"] {
+  --c-wind: #3987e5; --c-solar: #c98500; --c-battery: #d55181; --c-hydro: #008300; --c-coal: #8B93A1; --c-gas: #B08A6C;
+  --k-wind: #16263D; --k-solar: #2E2510; --k-battery: #321A26; --k-hydro: #102A14; --k-coal: #1E2633;
+}
+
+/* Moving background behind page headings (js/ambient.js) */
+.hero-wrap { position: relative; isolation: isolate; }
+.ambient { position: absolute; z-index: -1; inset: -2.5rem calc(50% - 50vw) 0; width: 100vw; height: calc(100% + 2.5rem); pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+body { overflow-x: hidden; overflow-x: clip; }
+@media (prefers-reduced-motion: reduce) { .site-nav a::after { transition: none; } }

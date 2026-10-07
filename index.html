@@ -34,6 +34,18 @@
     .project .stat { display: inline-flex; align-items: center; gap: .5rem; font-size: .88rem; color: var(--ink); background: var(--accent-soft); border-radius: 999px; padding: .2rem .75rem; margin: -.3rem 0 1rem; width: fit-content; font-variant-numeric: tabular-nums; }
     .project .stat i { width: 7px; height: 7px; border-radius: 50%; background: #1E8A5A; flex: none; }
     [data-theme="dark"] .project .stat i { background: #5FD39B; }
+    .projects li { transition: background .2s; }
+    .projects li:hover { background: linear-gradient(to bottom, var(--accent-soft), transparent 85%); }
+    .project { transition: transform .25s ease; }
+    .project:hover { transform: translateY(-3px); }
+    .project .tags { display: flex; gap: .35rem; margin-bottom: .9rem; }
+    .project .tags span { width: 1.9rem; height: 1.9rem; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
+    .project .tags svg { width: 62%; height: 62%; }
+    .hero img { box-shadow: 0 18px 40px rgba(20, 35, 58, .16); }
+    .hero h1, .hero p { animation: rise .8s ease both; }
+    .hero p { animation-delay: .15s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .hero h1, .hero p { animation: none; } .project, .projects li { transition: none; } }
     .project:hover h2 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
 
     .contact { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; border-top: 1px solid var(--line); padding: 2.5rem 0 4rem; }
@@ -58,6 +70,14 @@
   </style>
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-wind" viewBox="0 0 24 24"><path d="M11.2 10.6 12 22h0l.8-11.4" fill="currentColor"/><circle cx="12" cy="9" r="1.7" fill="currentColor"/><path d="M12 7.3c-.4-2.2-.2-4.4.6-6.3.9 2 .9 4.2-.6 6.3zM13.5 9.9c2.1.8 3.8 2.2 5 3.9-2.2.1-4.1-1-5-3.9zM10.5 9.9c-1.7 1.4-3.8 2.2-5.9 2.2 1.1-1.9 3-3 5.9-2.2z" fill="currentColor"/></symbol>
+    <symbol id="i-solar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"/></g></symbol>
+    <symbol id="i-battery" viewBox="0 0 24 24"><rect x="3" y="6.5" width="16" height="11" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19.6" y="10" width="2" height="4" rx=".8" fill="currentColor"/><path d="M11.8 8.3 8 12.6h3l-.8 3.2 3.8-4.4h-3z" fill="currentColor"/></symbol>
+    <symbol id="i-coal" viewBox="0 0 24 24"><path d="M3 21V12l5 3V12l5 3V8h3V4h3v17z" fill="currentColor"/></symbol>
+    <symbol id="i-price" viewBox="0 0 24 24"><path d="M3 15c3 0 4-6 7-6s3 8 6 8 3-10 5-12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-debt" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="2.6" fill="currentColor"/><path d="M5 6v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6V6M5 10v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-4M5 14v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-4" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  </svg>
   <header class="site-header">
     <div class="container-xl bar">
       <a class="brand" href="index.html">Abdulla Shaheed</a>
@@ -71,22 +91,26 @@
   </header>
 
   <main class="container-xl">
+    <div class="hero-wrap">
+    <canvas class="ambient" data-mode="grid" aria-hidden="true"></canvas>
     <section class="hero">
       <img src="images/profile.jpg" alt="Portrait of Abdulla Shaheed" width="280" height="280">
       <div>
         <h1>Public debt, climate risk and energy markets.</h1>
-        <p>I'm Shaheed, from Maldives. I've worked across economic development, statistics, tax and public finance in Maldives, in government ministries and state-owned enterprises.</p>
-        <p>I'm completing a PhD in Economics at the University of York. The first chapter looks at debt sustainability, and the second at how climate change and climate-related disasters affect sovereign bond yields. The third explores Australia's National Electricity Market, and I'm currently researching how AEMO and the energy-only market work.</p>
-        <p>I work with data every day, using Stata, Python, Power BI and LaTeX, and I have foundational training in PLEXOS energy modelling.</p>
-        <p>I hold Australian permanent residency and am moving to Sydney to work full time. My PhD is switching to remote part-time study, so it fits around my working week rather than competing with it. I'm looking for analytics, policy or research roles in energy markets or economic development.</p>
+        <p>I'm Shaheed, from Maldives. I've worked across economic development, statistics, tax and public finance in Maldives, in government ministries and state owned enterprises.</p>
+        <p>I'm completing a PhD in Economics at the University of York. The first chapter looks at debt sustainability, and the second at how climate change and climate related disasters affect sovereign bond yields. The third explores Australia's National Electricity Market, and I'm currently researching how AEMO and the energy only market work.</p>
+        <p>I work with data every day, using Stata, Python, R and LaTeX, and I have foundational training in PLEXOS energy modelling.</p>
+        <p>I hold Australian permanent residency and am moving to Sydney to work full time. My PhD is switching to remote part time study, so it fits around my working week rather than competing with it. I'm looking for analytics, policy or research roles in energy markets or economic development.</p>
       </div>
     </section>
+    </div>
 
     <section id="projects">
       <p class="label">Projects</p>
       <ul class="projects">
         <li>
           <a class="project" href="roadmap.html">
+            <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-wind"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-solar"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-battery"/></svg></span></div>
             <h2>Is NSW on track for 2030?</h2>
             <p>New wind, solar and storage in NSW measured against the Electricity Infrastructure Roadmap targets, updated from AEMO's quarterly project register.</p>
             <span class="stat" id="nsw-stat" hidden><i></i><span></span></span>
@@ -95,6 +119,7 @@
         </li>
         <li>
           <a class="project" href="simulator.html">
+            <div class="tags" aria-hidden="true"><span style="background:var(--k-coal);color:var(--c-coal)"><svg><use href="#i-coal"/></svg></span><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-wind"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-battery"/></svg></span></div>
             <h2>Could the NEM run without coal?</h2>
             <p>Change the mix of wind, solar and storage in Australia's National Electricity Market and see whether demand is still met.</p>
             <span class="where">Storage simulator</span>
@@ -102,6 +127,7 @@
         </li>
         <li>
           <a class="project" href="prices.html">
+            <div class="tags" aria-hidden="true"><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-price"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-solar"/></svg></span></div>
             <h2>When is electricity cheap?</h2>
             <p>Wholesale prices across the NEM by hour of day, season, year and region.</p>
             <span class="where">NEM price patterns</span>
@@ -109,6 +135,7 @@
         </li>
         <li>
           <a class="project" href="https://mvdebtclock.org">
+            <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-debt"/></svg></span></div>
             <h2>Maldives National Debt Clock</h2>
             <p>A live tracker of what the government owes, what it pays in interest and where its revenue comes from, in plain language.</p>
             <span class="where">mvdebtclock.org</span>
@@ -144,5 +171,6 @@
   });
   </script>
   <script src="js/theme.js"></script>
+  <script src="js/ambient.js"></script>
 </body>
 </html>
