@@ -6,6 +6,12 @@
   <title>Is NSW on track for 2030? | Abdulla Shaheed</title>
   <meta name="description" content="New wind, solar and storage in NSW measured against the Electricity Infrastructure Roadmap, from AEMO's Generation Information data.">
   <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="Is NSW on track for 2030?">
+  <meta property="og:description" content="A live tracker of new wind, solar and storage in NSW against the Electricity Infrastructure Roadmap, from AEMO data.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shaheed.work/roadmap">
+  <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="css/theme.css">
   <style>
     :root { --time: #B07A12; --time-soft: #F6EBD3; --live: #1E8A5A; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14); }
@@ -96,7 +102,17 @@
     .facts b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 2.1rem; line-height: 1.05; margin-bottom: .35rem; }
     .facts p { color: var(--muted); margin: 0; font-size: .95rem; }
     .filters { display: grid; grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr)); gap: .75rem; margin: 1.25rem 0 .75rem; }
-    .count { font-size: .9rem; color: var(--muted); margin-bottom: .5rem; }
+    .count { font-size: .9rem; color: var(--muted); margin-bottom: .5rem; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; }
+    .why { font-size: .9rem; color: var(--muted); margin: 0 0 1rem; }
+    .why summary { cursor: pointer; color: var(--accent); width: fit-content; }
+    .why ol { list-style: none; padding: 0; margin: .6rem 0 0; display: grid; grid-template-columns: auto auto; justify-content: start; gap: .15rem 1.5rem; font-variant-numeric: tabular-nums; }
+    .why li:nth-child(even) { text-align: right; color: var(--ink); }
+    .why li.tot { border-top: 1px solid var(--line); padding-top: .2rem; font-weight: 600; color: var(--ink); }
+    th button { all: unset; cursor: pointer; white-space: nowrap; }
+    th button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    th button::after { content: "↕"; margin-left: .3rem; color: var(--line); font-size: .85em; }
+    th[aria-sort="ascending"] button::after { content: "↑"; color: var(--ink); }
+    th[aria-sort="descending"] button::after { content: "↓"; color: var(--ink); }
     table { font-size: .95rem; }
     td .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: .45rem; vertical-align: 0; }
     td .exp { color: var(--muted); font-style: italic; }
@@ -184,7 +200,7 @@
 
       <section class="section">
         <h2>What has been switched on each year</h2>
-        <p>Hover over a bar to see the projects. 2026 covers the first half of the year.</p>
+        <p>Hover over a bar to see the projects. <span id="partial"></span></p>
         <div id="c-year" class="chart"></div>
       </section>
 
@@ -225,10 +241,11 @@
             <option value="">All types</option><option>Wind</option><option>Solar</option><option>Battery</option><option>Pumped hydro</option>
           </select>
         </div>
-        <p class="count" id="count"></p>
+        <details class="why" id="why"></details>
+        <div class="count"><span id="count"></span><button id="csv" class="btn btn-outline-primary btn-sm" type="button">Download CSV</button></div>
         <div class="table-responsive">
           <table class="table table-sm align-middle">
-            <thead><tr><th>Project</th><th>Type</th><th>Status</th><th class="hide-sm" title="Year first operating, or AEMO's expected full commercial use year">Year</th><th class="text-end">MW</th></tr></thead>
+            <thead><tr><th data-k="name"><button type="button">Project</button></th><th data-k="tech"><button type="button">Type</button></th><th data-k="status"><button type="button">Status</button></th><th class="hide-sm" data-k="year" title="Year first operating, or AEMO's expected full commercial use year"><button type="button">Year</button></th><th class="text-end" data-k="mw" aria-sort="descending"><button type="button">MW</button></th></tr></thead>
             <tbody id="rows"></tbody>
           </table>
         </div>
@@ -266,6 +283,8 @@
     const $ = id => document.getElementById(id);
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const YEAR = 365.25 * 864e5;
+    const upd = new Date(R.updated + "T00:00:00"), lastYr = Object.keys(R.by_year).sort().pop();
+    $("partial").textContent = +lastYr === upd.getFullYear() && upd.getMonth() > 0 ? lastYr + " covers the year to the end of " + new Date(upd.getFullYear(), upd.getMonth() - 1, 1).toLocaleDateString("en-GB", { month: "long" }) + "." : "";
     $("asof").textContent = "Latest data from AEMO's " + new Date(R.updated).toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + " release.";
 
     // Key dates, in Sydney time
@@ -473,18 +492,52 @@
     // Project explorer
     const q = $("f-q"), fs = $("f-status"), ft = $("f-tech");
     const swatch = { Operating: "s-op", Committed: "s-co", Anticipated: "s-an", Proposed: "s-pr" };
-    let shown = 25;
+    const order = { Operating: 0, Committed: 1, Anticipated: 2, Proposed: 3 };
+    let shown = 25, sortK = "mw", sortDir = -1, list = [];
+    if (R.counts) {
+      const k = R.counts;
+      $("why").innerHTML = "<summary>Why " + num(k.projects) + " projects when AEMO's file has " + num(k.rows) + " NSW rows?</summary><ol>" +
+        "<li>NSW rows in AEMO's file</li><li>" + num(k.rows) + "</li>" +
+        "<li>Coal, gas, conventional hydro and other</li><li>−" + num(k.other_tech) + "</li>" +
+        "<li>Withdrawn or with no capacity</li><li>−" + num(k.dropped) + "</li>" +
+        "<li>Already running before January " + R.baseline.slice(0, 4) + "</li><li>−" + num(k.pre_roadmap) + "</li>" +
+        "<li>New units</li><li>" + num(k.units) + "</li>" +
+        '<li class="tot">Projects, after combining units at the same site</li><li class="tot">' + num(k.projects) + "</li></ol>";
+    } else $("why").hidden = true;
+    function cmp(a, b) {
+      const x = sortK === "status" ? order[a.status] : a[sortK], y = sortK === "status" ? order[b.status] : b[sortK];
+      if (x == null && y == null) return 0;
+      if (x == null) return 1;
+      if (y == null) return -1;
+      return (typeof x === "string" ? x.localeCompare(y) : x - y) * sortDir;
+    }
     function render() {
       const term = q.value.trim().toLowerCase();
-      const list = R.projects.filter(p => (!term || p.name.toLowerCase().includes(term)) && (!fs.value || p.status === fs.value) && (!ft.value || p.tech === ft.value));
+      list = R.projects.filter(p => (!term || p.name.toLowerCase().includes(term)) && (!fs.value || p.status === fs.value) && (!ft.value || p.tech === ft.value)).sort(cmp);
       const total = list.reduce((a, p) => a + p.mw, 0);
-      $("count").textContent = list.length + " projects, " + gw(total) + " in total";
+      $("count").textContent = num(list.length) + " projects, " + gw(total) + " in total";
       $("rows").innerHTML = list.slice(0, shown).map(p =>
         "<tr><td>" + esc(p.name) + "</td><td>" + p.tech + '</td><td><i class="sw ' + swatch[p.status] + '"></i>' + p.status + '</td><td class="hide-sm">' +
         (p.year ? (p.status === "Operating" ? p.year : '<span class="exp">' + p.year + "</span>") : "") + '</td><td class="text-end">' + p.mw.toLocaleString("en-AU") + "</td></tr>").join("") ||
         '<tr><td colspan="5">No projects match. Try a different name or filter.</td></tr>';
       $("more").hidden = list.length <= shown;
+      $("csv").disabled = !list.length;
     }
+    document.querySelectorAll("th[data-k]").forEach(th => th.querySelector("button").addEventListener("click", () => {
+      const k = th.dataset.k;
+      sortDir = sortK === k ? -sortDir : (k === "mw" ? -1 : 1); sortK = k;
+      document.querySelectorAll("th[data-k]").forEach(h => h === th ? h.setAttribute("aria-sort", sortDir > 0 ? "ascending" : "descending") : h.removeAttribute("aria-sort"));
+      render();
+    }));
+    $("csv").addEventListener("click", () => {
+      const cell = v => /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : v;
+      const rows = [["Project", "Type", "Status", "Year", "Year basis", "MW"]].concat(list.map(p =>
+        [p.name, p.tech, p.status, p.year || "", p.year ? (p.status === "Operating" ? "First operating" : "Expected") : "", p.mw]));
+      const url = URL.createObjectURL(new Blob([rows.map(r => r.map(cell).join(",")).join("\n")], { type: "text/csv" }));
+      const a = document.createElement("a");
+      a.href = url; a.download = "nsw-roadmap-projects-" + R.updated.slice(0, 7) + ".csv";
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
     [q, fs, ft].forEach(el => el.addEventListener("input", () => { shown = 25; render(); }));
     $("more").addEventListener("click", () => { shown += 50; render(); });
     render();

@@ -106,8 +106,12 @@ def load(path, inspect=False):
         "mw": pd.to_numeric(df[mwcol], errors="coerce"),
         "fcu": pd.to_datetime(df["Full Commercial Use Date"], errors="coerce", format="mixed").dt.year if "Full Commercial Use Date" in df.columns else float("nan"),
     })
-    out = out[out.region.str.startswith("NSW") & out.tech.notna() & out.status.notna() & (out.mw > 0)].copy()
+    nsw = out.region.str.startswith("NSW")
+    counts = {"rows": int(nsw.sum()), "other_tech": int((nsw & out.tech.isna()).sum())}
+    out = out[nsw & out.tech.notna() & out.status.notna() & (out.mw > 0)].copy()
+    counts["dropped"] = counts["rows"] - counts["other_tech"] - len(out)
     out.attrs["coal"] = coal
+    out.attrs["counts"] = counts
     out["key"] = [d if d not in ("", "NAN") else "site:" + norm(n) + ":" + t for d, n, t in zip(out.duid, out.name, out.tech)]
     if inspect:
         print("Rows kept (NSW wind, solar, battery, pumped hydro):", len(out))
@@ -160,7 +164,11 @@ def main():
     every = latest[latest.status == "Operating"]
     aemo_total = {"gen_mw": int(round(every[every.tech.isin(["Wind", "Solar"])].mw.sum())),
                   "storage_mw": int(round(every[every.tech.isin(["Battery", "Pumped hydro"])].mw.sum()))}
-    latest = latest[is_new(latest) & (latest.status != "Closing")].copy()
+    counts = dict(latest.attrs["counts"])
+    keep = is_new(latest) & (latest.status != "Closing")
+    counts["pre_roadmap"] = int((~keep).sum())
+    latest = latest[keep].copy()
+    counts["units"] = len(latest)
     op = latest[latest.status == "Operating"].copy()
     op["year"] = op.key.map(lambda k: first_seen.get(k, latest_date).year)
     by_year, by_year_names = {}, {}
@@ -177,6 +185,7 @@ def main():
              .agg(mw=("mw", "sum"), year=("year", "min")).sort_values("mw", ascending=False))
     projects = [{"name": r.name, "tech": r.tech, "status": r.status, "mw": int(round(r.mw)),
                  "year": int(r.year) if pd.notna(r.year) else None} for r in sites.itertuples() if r.mw >= 0.5]
+    counts["projects"] = len(projects)
     operating_sites = [p for p in projects if p["status"] == "Operating"]
     coal = frames[-1][1].attrs["coal"]
     coal = (coal.groupby("name", as_index=False).agg(mw=("mw", "sum"), year=("year", "max"), date=("date", "max"),
@@ -187,7 +196,7 @@ def main():
              "date": r.date.strftime("%Y-%m-%d") if pd.notna(r.date) else None} for r in coal.itertuples()]
 
     data = {"updated": latest_date.isoformat(), "source_file": os.path.basename(files[-1]),
-            "baseline": frames[0][0].isoformat(), "targets": TARGETS, "aemo_total": aemo_total, "summary": summarise(latest),
+            "baseline": frames[0][0].isoformat(), "targets": TARGETS, "aemo_total": aemo_total, "counts": counts, "summary": summarise(latest),
             "by_year": by_year, "by_year_names": by_year_names, "history": history,
             "projects": projects, "coal": coal}
     s = data["summary"]

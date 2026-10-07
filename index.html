@@ -6,6 +6,12 @@
   <title>Abdulla Shaheed</title>
   <meta name="description" content="Abdulla Shaheed works on public debt, climate risk and energy markets.">
   <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="Abdulla Shaheed">
+  <meta property="og:description" content="Abdulla Shaheed works on public debt, climate risk and energy markets.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shaheed.work/">
+  <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="css/theme.css">
   <style>
     .hero { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; align-items: start; padding: 4.5rem 0 4rem; }
@@ -25,6 +31,9 @@
     .project h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.6rem; line-height: 1.15; letter-spacing: -.01em; margin: 0 0 .7rem; }
     .project p { color: var(--muted); margin: 0 0 1.1rem; flex: 1; }
     .project .where { font-size: .9rem; font-weight: 500; color: var(--accent); }
+    .project .stat { display: inline-flex; align-items: center; gap: .5rem; font-size: .88rem; color: var(--ink); background: var(--accent-soft); border-radius: 999px; padding: .2rem .75rem; margin: -.3rem 0 1rem; width: fit-content; font-variant-numeric: tabular-nums; }
+    .project .stat i { width: 7px; height: 7px; border-radius: 50%; background: #1E8A5A; flex: none; }
+    [data-theme="dark"] .project .stat i { background: #5FD39B; }
     .project:hover h2 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
 
     .contact { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; border-top: 1px solid var(--line); padding: 2.5rem 0 4rem; }
@@ -77,16 +86,10 @@
       <p class="label">Projects</p>
       <ul class="projects">
         <li>
-          <a class="project" href="https://mvdebtclock.org">
-            <h2>Maldives National Debt Clock</h2>
-            <p>A live tracker of what the government owes, what it pays in interest and where its revenue comes from, in plain language.</p>
-            <span class="where">mvdebtclock.org</span>
-          </a>
-        </li>
-        <li>
           <a class="project" href="roadmap.html">
             <h2>Is NSW on track for 2030?</h2>
             <p>New wind, solar and storage in NSW measured against the Electricity Infrastructure Roadmap targets, updated from AEMO's quarterly project register.</p>
+            <span class="stat" id="nsw-stat" hidden><i></i><span></span></span>
             <span class="where">NSW Roadmap tracker</span>
           </a>
         </li>
@@ -102,6 +105,13 @@
             <h2>When is electricity cheap?</h2>
             <p>Wholesale prices across the NEM by hour of day, season, year and region.</p>
             <span class="where">NEM price patterns</span>
+          </a>
+        </li>
+        <li>
+          <a class="project" href="https://mvdebtclock.org">
+            <h2>Maldives National Debt Clock</h2>
+            <p>A live tracker of what the government owes, what it pays in interest and where its revenue comes from, in plain language.</p>
+            <span class="where">mvdebtclock.org</span>
           </a>
         </li>
       </ul>
@@ -121,6 +131,18 @@
 
   <footer class="container-xl"><div class="site-footer">© <span id="year"></span> Abdulla Shaheed</div></footer>
   <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+  <script src="data/roadmap.js" defer></script>
+  <script>
+  // Live figures on the NSW card, from the same data as the tracker
+  window.addEventListener("DOMContentLoaded", function () {
+    var R = window.ROADMAP, el = document.getElementById("nsw-stat");
+    if (!R || !el) return;
+    var op = R.summary.Operating.Wind + R.summary.Operating.Solar;
+    var days = Math.max(0, Math.ceil((new Date("2030-01-01T00:00:00+11:00") - new Date()) / 864e5));
+    el.lastChild.textContent = Math.round(op / (R.targets.generation_min_gw * 10)) + "% of the 12 GW built · " + days.toLocaleString("en-AU") + " days to 2030";
+    el.hidden = false;
+  });
+  </script>
   <script src="js/theme.js"></script>
 </body>
 </html>
