@@ -11,15 +11,40 @@
     .pchart { height: 380px; }
     #c-trend { height: 440px; }
     #c-heat { height: 420px; }
-    .controls-card { position: sticky; top: 0; z-index: 20; }
-    @media (max-width: 991.98px) { .controls-aside { position: sticky; top: 0; z-index: 20; } }
-    @media (min-width: 992px) { .controls-card { top: 1rem; } }
+    .controls-card { position: sticky; top: var(--hdr-h); z-index: 20; }
+    @media (max-width: 991.98px) { .controls-aside { position: sticky; top: var(--hdr-h); z-index: 20; } }
+    @media (min-width: 992px) { .controls-card { top: calc(var(--hdr-h) + 1rem); } }
     @media (max-width: 991.98px) {
       .controls-card .card-body { padding: .5rem .75rem; }
       .controls-card .ctrl { flex: 1 1 30%; min-width: 9rem; }
       .controls-card .hint { display: none; }
     }
-    #annual-table th.sel, #annual-table td.sel { background: rgba(13, 110, 253, .08); font-weight: 700; }
+    #annual-table th.sel, #annual-table td.sel { background: var(--accent-soft); font-weight: 700; }
+    .lead { max-width: 52ch; }
+    .src { display: inline-flex; font-size: .82rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .7rem; }
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 2rem 0 2rem; }
+    .kpi { border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; background: var(--surface); transition: transform .2s, box-shadow .2s, border-color .2s; }
+    .kpi:hover { transform: translateY(-2px); border-color: var(--muted); box-shadow: 0 10px 30px rgba(20, 35, 58, .12); }
+    .kpi .top { display: flex; align-items: center; gap: .55rem; font-size: .88rem; color: var(--muted); margin-bottom: .5rem; }
+    .kpi .ic { width: 1.9rem; height: 1.9rem; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+    .kpi .ic svg { width: 62%; height: 62%; }
+    .kpi b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 2rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .kpi .sub { font-size: .85rem; color: var(--muted); margin-top: .25rem; }
+    .kpi .sub em { font-style: normal; font-weight: 600; color: var(--ink); }
+    .pills { display: flex; flex-wrap: wrap; gap: .35rem; }
+    .pill { all: unset; cursor: pointer; font-size: .88rem; border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; color: var(--muted); transition: background .15s, color .15s, border-color .15s; }
+    .pill:hover { border-color: var(--muted); color: var(--ink); }
+    .pill[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+    .pill:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .play { display: flex; align-items: center; gap: .75rem; margin-bottom: .5rem; }
+    .play button { display: inline-flex; align-items: center; gap: .4rem; }
+    .play .yr { font-family: "Newsreader", Georgia, serif !important; font-size: 1.6rem; line-height: 1; font-variant-numeric: tabular-nums; min-width: 3ch; }
+    .card { transition: border-color .2s; } .card:hover { border-color: var(--muted); }
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } .kpi { transition: none; } }
+    @media (max-width: 991.98px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 575.98px) { .kpis { gap: .6rem; } .kpi { padding: .85rem .8rem; } .kpi b { font-size: 1.35rem; } }
   </style>
 </head>
 <body>
@@ -36,8 +61,20 @@
   </header>
 
   <main class="container-xl py-4">
-    <h1 class="mb-2">When is electricity cheap?</h1>
-    <p class="lead mb-4" style="max-width: 60rem;">Wholesale electricity prices in Australia's National Electricity Market, by hour of day, year and region. <span id="period"></span></p>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-solar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"/></g></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/></symbol>
+      <symbol id="i-gap" viewBox="0 0 24 24"><path d="M5 18V9M12 18V4M19 18v-6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></symbol>
+      <symbol id="i-neg" viewBox="0 0 24 24"><path d="M3 12h18" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2"/><path d="M4 7c3 0 4 10 8 10s5-10 8-10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    </svg>
+    <div class="hero-wrap">
+      <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
+      <h1 class="mb-2">When is electricity cheap?</h1>
+      <p class="lead mb-2">Wholesale prices across Australia's National Electricity Market, hour by hour, year by year and region by region.</p>
+      <span class="src" id="period"></span>
+    </div>
+
+    <div class="kpis" id="kpis" aria-live="polite"></div>
 
     <div class="row g-4">
       <aside class="col-lg-3 controls-aside">
@@ -45,14 +82,14 @@
           <div class="card-body">
             <div class="d-flex flex-wrap flex-lg-column gap-2 gap-lg-3">
               <div class="ctrl">
-                <label for="region" class="form-label fw-bold mb-1">Region</label>
-                <select id="region" class="form-select">
-                  <option value="NSW1">New South Wales</option>
-                  <option value="QLD1">Queensland</option>
-                  <option value="VIC1">Victoria</option>
-                  <option value="SA1">South Australia</option>
-                  <option value="TAS1">Tasmania</option>
-                </select>
+                <span class="form-label fw-bold mb-1 d-block" id="region-label">Region</span>
+                <div class="pills" id="region" role="group" aria-labelledby="region-label">
+                  <button class="pill" type="button" data-v="NSW1" aria-pressed="true" title="New South Wales">NSW</button>
+                  <button class="pill" type="button" data-v="QLD1" aria-pressed="false" title="Queensland">QLD</button>
+                  <button class="pill" type="button" data-v="VIC1" aria-pressed="false" title="Victoria">VIC</button>
+                  <button class="pill" type="button" data-v="SA1" aria-pressed="false" title="South Australia">SA</button>
+                  <button class="pill" type="button" data-v="TAS1" aria-pressed="false" title="Tasmania">TAS</button>
+                </div>
               </div>
               <div class="ctrl">
                 <label for="season" class="form-label fw-bold mb-1">Season</label>
@@ -80,7 +117,7 @@
       </aside>
 
       <div class="col-lg-9">
-        <section class="card mb-4">
+        <section class="card mb-4 reveal">
           <div class="card-header">Midday and evening prices over time <span class="measure-label text-body-secondary"></span></div>
           <div class="card-body">
             <p class="text-body-secondary mb-2">Monthly prices in the midday and evening windows, and the gap between them (the spread, which is the evening price minus the midday price). The spread is a rough indicator of the value of moving energy from midday to the evening, which is what batteries do. Numbered dotted lines mark major events in Australia (grey) and in global energy markets (purple), listed below the chart.</p>
@@ -89,15 +126,16 @@
           </div>
         </section>
 
-        <section class="card mb-4">
+        <section class="card mb-4 reveal">
           <div class="card-header"><span class="measure-name">Average</span> price by hour of day, by year <span class="season-label text-body-secondary"></span></div>
           <div class="card-body">
-            <p class="text-body-secondary mb-2">Each line is one year. The shaded bands mark the midday window (10:00 to 15:00) and the evening window (17:00 to 21:00). Compare how the midday dip and the evening peak change from year to year. The daily pattern in winter is quite different from spring, so the Season menu lets you compare like with like.</p>
+            <div class="play"><button class="btn btn-outline-primary btn-sm" type="button" id="play" aria-pressed="false">▶ Play the years</button><span class="yr" id="play-yr" aria-live="polite"></span></div>
+            <p class="text-body-secondary mb-2">Each line is one year. Press play to watch the midday dip deepen as solar grows. The shaded bands mark the midday window (10:00 to 15:00) and the evening window (17:00 to 21:00). Compare how the midday dip and the evening peak change from year to year. The daily pattern in winter is quite different from spring, so the Season menu lets you compare like with like.</p>
             <div id="c-hourly" class="pchart"></div>
           </div>
         </section>
 
-        <section class="card mb-4">
+        <section class="card mb-4 reveal">
           <div class="card-header">Annual price</div>
           <div class="card-body">
             <p class="text-body-secondary mb-2">This table always shows all three measures side by side, so you can compare them. The highlighted column matches the Measure menu. The simple average counts every 5 minute interval equally. The demand weighted average gives more weight to times when more electricity is used, so it is closer to what buyers pay on average. It is usually higher, because expensive periods tend to be busy ones.</p>
@@ -105,7 +143,7 @@
           </div>
         </section>
 
-        <section class="card mb-4">
+        <section class="card mb-4 reveal">
           <div class="card-header">How often prices go below zero, by hour of day <span class="season-label text-body-secondary"></span></div>
           <div class="card-body">
             <p class="text-body-secondary mb-2">The share of 5 minute intervals with a negative price. A negative price means some generators would rather pay than switch off. It tends to happen when solar and wind output is high and demand is low.</p>
@@ -114,7 +152,7 @@
         </section>
 
 
-        <section class="card mb-4">
+        <section class="card mb-4 reveal">
           <div class="card-header">Price by hour and month</div>
           <div class="card-body">
             <p class="text-body-secondary mb-2">Each column is a month and each row an hour of the day. Blue is cheap and red is expensive. The colour scale is capped at the 95th percentile so a few extreme months don't wash out the pattern.</p>
@@ -122,7 +160,7 @@
           </div>
         </section>
 
-        <section class="card mb-4">
+        <section class="card mb-4 reveal">
           <div class="card-header">Price duration curves</div>
           <div class="card-body">
             <p class="text-body-secondary mb-2">Every 5 minute price in the year, sorted from highest to lowest. The further right the line dips below zero, the more often prices were negative. The chart is cut at $600/MWh, and real spikes go much higher.</p>
@@ -158,7 +196,7 @@
 
     const fmtDate = (s) => new Date(s + "T00:00").toLocaleDateString("en-AU", { month: "short", year: "numeric" });
     document.getElementById("period").textContent =
-      `Data covers ${fmtDate(P.first)} to ${fmtDate(P.last)}. Yearly charts cover ${P.years[0]} to ${P.years[P.years.length - 1]}.`;
+      `AEMO data · ${fmtDate(P.first)} to ${fmtDate(P.last)} · yearly charts ${P.years[0]} to ${P.years[P.years.length - 1]}`;
 
     // Major events marked on the "over time" chart
     const EVENTS = [
@@ -202,6 +240,62 @@
     const bySeason = (obj, reg, season) => (P.seasons ? obj[reg][season] : obj[reg]);
     const money = (x) => (x < 0 ? "−$" : "$") + Math.abs(x).toFixed(0);
 
+    // Headline figures for the latest full year, compared with the first
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const hh = (h) => String(h).padStart(2, "0") + ":00";
+    const avg = (a, from, to) => { let t = 0; for (let h = from; h <= to; h++) t += a[h]; return t / (to - from + 1); };
+    const argOf = (a, better) => a.reduce((b, x, i) => (better(x, a[b]) ? i : b), 0);
+    function countUp(el, to, fmt) {
+      if (calm) { el.textContent = fmt(to); return; }
+      const t0 = performance.now(), from = +el.dataset.v || 0;
+      el.dataset.v = to;
+      (function step(t) {
+        const k = Math.min(1, (t - t0) / 900), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = fmt(from + (to - from) * e);
+        if (k < 1) requestAnimationFrame(step);
+      })(t0);
+    }
+    function kpis(reg, season, HR, NG) {
+      const Y = String(P.years[P.years.length - 1]), Y0 = String(P.years[0]), a = HR[Y], a0 = HR[Y0];
+      const lo = argOf(a, (x, y) => x < y), hi = argOf(a, (x, y) => x > y), lo0 = argOf(a0, (x, y) => x < y), hi0 = argOf(a0, (x, y) => x > y);
+      const gap = avg(a, 17, 20) - avg(a, 10, 14), gap0 = avg(a0, 17, 20) - avg(a0, 10, 14);
+      const neg = NG[Y], n = argOf(neg, (x, y) => x > y), neg0 = NG[Y0][argOf(NG[Y0], (x, y) => x > y)];
+      const when = season === "All year" ? Y : season.toLowerCase() + " " + Y;
+      const card = (id, icon, bg, fg, label, sub) => `<div class="kpi"><div class="top"><span class="ic" style="background:var(--k-${bg});color:var(--c-${fg})"><svg><use href="#i-${icon}"/></svg></span>${label}</div><b id="${id}">…</b><div class="sub">${sub}</div></div>`;
+      const box = document.getElementById("kpis");
+      if (!box.children.length) box.innerHTML =
+        card("k-lo", "solar", "solar", "solar", "Cheapest hour", "") + card("k-hi", "moon", "wind", "wind", "Dearest hour", "") +
+        card("k-gap", "gap", "battery", "battery", "Evening premium", "") + card("k-neg", "neg", "hydro", "hydro", "Prices below zero", "");
+      const set = (id, val, fmt, sub) => { const el = document.getElementById(id); countUp(el, val, fmt); el.nextElementSibling.innerHTML = sub; };
+      set("k-lo", a[lo], (x) => hh(lo) + " · " + money(x), `Average at that hour in ${when}. In ${Y0}: <em>${money(a0[lo0])}</em> at ${hh(lo0)}.`);
+      set("k-hi", a[hi], (x) => hh(hi) + " · " + money(x), `Average at that hour in ${when}. In ${Y0}: <em>${money(a0[hi0])}</em> at ${hh(hi0)}.`);
+      set("k-gap", gap, (x) => money(x), `Evening (17:00 to 21:00) minus midday (10:00 to 15:00) in ${when}. In ${Y0}: <em>${money(gap0)}</em>. A rough guide to what a battery can earn.`);
+      set("k-neg", neg[n], (x) => x.toFixed(0) + "%", `of 5 minute prices were negative at ${hh(n)} in ${when}. In ${Y0}: <em>${neg0.toFixed(0)}%</em>.`);
+    }
+
+    // Play the years one by one on the hourly chart
+    let playing = null;
+    function stopPlay(restore = true) {
+      clearInterval(playing); playing = null;
+      const b = document.getElementById("play"); b.textContent = "▶ Play the years"; b.setAttribute("aria-pressed", "false");
+      document.getElementById("play-yr").textContent = "";
+      const gd = document.getElementById("c-hourly");
+      if (restore && gd.data) Plotly.restyle(gd, { opacity: gd.data.map(() => 1), "line.width": gd.data.map(() => 2.5) });
+    }
+    document.getElementById("play").addEventListener("click", () => {
+      if (playing) return stopPlay();
+      const gd = document.getElementById("c-hourly"), n = gd.data.length, b = document.getElementById("play");
+      b.textContent = "■ Stop"; b.setAttribute("aria-pressed", "true");
+      let i = 0;
+      const show = () => {
+        if (i >= n) { setTimeout(() => stopPlay(), 900); clearInterval(playing); return; }
+        Plotly.restyle(gd, { opacity: gd.data.map((_, j) => (j === i ? 1 : j < i ? 0.25 : 0.06)), "line.width": gd.data.map((_, j) => (j === i ? 4.5 : 1.5)) });
+        document.getElementById("play-yr").textContent = gd.data[i].name;
+        i++;
+      };
+      show(); playing = setInterval(show, calm ? 2000 : 1300);
+    });
+
     function draw(reg, season, measure) {
       const ys = P.years.map(String);
       document.querySelectorAll(".season-label").forEach((el) => { el.textContent = season === "All year" ? "" : "(" + season.toLowerCase() + " only)"; });
@@ -221,8 +315,11 @@
           ys.map((y) => `<tr><td>${y}</td><td${c("simple")}>${money(A.simple[y])}</td><td${c("weighted")}>${money(A.weighted[y])}</td><td class="text-end">${A.weighted[y] - A.simple[y] >= 0 ? "+" : ""}${money(A.weighted[y] - A.simple[y])}</td><td${c("median")}>${money(A.median[y])}</td></tr>`).join("") +
           "</tbody><caption class='small'>Prices in $/MWh for full calendar years, not adjusted for inflation. Difference is demand weighted minus simple average.</caption>";
       } else {
-        tbl.innerHTML = "<caption>Re-run make_price_data.py to show this table.</caption>";
+        tbl.innerHTML = "<caption>Run make_price_data.py again to show this table.</caption>";
       }
+
+      kpis(reg, season, HR, NG);
+      if (playing) stopPlay(false);
 
       // 1. Hourly by year
       Plotly.react("c-hourly", ys.map((y, i) => ({
@@ -272,14 +369,26 @@
         yaxis: { ...base().yaxis, title: { text: "Price ($/MWh)" }, range: [-150, 600] }, legend: { orientation: "h", y: -0.25 } }, config);
     }
 
-    const sel = document.getElementById("region"), ssel = document.getElementById("season"), msel = document.getElementById("measure");
-    if (!P.seasons) { ssel.disabled = true; ssel.title = "Re-run make_price_data.py to enable seasons"; }
-    if (!P.measures) { msel.disabled = true; msel.title = "Re-run make_price_data.py to enable this"; }
+    const ssel = document.getElementById("season"), msel = document.getElementById("measure");
+    const pills = [...document.querySelectorAll("#region .pill")], sel = { value: "NSW1" };
+    pills.forEach((b) => b.addEventListener("click", () => {
+      sel.value = b.dataset.v; pills.forEach((x) => x.setAttribute("aria-pressed", x === b)); redraw();
+    }));
+    if (!P.seasons) { ssel.disabled = true; ssel.title = "Run make_price_data.py again to enable seasons"; }
+    if (!P.measures) { msel.disabled = true; msel.title = "Run make_price_data.py again to enable this"; }
     const redraw = () => draw(sel.value, ssel.value, msel.value);
-    [sel, ssel, msel].forEach((el) => el.addEventListener("change", redraw));
+    [ssel, msel].forEach((el) => el.addEventListener("change", redraw));
     redraw();
+
+    // Cards fade in as they reach the screen
+    const items = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window && !calm) {
+      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.08 });
+      items.forEach((el) => io.observe(el));
+    } else items.forEach((el) => el.classList.add("in"));
   })();
   </script>
   <script src="js/theme.js"></script>
+  <script src="js/ambient.js"></script>
 </body>
 </html>

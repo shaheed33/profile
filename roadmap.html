@@ -16,13 +16,9 @@
   <style>
     :root {
       --time: #B07A12; --time-soft: #F6EBD3; --live: #1E8A5A; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14);
-      --c-wind: #2a78d6; --c-solar: #eda100; --c-battery: #e87ba4; --c-hydro: #008300; --c-coal: #6B7280;
-      --k-wind: #E4EEFB; --k-solar: #FDF1D6; --k-battery: #FCE8F0; --k-hydro: #DDF0DD; --k-coal: #ECEDEF;
     }
     [data-theme="dark"] {
       --time: #E0B45A; --time-soft: #2E2716; --live: #5FD39B; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5);
-      --c-wind: #3987e5; --c-solar: #c98500; --c-battery: #d55181; --c-hydro: #008300; --c-coal: #8B93A1;
-      --k-wind: #16263D; --k-solar: #2E2510; --k-battery: #321A26; --k-hydro: #102A14; --k-coal: #1E2633;
     }
     .page { max-width: 1040px; }
     .lead { max-width: 52ch; margin-bottom: .6rem; }
@@ -112,15 +108,6 @@
     .section > p { color: var(--muted); max-width: 66ch; }
     .chart { height: 360px; }
 
-    /* Map */
-    .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1rem 0 .8rem; }
-    .chip { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; border: 1px solid var(--line); border-radius: 999px; padding: .25rem .75rem; color: var(--muted); transition: background .15s, color .15s, border-color .15s; }
-    .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
-    .chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-    .chip span { font-variant-numeric: tabular-nums; opacity: .75; }
-    #map { height: 540px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--track); }
-    .map-keys { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .8rem; font-size: .88rem; color: var(--muted); align-items: center; }
-    .map-keys .dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; }
 
     /* Coal */
     .coal-wrap { position: relative; margin-top: 1.25rem; }
@@ -198,7 +185,7 @@
       .filters { grid-template-columns: 1fr 1fr; } .filters input { grid-column: 1 / -1; }
       .coal-row, .coal-axis { grid-template-columns: 8.5rem minmax(0, 1fr) 3.2rem; gap: .6rem; }
       .coal-row .gwv { display: none; }
-      .track { height: 36px; } .chart { height: 300px; } #map { height: 440px; } .tmark span { font-size: .75rem; }
+      .track { height: 36px; } .chart { height: 300px; } .tmark span { font-size: .75rem; }
       .hide-sm { display: none; }
     }
   </style>
@@ -227,10 +214,13 @@
 
   <main class="container-xl py-4">
     <div class="page">
+      <div class="hero-wrap">
+      <canvas class="ambient" data-mode="bubbles" aria-hidden="true"></canvas>
       <div class="live"><i></i>Live tracker</div>
       <h1>Is NSW on track for 2030?</h1>
       <p class="lead">A live check on whether NSW is building enough wind, solar and storage to replace its coal power stations.</p>
       <span class="src" id="asof"></span>
+      </div>
 
       <div class="clock" aria-label="Countdowns">
         <div><b id="d2030">…</b><span class="hms" id="t2030" aria-hidden="true"></span><span class="l">days until the 2030 targets</span></div>
@@ -256,8 +246,8 @@
           </div>
         </div>
         <div class="meter">
-          <div class="top"><span class="ics"><span class="ic battery"><svg><use href="#i-battery"/></svg></span><span class="ic hydro"><svg><use href="#i-hydro"/></svg></span></span><h3>Long-duration storage built</h3>
-            <button class="info" type="button" aria-expanded="false" aria-controls="p-sto" aria-label="What long-duration storage means">i</button></div>
+          <div class="top"><span class="ics"><span class="ic battery"><svg><use href="#i-battery"/></svg></span><span class="ic hydro"><svg><use href="#i-hydro"/></svg></span></span><h3>Long duration storage built</h3>
+            <button class="info" type="button" aria-expanded="false" aria-controls="p-sto" aria-label="What long duration storage means">i</button></div>
           <div class="pop" id="p-sto" hidden></div>
           <div class="body">
             <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg com" id="r-sco" cx="60" cy="60" r="52"/><circle class="fg gen" id="r-sto" cx="60" cy="60" r="52"/></svg><div class="v"><b id="v-sto">0%</b><small>of the 2 GW minimum</small></div></div>
@@ -278,7 +268,7 @@
       </section>
 
       <section class="gauge reveal" aria-labelledby="g-sto">
-        <div class="h-ic"><span class="ics"><span class="ic battery"><svg><use href="#i-battery"/></svg></span><span class="ic hydro"><svg><use href="#i-hydro"/></svg></span></span><h2 id="g-sto">New long-duration storage</h2></div>
+        <div class="h-ic"><span class="ics"><span class="ic battery"><svg><use href="#i-battery"/></svg></span><span class="ic hydro"><svg><use href="#i-hydro"/></svg></span></span><h2 id="g-sto">New long duration storage</h2></div>
         <p class="big" id="sto-text"></p>
         <h3>Power, against the 2030 goal</h3>
         <div class="track" id="sto-track"></div>
@@ -288,15 +278,6 @@
         <div class="keys" id="gwh-keys"></div>
         <div class="callout" id="snowy"></div>
         <p class="aside" id="sto-all"></p>
-      </section>
-
-      <section class="section">
-        <h2>Where the projects are</h2>
-        <p id="map-text">Each circle is a project, sized by capacity. Pick the statuses to show, then hover over or tap a circle for details.</p>
-        <div class="chips" id="map-chips" role="group" aria-label="Statuses shown on the map"></div>
-        <div id="map" role="img" aria-label="Map of NSW generation and storage projects"></div>
-        <div class="map-keys" id="map-keys"></div>
-        <p class="aside" id="map-cover"></p>
       </section>
 
       <section class="section">
@@ -325,7 +306,7 @@
         <h2 class="serif">Looking to 2035</h2>
         <div class="facts">
           <div><b>70%</b><p>cut in NSW emissions on 2005 levels by 2035, set in law. By 2022–23 the cut was 25%.</p></div>
-          <div><b>42 GWh</b><p>of long-duration storage targeted by 2034, raised in 2025 from the legal minimum of 28 GWh.</p></div>
+          <div><b>42 GWh</b><p>of long duration storage targeted by 2034, raised in 2025 from the legal minimum of 28 GWh.</p></div>
           <div><b id="coal35">…</b><p id="coal35-text">of coal capacity is due to close by 2035.</p></div>
         </div>
       </section>
@@ -354,14 +335,13 @@
         <ul class="notes">
           <li>New means a wind, solar, battery or pumped hydro unit that was not operating in AEMO's January 2021 release, the first after the Roadmap became law. Operating includes units being commissioned.</li>
           <li>Committed projects have finance and approvals. Anticipated ones are well advanced. Proposed ones are announced only, and many will not be built.</li>
-          <li>Targets. The Electricity Infrastructure Investment Act sets minimums of 12 GW of new renewable generation and 2 GW of long-duration storage by 2030, and 28 GWh of long-duration storage by 2034. In its 2025 Infrastructure Investment Objectives Report, the NSW Consumer Trustee (ASL, formerly AEMO Services) raised the targets to 16 GW and 42 GWh, warning that the minimums alone would push prices up as coal closes.</li>
-          <li>Long-duration storage is storage that can run at full power for at least 8 hours. The page works out each unit's hours from the capacity and energy AEMO reports. Snowy 2.0 is shown separately because it was already committed when the Roadmap began.</li>
+          <li>Targets. The Electricity Infrastructure Investment Act sets minimums of 12 GW of new renewable generation and 2 GW of long duration storage by 2030, and 28 GWh of long duration storage by 2034. In its 2025 Infrastructure Investment Objectives Report, the NSW Consumer Trustee (ASL, formerly AEMO Services) raised the targets to 16 GW and 42 GWh, warning that the minimums alone would push prices up as coal closes.</li>
+          <li>Long duration storage is storage that can run at full power for at least 8 hours. The page works out each unit's hours from the capacity and energy AEMO reports. Snowy 2.0 is shown separately because it was already committed when the Roadmap began.</li>
           <li>The official objectives count generation by annual output, so this page measures capacity as a guide.</li>
           <li>The Year column shows when an operating project first appeared as operating in an AEMO release. For other projects it shows the full commercial use year the developer reported, in italics. Many proposed projects have not reported one.</li>
-          <li>AEMO's file has no coordinates, so map locations come from the Open Electricity station register and are matched by AEMO unit code or site name. Some projects borrow the location of a nearby station of the same name and are marked approximate.</li>
           <li>AEMO's NSW region includes the ACT, so ACT projects such as the Capital Battery are counted here.</li>
           <li>The page checks AEMO every week and rebuilds itself when a new release appears.</li>
-          <li>Sources <a href="https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information">AEMO Generation Information</a>, <a href="https://www.netzerocommission.nsw.gov.au/">NSW Net Zero Commission 2026 Annual Progress Report</a>, <a href="https://www.energy.nsw.gov.au/nsw-plans-and-progress/major-state-projects/electricity-infrastructure-roadmap">NSW Electricity Infrastructure Roadmap</a>, ASL's 2025 Infrastructure Investment Objectives Report and <a href="https://github.com/opennem/opennem">Open Electricity</a> for locations.</li>
+          <li>Sources <a href="https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information">AEMO Generation Information</a>, <a href="https://www.netzerocommission.nsw.gov.au/">NSW Net Zero Commission 2026 Annual Progress Report</a>, <a href="https://www.energy.nsw.gov.au/nsw-plans-and-progress/major-state-projects/electricity-infrastructure-roadmap">NSW Electricity Infrastructure Roadmap</a> and ASL's 2025 Infrastructure Investment Objectives Report.</li>
         </ul>
       </section>
     </div>
@@ -447,8 +427,8 @@
       "<p>The lighter arc adds projects that are <b>committed</b>, with finance and approvals in place but not yet running.</p>" +
       "<p>In 2025 the NSW Consumer Trustee raised the target to <b>16 GW</b>, warning that the 12 GW minimum alone would push prices up as coal closes.</p>";
     $("p-sto").innerHTML =
-      "<p><b>Long-duration storage</b> can run at full power for " + R.lds_hours + " hours or more, long enough to cover an evening peak and a windless night. Pumped hydro and long batteries qualify.</p>" +
-      "<p><b>The 2 GW goal</b> is the legal minimum of long-duration storage NSW must have by 2030. The bar shows how much of that is running.</p>" +
+      "<p><b>Long duration storage</b> can run at full power for " + R.lds_hours + " hours or more, long enough to cover an evening peak and a windless night. Pumped hydro and long batteries qualify.</p>" +
+      "<p><b>The 2 GW goal</b> is the legal minimum of long duration storage NSW must have by 2030. The bar shows how much of that is running.</p>" +
       "<p>Most new NSW batteries store about " + R.typical_battery_hours + " hours. They help the grid every day but don't count here. <b>Snowy 2.0</b> is left out because it was already committed before the Roadmap began.</p>";
     document.querySelectorAll(".info").forEach(btn => {
       const pop = $(btn.getAttribute("aria-controls"));
@@ -462,7 +442,7 @@
 
     // A plain-English verdict
     function share(x) {
-      const parts = [[1 / 4, "a quarter"], [1 / 3, "a third"], [1 / 2, "half"], [2 / 3, "two-thirds"], [3 / 4, "three-quarters"], [1, "all"]];
+      const parts = [[1 / 4, "a quarter"], [1 / 3, "a third"], [1 / 2, "half"], [2 / 3, "two thirds"], [3 / 4, "three quarters"], [1, "all"]];
       const [v, w] = parts.reduce((b, p) => Math.abs(p[0] - x) < Math.abs(b[0] - x) ? p : b);
       return (Math.abs(v - x) < 0.015 ? "about " : x < v ? "nearly " : "just over ") + w;
     }
@@ -567,49 +547,6 @@
     $("coal35").textContent = gw(by35.reduce((a, c) => a + c.mw, 0));
     $("coal35-text").textContent = "of coal is due to close by 2035, at " + by35.map(c => c.name).join(", ").replace(/, ([^,]*)$/, " and $1") + ".";
 
-    // Map
-    const oldLabel = "Before " + startYr;
-    const MAP_ST = ["Operating", "Committed", "Anticipated", "Proposed", oldLabel, "Coal"];
-    const mapPts = (R.points || []).concat(R.coal.filter(c => c.ll).map(c => ({ n: c.name, t: "Coal", s: "Coal", mw: c.mw, ll: c.ll, y: c.year })));
-    const shownSt = new Set(["Operating", "Committed", "Anticipated", "Coal"]);
-    const stCount = s => mapPts.filter(p => p.s === s).length;
-    $("map-chips").innerHTML = MAP_ST.filter(stCount).map(s => '<button class="chip" type="button" data-s="' + esc(s) + '" aria-pressed="' + shownSt.has(s) + '">' + esc(s === "Coal" ? "Coal stations" : s === oldLabel ? "Running before " + startYr : s) + " <span>" + stCount(s) + "</span></button>").join("");
-    document.querySelectorAll("#map-chips .chip").forEach(b => b.addEventListener("click", () => {
-      const s = b.dataset.s; shownSt.has(s) ? shownSt.delete(s) : shownSt.add(s);
-      b.setAttribute("aria-pressed", shownSt.has(s)); drawMap();
-    }));
-    $("map-keys").innerHTML = ["Wind", "Solar", "Battery", "Pumped hydro", "Coal"].map(t => '<span><i class="dot" style="background:var(--c-' + TECH[t] + ')"></i>' + t + "</span>").join("") + "<span>Larger circles are bigger projects. Faded circles were running before " + startYr + ".</span>";
-    if (R.map_cover) {
-      const mc = R.map_cover;
-      $("map-cover").textContent = "AEMO doesn't publish locations, so the map shows the projects that can be placed: " + mc.Operating[0] + " of " + mc.Operating[1] + " new operating projects, " +
-        (mc.Committed[0] + mc.Anticipated[0]) + " of " + (mc.Committed[1] + mc.Anticipated[1]) + " committed and anticipated, and " + mc.Proposed[0] + " of " + mc.Proposed[1] + " proposed. Use the table below for the full list.";
-    }
-    let mapReady = false;
-    function drawMap() {
-      if (typeof Plotly === "undefined") return;
-      const dark = document.documentElement.getAttribute("data-theme") === "dark", ink = cv("--chart-text"), bg = cv("--chart-bg");
-      const pts = mapPts.filter(p => shownSt.has(p.s));
-      const maxMw = Math.max(...mapPts.map(p => p.mw));
-      const traces = ["Coal", "Wind", "Solar", "Battery", "Pumped hydro"].map(t => {
-        const g = pts.filter(p => p.t === t);
-        return {
-          type: "scattermapbox", mode: "markers", name: t,
-          lat: g.map(p => p.ll[0]), lon: g.map(p => p.ll[1]),
-          marker: { size: g.map(p => 7 + 26 * Math.sqrt(p.mw / maxMw)), color: cv("--c-" + TECH[t]), opacity: g.map(p => p.s === oldLabel ? 0.35 : p.s === "Proposed" ? 0.6 : 0.88) },
-          customdata: g.map(p => [esc(p.n), p.s === "Coal" ? "Closing " + (p.y || "") : p.s, num(p.mw), p.a ? "<br><i>Approximate location</i>" : ""]),
-          hovertemplate: "<b>%{customdata[0]}</b><br>" + t + " · %{customdata[1]}<br>%{customdata[2]} MW%{customdata[3]}<extra></extra>"
-        };
-      });
-      const wide = $("map").clientWidth > 700;
-      Plotly.react("map", traces, {
-        margin: { l: 0, r: 0, t: 0, b: 0 }, paper_bgcolor: bg, showlegend: false,
-        font: { family: getComputedStyle(document.body).fontFamily, color: ink },
-        hoverlabel: { bgcolor: bg, bordercolor: cv("--chart-grid"), font: { color: ink } },
-        mapbox: { style: dark ? "carto-darkmatter" : "carto-positron", center: { lat: -33.1, lon: 147.6 }, zoom: wide ? 4.9 : 4.2 }
-      }, { displayModeBar: false, responsive: true, scrollZoom: false });
-      mapReady = true;
-    }
-
     // Animate things in as they reach the screen
     function fill(el) {
       el.querySelectorAll("[data-w]").forEach(x => { x.style.width = x.dataset.w; });
@@ -661,7 +598,6 @@
         ], { ...base(), hovermode: "x unified", shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: target, y1: target, line: { color: ink, width: 1 } }],
              annotations: [{ xref: "paper", x: 0, y: target, text: "12 GW minimum", showarrow: false, yshift: 10, xanchor: "left", font: { size: 11, color: ink } }] }, cfg);
       } else $("history-wrap").hidden = true;
-      drawMap();
     }
     draw();
     window.onThemeChange = draw;
@@ -747,5 +683,6 @@
   })();
   </script>
   <script src="js/theme.js"></script>
+  <script src="js/ambient.js"></script>
 </body>
 </html>
