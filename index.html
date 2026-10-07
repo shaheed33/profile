@@ -4,131 +4,116 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Shaheed | Economist</title>
-  <meta name="description" content="Shaheed is a Maldivian economist working on public debt, climate risk and energy markets.">
+  <meta name="description" content="Abdulla Shaheed is a Maldivian economist working on public debt, climate risk and electricity markets.">
   <link rel="stylesheet" href="css/theme.css">
   <style>
-    .intro { padding: 3.5rem 0 3rem; }
-    .intro h1 { font-size: clamp(2rem, 4.6vw, 3.4rem); font-weight: 700; line-height: 1.08; letter-spacing: -.02em; max-width: 17ch; margin-bottom: 1.5rem; }
-    .intro p { font-size: 1.125rem; line-height: 1.65; max-width: 60ch; }
-    .intro .photo { width: 100%; max-width: 260px; aspect-ratio: 1; object-fit: cover; border-radius: 4px; }
+    .page { max-width: 880px; }
+    .hero { padding: 5rem 0 4.5rem; }
+    .who { display: flex; align-items: center; gap: .9rem; margin-bottom: 2.25rem; }
+    .who img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
+    .who strong { display: block; font-weight: 600; }
+    .who span { color: var(--muted); }
+    .hero h1 { font-size: clamp(2.3rem, 7vw, 4.4rem); letter-spacing: -.035em; line-height: 1.02; max-width: 17ch; margin-bottom: 1.5rem; }
+    .hero p { color: var(--muted); font-size: 1.2rem; line-height: 1.6; max-width: 46ch; margin: 0; }
 
-    .section { padding: 2.75rem 0; border-top: 1px solid var(--line); }
-    .section > h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.75rem; }
+    .block { padding: 2.5rem 0 3.5rem; }
+    .block > h2 { font-size: 1rem; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-bottom: .75rem; }
 
-    .feature { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1.5rem 3rem; align-items: end;
-               padding: 2rem 2rem 2rem 1.75rem; border-left: 6px solid var(--bs-primary); background: rgba(69,130,236,.06); margin-bottom: 2.5rem; }
-    .feature h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: .6rem; }
-    .feature p { max-width: 58ch; margin: 0; line-height: 1.6; }
-    .feature .btn { white-space: nowrap; }
-    @media (max-width: 767.98px) { .feature { grid-template-columns: 1fr; padding: 1.5rem 1.25rem; } }
+    .projects { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+    .projects li { border-bottom: 1px solid var(--line); }
+    .project { display: grid; grid-template-columns: minmax(0, 1fr) 112px; gap: 1.5rem; align-items: center; padding: 1.6rem 0; color: inherit; text-decoration: none; }
+    .project h3 { font-size: clamp(1.25rem, 2.6vw, 1.55rem); letter-spacing: -.02em; margin: 0 0 .35rem; }
+    .project p { color: var(--muted); margin: 0 0 .5rem; max-width: 52ch; }
+    .project .where { font-size: .9rem; color: var(--accent); font-weight: 500; }
+    .project svg { width: 112px; height: 56px; display: block; }
+    .project svg .stroke { fill: none; stroke: var(--accent); stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round; }
+    .project svg .fill { fill: var(--accent); }
+    .project svg .soft { fill: #C9D3F3; }
+    .project svg .base { stroke: var(--line); stroke-width: 1.5; }
+    .project:hover h3 { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+    @media (max-width: 575.98px) {
+      .hero { padding: 3rem 0 3rem; }
+      .hero p { font-size: 1.08rem; }
+      .project { grid-template-columns: minmax(0, 1fr) 72px; gap: 1rem; padding: 1.35rem 0; }
+      .project svg { width: 72px; height: 36px; }
+    }
 
-    .work { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 2rem 3rem; }
-    .work h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .4rem; }
-    .work h3 a { text-decoration: none; }
-    .work h3 a:hover { text-decoration: underline; }
-    .work p { margin-bottom: .35rem; line-height: 1.55; }
-
-    .path { list-style: none; padding: 0; margin: 0; }
-    .path li { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--line); }
-    .path li:last-child { border-bottom: 0; }
-    .path .yr { color: var(--muted); font-variant-numeric: tabular-nums; }
-    .path .org { color: var(--muted); display: block; font-size: .95rem; }
-    @media (max-width: 575.98px) { .path li { grid-template-columns: 1fr; gap: .15rem; } }
-
-    .docs a { display: block; padding: .55rem 0; }
-    a:focus-visible, .btn:focus-visible { outline: 3px solid var(--bs-primary); outline-offset: 3px; }
+    .contact p { font-size: 1.15rem; max-width: 46ch; }
+    .contact .links { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.25rem; }
+    .site-footer { border-top: 1px solid var(--line); padding: 1.5rem 0 2.5rem; font-size: .9rem; color: var(--muted); }
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand bg-primary" data-bs-theme="dark">
-    <div class="container-xl">
-      <a class="navbar-brand" href="index.html">Shaheed</a>
-      <div class="navbar-nav ms-auto flex-wrap">
-        <a class="nav-link active" aria-current="page" href="index.html">About</a>
-        <a class="nav-link" href="simulator.html">NEM storage simulator</a>
-        <a class="nav-link" href="prices.html">NEM price patterns</a>
-        <a class="nav-link" href="https://mvdebtclock.org">Debt clock</a>
-      </div>
+  <header class="site-header">
+    <div class="container-xl bar">
+      <a class="brand" href="index.html">shaheed.work</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="#projects">Projects</a>
+        <a href="docs/Abdulla_Shaheed_CV.pdf">CV</a>
+        <a href="#contact">Contact</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <main class="container-xl" style="max-width: 1100px;">
-    <section class="intro row g-5 align-items-center">
-      <div class="col-md-8">
-        <h1>Economist working on public debt, climate risk and energy markets.</h1>
-        <p>I'm Shaheed, from Maldives. I'm a PhD candidate in Economics and Econometrics at the University of York, where my thesis looks at debt sustainability and at how climate change and climate-related disasters affect what governments pay to borrow. The final chapter turns to Australia's National Electricity Market.</p>
-        <p class="mb-0">Before York I worked in public finance in Maldives for more than a decade, from price statistics and tax audits to running the finances of state-owned companies. I hold Australian permanent residency and am moving to Sydney.</p>
-      </div>
-      <div class="col-md-4 text-md-end">
-        <img class="photo" src="images/profile.jpg" alt="Portrait of Shaheed" width="260" height="260">
-      </div>
-    </section>
+  <main class="container-xl">
+    <div class="page">
+      <section class="hero">
+        <div class="who">
+          <img src="images/profile.jpg" alt="Portrait of Abdulla Shaheed" width="56" height="56">
+          <div><strong>Abdulla Shaheed</strong><span>Economist</span></div>
+        </div>
+        <h1>I study public debt, climate risk and electricity markets.</h1>
+        <p>Maldivian economist and PhD candidate at the University of York. Moving to Sydney to work on energy and public finance.</p>
+      </section>
 
-    <section class="section">
-      <h2>Projects</h2>
+      <section class="block" id="projects">
+        <h2>Projects</h2>
+        <ul class="projects">
+          <li>
+            <a class="project" href="https://mvdebtclock.org">
+              <div>
+                <h3>Maldives National Debt Clock</h3>
+                <p>A live tracker of what the government owes, what it pays in interest and where its revenue comes from, in plain language.</p>
+                <span class="where">mvdebtclock.org</span>
+              </div>
+              <svg viewBox="0 0 112 56" aria-hidden="true"><line class="base" x1="4" y1="52" x2="108" y2="52"/><polyline class="stroke" points="6,46 22,43 36,44 50,36 64,33 78,24 92,18 104,9"/><circle class="fill" cx="104" cy="9" r="4"/></svg>
+            </a>
+          </li>
+          <li>
+            <a class="project" href="simulator.html">
+              <div>
+                <h3>Could the NEM run without coal?</h3>
+                <p>Change the mix of wind, solar and storage in Australia's National Electricity Market and see whether demand is still met.</p>
+                <span class="where">Storage simulator</span>
+              </div>
+              <svg viewBox="0 0 112 56" aria-hidden="true"><line class="base" x1="4" y1="52" x2="108" y2="52"/><rect class="soft" x="8" y="30" width="14" height="22"/><rect class="fill" x="8" y="40" width="14" height="12"/><rect class="soft" x="28" y="18" width="14" height="34"/><rect class="fill" x="28" y="34" width="14" height="18"/><rect class="soft" x="48" y="24" width="14" height="28"/><rect class="fill" x="48" y="36" width="14" height="16"/><rect class="soft" x="68" y="10" width="14" height="42"/><rect class="fill" x="68" y="30" width="14" height="22"/><rect class="soft" x="88" y="20" width="14" height="32"/><rect class="fill" x="88" y="38" width="14" height="14"/></svg>
+            </a>
+          </li>
+          <li>
+            <a class="project" href="prices.html">
+              <div>
+                <h3>When is electricity cheap?</h3>
+                <p>Wholesale prices across the NEM by hour of day, season, year and region.</p>
+                <span class="where">NEM price patterns</span>
+              </div>
+              <svg viewBox="0 0 112 56" aria-hidden="true"><line class="base" x1="4" y1="52" x2="108" y2="52"/><path class="stroke" d="M6,26 C14,24 20,16 28,18 C38,20 42,40 54,44 C64,47 70,40 78,30 C86,18 92,6 100,10 C104,12 106,18 108,22"/></svg>
+            </a>
+          </li>
+        </ul>
+      </section>
 
-      <div class="feature">
-        <div>
-          <h3>Maldives National Debt Clock</h3>
-          <p>A live public tracker of what the Maldivian government owes, what it pays in interest and where its revenue comes from. Built from official MMA, Ministry of Finance and MIRA data and written for people without a finance background.</p>
+      <section class="block contact" id="contact">
+        <h2>Contact</h2>
+        <p>For research, analysis or policy work, email <a href="mailto:shahydh33@gmail.com">shahydh33@gmail.com</a>.</p>
+        <div class="links">
+          <a class="btn btn-primary" href="docs/Abdulla_Shaheed_CV.pdf">Download CV</a>
+          <a class="btn btn-outline-primary" href="docs/Shaheed_MSc_Dissertation_2021.pdf">MSc dissertation</a>
         </div>
-        <a class="btn btn-primary btn-lg" href="https://mvdebtclock.org">Visit mvdebtclock.org</a>
-      </div>
-
-      <div class="work">
-        <div>
-          <h3><a href="simulator.html">Could the NEM run without coal?</a></h3>
-          <p>An interactive model of wind, solar and storage across Australia's National Electricity Market. Change the generation mix and battery size and see whether demand is still met, half hour by half hour.</p>
-          <p class="small"><a href="replication.html">See the October 2024 replication</a></p>
-        </div>
-        <div>
-          <h3><a href="prices.html">When is electricity cheap?</a></h3>
-          <p>Wholesale prices in the NEM by hour of day, season, year and region, with simple, demand-weighted and median measures.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="row g-5">
-        <div class="col-lg-7">
-          <h2>Work</h2>
-          <ol class="path">
-            <li><span class="yr">2024 to 2026</span><span>Finance Manager<span class="org">Noonu Atoll Local Authority Company</span></span></li>
-            <li><span class="yr">2020 to 2022</span><span>Financial Controller<span class="org">Business Centre Corporation, Maldives' national SME body</span></span></li>
-            <li><span class="yr">2019</span><span>Manager, Business Centre<span class="org">Ministry of Economic Development</span></span></li>
-            <li><span class="yr">2018 to 2019</span><span>Accounts Executive<span class="org">Islanders Group</span></span></li>
-            <li><span class="yr">2017 to 2018</span><span>Senior Tax Officer, Large Corporate Audit<span class="org">Maldives Inland Revenue Authority</span></span></li>
-            <li><span class="yr">2013 to 2014</span><span>Assistant Customs Officer<span class="org">Maldives Customs Service</span></span></li>
-            <li><span class="yr">2012 to 2013</span><span>Assistant Statistical Officer<span class="org">Ministry of Finance and Treasury</span></span></li>
-          </ol>
-        </div>
-        <div class="col-lg-5">
-          <h2>Study</h2>
-          <ol class="path">
-            <li><span class="yr">2022 onwards</span><span>PhD Economics<span class="org">University of York</span></span></li>
-            <li><span class="yr">2020 to 2021</span><span>MSc Economics and Econometrics, Chevening Scholar<span class="org">University of Nottingham</span></span></li>
-            <li><span class="yr">2014 to 2016</span><span>Bachelor of Economics, Australia Awards Scholar<span class="org">University of Sydney</span></span></li>
-          </ol>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="row g-5">
-        <div class="col-md-7 docs">
-          <h2>Papers and CV</h2>
-          <a href="docs/Abdulla_Shaheed_CV.pdf">CV (PDF)</a>
-          <a href="docs/Shaheed_MSc_Dissertation_2021.pdf">Identification and date-stamping of bubbles in energy and non-energy commodity markets, 1970 to 2020 (MSc dissertation, PDF)</a>
-        </div>
-        <div class="col-md-5">
-          <h2>Get in touch</h2>
-          <p>For research, analysis or policy work, email me at <a href="mailto:shahydh33@gmail.com">shahydh33@gmail.com</a>.</p>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
-  <footer class="container-xl py-3 border-top small text-body-secondary" style="max-width: 1100px;">© <span id="year"></span> Shaheed.</footer>
+  <footer class="container-xl"><div class="site-footer">© <span id="year"></span> Abdulla Shaheed</div></footer>
   <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 </body>
 </html>
