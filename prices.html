@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NEM price patterns | Shaheed</title>
-    <link rel="stylesheet" href="css/theme.css">
+    <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
+  <link rel="stylesheet" href="css/theme.css">
   <style>
     .pchart { height: 380px; }
     #c-trend { height: 440px; }
@@ -28,6 +29,7 @@
         <a href="index.html#projects">Projects</a>
         <a href="docs/Abdulla_Shaheed_CV.pdf">CV</a>
         <a href="index.html#contact">Contact</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
     </div>
   </header>
@@ -277,5 +279,6 @@
     redraw();
   })();
   </script>
+  <script src="js/theme.js"></script>
 </body>
 </html>

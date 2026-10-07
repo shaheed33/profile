@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Replication: October 2024 | Shaheed</title>
-    <link rel="stylesheet" href="css/theme.css">
+    <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
+  <link rel="stylesheet" href="css/theme.css">
   <style>
     .rchart { height: 360px; }
     #rep-table td, #rep-table th, #res-table td, #res-table th { white-space: nowrap; }
@@ -21,6 +22,7 @@
         <a href="index.html#projects">Projects</a>
         <a href="docs/Abdulla_Shaheed_CV.pdf">CV</a>
         <a href="index.html#contact">Contact</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
     </div>
   </header>
@@ -285,5 +287,6 @@ if (typeof module !== "undefined") module.exports = { simulate, ANDREW_PRESET, G
     run();
   })();
   </script>
+  <script src="js/theme.js"></script>
 </body>
 </html>

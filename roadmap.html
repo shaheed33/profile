@@ -5,20 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Is NSW on track for 2030? | Abdulla Shaheed</title>
   <meta name="description" content="New wind, solar and storage in NSW measured against the Electricity Infrastructure Roadmap, from AEMO's Generation Information data.">
+  <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
   <link rel="stylesheet" href="css/theme.css">
   <style>
     .page { max-width: 1040px; }
     .lead { max-width: 60ch; }
-    .gauge { margin: 2.5rem 0 3rem; }
-    .gauge h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.7rem; margin-bottom: .25rem; }
-    .gauge .big { font-size: 1.05rem; color: var(--muted); max-width: 62ch; margin-bottom: 1.4rem; }
+    .clock { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); margin: 2.25rem 0 1rem; }
+    .clock div { padding: 1.1rem 1.25rem 1.2rem 0; }
+    .clock div + div { border-left: 1px solid var(--line); padding-left: 1.25rem; }
+    .clock b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(2rem, 5vw, 3rem); line-height: 1; font-variant-numeric: tabular-nums; }
+    .clock span { color: var(--muted); font-size: .92rem; }
+    .gauge { margin: 2.75rem 0 2.5rem; }
+    .gauge h2, .section h2.serif { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.7rem; margin-bottom: .25rem; }
+    .gauge .big { font-size: 1.05rem; color: var(--muted); max-width: 62ch; margin-bottom: 1.2rem; }
     .gauge .big strong { color: var(--ink); }
-    .track { position: relative; height: 44px; background: #F2F4F7; margin: 2.2rem 0 2rem; }
+    .track { position: relative; height: 44px; background: var(--track); margin: 2.2rem 0 2rem; }
     .seg { position: absolute; top: 0; bottom: 0; }
-    .s-op { background: #1F3D73; }
-    .s-co { background: #6E86B3; }
-    .s-an { background: #B7C4DC; }
-    .s-pr { background: repeating-linear-gradient(135deg, #DCE3EF 0 6px, #F2F4F7 6px 12px); }
+    .s-op { background: var(--seg-op); } .s-co { background: var(--seg-co); } .s-an { background: var(--seg-an); }
+    .s-pr { background: repeating-linear-gradient(135deg, var(--seg-pr) 0 6px, var(--track) 6px 12px); }
     .tmark { position: absolute; top: -26px; bottom: -6px; border-left: 2px solid var(--ink); }
     .tmark span { position: absolute; top: 0; left: 6px; font-size: .82rem; white-space: nowrap; color: var(--ink); }
     .tmark.alt { border-left-style: dashed; }
@@ -27,13 +31,36 @@
     .keys { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; font-size: .9rem; color: var(--muted); }
     .keys i { display: inline-block; width: 12px; height: 12px; margin-right: .4rem; vertical-align: -1px; }
     .keys b { color: var(--ink); font-weight: 600; }
+    .pace { display: flex; flex-wrap: wrap; gap: .5rem 2.5rem; margin-top: 1.4rem; font-size: .95rem; color: var(--muted); }
+    .pace b { color: var(--ink); font-weight: 600; }
+    .aside { font-size: .88rem; color: var(--muted); margin-top: .6rem; }
     .section { border-top: 1px solid var(--line); padding: 2.2rem 0; }
     .section h2 { font-size: 1.15rem; margin-bottom: .4rem; }
     .section > p { color: var(--muted); max-width: 64ch; }
     .chart { height: 360px; }
+    .coal { display: grid; gap: .9rem; margin-top: 1.25rem; }
+    .coal-row { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 4.5rem; gap: 1rem; align-items: center; font-size: .95rem; }
+    .coal-row .bar { position: relative; height: 14px; background: var(--track); }
+    .coal-row .bar span { position: absolute; left: 0; top: 0; bottom: 0; background: var(--muted); }
+    .coal-row .yr { text-align: right; font-variant-numeric: tabular-nums; }
+    .coal-axis { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 4.5rem; gap: 1rem; font-size: .8rem; color: var(--muted); }
+    .coal-axis div { display: flex; justify-content: space-between; }
+    .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2rem; margin-top: 1.25rem; }
+    .facts b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 2.1rem; line-height: 1.05; margin-bottom: .35rem; }
+    .facts p { color: var(--muted); margin: 0; font-size: .95rem; }
+    .filters { display: grid; grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr)); gap: .75rem; margin: 1.25rem 0 .75rem; }
+    .count { font-size: .9rem; color: var(--muted); margin-bottom: .5rem; }
     table { font-size: .95rem; }
-    .notes li { margin-bottom: .5rem; color: var(--muted); max-width: 70ch; }
-    @media (max-width: 575.98px) { .track { height: 36px; } .chart { height: 300px; } .tmark span { font-size: .75rem; } }
+    .notes li { margin-bottom: .45rem; color: var(--muted); max-width: 70ch; }
+    @media (max-width: 767.98px) {
+      .clock { grid-template-columns: 1fr; }
+      .clock div + div { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
+      .facts { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: 1fr 1fr; } .filters input { grid-column: 1 / -1; }
+      .coal-row, .coal-axis { grid-template-columns: 7rem minmax(0, 1fr) 3.2rem; gap: .6rem; }
+      .track { height: 36px; } .chart { height: 300px; } .tmark span { font-size: .75rem; }
+      .hide-sm { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -44,6 +71,7 @@
         <a href="index.html#projects">Projects</a>
         <a href="docs/Abdulla_Shaheed_CV.pdf">CV</a>
         <a href="index.html#contact">Contact</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
     </div>
   </header>
@@ -51,13 +79,21 @@
   <main class="container-xl py-4">
     <div class="page">
       <h1>Is NSW on track for 2030?</h1>
-      <p class="lead">The NSW Electricity Infrastructure Roadmap aims for at least 12 GW of new renewable generation and 2 GW of long-duration storage by 2030. This page measures progress using AEMO's register of every generation and storage project in the state. <span id="asof"></span></p>
+      <p class="lead">Progress on the NSW Electricity Infrastructure Roadmap, from AEMO's register of every generation and storage project. <span id="asof"></span></p>
+
+      <div class="clock" aria-label="Countdowns">
+        <div><b id="d2030">…</b><span>days until the 2030 targets</span></div>
+        <div><b id="dcoal">…</b><span id="dcoal-label">days until Eraring is due to close</span></div>
+        <div><b id="d2035">…</b><span>days until the 2035 emissions target</span></div>
+      </div>
 
       <section class="gauge" aria-labelledby="g-gen">
         <h2 id="g-gen">New wind and solar</h2>
         <p class="big" id="gen-text"></p>
         <div class="track" id="gen-track"></div>
         <div class="keys" id="gen-keys"></div>
+        <div class="pace" id="pace"></div>
+        <p class="aside">The Net Zero Commission put the gap to 12 GW at 7.9 GW in December 2025, counting projects the official way.</p>
       </section>
 
       <section class="gauge" aria-labelledby="g-sto">
@@ -69,57 +105,94 @@
 
       <section class="section">
         <h2>What has been switched on each year</h2>
-        <p>New capacity in NSW by the year of the AEMO release in which it first appears as operating. The 2026 bar covers the first half of the year only.</p>
+        <p>Hover over a bar to see the projects. 2026 covers the first half of the year.</p>
         <div id="c-year" class="chart"></div>
       </section>
 
       <section class="section" id="history-wrap">
         <h2>How the picture has changed</h2>
-        <p>Operating and committed wind and solar in each AEMO release since the Roadmap began.</p>
+        <p>New wind and solar in each AEMO release since 2021, against the 12 GW target.</p>
         <div id="c-hist" class="chart"></div>
       </section>
 
       <section class="section">
-        <h2>Largest projects under way</h2>
-        <p>Committed and anticipated projects, largest first. Sites with several units are combined.</p>
+        <h2 class="serif">Coal still to close</h2>
+        <p>Coal produced 97% of NSW electricity sector emissions in 2022–23. Expected closure years as reported to AEMO.</p>
+        <div class="coal" id="coal"></div>
+      </section>
+
+      <section class="section">
+        <h2 class="serif">Looking to 2035</h2>
+        <div class="facts">
+          <div><b>70%</b><p>cut in NSW emissions on 2005 levels by 2035, set in law. By 2022–23 the cut was 25%.</p></div>
+          <div><b>28 GWh</b><p>of long-duration storage targeted by 2034, with a goal of 42 GWh.</p></div>
+          <div><b id="coal35">…</b><p id="coal35-text">of coal capacity is due to close by 2035.</p></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Every NSW project</h2>
+        <p>All new wind, solar, battery and pumped hydro projects in AEMO's latest release, grouped by site.</p>
+        <div class="filters">
+          <input id="f-q" class="form-control" type="search" placeholder="Search by name" aria-label="Search projects by name">
+          <select id="f-status" class="form-select" aria-label="Filter by status">
+            <option value="">All statuses</option><option>Operating</option><option>Committed</option><option>Anticipated</option><option>Proposed</option>
+          </select>
+          <select id="f-tech" class="form-select" aria-label="Filter by type">
+            <option value="">All types</option><option>Wind</option><option>Solar</option><option>Battery</option><option>Pumped hydro</option>
+          </select>
+        </div>
+        <p class="count" id="count"></p>
         <div class="table-responsive">
           <table class="table table-sm align-middle">
-            <thead><tr><th>Project</th><th>Type</th><th>Status</th><th class="text-end">MW</th></tr></thead>
-            <tbody id="pipe"></tbody>
+            <thead><tr><th>Project</th><th>Type</th><th>Status</th><th class="hide-sm">Operating from</th><th class="text-end">MW</th></tr></thead>
+            <tbody id="rows"></tbody>
           </table>
         </div>
+        <button id="more" class="btn btn-outline-primary btn-sm" type="button">Show more</button>
       </section>
 
       <section class="section">
         <h2>How the figures are worked out</h2>
         <ul class="notes">
-          <li>Data comes from AEMO's NEM Generation Information, published each quarter, using one release about every six months since January 2021. Only projects in the NSW region of the market are counted, which includes Snowy Hydro.</li>
-          <li>New means any wind, solar, battery or pumped hydro unit that was not already operating in AEMO's January 2021 release, the first after the Electricity Infrastructure Investment Act was passed. Units are matched across releases by their AEMO unit code, or by site name where there is none. Operating includes units still being commissioned.</li>
-          <li>Committed projects have finance and approvals in place. Anticipated projects are well advanced but not yet committed. Proposed projects are publicly announced only, and many will not be built.</li>
-          <li>The official objectives count generation by expected annual output and storage by how many hours it can run, so this page is a guide to progress in capacity terms rather than the official measure. The storage figure includes batteries of any duration, while the Roadmap target is for long-duration storage of eight hours or more.</li>
-          <li>The 16 GW line is the more ambitious generation goal set by the Consumer Trustee in 2025.</li>
+          <li>New means a wind, solar, battery or pumped hydro unit that was not operating in AEMO's January 2021 release, the first after the Roadmap became law. Operating includes units being commissioned.</li>
+          <li>Committed projects have finance and approvals. Anticipated ones are well advanced. Proposed ones are announced only, and many will not be built.</li>
+          <li>The official objectives count generation by annual output and storage by duration, so this page measures capacity as a guide. The storage bar includes batteries of any duration.</li>
+          <li>The page checks AEMO every week and rebuilds itself when a new release appears.</li>
+          <li>Sources <a href="https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information">AEMO Generation Information</a>, <a href="https://www.netzerocommission.nsw.gov.au/">NSW Net Zero Commission 2026 Annual Progress Report</a> and <a href="https://www.energy.nsw.gov.au/nsw-plans-and-progress/major-state-projects/electricity-infrastructure-roadmap">NSW Electricity Infrastructure Roadmap</a>.</li>
         </ul>
       </section>
     </div>
   </main>
 
-  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Source AEMO, NEM Generation Information.</footer>
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Data from AEMO.</footer>
 
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <script src="data/roadmap.js"></script>
   <script>
   (function () {
     document.getElementById("year").textContent = new Date().getFullYear();
-    const R = window.ROADMAP, S = R.summary;
-    const fmt = mw => (mw / 1000).toLocaleString("en-AU", { maximumFractionDigits: 1 }) + " GW";
+    const R = window.ROADMAP, S = R.summary, T = R.targets;
+    const gw = mw => (mw / 1000).toLocaleString("en-AU", { maximumFractionDigits: 1 }) + " GW";
     const sum = (st, techs) => techs.reduce((a, t) => a + (S[st][t] || 0), 0);
-    const d = new Date(R.updated);
-    document.getElementById("asof").textContent = "Figures from AEMO's " + d.toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + " release.";
+    const cv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    document.getElementById("asof").textContent = "Latest data from AEMO's " + new Date(R.updated).toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + " release.";
 
+    // Countdowns
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const days = d => Math.max(0, Math.ceil((new Date(d) - today) / 864e5)).toLocaleString("en-AU");
+    document.getElementById("d2030").textContent = days("2030-01-01T00:00:00");
+    document.getElementById("d2035").textContent = days("2035-01-01T00:00:00");
+    const next = R.coal.filter(c => (c.date ? new Date(c.date) : new Date(c.year + "-12-31")) > today)[0];
+    if (next) {
+      document.getElementById("dcoal").textContent = days((next.date || next.year + "-12-31") + "T00:00:00");
+      document.getElementById("dcoal-label").textContent = "days until " + next.name + " is due to close";
+    }
+
+    // Gauges
     function gauge(id, techs, marks, scaleMax) {
-      const parts = [["Operating", "s-op"], ["Committed", "s-co"], ["Anticipated", "s-an"], ["Proposed", "s-pr"]]
-        .map(([st, cls]) => ({ st, cls, mw: sum(st, techs) }));
-      const total = parts.reduce((a, p) => a + p.mw, 0);
+      const parts = [["Operating", "s-op"], ["Committed", "s-co"], ["Anticipated", "s-an"], ["Proposed", "s-pr"]].map(([st, cls]) => ({ st, cls, mw: sum(st, techs) }));
       const max = Math.max(scaleMax, (parts[0].mw + parts[1].mw + parts[2].mw) * 1.05);
       const track = document.getElementById(id + "-track");
       let left = 0;
@@ -127,52 +200,90 @@
         const w = Math.min(p.mw / max * 100, 100 - left);
         if (w <= 0) return;
         const el = document.createElement("div");
-        el.className = "seg " + p.cls; el.style.left = left + "%"; el.style.width = w + "%";
-        el.title = p.st + " " + fmt(p.mw);
+        el.className = "seg " + p.cls; el.style.left = left + "%"; el.style.width = w + "%"; el.title = p.st + " " + gw(p.mw);
         track.appendChild(el); left += w;
       });
       marks.forEach(m => {
-        const el = document.createElement("div");
-        const pos = Math.min(m.mw / max * 100, 99.5);
+        const el = document.createElement("div"), pos = Math.min(m.mw / max * 100, 99.5);
         el.className = "tmark" + (m.alt ? " alt" : "") + (pos > 80 ? " flip" : "");
-        el.style.left = pos + "%";
-        el.innerHTML = "<span>" + m.label + "</span>";
+        el.style.left = pos + "%"; el.innerHTML = "<span>" + m.label + "</span>";
         track.appendChild(el);
       });
-      document.getElementById(id + "-keys").innerHTML = parts.map(p =>
-        '<span><i class="' + p.cls + '"></i>' + p.st + " <b>" + fmt(p.mw) + "</b></span>").join("");
+      document.getElementById(id + "-keys").innerHTML = parts.map(p => '<span><i class="' + p.cls + '"></i>' + p.st + " <b>" + gw(p.mw) + "</b></span>").join("");
       return parts;
     }
-
-    const T = R.targets;
     const g = gauge("gen", ["Wind", "Solar"], [{ mw: T.generation_min_gw * 1000, label: "12 GW" }, { mw: T.generation_ambition_gw * 1000, label: "16 GW", alt: true }], T.generation_ambition_gw * 1150);
     const s = gauge("sto", ["Battery", "Pumped hydro"], [{ mw: T.storage_min_gw * 1000, label: "2 GW target" }], T.storage_min_gw * 1500);
-    const pct = (mw, t) => Math.round(mw / (t * 1000) * 100);
-    document.getElementById("gen-text").innerHTML = "<strong>" + fmt(g[0].mw) + "</strong> of new wind and solar is operating, " + pct(g[0].mw, 12) + "% of the 12 GW target. Counting committed projects, that rises to " + fmt(g[0].mw + g[1].mw) + ". The solid line marks the 12 GW target and the dashed line the 16 GW goal.";
-    document.getElementById("sto-text").innerHTML = "<strong>" + fmt(s[0].mw) + "</strong> of new storage is operating and " + fmt(s[1].mw) + " more is committed. Most of it is batteries, which may not all count as long-duration.";
+    document.getElementById("gen-text").innerHTML = "<strong>" + gw(g[0].mw) + "</strong> operating, " + Math.round(g[0].mw / 120) + "% of the 12 GW target. With committed projects, " + gw(g[0].mw + g[1].mw) + ". The dashed line is the 16 GW goal.";
+    document.getElementById("sto-text").innerHTML = "<strong>" + gw(s[0].mw) + "</strong> operating and " + gw(s[1].mw) + " committed. Most is batteries, which may not all count as long-duration.";
 
-    const baseL = () => ({ margin: { l: 50, r: 10, t: 10, b: 40 }, font: { family: getComputedStyle(document.body).fontFamily, color: "#14233A", size: 12 },
-      paper_bgcolor: "#fff", plot_bgcolor: "#fff", legend: { orientation: "h", y: -0.2 }, xaxis: { showgrid: false },
-      yaxis: { gridcolor: "#EEF0F4", title: { text: "MW" }, rangemode: "tozero" } });
-    const cfg = { displayModeBar: false, responsive: true };
-    const colours = { Wind: "#1F3D73", Solar: "#C99A2E", Battery: "#6E86B3", "Pumped hydro": "#8FB3A2" };
-    const years = Object.keys(R.by_year).filter(y => +y >= 2021).sort();
-    Plotly.newPlot("c-year", ["Wind", "Solar", "Battery", "Pumped hydro"].map(t => ({
-      type: "bar", name: t, x: years, y: years.map(y => R.by_year[y][t] || 0), marker: { color: colours[t] },
-      hovertemplate: "%{y:,.0f} MW<extra>" + t + "</extra>" })), { ...baseL(), barmode: "stack" }, cfg);
+    // Pace needed against pace achieved
+    const H = R.history, last = H[H.length - 1];
+    const back = H.find(h => (new Date(last.date) - new Date(h.date)) / 3.156e10 <= 2.01) || H[0];
+    const yrsPast = (new Date(last.date) - new Date(back.date)) / 3.156e10;
+    const pastRate = yrsPast > 0 ? (last.operating_gen_mw - back.operating_gen_mw) / yrsPast : 0;
+    const yrsLeft = (new Date("2030-01-01") - today) / 3.156e10;
+    const need = Math.max(0, 12000 - g[0].mw) / Math.max(yrsLeft, 0.1);
+    document.getElementById("pace").innerHTML = "<span>Needed from now <b>" + gw(need) + " a year</b></span><span>Average over the last two years <b>" + gw(pastRate) + " a year</b></span>";
 
-    if (R.history.length > 1) {
-      const x = R.history.map(h => h.date);
-      Plotly.newPlot("c-hist", [
-        { x, y: R.history.map(h => h.operating_gen_mw), name: "Operating", mode: "lines+markers", line: { color: "#1F3D73", width: 2.5 } },
-        { x, y: R.history.map(h => h.operating_gen_mw + h.committed_gen_mw), name: "Operating and committed", mode: "lines+markers", line: { color: "#6E86B3", width: 2, dash: "dot" } }
-      ], { ...baseL(), shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: 12000, y1: 12000, line: { color: "#14233A", width: 1 } }] }, cfg);
-    } else { document.getElementById("history-wrap").hidden = true; }
+    // Coal
+    const y0 = new Date().getFullYear(), y1 = Math.max(...R.coal.map(c => c.year || y0)) + 1;
+    document.getElementById("coal").innerHTML = R.coal.map(c => {
+      const w = Math.max(2, ((c.year || y0) - y0 + 0.5) / (y1 - y0) * 100);
+      return '<div class="coal-row" title="' + esc(c.name) + ", " + c.mw.toLocaleString("en-AU") + ' MW"><span>' + esc(c.name) + ' <span class="text-body-secondary small">' + gw(c.mw) + '</span></span><div class="bar"><span style="width:' + w + '%"></span></div><span class="yr">' + (c.year || "") + "</span></div>";
+    }).join("") + '<div class="coal-axis"><span></span><div><span>' + y0 + "</span><span>" + y1 + "</span></div><span></span></div>";
+    const by35 = R.coal.filter(c => c.year && c.year <= 2035);
+    document.getElementById("coal35").textContent = gw(by35.reduce((a, c) => a + c.mw, 0));
+    document.getElementById("coal35-text").textContent = "of coal is due to close by 2035, at " + by35.map(c => c.name).join(", ").replace(/, ([^,]*)$/, " and $1") + ".";
 
-    const rows = R.projects.filter(p => p.status === "Committed" || p.status === "Anticipated").slice(0, 15);
-    document.getElementById("pipe").innerHTML = rows.map(p =>
-      "<tr><td>" + p.name + "</td><td>" + p.tech + "</td><td>" + p.status + '</td><td class="text-end">' + p.mw.toLocaleString("en-AU") + "</td></tr>").join("");
+    // Charts, drawn again when the theme changes
+    function draw() {
+      const ink = cv("--chart-text"), grid = cv("--chart-grid"), bg = cv("--chart-bg");
+      const base = () => ({ margin: { l: 50, r: 10, t: 10, b: 40 }, font: { family: getComputedStyle(document.body).fontFamily, color: ink, size: 12 },
+        paper_bgcolor: bg, plot_bgcolor: bg, legend: { orientation: "h", y: -0.2 }, xaxis: { showgrid: false },
+        yaxis: { gridcolor: grid, title: { text: "MW" }, rangemode: "tozero" }, hoverlabel: { align: "left", bgcolor: bg, bordercolor: grid, font: { color: ink } } });
+      const cfg = { displayModeBar: false, responsive: true };
+      const dark = document.documentElement.getAttribute("data-theme") === "dark";
+      const colours = { Wind: dark ? "#A9C1EE" : "#1F3D73", Solar: "#D3A33A", Battery: dark ? "#6D88BC" : "#6E86B3", "Pumped hydro": "#8FB3A2" };
+      const years = Object.keys(R.by_year).filter(y => +y >= 2021).sort();
+      const names = (y, t) => {
+        const l = (R.by_year_names[y] || {})[t] || [];
+        return l.slice(0, 10).map(esc).join("<br>") + (l.length > 10 ? "<br>and " + (l.length - 10) + " more" : "");
+      };
+      Plotly.react("c-year", ["Wind", "Solar", "Battery", "Pumped hydro"].map(t => ({
+        type: "bar", name: t, x: years, y: years.map(y => R.by_year[y][t] || 0), marker: { color: colours[t] },
+        customdata: years.map(y => names(y, t)),
+        hovertemplate: "<b>" + t + " %{x}, %{y:,.0f} MW</b><br>%{customdata}<extra></extra>" })), { ...base(), barmode: "stack", hovermode: "closest" }, cfg);
+      if (H.length > 1) {
+        const x = H.map(h => h.date);
+        Plotly.react("c-hist", [
+          { x, y: H.map(h => h.operating_gen_mw), name: "Operating", mode: "lines+markers", line: { color: colours.Wind, width: 2.5 }, hovertemplate: "%{y:,.0f} MW operating<extra></extra>" },
+          { x, y: H.map(h => h.operating_gen_mw + h.committed_gen_mw), name: "Operating and committed", mode: "lines+markers", line: { color: colours.Battery, width: 2, dash: "dot" }, hovertemplate: "%{y:,.0f} MW with committed<extra></extra>" }
+        ], { ...base(), hovermode: "x unified", shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: 12000, y1: 12000, line: { color: ink, width: 1 } }],
+             annotations: [{ xref: "paper", x: 0, y: 12000, text: "12 GW target", showarrow: false, yshift: 10, xanchor: "left", font: { size: 11, color: ink } }] }, cfg);
+      } else document.getElementById("history-wrap").hidden = true;
+    }
+    draw();
+    window.onThemeChange = draw;
+
+    // Project explorer
+    const q = document.getElementById("f-q"), fs = document.getElementById("f-status"), ft = document.getElementById("f-tech");
+    let shown = 25;
+    function render() {
+      const term = q.value.trim().toLowerCase();
+      const list = R.projects.filter(p => (!term || p.name.toLowerCase().includes(term)) && (!fs.value || p.status === fs.value) && (!ft.value || p.tech === ft.value));
+      const total = list.reduce((a, p) => a + p.mw, 0);
+      document.getElementById("count").textContent = list.length + " projects, " + gw(total) + " in total";
+      document.getElementById("rows").innerHTML = list.slice(0, shown).map(p =>
+        "<tr><td>" + esc(p.name) + "</td><td>" + p.tech + "</td><td>" + p.status + '</td><td class="hide-sm">' + (p.year || "") + '</td><td class="text-end">' + p.mw.toLocaleString("en-AU") + "</td></tr>").join("") ||
+        '<tr><td colspan="5">No projects match. Try a different name or filter.</td></tr>';
+      document.getElementById("more").hidden = list.length <= shown;
+    }
+    [q, fs, ft].forEach(el => el.addEventListener("input", () => { shown = 25; render(); }));
+    document.getElementById("more").addEventListener("click", () => { shown += 50; render(); });
+    render();
   })();
   </script>
+  <script src="js/theme.js"></script>
 </body>
 </html>

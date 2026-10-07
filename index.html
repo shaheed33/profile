@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Abdulla Shaheed</title>
   <meta name="description" content="Abdulla Shaheed works on public debt, climate risk and energy markets.">
+  <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
   <link rel="stylesheet" href="css/theme.css">
   <style>
     .hero { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; align-items: start; padding: 4.5rem 0 4rem; }
     .hero img { width: 280px; height: 280px; object-fit: cover; border-radius: 2px; display: block; }
     .hero h1 { font-size: clamp(2.2rem, 4.6vw, 3.5rem); line-height: 1.06; max-width: 18ch; margin: -.35rem 0 1.5rem; }
-    .hero p { font-size: 1.1rem; line-height: 1.7; color: #3A4860; max-width: 58ch; }
+    .hero p { font-size: 1.1rem; line-height: 1.7; color: var(--soft); max-width: 58ch; }
     .hero p:last-child { margin-bottom: 0; }
 
     .label { font-size: .95rem; font-weight: 500; color: var(--muted); margin-bottom: 1rem; }
@@ -55,6 +56,7 @@
         <a href="#projects">Projects</a>
         <a href="docs/Abdulla_Shaheed_CV.pdf">CV</a>
         <a href="#contact">Contact</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
     </div>
   </header>
@@ -119,5 +121,6 @@
 
   <footer class="container-xl"><div class="site-footer">© <span id="year"></span> Abdulla Shaheed</div></footer>
   <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+  <script src="js/theme.js"></script>
 </body>
 </html>
