@@ -142,6 +142,17 @@
           <div class="chart" id="models"></div>
         </section>
 
+        <section class="section" id="infl-sec" hidden>
+          <h2>Perth prices so far</h2>
+          <p class="note" id="infl-text"></p>
+          <div class="grid" id="infl-stats"></div>
+          <div class="chart" id="infl" style="margin-top:1.4rem"></div>
+          <div class="key">
+            <span><i class="sw bar"></i>Annual inflation, official</span>
+            <span><i class="sw open"></i>This quarter so far, with likely range</span>
+          </div>
+        </section>
+
         <section class="section">
           <h2>The indicators</h2>
           <p class="note">Latest reading of each input, with its path since 2015.</p>
@@ -158,6 +169,7 @@
         <details>
           <summary>The models</summary>
           <p>Three machine learning models are trained on every quarter since the early 1990s. Ridge regression is a linear model that shrinks weak signals towards zero. A random forest averages hundreds of decision trees. Gradient boosting builds small trees one after another, each correcting the errors of the last. A blend of all three is also tried. Two simple benchmarks sit alongside them, the average of the last two years and a model that only knows the last two quarters of growth.</p>
+          <p>Construction work done and business investment for the quarter come out a few days before the official demand figure. Once they do, a second version of each model that also uses them takes over for those final days.</p>
           <p>Monthly indicators are read over the latest three months against the three months before, so a quarter with only some of its figures in is still compared like for like. Perth inflation and wage growth come in a quarter behind, because the figures for the quarter being estimated are published too late to use.</p>
           <p>Each model is tested by stepping through history from 2010, predicting each quarter using only the quarters before it and only the figures that would have been published by then. Whichever has the smallest typical miss produces the headline figure, and the likely range comes from its own past misses at the same point in the quarter, covering eight in every ten outcomes.</p>
         </details>
@@ -167,7 +179,7 @@
         </details>
         <details>
           <summary>Sources</summary>
-          <p>Australian Bureau of Statistics Data API for State Final Demand, the Labour Force survey, the Consumer Price Index, the Wage Price Index and Building Approvals. Iron ore, Brent oil and the exchange rate come from the Federal Reserve Bank of St. Louis (FRED), originally from the IMF and the US Federal Reserve. The model refreshes on the 20th of each month.</p>
+          <p>Australian Bureau of Statistics Data API for State Final Demand, the Labour Force survey, the monthly and quarterly Consumer Price Index, the Wage Price Index, Building Approvals, Construction Work Done and Private New Capital Expenditure. Iron ore, Brent oil and the exchange rate come from the Federal Reserve Bank of St. Louis (FRED), originally from the IMF and the US Federal Reserve. The model refreshes on the 20th of each month, and again late in February, May, August and November once the construction and business investment surveys are out.</p>
           <p id="generated" class="small text-body-secondary"></p>
         </details>
       </section>
@@ -338,11 +350,59 @@
       });
     }
 
+    function inflation() {
+      const I = D.inflation, sec = $("infl-sec");
+      if (!I || !I.q_annual) { sec.hidden = true; return; }
+      sec.hidden = false;
+      const words = ["none", "one", "two", "all three"][I.months_in];
+      $("infl-text").textContent = "The ABS now measures Perth prices every month, and the quarterly figure is the average of the quarter's three months. With " +
+        words + " of them in, much of " + I.label + " is already known. This part is arithmetic on published figures, not a model, with any month still to come assumed to rise at its usual pace.";
+      const stats = $("infl-stats"); stats.innerHTML = "";
+      [[I.latest_annual != null ? sign(I.latest_annual) + "%" : "n/a", "Annual inflation, " + I.latest_month, (I.latest_monthly != null ? sign(I.latest_monthly) + "% on the month before" : "")],
+       [sign(I.q_annual.point) + "%", "Annual inflation, " + I.label + " so far", "likely " + sign(I.q_annual.lo) + "% to " + sign(I.q_annual.hi) + "%"],
+       [sign(I.last_q.annual) + "%", "Annual inflation, " + I.last_q.label, "latest official quarter"]].forEach(([v, h, p]) => {
+        const c = document.createElement("div"); c.className = "card-i";
+        c.innerHTML = `<h3>${h}</h3><p class="v">${v}</p><span class="p">${p}</span>`;
+        stats.appendChild(c);
+      });
+      const host = $("infl"); host.innerHTML = "";
+      const rows = I.history.map(([q, v]) => ({ q, v })), items = [...rows, { q: I.quarter, now: true }];
+      const W = Math.max(300, host.clientWidth), H = W < 560 ? 200 : 240, m = { t: 12, r: 6, b: 28, l: 42 };
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Perth annual inflation by quarter" }, host);
+      const vals = rows.map((r) => r.v).concat([I.q_annual.lo, I.q_annual.hi]);
+      let lo = Math.min(0, ...vals), hi = Math.max(0, ...vals); const pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+      const y = (v) => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+      const bw = (W - m.l - m.r) / items.length, x = (i) => m.l + i * bw, gap = Math.min(3, bw * 0.25);
+      const step = hi - lo > 6 ? 2 : 1;
+      for (let g = Math.ceil(lo / step) * step; g <= hi; g += step) {
+        el("line", { x1: m.l, x2: W - m.r, y1: y(g), y2: y(g), stroke: g === 0 ? css("--muted") : css("--chart-grid"), "stroke-width": 1 }, svg);
+        txt(svg, m.l - 8, y(g) + 4, (g > 0 ? "+" : g < 0 ? "−" : "") + Math.abs(g) + "%", { "text-anchor": "end" });
+      }
+      const every = Math.max(1, Math.ceil(items.length / 4 / (W / 70)));
+      items.forEach((r, i) => {
+        const cx = x(i) + bw / 2, a = I.q_annual;
+        if (r.now) {
+          el("rect", { x: x(i) + gap / 2, y: Math.min(y(a.point), y(0)), width: bw - gap, height: Math.max(1, Math.abs(y(a.point) - y(0))), fill: "none", stroke: css("--est"), "stroke-width": 1.5, "stroke-dasharray": "3 2" }, svg);
+          el("line", { x1: cx, x2: cx, y1: y(a.lo), y2: y(a.hi), stroke: css("--est"), "stroke-width": 1.5 }, svg);
+        } else {
+          el("rect", { x: x(i) + gap / 2, y: Math.min(y(r.v), y(0)), width: bw - gap, height: Math.max(0.8, Math.abs(y(r.v) - y(0))), rx: Math.min(1.5, bw / 6), fill: css("--ink"), opacity: 0.8 }, svg);
+        }
+        const [yr, qq] = r.q.split("Q");
+        if (qq === "1" && Number(yr) % every === 0) txt(svg, x(i) + 1, H - 6, yr);
+        const hit = el("rect", { x: x(i), y: m.t, width: bw, height: H - m.t - m.b, fill: "transparent" }, svg);
+        const html = r.now ? `${I.label} so far<br>Annual inflation <b>${sign(a.point, 1)}%</b><br>Likely range <b>${sign(a.lo, 1)}</b> to <b>${sign(a.hi, 1)}%</b>`
+          : `${qlab(r.q)}<br>Annual inflation <b>${sign(r.v, 1)}%</b>`;
+        hit.addEventListener("pointermove", (e) => showTip(e, html));
+        hit.addEventListener("pointerleave", hideTip);
+      });
+    }
+    const qlab = (q) => { const [y, n] = q.split("Q"); return ["Jan to Mar", "Apr to Jun", "Jul to Sep", "Oct to Dec"][n - 1] + " " + y; };
+
     function render() {
       headline(); history();
       hbars("drivers", D.drivers, true, (v) => sign(v, 2));
       hbars("importance", D.importance.filter((r) => r.value > 0), false, (v) => v.toFixed(3));
-      accuracy(); indicators();
+      accuracy(); inflation(); indicators();
     }
     document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
       document.querySelectorAll(".seg button").forEach((x) => x.classList.toggle("on", x === b));
