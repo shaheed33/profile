@@ -40,6 +40,12 @@ class AbsSeries:
     freq: str               # "Q" or "M"
     optional: bool = True
     how: str = "last"       # monthly -> quarterly aggregation: mean | sum | last
+    file: str = ""          # raw file name, when one dataflow is downloaded with two keys
+    model: bool = True      # False: downloaded for the site only, not a model input
+
+    @property
+    def stem(self) -> str:
+        return self.file or self.flow
 
 
 # Each loaded series is (quarterly, label, source, monthly or None). The model
@@ -86,6 +92,27 @@ ABS_SERIES = [
         match={"MEASURE": r"^index numbers$", "INDEX": r"^all groups cpi$",
                "TSEST": r"^original$"},
     ),
+    # quarterly surveys that come out a few days before State Final Demand
+    AbsSeries(
+        name="cwd", label="WA construction work done, volume", flow="CWD", key="M1.CVM.9.TOT.20.5.Q", freq="Q",
+        match={"MEASURE": r"^value of work done$", "PRICE_ADJUSTMENT": r"^chain volume measures$",
+               "SECTOR_OWN": r"^total sectors$", "CONSTRUCTION_TYPE": r"^total construction$",
+               "TSEST": r"^seasonally adjusted$"},
+    ),
+    AbsSeries(
+        name="capex", label="WA private business investment, volume", flow="CAPEX", key="M1.CVM.TOT.TOT.20.5.Q",
+        freq="Q",
+        match={"MEASURE": r"^actual expenditure$", "PRICE_ADJUSTMENT": r"^chain volume measures$",
+               "ASSET": r"^total$", "INDUSTRY": r"^total, including education and health$",
+               "TSEST": r"^seasonally adjusted$"},
+    ),
+    # monthly Perth CPI (the ABS's main inflation measure since late 2025), for the
+    # inflation tracker on the page; the quarterly series above stays the model input
+    AbsSeries(
+        name="cpi_m", label="Perth CPI, all groups, monthly", flow="CPI", key="1.10001.10.5.M", freq="M",
+        file="CPI_M", model=False,
+        match={"MEASURE": r"^index numbers$", "INDEX": r"^all groups cpi$", "TSEST": r"^original$"},
+    ),
     AbsSeries(
         name="wpi", label="WA wage price index", flow="WPI", key="1.THRPEB.7.TOT.10.5.Q", freq="Q",
         match={"MEASURE": r"^quarterly index$", "INDEX": r"^total hourly rates of pay excluding bonuses$",
@@ -105,6 +132,10 @@ FRED_SERIES = [
     FredSeries("brent", "Brent crude oil, USD per barrel", "POILBREUSDM"),
     FredSeries("audusd", "US dollars per Australian dollar", "EXUSAL"),
 ]
+
+
+# downloaded for the site only, not model inputs
+SITE_ONLY = {s.name for s in ABS_SERIES if not s.model}
 
 
 # ---------------------------------------------------------------- helpers
@@ -224,14 +255,14 @@ def load_abs(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
     # Try the narrow key first; if the ABS rejects it, fall back to
     # wildcarding everything except state and frequency.
     if not offline:
-        for flow, key in dict((s.flow, s.key) for s in ABS_SERIES).items():
+        for stem, (flow, key) in dict((s.stem, (s.flow, s.key)) for s in ABS_SERIES).items():
             broad = "." * (key.count(".") - 1) + ".".join(key.split(".")[-2:])
             for k in dict.fromkeys([key, broad]):
                 url = f"{ABS_BASE}/ABS,{flow},/{k}?startPeriod={START}&format=csvfilewithlabels"
                 t0 = time.time()
                 try:
                     text = _get(url)
-                    (raw_dir / f"abs_{flow}.csv").write_text(text, encoding="utf-8")
+                    (raw_dir / f"abs_{stem}.csv").write_text(text, encoding="utf-8")
                     print(f"  {flow} [{k}] {len(text) / 1e6:.1f} MB in {time.time() - t0:.0f}s", flush=True)
                     break
                 except RuntimeError as e:
@@ -241,16 +272,16 @@ def load_abs(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
     cache: dict[str, pd.DataFrame] = {}
     series, errors = {}, []
     for spec in ABS_SERIES:
-        f = raw_dir / f"abs_{spec.flow}.csv"
+        f = raw_dir / f"abs_{spec.stem}.csv"
         try:
-            if spec.flow not in cache:
+            if spec.stem not in cache:
                 if not f.exists() and f.with_suffix(".csv.gz").exists():
                     import gzip
                     text = gzip.open(f.with_suffix(".csv.gz"), "rt", encoding="utf-8").read()
                 else:
                     text = f.read_text(encoding="utf-8")
-                cache[spec.flow] = parse_abs_csv(text)
-            s = pick_series(cache[spec.flow], spec)
+                cache[spec.stem] = parse_abs_csv(text)
+            s = pick_series(cache[spec.stem], spec)
             series[spec.name] = (to_quarter(s, spec.how), spec.label, f"ABS {spec.flow}",
                                  s if spec.freq == "M" else None)
         except (LookupError, KeyError, FileNotFoundError) as e:
