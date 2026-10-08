@@ -1,3 +1,12 @@
+  ANA_SFD [VCH.SFD.SSS.20.5.Q] 0.0 MB in 0s
+  LF [.3.1599.20.5.M] 0.6 MB in 0s
+  LF_HOURS [M18.3.1599.TOT.20.5.M] 0.1 MB in 0s
+  CPI [1.10001.10.5.Q] 0.0 MB in 0s
+  CWD [M1.CVM.9.TOT.20.5.Q] 0.0 MB in 0s
+  CAPEX [M1.CVM.TOT.TOT.20.5.Q] 0.0 MB in 2s
+  CPI [1.10001.10.5.M] 0.0 MB in 2s
+  WPI [1.THRPEB.7.TOT.10.5.Q] 0.0 MB in 0s
+  BA_GCCSA [1.1.9.1.100.10.5.M] 0.1 MB in 0s
 Features (17): sfd_l1, sfd_l2, d_unemp, emp_g, hours_g, cpi_y_l1, wpi_y_l1, cwd_g, cwd_g_l1, capex_g, capex_g_l1, dwell_y, iron_g, iron_g_l1, iron_y, brent_g, aud_g
 Estimating 2026Q3: 2 months of jobs data (2 months in)
 Backtesting...
@@ -32,4 +41,33 @@ mae    1.434   1.494   1.171   1.052   1.079   1.052
 n     64.000  64.000  64.000  64.000  64.000  64.000
 
 Nowcast 2026Q3: -0.35% (80% range -1.53 to +2.18) using forest
-Wrote /home/user/profile/data/wa_economy.js
+Wrote /home/runner/work/profile/profile/data/wa_economy.js
+total 1144
+drwxr-xr-x 2 runner runner   4096 Oct  8 19:12 .
+drwxr-xr-x 3 runner runner   4096 Oct  8 19:10 ..
+-rw-r--r-- 1 runner runner      0 Oct  8 19:10 .gitkeep
+-rw-r--r-- 1 runner runner  36381 Oct  8 19:10 abs_ANA_SFD.csv
+-rw-r--r-- 1 runner runner   1540 Oct  8 19:10 abs_ANA_SFD.csv.gz
+-rw-r--r-- 1 runner runner 119613 Oct  8 19:10 abs_BA_GCCSA.csv
+-rw-r--r-- 1 runner runner   3520 Oct  8 19:10 abs_BA_GCCSA.csv.gz
+-rw-r--r-- 1 runner runner  43620 Oct  8 19:10 abs_CAPEX.csv
+-rw-r--r-- 1 runner runner   1646 Oct  8 19:10 abs_CAPEX.csv.gz
+-rw-r--r-- 1 runner runner  26879 Oct  8 19:10 abs_CPI.csv
+-rw-r--r-- 1 runner runner   1410 Oct  8 19:10 abs_CPI.csv.gz
+-rw-r--r-- 1 runner runner   5541 Oct  8 19:10 abs_CPI_M.csv
+-rw-r--r-- 1 runner runner    577 Oct  8 19:10 abs_CPI_M.csv.gz
+-rw-r--r-- 1 runner runner  38992 Oct  8 19:10 abs_CWD.csv
+-rw-r--r-- 1 runner runner   1797 Oct  8 19:10 abs_CWD.csv.gz
+-rw-r--r-- 1 runner runner 604747 Oct  8 19:10 abs_LF.csv
+-rw-r--r-- 1 runner runner  32393 Oct  8 19:10 abs_LF.csv.gz
+-rw-r--r-- 1 runner runner 122616 Oct  8 19:10 abs_LF_HOURS.csv
+-rw-r--r-- 1 runner runner   5498 Oct  8 19:10 abs_LF_HOURS.csv.gz
+-rw-r--r-- 1 runner runner  27640 Oct  8 19:10 abs_WPI.csv
+-rw-r--r-- 1 runner runner   1223 Oct  8 19:10 abs_WPI.csv.gz
+-rw-r--r-- 1 runner runner   2181 Oct  8 19:12 build.log
+-rw-r--r-- 1 runner runner  12066 Oct  8 19:10 fred_EXUSAL.csv
+-rw-r--r-- 1 runner runner   3285 Oct  8 19:10 fred_EXUSAL.csv.gz
+-rw-r--r-- 1 runner runner  12189 Oct  8 19:10 fred_PIORECRUSDM.csv
+-rw-r--r-- 1 runner runner   2239 Oct  8 19:10 fred_PIORECRUSDM.csv.gz
+-rw-r--r-- 1 runner runner  12119 Oct  8 19:10 fred_POILBREUSDM.csv
+-rw-r--r-- 1 runner runner   3220 Oct  8 19:10 fred_POILBREUSDM.csv.gz
