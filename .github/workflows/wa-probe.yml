@@ -1,0 +1,15 @@
+name: WA probe (temporary)
+on:
+  push:
+    branches: [claude/zealous-archimedes-8qq9t4]
+    paths: [".github/probe/**", ".github/workflows/wa-probe.yml"]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q pandas requests
+      - run: python -u .github/probe/probe.py
