@@ -2,14 +2,22 @@ name: WA probe (temporary)
 on:
   push:
     branches: [claude/zealous-archimedes-8qq9t4]
-    paths: [".github/probe/**", ".github/workflows/wa-probe.yml"]
+    paths: [".github/workflows/wa-probe.yml", "scripts/wa_*.py", "scripts/build_wa_economy.py"]
+permissions:
+  contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install -q pandas requests
-      - run: python -u .github/probe/probe.py
+      - run: pip install -q pandas numpy scikit-learn requests
+      - run: python -u scripts/build_wa_economy.py 2>&1 | tee raw/wa/build.log
+        continue-on-error: true
+      - run: |
+          for f in raw/wa/*.csv; do gzip -nkf "$f"; done
+          git config user.name probe; git config user.email actions@users.noreply.github.com
+          git add raw/wa/*.gz raw/wa/build.log; [ -e data/wa_economy.js ] && git add data/wa_economy.js
+          git commit -qm "Probe: raw WA downloads" && git push origin HEAD

@@ -42,6 +42,11 @@ class AbsSeries:
     how: str = "last"       # monthly -> quarterly aggregation: mean | sum | last
 
 
+# Each loaded series is (quarterly, label, source, monthly or None). The model
+# builds its features from the monthly data where there is some, so a quarter
+# with only one or two months in is handled consistently (see wa_model).
+
+
 @dataclass
 class FredSeries:
     name: str
@@ -75,6 +80,17 @@ ABS_SERIES = [
         name="hours", label="WA monthly hours worked", flow="LF_HOURS", key="M18.3.1599.TOT.20.5.M", freq="M", how="sum",
         match={"MEASURE": r"^employed persons - monthly hours worked in all jobs$", "SEX": r"^persons$",
                "AGE": r"^total \(age\)$", "HOURS": r"^industry total$", "TSEST": r"^seasonally adjusted$"},
+    ),
+    # Household spending: the ABS indicator from 2012, and retail trade (which it replaced,
+    # ending June 2025) to give the model a long history. They are spliced in wa_model.
+    AbsSeries(
+        name="hsi", label="WA household spending", flow="HSI_M", key="7.TOT.CUR.20.5.M", freq="M", how="sum",
+        match={"MEASURE": r"^household spending$", "CATEGORY": r"^total$",
+               "PRICE_ADJUSTMENT": r"^current price$", "TSEST": r"^seasonally adjusted$"},
+    ),
+    AbsSeries(
+        name="retail", label="WA retail turnover", flow="RT", key="M1.20.20.5.M", freq="M", how="sum",
+        match={"MEASURE": r"^current prices$", "INDUSTRY": r"^total$", "TSEST": r"^seasonally adjusted$"},
     ),
     AbsSeries(
         name="cpi", label="Perth CPI, all groups", flow="CPI", key="1.10001.10.5.Q", freq="Q",
@@ -246,7 +262,8 @@ def load_abs(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
                     text = f.read_text(encoding="utf-8")
                 cache[spec.flow] = parse_abs_csv(text)
             s = pick_series(cache[spec.flow], spec)
-            series[spec.name] = (to_quarter(s, spec.how), spec.label, f"ABS {spec.flow}")
+            series[spec.name] = (to_quarter(s, spec.how), spec.label, f"ABS {spec.flow}",
+                                 s if spec.freq == "M" else None)
         except (LookupError, KeyError, FileNotFoundError) as e:
             (errors if not spec.optional else notes).append(f"{spec.name}: {e}")
     if errors:
@@ -268,7 +285,7 @@ def load_fred(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
             d = d.dropna()
             s = pd.Series(d["value"].values,
                           index=pd.PeriodIndex(pd.to_datetime(d["date"]), freq="M"))
-            series[spec.name] = (to_quarter(s, spec.how), spec.label, f"FRED {spec.sid}")
+            series[spec.name] = (to_quarter(s, spec.how), spec.label, f"FRED {spec.sid}", s)
         except Exception as e:  # noqa: BLE001 - every FRED series is optional
             notes.append(f"Skipped {spec.sid}: {e}")
     return series, notes
