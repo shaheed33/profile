@@ -155,8 +155,9 @@ def score(bt: pd.DataFrame) -> pd.DataFrame:
             "rmse": float(np.sqrt((e ** 2).mean())),
             "mae": float(e.abs().mean()),
             # share of quarters where it got the direction relative to trend right
-            "direction": float(((b[k] - b["naive"]).apply(np.sign) ==
-                                (b["actual"] - b["naive"]).apply(np.sign)).mean()),
+            # (undefined for the recent average itself, which is the reference)
+            "direction": np.nan if k == "naive" else float(
+                ((b[k] - b["naive"]).apply(np.sign) == (b["actual"] - b["naive"]).apply(np.sign)).mean()),
             "n": int(len(b)),
         })
     return pd.DataFrame(res).set_index("id")
