@@ -17,8 +17,8 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).parent))
-from wa_model import (COVID, FEATURE_LABELS, MODEL_NAMES, Final,  # noqa: E402
-                   backtest, build_features, score)
+from wa_model import (COVID, FEATURE_LABELS, MODEL_NAMES, STAGES, Final,  # noqa: E402
+                      backtest, build_features, score)
 from wa_sources import load_abs, load_fred  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -46,9 +46,10 @@ def main() -> None:
     for n in notes:
         print("NOTE:", n)
     allser = {**abs_s, **fred_s}
-    q = {k: v[0] for k, v in allser.items()}
+    q = {k: v[0] for k, v in allser.items() if v[3] is None}
+    m = {k: v[3] for k, v in allser.items() if v[3] is not None}
 
-    df = build_features(q)
+    df = build_features(q, m)
     feats = [c for c in df.columns if c != "target"]
     print(f"Features ({len(feats)}): {', '.join(feats)}")
 
@@ -58,17 +59,35 @@ def main() -> None:
     if nxt not in df.index or df.loc[[nxt], feats].drop(columns=["sfd_l1", "sfd_l2"]).notna().sum(axis=1).iloc[0] == 0:
         raise SystemExit(f"No indicator data yet for {nxt}; nothing to nowcast.")
 
+    # how far into the quarter being estimated the data runs
+    def months_in(k):
+        return int((m[k].dropna().index.asfreq("Q") == nxt).sum()) if k in m else 0
+    jobs_in = months_in("emp")
+    stage = ("2 months in" if jobs_in < 3 else
+             "3 months in" if months_in("dwell") < 3 else "all monthly data in")
+    print(f"Estimating {nxt}: {jobs_in} months of jobs data ({stage})")
+
     print("Backtesting...")
-    bt = backtest(df, feats)
+    bt, stages = backtest(df, feats, q, m)
     sc = score(bt)
+    print("With each quarter's full data:")
     print(sc.round(3).to_string())
+    ssc = {k: score(v) for k, v in stages.items()}
+    for k, v in ssc.items():
+        print(f"{k}:")
+        print(v[["rmse", "mae", "n"]].round(3).T.to_string())
 
-    contenders = sc.loc[["ridge", "forest", "boost", "blend"]]
-    choice = contenders["rmse"].idxmin()
-    beat_naive = sc.at[choice, "rmse"] < sc.at["naive", "rmse"]
-    beat_ar = sc.at[choice, "rmse"] < sc.at["ar", "rmse"]
+    # pick the model that does best across the points in a quarter where it is really used
+    contenders = ["ridge", "forest", "boost", "blend"]
+    avg = pd.concat([v["rmse"] for v in ssc.values()], axis=1).mean(axis=1)
+    choice = avg[contenders].idxmin()
+    cur = ssc[stage]
+    beat_naive = cur.at[choice, "rmse"] < cur.at["naive", "rmse"]
+    beat_ar = cur.at[choice, "rmse"] < cur.at["ar", "rmse"]
 
-    err = (bt[choice] - bt["actual"])[~bt.index.isin(COVID)]
+    # the range comes from past misses at the same point in the quarter
+    sb = stages[stage]
+    err = (sb[choice] - sb["actual"])[~sb.index.isin(COVID)]
     lo_e, hi_e = np.quantile(err, [0.1, 0.9])
 
     fin = Final(choice, df, feats)
@@ -85,21 +104,33 @@ def main() -> None:
         hist.append({
             "q": str(p), "label": qlabel(p),
             "actual": r(known.at[p, "target"]),
-            "model": r(bt.at[p, choice]) if p in bt.index else None,
+            "model": r(stages[stage].at[p, choice]) if p in stages[stage].index else None,
             "covid": p in COVID,
         })
 
     level = q["sfd"].dropna()
     indicators = []
-    for k, (s, label, src) in allser.items():
-        s = s.dropna()
+    for k, (s, label, src, mon) in allser.items():
+        if mon is not None:
+            # latest three months against the same three months a year earlier
+            mon = mon.dropna()
+            mon = mon.reindex(pd.period_range(mon.index.min(), mon.index.max(), freq="M"))
+            s = mon.rolling(3, min_periods=3).mean().dropna()
+            prev = s.get(s.index[-1] - 12, np.nan)
+            last = s.index[-1]
+            period = f"3 months to {last.strftime('%b %Y')}"
+            series_pts = s[s.index >= pd.Period("2015-01", "M")]
+        else:
+            s = s.dropna()
+            prev = s.iloc[-5] if len(s) > 4 else np.nan
+            period = qlabel(s.index[-1])
+            series_pts = s[s.index >= pd.Period("2015Q1", "Q")]
         if s.empty:
             continue
-        prev = s.iloc[-5] if len(s) > 4 else np.nan
         indicators.append({
-            "id": k, "label": label, "source": src, "period": qlabel(s.index[-1]),
+            "id": k, "label": label, "source": src, "period": period,
             "latest": r(s.iloc[-1], 3), "year_ago": r(prev, 3),
-            "series": [[str(i), r(v, 3)] for i, v in s[s.index >= pd.Period("2015Q1", "Q")].items()],
+            "series": [[str(i), r(v, 3)] for i, v in series_pts.items()],
         })
 
     out = {
@@ -111,16 +142,20 @@ def main() -> None:
         "nowcast": {
             "q": str(nxt), "label": qlabel(nxt),
             "point": r(point), "lo": r(point + lo_e), "hi": r(point + hi_e),
-            "model": choice, "model_name": MODEL_NAMES[choice],
+            "model": choice, "model_name": MODEL_NAMES[choice], "stage": stage,
         },
         "accuracy": {
-            "rmse": r(sc.at[choice, "rmse"]), "naive_rmse": r(sc.at["naive", "rmse"]),
-            "ar_rmse": r(sc.at["ar", "rmse"]), "beats_naive": bool(beat_naive),
+            "rmse": r(cur.at[choice, "rmse"]), "naive_rmse": r(cur.at["naive", "rmse"]),
+            "ar_rmse": r(cur.at["ar", "rmse"]), "beats_naive": bool(beat_naive),
             "beats_ar": bool(beat_ar), "within_half_point": r(within, 3),
-            "quarters_tested": int(sc.at[choice, "n"]), "from": str(bt.index.min()),
+            "quarters_tested": int(cur.at[choice, "n"]), "from": str(sb.index.min()),
+            "stage": stage, "jobs_months": jobs_in,
+            "by_stage": [{"stage": k, "rmse": r(v.at[choice, "rmse"]), "naive_rmse": r(v.at["naive", "rmse"])}
+                         for k, v in ssc.items()],
+            "recent_rmse": r(float(np.sqrt((err[err.index >= pd.Period("2017Q1", "Q")] ** 2).mean()))),
         },
         "models": [{"id": i, **{k: (r(v, 3) if isinstance(v, float) else v)
-                                for k, v in rw.items()}} for i, rw in sc.iterrows()],
+                                for k, v in rw.items()}} for i, rw in cur.iterrows()],
         "importance": [{"id": f, "label": FEATURE_LABELS.get(f, f), "value": r(v, 4)}
                        for f, v in imp.items()],
         "drivers": [{"id": f, "label": FEATURE_LABELS.get(f, f), "value": r(v, 3),

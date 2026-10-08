@@ -42,6 +42,11 @@ class AbsSeries:
     how: str = "last"       # monthly -> quarterly aggregation: mean | sum | last
 
 
+# Each loaded series is (quarterly, label, source, monthly or None). The model
+# builds its features from the monthly data where there is some, so a quarter
+# with only one or two months in is handled consistently (see wa_model).
+
+
 @dataclass
 class FredSeries:
     name: str
@@ -246,7 +251,8 @@ def load_abs(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
                     text = f.read_text(encoding="utf-8")
                 cache[spec.flow] = parse_abs_csv(text)
             s = pick_series(cache[spec.flow], spec)
-            series[spec.name] = (to_quarter(s, spec.how), spec.label, f"ABS {spec.flow}")
+            series[spec.name] = (to_quarter(s, spec.how), spec.label, f"ABS {spec.flow}",
+                                 s if spec.freq == "M" else None)
         except (LookupError, KeyError, FileNotFoundError) as e:
             (errors if not spec.optional else notes).append(f"{spec.name}: {e}")
     if errors:
@@ -268,7 +274,7 @@ def load_fred(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
             d = d.dropna()
             s = pd.Series(d["value"].values,
                           index=pd.PeriodIndex(pd.to_datetime(d["date"]), freq="M"))
-            series[spec.name] = (to_quarter(s, spec.how), spec.label, f"FRED {spec.sid}")
+            series[spec.name] = (to_quarter(s, spec.how), spec.label, f"FRED {spec.sid}", s)
         except Exception as e:  # noqa: BLE001 - every FRED series is optional
             notes.append(f"Skipped {spec.sid}: {e}")
     return series, notes

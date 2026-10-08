@@ -36,8 +36,8 @@ FEATURE_LABELS = {
     "d_unemp": "Unemployment rate change",
     "emp_g": "Jobs growth",
     "hours_g": "Hours worked growth",
-    "cpi_y": "Perth inflation (yearly)",
-    "wpi_y": "Wage growth (yearly)",
+    "cpi_y_l1": "Perth inflation (yearly, last quarter)",
+    "wpi_y_l1": "Wage growth (yearly, last quarter)",
     "dwell_y": "Dwelling approvals (yearly)",
     "iron_g": "Iron ore in A$, this quarter",
     "iron_g_l1": "Iron ore in A$, last quarter",
@@ -45,46 +45,87 @@ FEATURE_LABELS = {
     "brent_g": "Oil price growth",
     "aud_g": "Australian dollar movement",
 }
+# series that come out monthly; features from these use the latest three months
+MONTHLY = ["unemp", "emp", "hours", "dwell", "iron", "brent", "audusd"]
+# months between a reference month and a run on the 20th that can use it
+# (Labour Force mid-month, the exchange rate early next month, building approvals
+# early the month after next, and the IMF iron ore and oil prices on FRED about as late)
+LAG = {"unemp": 1, "emp": 1, "hours": 1, "audusd": 1, "brent": 2, "iron": 2, "dwell": 2}
+# the three points in a quarter where a monthly run (on the 20th) nowcasts it,
+# as months after the quarter's first month: two months of jobs data in,
+# all three, and all three with every other monthly series complete
+STAGES = {"2 months in": 2, "3 months in": 3, "all monthly data in": 4}
 
 
 def pct(s: pd.Series, n: int = 1) -> pd.Series:
     return 100 * (s / s.shift(n) - 1)
 
 
-def build_features(q: dict[str, pd.Series]) -> pd.DataFrame:
-    """q holds quarterly series keyed by short name. Returns target + features."""
-    idx = pd.period_range(min(s.index.min() for s in q.values()),
-                          max(s.index.max() for s in q.values()), freq="Q")
+def _roll3(s: pd.Series) -> pd.Series:
+    """Average of the latest three months, on a gap-free monthly index."""
+    s = s.reindex(pd.period_range(s.index.min(), s.index.max(), freq="M"))
+    return s.rolling(3, min_periods=3).mean()
+
+
+def _at_quarter(f: pd.Series) -> pd.Series:
+    """Each quarter takes the value at its latest available month. For a full
+    quarter that is the usual quarter-on-quarter figure; for a quarter with one
+    or two months in, it compares the latest three months with the three before,
+    so the window is always the same length."""
+    f = f.dropna()
+    return f.groupby(f.index.asfreq("Q")).last()
+
+
+def build_features(q: dict[str, pd.Series], m: dict[str, pd.Series] | None = None,
+                   cutoff: pd.Period | None = None) -> pd.DataFrame:
+    """q holds quarterly series and m monthly ones, keyed by short name.
+    cutoff (a month) rebuilds the features as a run on the 20th of that month
+    would have seen them: each monthly series stops LAG months earlier, and
+    quarterly ABS figures stop before the cutoff's quarter. Returns target + features."""
+    m = dict(m or {})
+    q = dict(q)
+    if cutoff is not None:
+        m = {k: v[v.index <= cutoff - LAG.get(k, 1)] for k, v in m.items()}
+        m = {k: v for k, v in m.items() if len(v)}
+        cq = cutoff.asfreq("Q")
+        q = {k: (v[v.index < cq] if k != "sfd" else v) for k, v in q.items()}
+    lo = min(s.index.min() for s in q.values())
+    hi = max([s.index.max() for s in q.values()] + [v.index.max().asfreq("Q") for v in m.values()])
+    idx = pd.period_range(lo, hi, freq="Q")
     d = pd.DataFrame({k: v.reindex(idx) for k, v in q.items()})
+    R = {k: _roll3(v) for k, v in m.items() if k in MONTHLY and len(v)}
     X = pd.DataFrame(index=idx)
     y = pct(d["sfd"])
     X["sfd_l1"] = y.shift(1)
     X["sfd_l2"] = y.shift(2)
-    if "unemp" in d:
-        X["d_unemp"] = d["unemp"].diff()
-    if "emp" in d:
-        X["emp_g"] = pct(d["emp"])
-    if "hours" in d:
-        X["hours_g"] = pct(d["hours"])
+    mq = lambda f: _at_quarter(f).reindex(idx)  # noqa: E731
+    if "unemp" in R:
+        X["d_unemp"] = mq(R["unemp"] - R["unemp"].shift(3))
+    if "emp" in R:
+        X["emp_g"] = mq(pct(R["emp"], 3))
+    if "hours" in R:
+        X["hours_g"] = mq(pct(R["hours"], 3))
+    # CPI and wages for the quarter being estimated are never out in time, so use last quarter's
     if "cpi" in d:
-        X["cpi_y"] = pct(d["cpi"], 4)
+        X["cpi_y_l1"] = pct(d["cpi"], 4).shift(1)
     if "wpi" in d:
-        X["wpi_y"] = pct(d["wpi"], 4)
-    if "dwell" in d:
+        X["wpi_y_l1"] = pct(d["wpi"], 4).shift(1)
+    if "dwell" in R:
         # approvals are not seasonally adjusted for WA, so compare with a year earlier
-        X["dwell_y"] = 100 * np.log(d["dwell"] / d["dwell"].shift(4))
-    if "iron" in d:
-        iron_aud = d["iron"] / d["audusd"] if "audusd" in d else d["iron"]
-        X["iron_g"] = pct(iron_aud)
+        X["dwell_y"] = mq(100 * np.log(R["dwell"] / R["dwell"].shift(12)))
+    if "iron" in R:
+        iron_aud = R["iron"] / R["audusd"] if "audusd" in R else R["iron"]
+        X["iron_g"] = mq(pct(iron_aud, 3))
         X["iron_g_l1"] = X["iron_g"].shift(1)
-        X["iron_y"] = pct(iron_aud, 4)
-    if "brent" in d:
-        X["brent_g"] = pct(d["brent"])
-    if "audusd" in d:
-        X["aud_g"] = pct(d["audusd"])
+        X["iron_y"] = mq(pct(iron_aud, 12))
+    if "brent" in R:
+        X["brent_g"] = mq(pct(R["brent"], 3))
+    if "audusd" in R:
+        X["aud_g"] = mq(pct(R["audusd"], 3))
     X = X.replace([np.inf, -np.inf], np.nan)
     # drop features that are mostly empty
-    X = X.loc[:, X.notna().mean() > 0.5]
+    if cutoff is None:
+        X = X.loc[:, X.notna().mean() > 0.5]
     X["target"] = y
     return X
 
@@ -133,16 +174,29 @@ def fit_predict(train: pd.DataFrame, test: pd.DataFrame, feats: list[str]) -> di
     return out
 
 
-def backtest(df: pd.DataFrame, feats: list[str]) -> pd.DataFrame:
+def backtest(df: pd.DataFrame, feats: list[str], q: dict | None = None,
+             m: dict | None = None) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
+    """Expanding-window backtest. The first frame scores each quarter with all of
+    its data; given the raw series, the second scores it at each STAGE, using
+    only what a monthly run at that point would have had."""
     known = df.dropna(subset=["target", "sfd_l1"])
-    rows = []
+    rows, staged = [], {k: [] for k in STAGES}
     for t in known.index[known.index >= BACKTEST_FROM]:
         train = known[known.index < t]
         if len(train) < 40:
             continue
-        p = fit_predict(train, known.loc[[t]], feats)
-        rows.append({"q": t, "actual": known.at[t, "target"], **{k: float(v[0]) for k, v in p.items()}})
-    return pd.DataFrame(rows).set_index("q")
+        tests = [known.loc[[t], feats]]
+        if q is not None:
+            first = t.asfreq("M", how="start")
+            tests += [build_features(q, m, first + n).reindex([t])[feats] for n in STAGES.values()]
+        p = fit_predict(train, pd.concat(tests), feats)
+        actual = known.at[t, "target"]
+        rows.append({"q": t, "actual": actual, **{k: float(v[0]) for k, v in p.items()}})
+        for i, name in enumerate(STAGES, start=1):
+            if q is not None:
+                staged[name].append({"q": t, "actual": actual, **{k: float(v[i]) for k, v in p.items()}})
+    stages = {k: pd.DataFrame(v).set_index("q") for k, v in staged.items() if v}
+    return pd.DataFrame(rows).set_index("q"), stages
 
 
 def score(bt: pd.DataFrame) -> pd.DataFrame:
