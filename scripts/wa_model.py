@@ -44,6 +44,10 @@ FEATURE_LABELS = {
     "iron_y": "Iron ore in A$, over the year",
     "brent_g": "Oil price growth",
     "aud_g": "Australian dollar movement",
+    "cwd_g": "Construction work done, this quarter",
+    "cwd_g_l1": "Construction work done, last quarter",
+    "capex_g": "Business investment, this quarter",
+    "capex_g_l1": "Business investment, last quarter",
 }
 # series that come out monthly; features from these use the latest three months
 MONTHLY = ["unemp", "emp", "hours", "dwell", "iron", "brent", "audusd"]
@@ -51,10 +55,22 @@ MONTHLY = ["unemp", "emp", "hours", "dwell", "iron", "brent", "audusd"]
 # (Labour Force mid-month, the exchange rate early next month, building approvals
 # early the month after next, and the IMF iron ore and oil prices on FRED about as late)
 LAG = {"unemp": 1, "emp": 1, "hours": 1, "audusd": 1, "brent": 2, "iron": 2, "dwell": 2}
-# the three points in a quarter where a monthly run (on the 20th) nowcasts it,
-# as months after the quarter's first month: two months of jobs data in,
-# all three, and all three with every other monthly series complete
-STAGES = {"2 months in": 2, "3 months in": 3, "all monthly data in": 4}
+# Construction work done and business investment (CAPEX) for a quarter come out
+# late in the second month after it, a few days before State Final Demand.
+SURVEYS = ["cwd", "capex"]
+SURVEY_FEATS = ["cwd_g", "capex_g"]   # this quarter's figures, only used once they are out
+# the points in a quarter where a run nowcasts it, as (months after the quarter's
+# first month, whether this quarter's surveys are out). The first three are the
+# monthly runs on the 20th; the last is the extra run at the end of the second
+# month after the quarter, once the surveys are published.
+STAGES = {"2 months in": (2, False), "3 months in": (3, False),
+          "all monthly data in": (4, False), "surveys in": (4, True)}
+
+
+def survey_out(p: pd.Period, cutoff: pd.Period, late: bool) -> bool:
+    """Whether quarter p's surveys are out at a run in month cutoff."""
+    after = (cutoff - p.asfreq("M", how="end")).n
+    return after >= 3 or (after == 2 and late)
 
 
 def pct(s: pd.Series, n: int = 1) -> pd.Series:
@@ -77,18 +93,21 @@ def _at_quarter(f: pd.Series) -> pd.Series:
 
 
 def build_features(q: dict[str, pd.Series], m: dict[str, pd.Series] | None = None,
-                   cutoff: pd.Period | None = None) -> pd.DataFrame:
+                   cutoff: pd.Period | None = None, late: bool = False) -> pd.DataFrame:
     """q holds quarterly series and m monthly ones, keyed by short name.
     cutoff (a month) rebuilds the features as a run on the 20th of that month
     would have seen them: each monthly series stops LAG months earlier, and
-    quarterly ABS figures stop before the cutoff's quarter. Returns target + features."""
+    quarterly ABS figures stop before the cutoff's quarter (the surveys follow
+    survey_out, with late for the end-of-month run). Returns target + features."""
     m = dict(m or {})
     q = dict(q)
     if cutoff is not None:
         m = {k: v[v.index <= cutoff - LAG.get(k, 1)] for k, v in m.items()}
         m = {k: v for k, v in m.items() if len(v)}
         cq = cutoff.asfreq("Q")
-        q = {k: (v[v.index < cq] if k != "sfd" else v) for k, v in q.items()}
+        q = {k: (v if k == "sfd" else
+                 v[[survey_out(p, cutoff, late) for p in v.index]] if k in SURVEYS else
+                 v[v.index < cq]) for k, v in q.items()}
     lo = min(s.index.min() for s in q.values())
     hi = max([s.index.max() for s in q.values()] + [v.index.max().asfreq("Q") for v in m.values()])
     idx = pd.period_range(lo, hi, freq="Q")
@@ -110,6 +129,10 @@ def build_features(q: dict[str, pd.Series], m: dict[str, pd.Series] | None = Non
         X["cpi_y_l1"] = pct(d["cpi"], 4).shift(1)
     if "wpi" in d:
         X["wpi_y_l1"] = pct(d["wpi"], 4).shift(1)
+    for k in SURVEYS:
+        if k in d:
+            X[f"{k}_g"] = pct(d[k])
+            X[f"{k}_g_l1"] = X[f"{k}_g"].shift(1)
     if "dwell" in R:
         # approvals are not seasonally adjusted for WA, so compare with a year earlier
         X["dwell_y"] = mq(100 * np.log(R["dwell"] / R["dwell"].shift(12)))
@@ -174,27 +197,37 @@ def fit_predict(train: pd.DataFrame, test: pd.DataFrame, feats: list[str]) -> di
     return out
 
 
+def base_feats(feats: list[str]) -> list[str]:
+    """Features every run has; the surveys stage adds SURVEY_FEATS."""
+    return [f for f in feats if f not in SURVEY_FEATS]
+
+
 def backtest(df: pd.DataFrame, feats: list[str], q: dict | None = None,
              m: dict | None = None) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
     """Expanding-window backtest. The first frame scores each quarter with all of
-    its data; given the raw series, the second scores it at each STAGE, using
-    only what a monthly run at that point would have had."""
+    its data (base features); given the raw series, the second scores it at each
+    STAGE, using only what a run at that point would have had."""
     known = df.dropna(subset=["target", "sfd_l1"])
+    base = base_feats(feats)
     rows, staged = [], {k: [] for k in STAGES}
     for t in known.index[known.index >= BACKTEST_FROM]:
         train = known[known.index < t]
         if len(train) < 40:
             continue
-        tests = [known.loc[[t], feats]]
-        if q is not None:
-            first = t.asfreq("M", how="start")
-            tests += [build_features(q, m, first + n).reindex([t])[feats] for n in STAGES.values()]
-        p = fit_predict(train, pd.concat(tests), feats)
         actual = known.at[t, "target"]
-        rows.append({"q": t, "actual": actual, **{k: float(v[0]) for k, v in p.items()}})
-        for i, name in enumerate(STAGES, start=1):
-            if q is not None:
-                staged[name].append({"q": t, "actual": actual, **{k: float(v[i]) for k, v in p.items()}})
+        first = t.asfreq("M", how="start")
+        rowsets = {"full": known.loc[[t]]}
+        if q is not None:
+            for name, (n, late) in STAGES.items():
+                rowsets[name] = build_features(q, m, first + n, late).reindex([t])
+        for fs, names in [(base, [k for k in rowsets if k == "full" or not STAGES[k][1]]),
+                          (feats, [k for k in rowsets if k != "full" and STAGES[k][1]])]:
+            if not names:
+                continue
+            p = fit_predict(train, pd.concat([rowsets[k][fs] for k in names]), fs)
+            for i, name in enumerate(names):
+                rec = {"q": t, "actual": actual, **{k: float(v[i]) for k, v in p.items()}}
+                (rows if name == "full" else staged[name]).append(rec)
     stages = {k: pd.DataFrame(v).set_index("q") for k, v in staged.items() if v}
     return pd.DataFrame(rows).set_index("q"), stages
 
