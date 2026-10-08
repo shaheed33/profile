@@ -1,53 +1,19 @@
-Traceback (most recent call last):
-  File "/home/runner/work/profile/profile/scripts/build_wa_economy.py", line 140, in <module>
-    main()
-  File "/home/runner/work/profile/profile/scripts/build_wa_economy.py", line 43, in main
-    abs_s, n1 = load_abs(RAW, args.offline)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/profile/profile/scripts/wa_sources.py", line 233, in load_abs
-    s = pick_series(cache[spec.flow], spec)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/profile/profile/scripts/wa_sources.py", line 185, in pick_series
-    raise LookupError(
-LookupError: sfd: filter matched 0 series in ANA_SFD (need exactly 1). Some label combinations available:
-                                                MEASURE                                                                                DATA_ITEM TSEST
-Chain Volume Measures - Revisions to Percentage Changes                                                            Final consumption expenditure    20
-Chain Volume Measures - Revisions to Percentage Changes                                      Final consumption expenditure - Alcoholic beverages    20
-Chain Volume Measures - Revisions to Percentage Changes                                   Final consumption expenditure - Cigarettes and tobacco    20
-Chain Volume Measures - Revisions to Percentage Changes                                    Final consumption expenditure - Clothing and footwear    20
-Chain Volume Measures - Revisions to Percentage Changes                                           Final consumption expenditure - Communications    20
-Chain Volume Measures - Revisions to Percentage Changes                                       Final consumption expenditure - Education services    20
-Chain Volume Measures - Revisions to Percentage Changes                          Final consumption expenditure - Electricity, gas and other fuel    20
-Chain Volume Measures - Revisions to Percentage Changes                                                     Final consumption expenditure - Food    20
-Chain Volume Measures - Revisions to Percentage Changes                      Final consumption expenditure - Furnishings and household equipment    20
-Chain Volume Measures - Revisions to Percentage Changes                                                   Final consumption expenditure - Health    20
-Chain Volume Measures - Revisions to Percentage Changes                            Final consumption expenditure - Hotels, cafes and restaurants    20
-Chain Volume Measures - Revisions to Percentage Changes                   Final consumption expenditure - Insurance and other financial services    20
-Chain Volume Measures - Revisions to Percentage Changes                               Final consumption expenditure - Net expenditure interstate    20
-Chain Volume Measures - Revisions to Percentage Changes                                    Final consumption expenditure - Operation of vehicles    20
-Chain Volume Measures - Revisions to Percentage Changes                                 Final consumption expenditure - Other goods and services    20
-Chain Volume Measures - Revisions to Percentage Changes                                     Final consumption expenditure - Purchase of vehicles    20
-Chain Volume Measures - Revisions to Percentage Changes                                   Final consumption expenditure - Recreation and culture    20
-Chain Volume Measures - Revisions to Percentage Changes                         Final consumption expenditure - Rent and other dwelling services    20
-Chain Volume Measures - Revisions to Percentage Changes                                       Final consumption expenditure - Transport services    20
-Chain Volume Measures - Revisions to Percentage Changes                                                                             Final demand    20
-Chain Volume Measures - Revisions to Percentage Changes                                                            Gross fixed capital formation    20
-Chain Volume Measures - Revisions to Percentage Changes                                      Gross fixed capital formation - Business investment    20
-Chain Volume Measures - Revisions to Percentage Changes                          Gross fixed capital formation - Cultivated biological resources    20
-Chain Volume Measures - Revisions to Percentage Changes                    Gross fixed capital formation - Dwellings - Alterations and additions    20
-Chain Volume Measures - Revisions to Percentage Changes                                 Gross fixed capital formation - Dwellings - New and Used    20
-Chain Volume Measures - Revisions to Percentage Changes                                        Gross fixed capital formation - Dwellings - Total    20
-Chain Volume Measures - Revisions to Percentage Changes                           Gross fixed capital formation - Intellectual property products    20
-Chain Volume Measures - Revisions to Percentage Changes                            Gross fixed capital formation - Machinery and equipment - New    20
-Chain Volume Measures - Revisions to Percentage Changes                          Gross fixed capital formation - Machinery and equipment - Total    20
-Chain Volume Measures - Revisions to Percentage Changes                 Gross fixed capital formation - Non-dwelling construction - New building    20
-Chain Volume Measures - Revisions to Percentage Changes Gross fixed capital formation - Non-dwelling construction - New engineering construction    20
-Chain Volume Measures - Revisions to Percentage Changes                        Gross fixed capital formation - Non-dwelling construction - Total    20
-Chain Volume Measures - Revisions to Percentage Changes                                 Gross fixed capital formation - Ownership transfer costs    20
-Chain Volume Measures - Revisions to Percentage Changes                                                                       STATE FINAL DEMAND    20
-                                  Chain volume measures                                                            Final consumption expenditure    10
-                                  Chain volume measures                                                            Final consumption expenditure    20
-                                  Chain volume measures                                                            Final consumption expenditure    30
-                                  Chain volume measures                                   Final consumption expenditure - Accommodation services    10
-                                  Chain volume measures                      Final consumption expenditure - Actual and imputed rent for housing    10
-                                  Chain volume measures                                      Final consumption expenditure - Alcoholic beverages    10
+  ANA_SFD [VCH.SFD.SSS.20.5.Q] 0.0 MB in 0s
+  LF [.3.1599.20.5.M] 0.6 MB in 0s
+  LF_HOURS [M18.3.1599.TOT.20.5.M] 0.1 MB in 2s
+  CPI [1.10001.10.5.Q] 0.0 MB in 2s
+  WPI [1.THRPEB.7.TOT.10.5.Q] 0.0 MB in 2s
+  BA_GCCSA [1.1.9.1.100.10.5.M] 0.1 MB in 2s
+Features (13): sfd_l1, sfd_l2, d_unemp, emp_g, hours_g, cpi_y, wpi_y, dwell_y, iron_g, iron_g_l1, iron_y, brent_g, aud_g
+Backtesting...
+                              name   rmse    mae  direction   n
+id                                                             
+naive   Recent average (benchmark)  2.232  1.434      0.000  64
+ar       Momentum only (benchmark)  2.183  1.494      0.656  64
+ridge             Ridge regression  2.010  1.350      0.641  64
+forest               Random forest  2.044  1.330      0.641  64
+boost            Gradient boosting  2.345  1.621      0.516  64
+blend           Blend of the three  2.094  1.365      0.625  64
+
+Nowcast 2026Q3: -0.02% (80% range -1.71 to +2.50) using ridge
+Wrote /home/runner/work/profile/profile/data/wa_economy.js
