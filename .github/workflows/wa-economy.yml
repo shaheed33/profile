@@ -16,11 +16,12 @@ permissions:
 
 concurrency:
   group: wa-economy
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -30,11 +31,12 @@ jobs:
       - name: Download data and rebuild the model
         id: build
         continue-on-error: true
+        timeout-minutes: 25
         shell: bash
         run: |
           mkdir -p raw/wa
           set -o pipefail
-          python scripts/build_wa_economy.py 2>&1 | tee raw/wa/build.log
+          python -u scripts/build_wa_economy.py 2>&1 | tee raw/wa/build.log
       - name: Save the changes
         if: always()
         run: |

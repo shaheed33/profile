@@ -54,39 +54,39 @@ class FredSeries:
 ABS_SERIES = [
     AbsSeries(
         name="sfd", label="WA State Final Demand, chain volume, seasonally adjusted",
-        flow="ANA_SFD", key="....5.Q", freq="Q", optional=False,
+        flow="ANA_SFD", key="VCH.SFD.SSS.20.5.Q", freq="Q", optional=False,
         match={"MEASURE": r"^chain volume measures$", "DATA_ITEM": r"^state final demand$",
                "SECTOR": r"^all sectors$",
                "TSEST": r"^seasonally adjusted$"},
     ),
     AbsSeries(
-        name="unemp", label="WA unemployment rate", flow="LF", key="....5.M", freq="M", how="mean",
+        name="unemp", label="WA unemployment rate", flow="LF", key=".3.1599.20.5.M", freq="M", how="mean",
         match={"MEASURE": r"^unemployment rate$", "SEX": r"^persons$",
                "AGE": r"^15 years and over$", "TSEST": r"^seasonally adjusted$"},
     ),
     AbsSeries(
-        name="emp", label="WA employed persons", flow="LF", key="....5.M", freq="M", how="mean",
+        name="emp", label="WA employed persons", flow="LF", key=".3.1599.20.5.M", freq="M", how="mean",
         match={"MEASURE": r"^employed total$", "SEX": r"^persons$",
                "AGE": r"^15 years and over$", "TSEST": r"^seasonally adjusted$"},
     ),
     AbsSeries(
-        name="hours", label="WA monthly hours worked", flow="LF", key="....5.M", freq="M", how="sum",
+        name="hours", label="WA monthly hours worked", flow="LF", key=".3.1599.20.5.M", freq="M", how="sum",
         match={"MEASURE": r"hours worked", "SEX": r"^persons$",
                "AGE": r"^15 years and over$", "TSEST": r"^seasonally adjusted$"},
     ),
     AbsSeries(
-        name="cpi", label="Perth CPI, all groups", flow="CPI", key="...5.Q", freq="Q",
+        name="cpi", label="Perth CPI, all groups", flow="CPI", key="1.10001.10.5.Q", freq="Q",
         match={"MEASURE": r"^index numbers$", "INDEX": r"^all groups cpi$",
                "TSEST": r"^original$"},
     ),
     AbsSeries(
-        name="wpi", label="WA wage price index", flow="WPI", key=".....5.Q", freq="Q",
+        name="wpi", label="WA wage price index", flow="WPI", key="1....10.5.Q", freq="Q",
         match={"MEASURE": r"^index numbers$", "INDEX": r"excluding bonuses",
                "SECTOR": r"private and public", "INDUSTRY": r"all industries",
                "TSEST": r"^original$"},
     ),
     AbsSeries(
-        name="dwell", label="WA dwelling approvals", flow="BA_GCCSA", key="......5.M", freq="M", how="sum",
+        name="dwell", label="WA dwelling approvals", flow="BA_GCCSA", key="1.....20.5.M", freq="M", how="sum",
         match={"MEASURE": r"number", "SECTOR": r"^total", "WORK_TYPE": r"new",
                "BUILDING_TYPE": r"total (?:dwelling|residential)", "TSEST": r"^seasonally adjusted$"},
     ),
@@ -101,17 +101,17 @@ FRED_SERIES = [
 
 # ---------------------------------------------------------------- helpers
 
-def _get(url: str, tries: int = 4) -> str:
+def _get(url: str, tries: int = 2) -> str:
     last = None
     for i in range(tries):
         try:
-            r = requests.get(url, headers=UA, timeout=120)
+            r = requests.get(url, headers=UA, timeout=(20, 90))
             if r.status_code == 200 and r.text.strip():
                 return r.text
             last = f"HTTP {r.status_code}: {r.text[:300]}"
         except requests.RequestException as e:
             last = str(e)
-        time.sleep(3 * (i + 1))
+        time.sleep(5)
     raise RuntimeError(f"Download failed for {url}\n{last}")
 
 
@@ -212,14 +212,23 @@ def to_quarter(s: pd.Series, how: str) -> pd.Series:
 def load_abs(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
     raw_dir.mkdir(parents=True, exist_ok=True)
     notes: list[str] = []
-    # 1. download every dataflow first, so one run archives all of them
+    # 1. download every dataflow first, so one run archives all of them.
+    # Try the narrow key first; if the ABS rejects it, fall back to
+    # wildcarding everything except state and frequency.
     if not offline:
         for flow, key in dict((s.flow, s.key) for s in ABS_SERIES).items():
-            url = f"{ABS_BASE}/ABS,{flow},/{key}?startPeriod={START}&format=csvfilewithlabels"
-            try:
-                (raw_dir / f"abs_{flow}.csv").write_text(_get(url), encoding="utf-8")
-            except RuntimeError as e:
-                notes.append(f"Download failed for {flow}: {e}")
+            broad = "." * (key.count(".") - 1) + ".".join(key.split(".")[-2:])
+            for k in dict.fromkeys([key, broad]):
+                url = f"{ABS_BASE}/ABS,{flow},/{k}?startPeriod={START}&format=csvfilewithlabels"
+                t0 = time.time()
+                try:
+                    text = _get(url)
+                    (raw_dir / f"abs_{flow}.csv").write_text(text, encoding="utf-8")
+                    print(f"  {flow} [{k}] {len(text) / 1e6:.1f} MB in {time.time() - t0:.0f}s", flush=True)
+                    break
+                except RuntimeError as e:
+                    print(f"  {flow} [{k}] failed after {time.time() - t0:.0f}s: {str(e)[-160:]}", flush=True)
+                    notes.append(f"Download failed for {flow} [{k}]")
     # 2. pick the series out of the saved files
     cache: dict[str, pd.DataFrame] = {}
     series, errors = {}, []
