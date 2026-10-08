@@ -55,7 +55,8 @@ ABS_SERIES = [
     AbsSeries(
         name="sfd", label="WA State Final Demand, chain volume, seasonally adjusted",
         flow="ANA_SFD", key="....5.Q", freq="Q", optional=False,
-        match={"MEASURE": r"chain volume", "DATA_ITEM": r"^state final demand$",
+        match={"MEASURE": r"^chain volume measures$", "DATA_ITEM": r"^state final demand$",
+               "SECTOR": r"^all sectors$",
                "TSEST": r"^seasonally adjusted$"},
     ),
     AbsSeries(
@@ -140,22 +141,24 @@ def parse_abs_csv(text: str) -> pd.DataFrame:
     # the "code: label" form so the rest of the code sees one layout.
     cols = list(raw.columns)
     if not any(": " in c for c in cols):
+        # ABS csvfilewithlabels gives a code column (upper case id, such as
+        # TSEST) followed by its label column (such as "Adjustment Type").
         merged = pd.DataFrame(index=raw.index)
-        skip = set()
-        for i, c in enumerate(cols):
-            if c in skip:
-                continue
+        i = 0
+        while i < len(cols):
+            c = cols[i]
             nxt = cols[i + 1] if i + 1 < len(cols) else None
-            if nxt and c.isupper() and nxt.lower().replace(" ", "_") == c.lower():
+            if c.isupper() and nxt is not None and not nxt.isupper():
                 merged[f"{c}: {nxt}"] = raw[c].fillna("") + ": " + raw[nxt].fillna("")
-                skip.add(nxt)
+                i += 2
             else:
                 merged[c] = raw[c]
+                i += 1
         raw = merged
     out = pd.DataFrame(index=raw.index)
     for col in raw.columns:
         dim = col.split(":")[0].strip()
-        if dim in ("DATAFLOW", "OBS_VALUE", "UNIT_MEASURE", "UNIT_MULT",
+        if dim in ("DATAFLOW", "STRUCTURE", "STRUCTURE_ID", "STRUCTURE_NAME", "ACTION", "OBS_VALUE", "UNIT_MEASURE", "UNIT_MULT",
                    "OBS_STATUS", "OBS_COMMENT", "DECIMALS"):
             if dim == "OBS_VALUE":
                 out["OBS_VALUE"] = pd.to_numeric(raw[col].map(lambda c: _split(c)[0]), errors="coerce")
@@ -208,34 +211,29 @@ def to_quarter(s: pd.Series, how: str) -> pd.Series:
 
 def load_abs(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
     raw_dir.mkdir(parents=True, exist_ok=True)
+    notes: list[str] = []
+    # 1. download every dataflow first, so one run archives all of them
+    if not offline:
+        for flow, key in dict((s.flow, s.key) for s in ABS_SERIES).items():
+            url = f"{ABS_BASE}/ABS,{flow},/{key}?startPeriod={START}&format=csvfilewithlabels"
+            try:
+                (raw_dir / f"abs_{flow}.csv").write_text(_get(url), encoding="utf-8")
+            except RuntimeError as e:
+                notes.append(f"Download failed for {flow}: {e}")
+    # 2. pick the series out of the saved files
     cache: dict[str, pd.DataFrame] = {}
-    series, notes = {}, []
+    series, errors = {}, []
     for spec in ABS_SERIES:
         f = raw_dir / f"abs_{spec.flow}.csv"
-        if spec.flow not in cache:
-            if not offline:
-                url = (f"{ABS_BASE}/ABS,{spec.flow},/{spec.key}"
-                       f"?startPeriod={START}&format=csvfilewithlabels")
-                try:
-                    f.write_text(_get(url), encoding="utf-8")
-                except RuntimeError as e:
-                    if not spec.optional:
-                        raise
-                    notes.append(f"Skipped {spec.flow}: {e}")
-                    continue
-            if not f.exists():
-                if not spec.optional:
-                    raise FileNotFoundError(f)
-                notes.append(f"Skipped {spec.flow}: no file")
-                continue
-            cache[spec.flow] = parse_abs_csv(f.read_text(encoding="utf-8"))
         try:
+            if spec.flow not in cache:
+                cache[spec.flow] = parse_abs_csv(f.read_text(encoding="utf-8"))
             s = pick_series(cache[spec.flow], spec)
             series[spec.name] = (to_quarter(s, spec.how), spec.label, f"ABS {spec.flow}")
-        except (LookupError, KeyError) as e:
-            if not spec.optional:
-                raise
-            notes.append(f"Skipped {spec.name}: {e}")
+        except (LookupError, KeyError, FileNotFoundError) as e:
+            (errors if not spec.optional else notes).append(f"{spec.name}: {e}")
+    if errors:
+        raise SystemExit("Required series missing:\n" + "\n".join(errors + notes))
     return series, notes
 
 
