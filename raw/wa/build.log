@@ -1,42 +1,24 @@
   ANA_SFD [VCH.SFD.SSS.20.5.Q] 0.0 MB in 0s
   LF [.3.1599.20.5.M] 0.6 MB in 0s
-  LF_HOURS [M18.3.1599.TOT.20.5.M] 0.1 MB in 3s
+  LF_HOURS [M18.3.1599.TOT.20.5.M] 0.1 MB in 0s
+  HSI_M [7.TOT.CUR.20.5.M] 0.0 MB in 2s
+  RT [M1.20.20.5.M] 0.1 MB in 2s
   CPI [1.10001.10.5.Q] 0.0 MB in 0s
-  WPI [1.THRPEB.7.TOT.10.5.Q] 0.0 MB in 2s
-  BA_GCCSA [1.1.9.1.100.10.5.M] 0.1 MB in 2s
-Features (13): sfd_l1, sfd_l2, d_unemp, emp_g, hours_g, cpi_y, wpi_y, dwell_y, iron_g, iron_g_l1, iron_y, brent_g, aud_g
+  WPI [1.THRPEB.7.TOT.10.5.Q] 0.0 MB in 0s
+  BA_GCCSA [1.1.9.1.100.10.5.M] 0.1 MB in 0s
+Features (14): sfd_l1, sfd_l2, d_unemp, emp_g, hours_g, spend_g, cpi_y_l1, wpi_y_l1, dwell_y, iron_g, iron_g_l1, iron_y, brent_g, aud_g
+Estimating 2026Q3: 2 months of jobs data, 2 of household spending (2 months in)
 Backtesting...
-                              name   rmse    mae  direction   n
-id                                                             
-naive   Recent average (benchmark)  2.232  1.434        NaN  64
-ar       Momentum only (benchmark)  2.183  1.494      0.656  64
-ridge             Ridge regression  2.010  1.350      0.641  64
-forest               Random forest  2.044  1.330      0.641  64
-boost            Gradient boosting  2.345  1.621      0.516  64
-blend           Blend of the three  2.094  1.365      0.625  64
-
-Nowcast 2026Q3: -0.02% (80% range -1.71 to +2.50) using ridge
-Wrote /home/runner/work/profile/profile/data/wa_economy.js
-total 1040
-drwxr-xr-x 2 runner runner   4096 Oct  8 17:38 .
-drwxr-xr-x 3 runner runner   4096 Oct  8 17:37 ..
--rw-r--r-- 1 runner runner      0 Oct  8 17:37 .gitkeep
--rw-r--r-- 1 runner runner  36381 Oct  8 17:37 abs_ANA_SFD.csv
--rw-r--r-- 1 runner runner   1540 Oct  8 17:37 abs_ANA_SFD.csv.gz
--rw-r--r-- 1 runner runner 119613 Oct  8 17:38 abs_BA_GCCSA.csv
--rw-r--r-- 1 runner runner   3520 Oct  8 17:38 abs_BA_GCCSA.csv.gz
--rw-r--r-- 1 runner runner  26879 Oct  8 17:38 abs_CPI.csv
--rw-r--r-- 1 runner runner   1410 Oct  8 17:38 abs_CPI.csv.gz
--rw-r--r-- 1 runner runner 604747 Oct  8 17:37 abs_LF.csv
--rw-r--r-- 1 runner runner  32393 Oct  8 17:37 abs_LF.csv.gz
--rw-r--r-- 1 runner runner 122616 Oct  8 17:38 abs_LF_HOURS.csv
--rw-r--r-- 1 runner runner   5498 Oct  8 17:38 abs_LF_HOURS.csv.gz
--rw-r--r-- 1 runner runner  27640 Oct  8 17:38 abs_WPI.csv
--rw-r--r-- 1 runner runner   1223 Oct  8 17:38 abs_WPI.csv.gz
--rw-r--r-- 1 runner runner   1021 Oct  8 17:38 build.log
--rw-r--r-- 1 runner runner  12066 Oct  8 17:38 fred_EXUSAL.csv
--rw-r--r-- 1 runner runner   3285 Oct  8 17:38 fred_EXUSAL.csv.gz
--rw-r--r-- 1 runner runner  12189 Oct  8 17:38 fred_PIORECRUSDM.csv
--rw-r--r-- 1 runner runner   2239 Oct  8 17:38 fred_PIORECRUSDM.csv.gz
--rw-r--r-- 1 runner runner  12119 Oct  8 17:38 fred_POILBREUSDM.csv
--rw-r--r-- 1 runner runner   3220 Oct  8 17:38 fred_POILBREUSDM.csv.gz
+Traceback (most recent call last):
+  File "/home/runner/work/profile/profile/scripts/build_wa_economy.py", line 177, in <module>
+    main()
+  File "/home/runner/work/profile/profile/scripts/build_wa_economy.py", line 71, in main
+    bt, stages = backtest(df, feats, q, m)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/profile/profile/scripts/wa_model.py", line 196, in backtest
+    tests += [build_features(q, m, first + n).reindex([t])[feats] for n in STAGES.values()]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/profile/profile/scripts/wa_model.py", line 94, in build_features
+    hi = max([s.index.max() for s in q.values()] + [v.index.max().asfreq("Q") for v in m.values()])
+                                                    ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NaTType' object has no attribute 'asfreq'
