@@ -236,7 +236,12 @@ def load_abs(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
         f = raw_dir / f"abs_{spec.flow}.csv"
         try:
             if spec.flow not in cache:
-                cache[spec.flow] = parse_abs_csv(f.read_text(encoding="utf-8"))
+                if not f.exists() and f.with_suffix(".csv.gz").exists():
+                    import gzip
+                    text = gzip.open(f.with_suffix(".csv.gz"), "rt", encoding="utf-8").read()
+                else:
+                    text = f.read_text(encoding="utf-8")
+                cache[spec.flow] = parse_abs_csv(text)
             s = pick_series(cache[spec.flow], spec)
             series[spec.name] = (to_quarter(s, spec.how), spec.label, f"ABS {spec.flow}")
         except (LookupError, KeyError, FileNotFoundError) as e:
@@ -253,7 +258,7 @@ def load_fred(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
         try:
             if not offline:
                 f.write_text(_get(FRED_CSV.format(sid=spec.sid)), encoding="utf-8")
-            d = pd.read_csv(f)
+            d = pd.read_csv(f if f.exists() else f.with_suffix(".csv.gz"))
             d.columns = ["date", "value"]
             d["value"] = pd.to_numeric(d["value"], errors="coerce")
             d = d.dropna()
