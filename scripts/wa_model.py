@@ -36,7 +36,6 @@ FEATURE_LABELS = {
     "d_unemp": "Unemployment rate change",
     "emp_g": "Jobs growth",
     "hours_g": "Hours worked growth",
-    "spend_g": "Household spending growth",
     "cpi_y_l1": "Perth inflation (yearly, last quarter)",
     "wpi_y_l1": "Wage growth (yearly, last quarter)",
     "dwell_y": "Dwelling approvals (yearly)",
@@ -47,12 +46,11 @@ FEATURE_LABELS = {
     "aud_g": "Australian dollar movement",
 }
 # series that come out monthly; features from these use the latest three months
-MONTHLY = ["unemp", "emp", "hours", "hsi", "retail", "dwell", "iron", "brent", "audusd"]
+MONTHLY = ["unemp", "emp", "hours", "dwell", "iron", "brent", "audusd"]
 # months between a reference month and a run on the 20th that can use it
-# (Labour Force mid-month, FRED monthly averages early next month,
-# household spending and approvals in the first days of the month after next)
-LAG = {"unemp": 1, "emp": 1, "hours": 1, "brent": 1, "iron": 1, "audusd": 1,
-       "hsi": 2, "retail": 2, "dwell": 2}
+# (Labour Force mid-month, the exchange rate early next month, building approvals
+# early the month after next, and the IMF iron ore and oil prices on FRED about as late)
+LAG = {"unemp": 1, "emp": 1, "hours": 1, "audusd": 1, "brent": 2, "iron": 2, "dwell": 2}
 # the three points in a quarter where a monthly run (on the 20th) nowcasts it,
 # as months after the quarter's first month: two months of jobs data in,
 # all three, and all three with every other monthly series complete
@@ -88,6 +86,7 @@ def build_features(q: dict[str, pd.Series], m: dict[str, pd.Series] | None = Non
     q = dict(q)
     if cutoff is not None:
         m = {k: v[v.index <= cutoff - LAG.get(k, 1)] for k, v in m.items()}
+        m = {k: v for k, v in m.items() if len(v)}
         cq = cutoff.asfreq("Q")
         q = {k: (v[v.index < cq] if k != "sfd" else v) for k, v in q.items()}
     lo = min(s.index.min() for s in q.values())
@@ -106,10 +105,6 @@ def build_features(q: dict[str, pd.Series], m: dict[str, pd.Series] | None = Non
         X["emp_g"] = mq(pct(R["emp"], 3))
     if "hours" in R:
         X["hours_g"] = mq(pct(R["hours"], 3))
-    if "hsi" in R or "retail" in R:
-        # the spending indicator where it exists, retail turnover before it
-        g = [pct(R[k], 3) for k in ("hsi", "retail") if k in R]
-        X["spend_g"] = mq(g[0].combine_first(g[1]) if len(g) == 2 else g[0])
     # CPI and wages for the quarter being estimated are never out in time, so use last quarter's
     if "cpi" in d:
         X["cpi_y_l1"] = pct(d["cpi"], 4).shift(1)

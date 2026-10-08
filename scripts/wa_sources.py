@@ -81,17 +81,6 @@ ABS_SERIES = [
         match={"MEASURE": r"^employed persons - monthly hours worked in all jobs$", "SEX": r"^persons$",
                "AGE": r"^total \(age\)$", "HOURS": r"^industry total$", "TSEST": r"^seasonally adjusted$"},
     ),
-    # Household spending: the ABS indicator from 2012, and retail trade (which it replaced,
-    # ending June 2025) to give the model a long history. They are spliced in wa_model.
-    AbsSeries(
-        name="hsi", label="WA household spending", flow="HSI_M", key="7.TOT.CUR.20.5.M", freq="M", how="sum",
-        match={"MEASURE": r"^household spending$", "CATEGORY": r"^total$",
-               "PRICE_ADJUSTMENT": r"^current price$", "TSEST": r"^seasonally adjusted$"},
-    ),
-    AbsSeries(
-        name="retail", label="WA retail turnover", flow="RT", key="M1.20.20.5.M", freq="M", how="sum",
-        match={"MEASURE": r"^current prices$", "INDUSTRY": r"^total$", "TSEST": r"^seasonally adjusted$"},
-    ),
     AbsSeries(
         name="cpi", label="Perth CPI, all groups", flow="CPI", key="1.10001.10.5.Q", freq="Q",
         match={"MEASURE": r"^index numbers$", "INDEX": r"^all groups cpi$",

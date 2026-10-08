@@ -158,11 +158,12 @@
         <details>
           <summary>The models</summary>
           <p>Three machine learning models are trained on every quarter since the early 1990s. Ridge regression is a linear model that shrinks weak signals towards zero. A random forest averages hundreds of decision trees. Gradient boosting builds small trees one after another, each correcting the errors of the last. A blend of all three is also tried. Two simple benchmarks sit alongside them, the average of the last two years and a model that only knows the last two quarters of growth.</p>
-          <p>Each model is tested by stepping through history from 2010, predicting each quarter using only the quarters before it. Whichever has the smallest typical miss produces the headline figure, and the likely range comes from its own past misses, covering eight in every ten outcomes.</p>
+          <p>Monthly indicators are read over the latest three months against the three months before, so a quarter with only some of its figures in is still compared like for like. Perth inflation and wage growth come in a quarter behind, because the figures for the quarter being estimated are published too late to use.</p>
+          <p>Each model is tested by stepping through history from 2010, predicting each quarter using only the quarters before it and only the figures that would have been published by then. Whichever has the smallest typical miss produces the headline figure, and the likely range comes from its own past misses at the same point in the quarter, covering eight in every ten outcomes.</p>
         </details>
         <details>
           <summary>Things to keep in mind</summary>
-          <p>The test uses today's version of the data. Official figures get revised, so at the time the model would have seen slightly different numbers, and its real accuracy is probably a little worse than shown. The two pandemic quarters of 2020 are left out of training and scoring because nothing in normal history looks like them. The latest quarter often has only one or two months of some indicators.</p>
+          <p>The test uses today's version of the data. Official figures get revised, so at the time the model would have seen slightly different numbers, and its real accuracy is probably a little worse than shown. The two pandemic quarters of 2020 are left out of training and scoring because nothing in normal history looks like them. Early in a quarter the estimate rests on fewer figures, and it is refreshed each month as more come in.</p>
         </details>
         <details>
           <summary>Sources</summary>
@@ -210,8 +211,12 @@
       $("nc-point").textContent = sign(n.point) + "%";
       $("nc-range").textContent = "likely between " + sign(n.lo) + "% and " + sign(n.hi) + "%";
       const dir = n.point > lp.growth + 0.15 ? "a pick-up from" : n.point < lp.growth - 0.15 ? "a slowdown from" : "much the same as";
+      const stageText = { "2 months in": "two of the quarter's three months of jobs figures, so it will firm up as the rest come in",
+        "3 months in": "all three months of jobs figures, with a few other monthly figures still to come",
+        "all monthly data in": "every monthly figure for the quarter" }[n.stage];
       $("nc-context").textContent = "That would be " + dir + " the " + sign(lp.growth) + "% recorded in " + lp.label +
-        ", the latest official figure. The ABS number for " + n.label + " is due in " + nextRelease(n.q) + ".";
+        ", the latest official figure. The ABS number for " + n.label + " is due in " + nextRelease(n.q) + "." +
+        (stageText ? " This estimate uses " + stageText + "." : "");
       const g = new Date(D.generated.replace("Z", ":00Z"));
       $("asof").textContent = "Updated " + g.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + " from the ABS and FRED";
       $("generated").textContent = "Last run " + D.generated.replace("T", " ").replace("Z", " UTC") + " using " + n.model_name.toLowerCase() + ".";
@@ -285,7 +290,8 @@
 
     function accuracy() {
       const a = D.accuracy, tenths = Math.round(a.within_half_point * 10);
-      let s = "Tested on " + a.quarters_tested + " quarters since " + a.from.slice(0, 4) + ", the model's typical miss is " + a.rmse.toFixed(2) + " percentage points. ";
+      let s = "Tested on " + a.quarters_tested + " quarters since " + a.from.slice(0, 4) + ", using only the figures that would have been out at this point in each quarter, the model's typical miss is " + a.rmse.toFixed(2) + " percentage points. ";
+      if (a.recent_rmse != null) s += "Most of that comes from the mining investment swings of 2011 to 2016. Since 2017 the typical miss is " + a.recent_rmse.toFixed(2) + ". ";
       s += a.beats_naive
         ? "Simply assuming growth carries on at its recent average misses by " + a.naive_rmse.toFixed(2) + ". "
         : "That is no better than assuming growth carries on at its recent average, which misses by " + a.naive_rmse.toFixed(2) + ", so treat the estimate with care. ";

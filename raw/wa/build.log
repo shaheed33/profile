@@ -1,24 +1,30 @@
-  ANA_SFD [VCH.SFD.SSS.20.5.Q] 0.0 MB in 0s
-  LF [.3.1599.20.5.M] 0.6 MB in 0s
-  LF_HOURS [M18.3.1599.TOT.20.5.M] 0.1 MB in 0s
-  HSI_M [7.TOT.CUR.20.5.M] 0.0 MB in 2s
-  RT [M1.20.20.5.M] 0.1 MB in 2s
-  CPI [1.10001.10.5.Q] 0.0 MB in 0s
-  WPI [1.THRPEB.7.TOT.10.5.Q] 0.0 MB in 0s
-  BA_GCCSA [1.1.9.1.100.10.5.M] 0.1 MB in 0s
-Features (14): sfd_l1, sfd_l2, d_unemp, emp_g, hours_g, spend_g, cpi_y_l1, wpi_y_l1, dwell_y, iron_g, iron_g_l1, iron_y, brent_g, aud_g
-Estimating 2026Q3: 2 months of jobs data, 2 of household spending (2 months in)
+Features (13): sfd_l1, sfd_l2, d_unemp, emp_g, hours_g, cpi_y_l1, wpi_y_l1, dwell_y, iron_g, iron_g_l1, iron_y, brent_g, aud_g
+Estimating 2026Q3: 2 months of jobs data (2 months in)
 Backtesting...
-Traceback (most recent call last):
-  File "/home/runner/work/profile/profile/scripts/build_wa_economy.py", line 177, in <module>
-    main()
-  File "/home/runner/work/profile/profile/scripts/build_wa_economy.py", line 71, in main
-    bt, stages = backtest(df, feats, q, m)
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/profile/profile/scripts/wa_model.py", line 196, in backtest
-    tests += [build_features(q, m, first + n).reindex([t])[feats] for n in STAGES.values()]
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/profile/profile/scripts/wa_model.py", line 94, in build_features
-    hi = max([s.index.max() for s in q.values()] + [v.index.max().asfreq("Q") for v in m.values()])
-                                                    ^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'NaTType' object has no attribute 'asfreq'
+With each quarter's full data:
+                              name   rmse    mae  direction   n
+id                                                             
+naive   Recent average (benchmark)  2.232  1.434        NaN  64
+ar       Momentum only (benchmark)  2.183  1.494      0.656  64
+ridge             Ridge regression  2.068  1.382      0.594  64
+forest               Random forest  2.082  1.338      0.625  64
+boost            Gradient boosting  2.222  1.575      0.547  64
+blend           Blend of the three  2.070  1.349      0.625  64
+2 months in:
+id     naive      ar   ridge  forest   boost   blend
+rmse   2.232   2.183   2.064   2.023   2.097   1.997
+mae    1.434   1.494   1.390   1.299   1.409   1.277
+n     64.000  64.000  64.000  64.000  64.000  64.000
+3 months in:
+id     naive      ar   ridge  forest   boost   blend
+rmse   2.232   2.183   2.069   2.076   2.201   2.060
+mae    1.434   1.494   1.391   1.345   1.528   1.341
+n     64.000  64.000  64.000  64.000  64.000  64.000
+all monthly data in:
+id     naive      ar   ridge  forest   boost   blend
+rmse   2.232   2.183   2.068   2.082   2.222   2.070
+mae    1.434   1.494   1.382   1.338   1.575   1.349
+n     64.000  64.000  64.000  64.000  64.000  64.000
+
+Nowcast 2026Q3: -0.16% (80% range -1.44 to +2.21) using blend
+Wrote /home/user/profile/data/wa_economy.js

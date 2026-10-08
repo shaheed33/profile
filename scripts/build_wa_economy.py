@@ -62,10 +62,10 @@ def main() -> None:
     # how far into the quarter being estimated the data runs
     def months_in(k):
         return int((m[k].dropna().index.asfreq("Q") == nxt).sum()) if k in m else 0
-    jobs_in, spend_in = months_in("emp"), months_in("hsi")
+    jobs_in = months_in("emp")
     stage = ("2 months in" if jobs_in < 3 else
-             "3 months in" if min(spend_in, months_in("dwell")) < 3 else "all monthly data in")
-    print(f"Estimating {nxt}: {jobs_in} months of jobs data, {spend_in} of household spending ({stage})")
+             "3 months in" if months_in("dwell") < 3 else "all monthly data in")
+    print(f"Estimating {nxt}: {jobs_in} months of jobs data ({stage})")
 
     print("Backtesting...")
     bt, stages = backtest(df, feats, q, m)
@@ -111,8 +111,6 @@ def main() -> None:
     level = q["sfd"].dropna()
     indicators = []
     for k, (s, label, src, mon) in allser.items():
-        if k == "retail":   # stopped in 2025; only used to extend household spending back
-            continue
         if mon is not None:
             # latest three months against the same three months a year earlier
             mon = mon.dropna()
