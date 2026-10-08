@@ -1,0 +1,52 @@
+name: Update WA economy nowcast
+
+on:
+  schedule:
+    - cron: "0 23 19 * *"   # 20th of each month, 7am Perth time, after the Labour Force release
+  workflow_dispatch:        # adds a "Run workflow" button in the Actions tab
+  push:
+    branches: [main]
+    paths:
+      - "scripts/wa_*.py"
+      - "scripts/build_wa_economy.py"
+      - ".github/workflows/wa-economy.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wa-economy
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy scikit-learn requests
+      - name: Download data and rebuild the model
+        id: build
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p raw/wa
+          set -o pipefail
+          python scripts/build_wa_economy.py 2>&1 | tee raw/wa/build.log
+      - name: Save the changes
+        if: always()
+        run: |
+          git config user.name "wa-economy-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add raw/wa data/wa_economy.js 2>/dev/null || git add raw/wa
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "WA economy nowcast: refresh $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push
+      - name: Report a failed build
+        if: steps.build.outcome == 'failure'
+        run: |
+          echo "The build failed. See raw/wa/build.log"
+          exit 1

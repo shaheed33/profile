@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How fast is WA growing? | Abdulla Shaheed</title>
+  <meta name="description" content="A machine learning estimate of how fast Western Australia's economy grew this quarter, before the official ABS figure is out.">
+  <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="How fast is WA growing right now?">
+  <meta property="og:description" content="A machine learning nowcast of Western Australia's economy, published before the official figures.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shaheed.work/wa-economy">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    :root { --est: #B4502A; --est-soft: #F6E4DA; --neg: #6E86B3; --live: #1E8A5A; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14); }
+    [data-theme="dark"] { --est: #E58A5F; --est-soft: #33221A; --neg: #7E98C8; --live: #5FD39B; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
+    .page { max-width: 1040px; }
+    .lead { max-width: 56ch; margin-bottom: .6rem; }
+    .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
+    .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); position: relative; }
+    .live i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--live); animation: ping 1.8s ease-out infinite; }
+    @keyframes ping { from { transform: scale(1); opacity: .7; } to { transform: scale(3); opacity: 0; } }
+    .src { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .7rem; }
+
+    .headline { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2.5rem; align-items: end; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); margin: 2rem 0 1rem; padding: 1.4rem 0 1.5rem; }
+    .eyebrow { margin: 0; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .figure { margin: .3rem 0 .2rem; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(4rem, 11vw, 6.5rem); line-height: 1; color: var(--est); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+    .range { margin: 0; color: var(--muted); font-size: .95rem; font-variant-numeric: tabular-nums; }
+    .context { margin: 0; font-size: 1.08rem; color: var(--soft); max-width: 46ch; }
+
+    .section { margin: 3.25rem 0 0; }
+    .section h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.7rem; margin: 0; }
+    .section .note { color: var(--muted); max-width: 66ch; margin: .45rem 0 1.1rem; }
+    .head-row { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+    .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; }
+    .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .chart text { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+    .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+    .seg button { font-size: .85rem; font-weight: 500; color: var(--muted); background: none; border: 0; padding: .25rem .8rem; border-radius: 999px; cursor: pointer; }
+    .seg button.on { background: var(--ink); color: var(--surface); }
+
+    .key { display: flex; gap: 1.3rem; flex-wrap: wrap; font-size: .86rem; color: var(--muted); margin-top: .7rem; }
+    .sw { display: inline-block; width: 11px; height: 11px; margin-right: .4rem; vertical-align: -1px; }
+    .sw.bar { background: var(--ink); opacity: .8; border-radius: 2px; }
+    .sw.dot { border-radius: 50%; background: var(--est); width: 9px; height: 9px; }
+    .sw.open { border: 1.5px dashed var(--est); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); border-top: 1px solid var(--line); }
+    .card-i { padding: 1rem 1rem .9rem 0; border-bottom: 1px solid var(--line); }
+    .card-i h3 { font-size: .86rem; font-weight: 500; color: var(--muted); margin: 0; min-height: 2.4em; line-height: 1.3; }
+    .card-i .v { font-family: "Newsreader", Georgia, serif !important; font-size: 1.7rem; line-height: 1.15; margin: .2rem 0 0; font-variant-numeric: tabular-nums; }
+    .card-i .p { font-size: .78rem; color: var(--muted); display: block; margin-bottom: .3rem; }
+
+    .method details { border-top: 1px solid var(--line); padding: .8rem 0; }
+    .method details:last-of-type { border-bottom: 1px solid var(--line); }
+    .method summary { cursor: pointer; font-weight: 600; list-style: none; }
+    .method summary::-webkit-details-marker { display: none; }
+    .method summary::before { content: "+"; display: inline-block; width: 1.3rem; color: var(--est); font-weight: 400; }
+    .method details[open] summary::before { content: "\2212"; }
+    .method p { color: var(--soft); max-width: 70ch; margin: .6rem 0 0 1.3rem; }
+
+    .tip { position: fixed; pointer-events: none; background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); font-size: .82rem; line-height: 1.45; padding: .5rem .7rem; border-radius: 8px; opacity: 0; transition: opacity .12s; max-width: 250px; z-index: 1100; }
+    .tip.on { opacity: 1; }
+    .tip b { font-variant-numeric: tabular-nums; }
+    .empty { padding: 1.2rem 1.3rem; border-left: 3px solid var(--est); background: var(--est-soft); border-radius: 0 10px 10px 0; max-width: 70ch; }
+
+    @media (max-width: 767.98px) {
+      .headline { grid-template-columns: 1fr; gap: .9rem; }
+      .two { grid-template-columns: 1fr; gap: 2.75rem; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container-xl bar">
+      <a class="brand" href="index.html">Abdulla Shaheed</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html#projects">Projects</a>
+        <a href="docs/Abdulla_Shaheed_CV.pdf">CV</a>
+        <a href="index.html#contact">Contact</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container-xl py-4">
+    <div class="page">
+      <div class="hero-wrap">
+        <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
+        <div class="live"><i></i>Machine learning nowcast</div>
+        <h1>How fast is WA's economy growing right now?</h1>
+        <p class="lead">Official figures on spending in Western Australia arrive about two months after each quarter ends. This model reads the indicators that come out sooner, such as jobs, wages, house approvals and the iron ore price, and estimates the answer early.</p>
+        <span class="src" id="asof">Data from the ABS and FRED</span>
+      </div>
+
+      <div id="content">
+        <section class="headline" aria-live="polite">
+          <div>
+            <p class="eyebrow" id="nc-label">Loading</p>
+            <p class="figure" id="nc-point">&nbsp;</p>
+            <p class="range" id="nc-range"></p>
+          </div>
+          <p class="context" id="nc-context"></p>
+        </section>
+
+        <section class="section">
+          <div class="head-row">
+            <h2>Quarter by quarter</h2>
+            <div class="seg" aria-label="Period shown">
+              <button type="button" data-span="3">3 years</button><button type="button" data-span="10" class="on">10 years</button><button type="button" data-span="99">All</button>
+            </div>
+          </div>
+          <p class="note">Bars are official growth in WA State Final Demand each quarter. Dots are what the model would have said at the time, trained only on earlier data. The open bar is this quarter's estimate.</p>
+          <div class="chart" id="hist"></div>
+          <div class="key">
+            <span><i class="sw bar"></i>Official figure</span>
+            <span><i class="sw dot"></i>Model at the time</span>
+            <span><i class="sw open"></i>Estimate with likely range</span>
+          </div>
+        </section>
+
+        <section class="section two">
+          <div>
+            <h2>What is moving this estimate</h2>
+            <p class="note">How far each indicator pushes the estimate above or below an ordinary quarter, in percentage points.</p>
+            <div class="chart" id="drivers"></div>
+          </div>
+          <div>
+            <h2>What the model leans on most</h2>
+            <p class="note">How much worse the model gets when each indicator is scrambled. Longer means more useful.</p>
+            <div class="chart" id="importance"></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Is it any good?</h2>
+          <p class="note" id="acc-text"></p>
+          <div class="chart" id="models"></div>
+        </section>
+
+        <section class="section">
+          <h2>The indicators</h2>
+          <p class="note">Latest reading of each input, with its path since 2015.</p>
+          <div class="grid" id="indicators"></div>
+        </section>
+      </div>
+
+      <section class="section method">
+        <h2>How it works</h2>
+        <details open>
+          <summary>What is being estimated</summary>
+          <p>Growth in WA State Final Demand, the Australian Bureau of Statistics' quarterly measure of spending by households, businesses and government in the state, with price changes and seasonal patterns removed. Gross State Product is only published once a year, so this is the closest quarterly read on the WA economy. It leaves out exports, which matter a great deal in a state built on iron ore and gas, so the iron ore and oil prices are included as inputs instead.</p>
+        </details>
+        <details>
+          <summary>The models</summary>
+          <p>Three machine learning models are trained on every quarter since the early 1990s. Ridge regression is a linear model that shrinks weak signals towards zero. A random forest averages hundreds of decision trees. Gradient boosting builds small trees one after another, each correcting the errors of the last. A blend of all three is also tried. Two simple benchmarks sit alongside them, the average of the last two years and a model that only knows the last two quarters of growth.</p>
+          <p>Each model is tested by stepping through history from 2010, predicting each quarter using only the quarters before it. Whichever has the smallest typical miss produces the headline figure, and the likely range comes from its own past misses, covering eight in every ten outcomes.</p>
+        </details>
+        <details>
+          <summary>Things to keep in mind</summary>
+          <p>The test uses today's version of the data. Official figures get revised, so at the time the model would have seen slightly different numbers, and its real accuracy is probably a little worse than shown. The two pandemic quarters of 2020 are left out of training and scoring because nothing in normal history looks like them. The latest quarter often has only one or two months of some indicators.</p>
+        </details>
+        <details>
+          <summary>Sources</summary>
+          <p>Australian Bureau of Statistics Data API for State Final Demand, the Labour Force survey, the Consumer Price Index, the Wage Price Index and Building Approvals. Iron ore, Brent oil and the exchange rate come from the Federal Reserve Bank of St. Louis (FRED), originally from the IMF and the US Federal Reserve. The model refreshes on the 20th of each month.</p>
+          <p id="generated" class="small text-body-secondary"></p>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Data from the ABS and FRED.</footer>
+  <div class="tip" id="tip" role="tooltip"></div>
+
+  <script src="data/wa_economy.js" onerror="void 0"></script>
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    $("year").textContent = new Date().getFullYear();
+    const D = window.WA_ECONOMY;
+    if (!D) {
+      $("content").innerHTML = '<p class="empty">The first estimate is being built from the latest ABS figures and will appear here shortly.</p>';
+      return;
+    }
+    const NS = "http://www.w3.org/2000/svg", tip = $("tip");
+    let span = 10;
+    const el = (tag, attrs = {}, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+    const txt = (parent, x, y, s, attrs = {}) => { const t = el("text", { x, y, ...attrs }, parent); t.textContent = s; return t; };
+    const sign = (v, d = 1) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
+    const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const showTip = (e, html) => {
+      tip.innerHTML = html; tip.classList.add("on");
+      tip.style.left = Math.max(8, Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8)) + "px";
+      tip.style.top = Math.max(8, e.clientY - tip.offsetHeight - 12) + "px";
+    };
+    const hideTip = () => tip.classList.remove("on");
+    const nextRelease = (q) => {
+      const [y, n] = q.split("Q").map(Number), m = n * 3 + 3;
+      const d = new Date(Date.UTC(y + Math.floor((m - 1) / 12), (m - 1) % 12, 1));
+      return "early " + d.toLocaleString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+    };
+
+    function headline() {
+      const n = D.nowcast, lp = D.last_published;
+      $("nc-label").textContent = "Estimated growth, " + n.label;
+      $("nc-point").textContent = sign(n.point) + "%";
+      $("nc-range").textContent = "likely between " + sign(n.lo) + "% and " + sign(n.hi) + "%";
+      const dir = n.point > lp.growth + 0.15 ? "a pick-up from" : n.point < lp.growth - 0.15 ? "a slowdown from" : "much the same as";
+      $("nc-context").textContent = "That would be " + dir + " the " + sign(lp.growth) + "% recorded in " + lp.label +
+        ", the latest official figure. The ABS number for " + n.label + " is due in " + nextRelease(n.q) + ".";
+      const g = new Date(D.generated.replace("Z", ":00Z"));
+      $("asof").textContent = "Updated " + g.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + " from the ABS and FRED";
+      $("generated").textContent = "Last run " + D.generated.replace("T", " ").replace("Z", " UTC") + " using " + n.model_name.toLowerCase() + ".";
+    }
+
+    function history() {
+      const host = $("hist"); host.innerHTML = "";
+      const all = D.history, n = D.nowcast;
+      const lastYear = Number(all[all.length - 1].q.slice(0, 4));
+      const rows = all.filter((r) => span >= 99 || Number(r.q.slice(0, 4)) > lastYear - span);
+      const items = [...rows, { q: n.q, label: n.label, now: true }];
+      const W = Math.max(300, host.clientWidth), H = W < 560 ? 240 : 320, m = { t: 16, r: 6, b: 28, l: 42 };
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Quarterly growth, official and estimated" }, host);
+      const vals = rows.filter((r) => !r.covid).flatMap((r) => [r.actual, r.model]).filter((v) => v != null).concat([n.lo, n.hi]);
+      let lo = Math.min(0, ...vals), hi = Math.max(0, ...vals); const pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+      const y = (v) => m.t + (hi - Math.max(lo, Math.min(hi, v))) / (hi - lo) * (H - m.t - m.b);
+      const bw = (W - m.l - m.r) / items.length, x = (i) => m.l + i * bw;
+      const step = hi - lo > 5 ? 2 : hi - lo > 2.5 ? 1 : 0.5;
+      for (let g = Math.ceil(lo / step) * step; g <= hi; g += step) {
+        el("line", { x1: m.l, x2: W - m.r, y1: y(g), y2: y(g), stroke: g === 0 ? css("--muted") : css("--chart-grid"), "stroke-width": 1 }, svg);
+        txt(svg, m.l - 8, y(g) + 4, (g > 0 ? "+" : g < 0 ? "−" : "") + Math.abs(g) + "%", { "text-anchor": "end" });
+      }
+      const gap = Math.min(3, bw * 0.25), every = Math.max(1, Math.ceil(items.length / 4 / (W / 70)));
+      items.forEach((r, i) => {
+        const cx = x(i) + bw / 2;
+        if (r.now) {
+          el("rect", { x: x(i) + gap / 2, y: Math.min(y(n.point), y(0)), width: bw - gap, height: Math.max(1, Math.abs(y(n.point) - y(0))), fill: "none", stroke: css("--est"), "stroke-width": 1.5, "stroke-dasharray": "3 2" }, svg);
+          el("line", { x1: cx, x2: cx, y1: y(n.lo), y2: y(n.hi), stroke: css("--est"), "stroke-width": 1.5 }, svg);
+          [n.lo, n.hi].forEach((v) => el("line", { x1: cx - Math.min(6, bw / 2), x2: cx + Math.min(6, bw / 2), y1: y(v), y2: y(v), stroke: css("--est"), "stroke-width": 1.5 }, svg));
+        } else if (r.actual != null) {
+          el("rect", { x: x(i) + gap / 2, y: Math.min(y(r.actual), y(0)), width: bw - gap, height: Math.max(0.8, Math.abs(y(r.actual) - y(0))), rx: Math.min(1.5, bw / 6), fill: css("--ink"), opacity: r.covid ? 0.3 : 0.8 }, svg);
+          if (r.actual > hi || r.actual < lo) txt(svg, cx, r.actual > hi ? m.t - 4 : H - m.b + 13, sign(r.actual, 0) + "%", { "text-anchor": "middle", "font-size": 10 });
+          if (r.model != null) el("circle", { cx, cy: y(r.model), r: Math.max(2.2, Math.min(4, bw / 3.2)), fill: css("--est"), stroke: css("--surface"), "stroke-width": 1 }, svg);
+        }
+        const [yr, qq] = r.q.split("Q");
+        if (qq === "1" && Number(yr) % every === 0) txt(svg, x(i) + 1, H - 6, yr);
+        const hit = el("rect", { x: x(i), y: m.t, width: bw, height: H - m.t - m.b, fill: "transparent" }, svg);
+        const html = r.now
+          ? `${r.label}<br>Estimate <b>${sign(n.point, 2)}%</b><br>Likely range <b>${sign(n.lo, 2)}</b> to <b>${sign(n.hi, 2)}%</b>`
+          : `${r.label}${r.covid ? " (pandemic)" : ""}<br>Official <b>${sign(r.actual, 2)}%</b>` + (r.model != null ? `<br>Model at the time <b>${sign(r.model, 2)}%</b>` : "");
+        hit.addEventListener("pointermove", (e) => showTip(e, html));
+        hit.addEventListener("pointerleave", hideTip);
+      });
+    }
+
+    function hbars(id, list, diverging, fmt) {
+      const host = $(id); host.innerHTML = "";
+      const rows = list.slice(0, 8), W = Math.max(290, host.clientWidth), rowH = 30, lab = Math.min(190, W * 0.47);
+      const H = rows.length * rowH + (diverging ? 26 : 6);
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" }, host);
+      const max = Math.max(...rows.map((r) => Math.abs(r.value))) || 1, plotW = W - lab - 58;
+      const zero = diverging ? lab + plotW / 2 : lab, scale = (diverging ? plotW / 2 : plotW) / max;
+      if (diverging) el("line", { x1: zero, x2: zero, y1: 0, y2: rows.length * rowH + 6, stroke: css("--muted") }, svg);
+      rows.forEach((r, i) => {
+        const yy = i * rowH + 6, w = Math.abs(r.value) * scale, pos = r.value >= 0;
+        txt(svg, 0, yy + 14, r.label, W < 380 ? { "font-size": 11 } : { fill: css("--ink") });
+        el("rect", { x: pos ? zero : zero - w, y: yy + 4, width: Math.max(w, 1), height: 14, rx: 2, fill: diverging ? (pos ? css("--est") : css("--neg")) : css("--accent"), opacity: 0.9 }, svg);
+        if (diverging) txt(svg, W, yy + 15, fmt(r.value), { "text-anchor": "end" });
+        else txt(svg, zero + w + 6, yy + 15, fmt(r.value));
+        if (r.input != null) {
+          const hit = el("rect", { x: 0, y: yy, width: W, height: rowH, fill: "transparent" }, svg);
+          hit.addEventListener("pointermove", (e) => showTip(e, `${r.label}<br>This quarter's reading <b>${sign(r.input, 2)}</b>`));
+          hit.addEventListener("pointerleave", hideTip);
+        }
+      });
+      if (diverging) {
+        txt(svg, zero - 6, H - 4, "pulls down", { "text-anchor": "end", "font-size": 11 });
+        txt(svg, zero + 6, H - 4, "pushes up", { "font-size": 11 });
+      }
+    }
+
+    function accuracy() {
+      const a = D.accuracy, tenths = Math.round(a.within_half_point * 10);
+      let s = "Tested on " + a.quarters_tested + " quarters since " + a.from.slice(0, 4) + ", the model's typical miss is " + a.rmse.toFixed(2) + " percentage points. ";
+      s += a.beats_naive
+        ? "Simply assuming growth carries on at its recent average misses by " + a.naive_rmse.toFixed(2) + ". "
+        : "That is no better than assuming growth carries on at its recent average, which misses by " + a.naive_rmse.toFixed(2) + ", so treat the estimate with care. ";
+      s += "It lands within half a point of the official figure in " + tenths + " of every 10 quarters.";
+      $("acc-text").textContent = s;
+      const host = $("models"); host.innerHTML = "";
+      const rows = [...D.models].sort((p, q) => p.rmse - q.rmse);
+      const W = Math.max(300, host.clientWidth), small = W < 560, rowH = 32, lab = small ? 150 : 230, H = rows.length * rowH + 30;
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Typical miss of each model" }, host);
+      const max = Math.max(...rows.map((r) => r.rmse)) * 1.1, x = (v) => lab + v / max * (W - lab - (small ? 48 : 200));
+      const tick = max > 2 ? 0.5 : 0.25;
+      for (let g = 0; g <= max; g += tick) {
+        el("line", { x1: x(g), x2: x(g), y1: 0, y2: H - 24, stroke: css("--chart-grid") }, svg);
+        txt(svg, x(g), H - 6, g.toFixed(2), { "text-anchor": "middle", "font-size": 11 });
+      }
+      txt(svg, lab - 26, H - 6, "typical miss", { "text-anchor": "end", "font-size": 11 });
+      rows.forEach((r, i) => {
+        const yy = i * rowH + 14, chosen = r.id === D.nowcast.model, bench = r.id === "naive" || r.id === "ar";
+        txt(svg, 0, yy + 4, small ? r.name.replace(" (benchmark)", "") : r.name, { fill: chosen ? css("--est") : css("--ink"), "font-weight": chosen ? 600 : 400, "font-size": small ? 11 : 12 });
+        el("line", { x1: x(0), x2: x(r.rmse), y1: yy, y2: yy, stroke: css("--line"), "stroke-width": 2 }, svg);
+        el("circle", { cx: x(r.rmse), cy: yy, r: chosen ? 7 : 5, fill: chosen ? css("--est") : bench ? css("--surface") : css("--ink"), stroke: bench ? css("--muted") : "none", "stroke-width": 1.5 }, svg);
+        txt(svg, x(r.rmse) + 12, yy + 4, r.rmse.toFixed(2) + (chosen && !small ? "  used for the estimate" : ""), { fill: chosen ? css("--est") : css("--muted") });
+      });
+    }
+
+    function indicators() {
+      const host = $("indicators"); host.innerHTML = "";
+      D.indicators.forEach((s) => {
+        const c = document.createElement("div"); c.className = "card-i";
+        let v, sub;
+        if (s.id === "unemp") { v = s.latest.toFixed(1) + "%"; sub = s.year_ago != null ? sign(s.latest - s.year_ago) + " points on a year ago" : ""; }
+        else if (s.year_ago) { v = sign((s.latest / s.year_ago - 1) * 100) + "%"; sub = "on a year ago"; }
+        else { v = s.latest.toLocaleString("en-GB"); sub = ""; }
+        c.innerHTML = `<h3>${s.label}</h3><p class="v">${v}</p><span class="p">${sub}${sub ? ", " : ""}${s.period}</span>`;
+        const pts = s.series.filter((p) => p[1] != null);
+        if (pts.length > 2) {
+          const Wp = 180, Hp = 34, vs = pts.map((p) => p[1]), lo = Math.min(...vs), hi = Math.max(...vs);
+          const svg = el("svg", { viewBox: `0 0 ${Wp} ${Hp}`, width: "100%", height: Hp, preserveAspectRatio: "none", "aria-hidden": "true" });
+          el("path", { d: pts.map((p, i) => (i ? "L" : "M") + (i / (pts.length - 1) * Wp).toFixed(1) + "," + (Hp - 3 - (p[1] - lo) / (hi - lo || 1) * (Hp - 6)).toFixed(1)).join(""),
+            fill: "none", stroke: css("--accent"), "stroke-width": 1.4, "vector-effect": "non-scaling-stroke" }, svg);
+          c.appendChild(svg);
+        }
+        host.appendChild(c);
+      });
+    }
+
+    function render() {
+      headline(); history();
+      hbars("drivers", D.drivers, true, (v) => sign(v, 2));
+      hbars("importance", D.importance.filter((r) => r.value > 0), false, (v) => v.toFixed(3));
+      accuracy(); indicators();
+    }
+    document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
+      document.querySelectorAll(".seg button").forEach((x) => x.classList.toggle("on", x === b));
+      span = Number(b.dataset.span); history();
+    }));
+    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+    window.onThemeChange = render;
+    render();
+  })();
+  </script>
+  <script src="js/theme.js"></script>
+  <script src="js/ambient.js"></script>
+</body>
+</html>
