@@ -43,14 +43,16 @@ jobs:
           git config user.name "wa-economy-bot"
           git config user.email "actions@users.noreply.github.com"
           # keep the raw archive compressed, and never commit a file GitHub would refuse
-          for f in raw/wa/*.csv; do [ -e "$f" ] && gzip -kf "$f"; done
+          for f in raw/wa/*.csv; do [ -e "$f" ] && gzip -nkf "$f"; done
           find raw/wa -name "*.gz" -size +90M -print -delete
           ls -la raw/wa | tee -a raw/wa/build.log
-          git add raw/wa/build.log raw/wa/*.gz data/wa_economy.js 2>/dev/null || git add raw/wa/build.log
+          # add each path on its own, so a missing data/wa_economy.js (failed build) cannot stop the rest
+          for p in raw/wa/build.log raw/wa/*.gz data/wa_economy.js; do [ -e "$p" ] && git add -- "$p"; done
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "WA economy nowcast: refresh $(date -u +%Y-%m-%d)"
-          git pull --rebase origin main
-          git push
+          # raw/wa/*.csv are gitignored, but stash anything else so the rebase can run
+          git pull --rebase --autostash origin "$GITHUB_REF_NAME"
+          git push origin HEAD:"$GITHUB_REF_NAME"
       - name: Report a failed build
         if: steps.build.outcome == 'failure'
         run: |

@@ -76,6 +76,7 @@
     <symbol id="i-battery" viewBox="0 0 24 24"><rect x="3" y="6.5" width="16" height="11" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19.6" y="10" width="2" height="4" rx=".8" fill="currentColor"/><path d="M11.8 8.3 8 12.6h3l-.8 3.2 3.8-4.4h-3z" fill="currentColor"/></symbol>
     <symbol id="i-coal" viewBox="0 0 24 24"><path d="M3 21V12l5 3V12l5 3V8h3V4h3v17z" fill="currentColor"/></symbol>
     <symbol id="i-price" viewBox="0 0 24 24"><path d="M3 15c3 0 4-6 7-6s3 8 6 8 3-10 5-12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-growth" viewBox="0 0 24 24"><path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="5" y="12" width="3.4" height="6" rx=".8" fill="currentColor"/><rect x="10.3" y="8" width="3.4" height="10" rx=".8" fill="currentColor"/><rect x="15.6" y="4" width="3.4" height="14" rx=".8" fill="currentColor"/></symbol>
     <symbol id="i-debt" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="2.6" fill="currentColor"/><path d="M5 6v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6V6M5 10v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-4M5 14v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-4" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
   </svg>
   <header class="site-header">
@@ -115,6 +116,15 @@
             <p>New wind, solar and storage in NSW measured against the Electricity Infrastructure Roadmap targets, updated from AEMO's quarterly project register.</p>
             <span class="stat" id="nsw-stat" hidden><i></i><span></span></span>
             <span class="where">NSW Roadmap tracker</span>
+          </a>
+        </li>
+        <li>
+          <a class="project" href="wa-economy.html">
+            <div class="tags" aria-hidden="true"><span style="background:var(--k-hydro);color:var(--c-hydro)"><svg><use href="#i-growth"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-price"/></svg></span></div>
+            <h2>How fast is WA growing right now?</h2>
+            <p>A machine learning estimate of this quarter's growth in Western Australia's economy, read from jobs, wages, prices and the iron ore price before the official ABS figure is out.</p>
+            <span class="stat" id="wa-stat" hidden><i></i><span></span></span>
+            <span class="where">WA economy nowcast</span>
           </a>
         </li>
         <li>
@@ -159,6 +169,7 @@
   <footer class="container-xl"><div class="site-footer">© <span id="year"></span> Abdulla Shaheed</div></footer>
   <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
   <script src="data/roadmap.js" defer></script>
+  <script src="data/wa_economy.js" defer></script>
   <script>
   // Live figures on the NSW card, from the same data as the tracker
   window.addEventListener("DOMContentLoaded", function () {
@@ -167,6 +178,15 @@
     var op = R.summary.Operating.Wind + R.summary.Operating.Solar;
     var days = Math.max(0, Math.ceil((new Date("2030-01-01T00:00:00+11:00") - new Date()) / 864e5));
     el.lastChild.textContent = Math.round(op / (R.targets.generation_min_gw * 10)) + "% of the 12 GW built · " + days.toLocaleString("en-AU") + " days to 2030";
+    el.hidden = false;
+  });
+  // Latest estimate on the WA card, from the same data as the nowcast page
+  window.addEventListener("DOMContentLoaded", function () {
+    var D = window.WA_ECONOMY, el = document.getElementById("wa-stat");
+    if (!D || !el) return;
+    var sign = function (v) { var t = Math.abs(v).toFixed(1); return (Number(t) === 0 ? "" : v > 0 ? "+" : "−") + t + "%"; };
+    var n = D.nowcast;
+    el.lastChild.textContent = sign(n.point) + " growth estimated for " + n.label;
     el.hidden = false;
   });
   </script>

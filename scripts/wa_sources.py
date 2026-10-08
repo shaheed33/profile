@@ -59,20 +59,22 @@ ABS_SERIES = [
                "SECTOR": r"^all sectors$",
                "TSEST": r"^seasonally adjusted$"},
     ),
+    # LF series share one download, so they must share one key
     AbsSeries(
         name="unemp", label="WA unemployment rate", flow="LF", key=".3.1599.20.5.M", freq="M", how="mean",
         match={"MEASURE": r"^unemployment rate$", "SEX": r"^persons$",
-               "AGE": r"^15 years and over$", "TSEST": r"^seasonally adjusted$"},
+               "AGE": r"^total \(age\)$", "TSEST": r"^seasonally adjusted$"},
     ),
     AbsSeries(
         name="emp", label="WA employed persons", flow="LF", key=".3.1599.20.5.M", freq="M", how="mean",
-        match={"MEASURE": r"^employed total$", "SEX": r"^persons$",
-               "AGE": r"^15 years and over$", "TSEST": r"^seasonally adjusted$"},
+        match={"MEASURE": r"^employed persons$", "SEX": r"^persons$",
+               "AGE": r"^total \(age\)$", "TSEST": r"^seasonally adjusted$"},
     ),
+    # state hours are not in LF; they sit in LF_HOURS (dims MEASURE.SEX.AGE.HOURS.TSEST.REGION.FREQ)
     AbsSeries(
-        name="hours", label="WA monthly hours worked", flow="LF", key=".3.1599.20.5.M", freq="M", how="sum",
-        match={"MEASURE": r"hours worked", "SEX": r"^persons$",
-               "AGE": r"^15 years and over$", "TSEST": r"^seasonally adjusted$"},
+        name="hours", label="WA monthly hours worked", flow="LF_HOURS", key="M18.3.1599.TOT.20.5.M", freq="M", how="sum",
+        match={"MEASURE": r"^employed persons - monthly hours worked in all jobs$", "SEX": r"^persons$",
+               "AGE": r"^total \(age\)$", "HOURS": r"^industry total$", "TSEST": r"^seasonally adjusted$"},
     ),
     AbsSeries(
         name="cpi", label="Perth CPI, all groups", flow="CPI", key="1.10001.10.5.Q", freq="Q",
@@ -80,15 +82,16 @@ ABS_SERIES = [
                "TSEST": r"^original$"},
     ),
     AbsSeries(
-        name="wpi", label="WA wage price index", flow="WPI", key="1....10.5.Q", freq="Q",
-        match={"MEASURE": r"^index numbers$", "INDEX": r"excluding bonuses",
-               "SECTOR": r"private and public", "INDUSTRY": r"all industries",
+        name="wpi", label="WA wage price index", flow="WPI", key="1.THRPEB.7.TOT.10.5.Q", freq="Q",
+        match={"MEASURE": r"^quarterly index$", "INDEX": r"^total hourly rates of pay excluding bonuses$",
+               "SECTOR": r"^private and public$", "INDUSTRY": r"^all industries$",
                "TSEST": r"^original$"},
     ),
+    # BA_GCCSA has a VALUE dimension, and for WA only original (not seasonally adjusted) data
     AbsSeries(
-        name="dwell", label="WA dwelling approvals", flow="BA_GCCSA", key="1.....20.5.M", freq="M", how="sum",
-        match={"MEASURE": r"number", "SECTOR": r"^total", "WORK_TYPE": r"new",
-               "BUILDING_TYPE": r"total (?:dwelling|residential)", "TSEST": r"^seasonally adjusted$"},
+        name="dwell", label="WA new dwelling approvals", flow="BA_GCCSA", key="1.1.9.1.100.10.5.M", freq="M", how="sum",
+        match={"MEASURE": r"^number of dwelling units$", "VALUE": r"^total$", "SECTOR": r"^total sectors$",
+               "WORK_TYPE": r"^new$", "BUILDING_TYPE": r"^total residential$", "TSEST": r"^original$"},
     ),
 ]
 
@@ -101,11 +104,11 @@ FRED_SERIES = [
 
 # ---------------------------------------------------------------- helpers
 
-def _get(url: str, tries: int = 2) -> str:
+def _get(url: str, tries: int = 2, headers: dict | None = UA) -> str:
     last = None
     for i in range(tries):
         try:
-            r = requests.get(url, headers=UA, timeout=(20, 90))
+            r = requests.get(url, headers=headers, timeout=(20, 90))
             if r.status_code == 200 and r.text.strip():
                 return r.text
             last = f"HTTP {r.status_code}: {r.text[:300]}"
@@ -257,7 +260,8 @@ def load_fred(raw_dir: Path, offline: bool) -> tuple[dict, list[str]]:
         f = raw_dir / f"fred_{spec.sid}.csv"
         try:
             if not offline:
-                f.write_text(_get(FRED_CSV.format(sid=spec.sid)), encoding="utf-8")
+                # FRED stalls on custom User-Agent headers but answers requests' default one
+                f.write_text(_get(FRED_CSV.format(sid=spec.sid), headers=None), encoding="utf-8")
             d = pd.read_csv(f if f.exists() else f.with_suffix(".csv.gz"))
             d.columns = ["date", "value"]
             d["value"] = pd.to_numeric(d["value"], errors="coerce")

@@ -38,7 +38,7 @@ FEATURE_LABELS = {
     "hours_g": "Hours worked growth",
     "cpi_y": "Perth inflation (yearly)",
     "wpi_y": "Wage growth (yearly)",
-    "dwell_g": "Dwelling approvals growth",
+    "dwell_y": "Dwelling approvals (yearly)",
     "iron_g": "Iron ore in A$, this quarter",
     "iron_g_l1": "Iron ore in A$, last quarter",
     "iron_y": "Iron ore in A$, over the year",
@@ -71,7 +71,8 @@ def build_features(q: dict[str, pd.Series]) -> pd.DataFrame:
     if "wpi" in d:
         X["wpi_y"] = pct(d["wpi"], 4)
     if "dwell" in d:
-        X["dwell_g"] = 100 * np.log(d["dwell"] / d["dwell"].shift(1))
+        # approvals are not seasonally adjusted for WA, so compare with a year earlier
+        X["dwell_y"] = 100 * np.log(d["dwell"] / d["dwell"].shift(4))
     if "iron" in d:
         iron_aud = d["iron"] / d["audusd"] if "audusd" in d else d["iron"]
         X["iron_g"] = pct(iron_aud)
@@ -154,8 +155,9 @@ def score(bt: pd.DataFrame) -> pd.DataFrame:
             "rmse": float(np.sqrt((e ** 2).mean())),
             "mae": float(e.abs().mean()),
             # share of quarters where it got the direction relative to trend right
-            "direction": float(((b[k] - b["naive"]).apply(np.sign) ==
-                                (b["actual"] - b["naive"]).apply(np.sign)).mean()),
+            # (undefined for the recent average itself, which is the reference)
+            "direction": np.nan if k == "naive" else float(
+                ((b[k] - b["naive"]).apply(np.sign) == (b["actual"] - b["naive"]).apply(np.sign)).mean()),
             "n": int(len(b)),
         })
     return pd.DataFrame(res).set_index("id")
