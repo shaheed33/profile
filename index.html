@@ -14,8 +14,8 @@
   <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="css/theme.css">
   <style>
-    .hero { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; align-items: start; padding: 4.5rem 0 4rem; }
-    .hero img { width: 280px; height: 280px; object-fit: cover; border-radius: 2px; display: block; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 3.5rem; align-items: start; padding: 4.5rem 0 4rem; }
+    .hero img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 2px; display: block; margin-top: .4rem; }
     .hero h1 { font-size: clamp(2.2rem, 4.6vw, 3.5rem); line-height: 1.06; max-width: 18ch; margin: -.35rem 0 1.5rem; }
     .hero p { font-size: 1.1rem; line-height: 1.7; color: var(--soft); max-width: 58ch; }
     .hero p:last-child { margin-bottom: 0; }
@@ -63,7 +63,7 @@
     }
     @media (max-width: 767.98px) {
       .hero { grid-template-columns: 1fr; gap: 2rem; padding: 2.5rem 0 3rem; }
-      .hero img { width: 100%; max-width: 280px; height: auto; aspect-ratio: 1; }
+      .hero img { margin-top: 0; }
       .hero p { font-size: 1.05rem; }
       .contact { grid-template-columns: 1fr; gap: 1rem; }
     }
@@ -95,13 +95,13 @@
     <div class="hero-wrap">
     <canvas class="ambient" data-mode="grid" aria-hidden="true"></canvas>
     <section class="hero">
-      <img src="images/profile.jpg" alt="Portrait of Abdulla Shaheed" width="280" height="280">
+      <img src="images/profile.jpg" alt="Abdulla Shaheed sitting on a railing at a forest lookout" width="1280" height="720">
       <div>
         <h1>Public debt, climate risk and energy markets.</h1>
-        <p>I'm Shaheed, from Maldives. I'm completing a PhD in Economics at the University of York. The first chapter looks at debt sustainability, and the second at how climate change and climate related disasters affect sovereign bond yields. The third explores Australia's National Electricity Market, and I'm currently researching how AEMO and the energy only market work.</p>
-        <p>I work with data every day, using Stata, Python, R and Excel, and I have foundational training in PLEXOS energy modelling.</p>
-        <p>I've worked across economic development, statistics, tax and public finance in Maldives, in government ministries and state owned enterprises.</p>
-        <p>I'm moving to Australia to work full time. My PhD is switching to remote part time study, so it fits around my working week rather than competing with it. I'm looking for analytics, policy or research roles in energy markets or economic development.</p>
+        <p>I'm Shaheed, from Maldives, and I'm completing a PhD in Economics at the University of York. The first chapter looks at debt sustainability, and the second at how climate change and climate related disasters affect sovereign bond yields. The third turns to Australia and its National Electricity Market, where I'm currently researching how AEMO and the energy only market work.</p>
+        <p>I work with data every day, using Stata, Python, R and Excel, and I have foundational training in PLEXOS energy modelling. Most of what I build turns public data into something people can use, from energy trackers to a nowcast of the WA economy.</p>
+        <p>I've worked across economic development, statistics, tax and public finance in Maldives, in government ministries, state owned enterprises and a local authority company, from supporting small businesses and start-ups to managing public money.</p>
+        <p>My PhD continues part time, which leaves room for applied work. I'm most interested in analytics, policy and research roles in economic development and energy, and especially where the two meet, in regional growth, investment and the energy transition.</p>
       </div>
     </section>
     </div>
