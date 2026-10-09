@@ -48,6 +48,15 @@
     @media (prefers-reduced-motion: reduce) { .hero h1, .hero p { animation: none; } .project, .projects li { transition: none; } }
     .project:hover h2 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
 
+    .edu { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; border-top: 1px solid var(--line); padding: 2.5rem 0 3rem; }
+    .edu h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.9rem; margin: 0; }
+    .edu-list { list-style: none; padding: 0; margin: 0; }
+    .edu-list li { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 1.5rem; padding: 0 0 1.6rem; }
+    .edu-list li + li { border-top: 1px solid var(--line); padding-top: 1.4rem; }
+    .edu-list .yr { font-size: .9rem; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: .2rem; }
+    .edu-list h3 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.35rem; margin: 0 0 .15rem; }
+    .edu-list .where { font-size: .95rem; font-weight: 500; color: var(--accent); margin: 0 0 .45rem; }
+    .edu-list p { color: var(--soft); margin: 0; max-width: 62ch; }
     .contact { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; border-top: 1px solid var(--line); padding: 2.5rem 0 4rem; }
     .contact h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.9rem; margin: 0; }
     .contact p { font-size: 1.1rem; margin-bottom: 1.25rem; }
@@ -65,7 +74,8 @@
       .hero { grid-template-columns: 1fr; gap: 2rem; padding: 2.5rem 0 3rem; }
       .hero img { margin-top: 0; }
       .hero p { font-size: 1.05rem; }
-      .contact { grid-template-columns: 1fr; gap: 1rem; }
+      .contact, .edu { grid-template-columns: 1fr; gap: 1rem; }
+      .edu-list li { grid-template-columns: 1fr; gap: .2rem; }
     }
   </style>
 </head>
@@ -84,7 +94,7 @@
       <a class="brand" href="index.html">Abdulla Shaheed</a>
       <nav class="site-nav" aria-label="Main">
         <a href="#projects">Projects</a>
-        <a href="docs/Abdulla_Shaheed_CV.pdf">CV</a>
+        <a href="#education">Education</a>
         <a href="#contact">Contact</a>
         <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
@@ -98,7 +108,7 @@
       <img src="images/profile.jpg" alt="Abdulla Shaheed sitting on a railing at a forest lookout" width="1280" height="720">
       <div>
         <h1>Public debt, climate risk and energy markets.</h1>
-        <p>I'm Shaheed, from Maldives, and I'm completing a PhD in Economics at the University of York. The first chapter looks at debt sustainability, and the second at how climate change and climate related disasters affect sovereign bond yields. The third turns to Australia, where I'm studying how the National Electricity Market works and what the energy transition means for investment and regional economies.</p>
+        <p>I'm Shaheed, from Maldives, and I'm completing a PhD in Economics at the University of York. The first chapter looks at debt sustainability, and the second at how climate change and climate related disasters affect sovereign bond yields. The third turns to the Australian economy, with a focus on regional development and the National Electricity Market.</p>
         <p>I work with data every day, using Stata, Python, R and Excel, and I have foundational training in PLEXOS energy modelling. Most of what I build turns public data into something people can use, from energy trackers to a nowcast of the WA economy.</p>
         <p>I've worked across economic development, statistics, tax and public finance in Maldives, in government ministries, state owned enterprises and a local authority company, from supporting small businesses and start-ups to managing public money.</p>
         <p>My PhD continues part time, which leaves room for applied work. I'm most interested in analytics, policy and research roles in economic development and energy, and especially where the two meet, in regional growth, investment and the energy transition.</p>
@@ -154,14 +164,47 @@
       </ul>
     </section>
 
+    <section class="edu" id="education">
+      <h2>Education</h2>
+      <ol class="edu-list">
+        <li>
+          <span class="yr">2022 to now</span>
+          <div>
+            <h3>PhD Economics</h3>
+            <p class="where">University of York, England</p>
+            <p>Thesis on sovereign debt, climate risk and the Australian economy, using panel data and time series econometrics. Now continuing part time. Funded by a DERS Studentship.</p>
+          </div>
+        </li>
+        <li>
+          <span class="yr">2020 to 2021</span>
+          <div>
+            <h3>MSc Economics and Econometrics</h3>
+            <p class="where">University of Nottingham, England</p>
+            <p>Chevening Scholar. Dissertation awarded a distinction, on detecting price bubbles and co-explosive behaviour in energy and non-energy commodity markets from 1970 to 2020. <a href="docs/Shaheed_MSc_Dissertation_2021.pdf">Read the dissertation</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="yr">2014 to 2016</span>
+          <div>
+            <h3>Bachelor of Economics</h3>
+            <p class="where">University of Sydney, Australia</p>
+            <p>Double major in Economics and Accounting. Australia Awards Scholar.</p>
+          </div>
+        </li>
+        <li>
+          <span class="yr">2026</span>
+          <div>
+            <h3>Professional training</h3>
+            <p>AEMO NEM Foundations. Core Certified PLEXOS, Energy Exemplar. IMF courses on the macroeconomics of climate and the transition to net zero.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
     <section class="contact" id="contact">
       <h2>Get in touch</h2>
       <div>
         <p>For research, analysis or policy work, email <a href="mailto:shahydh33@gmail.com">shahydh33@gmail.com</a>.</p>
-        <div class="links">
-          <a class="btn btn-primary" href="docs/Abdulla_Shaheed_CV.pdf">Download CV</a>
-          <a class="btn btn-outline-primary" href="docs/Shaheed_MSc_Dissertation_2021.pdf">MSc dissertation</a>
-        </div>
       </div>
     </section>
   </main>

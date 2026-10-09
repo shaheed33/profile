@@ -97,7 +97,8 @@ html { scroll-padding-top: calc(var(--hdr-h) + 1rem); }
 .site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--ink); }
 .site-header .brand { white-space: nowrap; }
 @media (max-width: 480px) { .site-nav { gap: .9rem; } .site-header .brand { font-size: .95rem; } }
-@media (max-width: 370px) { .site-nav { gap: .6rem; } .site-nav a { font-size: .9rem; } }
+@media (max-width: 430px) { .site-nav { gap: .7rem; } .site-nav a { font-size: .92rem; } .site-header .brand { font-size: .9rem; } .theme-toggle { width: 30px; height: 30px; } }
+@media (max-width: 370px) { .site-nav { gap: .5rem; } .site-nav a { font-size: .85rem; } .site-header .brand { font-size: .82rem; } }
 
 /* Bootstrap components in the site palette */
 .btn-primary { --bs-btn-bg: #1F3D73; --bs-btn-border-color: #1F3D73; --bs-btn-hover-bg: #14233A; --bs-btn-hover-border-color: #14233A; --bs-btn-active-bg: #14233A; --bs-btn-active-border-color: #14233A; }

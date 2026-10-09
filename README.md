@@ -16,7 +16,7 @@ Personal site of Shaheed, served at https://shaheed.work through Cloudflare
 - `css/theme.css` site theme (Bootswatch Litera and Public Sans)
 - `data/` NEM data used by the simulator and price pages
 - `scripts/prepare_data.py` builds `data/nem_data.js` from the spreadsheet
-- `docs/` CV and MSc dissertation
+- `docs/` MSc dissertation
 - `images/profile.jpg` profile photo
 
 ## Run locally
