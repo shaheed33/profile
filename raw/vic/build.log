@@ -1,11 +1,11 @@
-  BUILDING_ACTIVITY [.2......Q] 11.3 MB in 7s
-  BA_GCCSA [1.1.9.TOT.100.10..M] 2.1 MB in 2s
-  BA_LGA2023 [1.9.TOT.100.LGA2023..M] 1.8 MB in 3s
-  BA_LGA2024 [1.9.TOT.100.LGA2024..M] 1.8 MB in 2s
-  BA_LGA2025 [1.9.TOT.100.LGA2025..M] 1.8 MB in 2s
+  BUILDING_ACTIVITY [.2......Q] 11.3 MB in 4s
+  BA_GCCSA [1.1.9.TOT.100.10..M] 2.1 MB in 0s
+  BA_LGA2023 [1.9.TOT.100.LGA2023..M] 1.8 MB in 0s
+  BA_LGA2024 [1.9.TOT.100.LGA2024..M] 1.8 MB in 0s
+  BA_LGA2025 [1.9.TOT.100.LGA2025..M] 1.8 MB in 0s
   BA_LGA2026 [1.9.TOT.100.LGA2026..M] failed: for https://data.api.abs.gov.au/rest/data/ABS,BA_LGA2026,/1.9.TOT.100.LGA2026..M?startPeriod=2026-01&format=csvfilewithlabels
 HTTP 404: NoRecordsFound
-  ERP_Q [1.3.TOT.2.Q] 0.0 MB in 2s
+  ERP_Q [1.3.TOT.2.Q] 0.0 MB in 0s
 79 councils matched; unmatched ABS areas ['Migratory - Offshore - Shipping (Vic.)', 'Unincorporated Vic']; targets missing []
 Built since 2024: 142,015 of 800,000 (10 quarters; on-track figure 200,000)
 Pace 56,243 a year = 154.0 a day vs 219.0 needed; finish year at this pace 2038
