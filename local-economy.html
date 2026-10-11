@@ -272,7 +272,7 @@
 
     // ---- what each part means, in a sentence or two
     const HELP = {
-      diversity: "How evenly residents' jobs are spread across the 19 main industries. An area that depends on a few industries is hit harder when one of them has a bad year. It is measured as the number of equal-sized industries that would give the same spread, so 10 is more diverse than 5.",
+      diversity: "How evenly residents' jobs are spread across the 19 main industries. An area that depends on a few industries is hit harder when one of them has a bad year. It is measured as the number of equal-sized industries that would give the same spread, so 10 is more diverse than 5. Cities where health and education dominate can score low here even though those are steady employers, which is why exposure is scored separately.",
       exposure: "The share of residents' jobs in farming, mining, manufacturing, and energy, water and waste. These industries swing with commodity prices, weather and trade, and face the biggest changes from the shift to net zero. A lower share scores higher. It is exposure, not a forecast, and many of these industries are growing.",
       growth: `How much the number of employee jobs held by residents changed from ${Y.jobs[0]} to ${Y.jobs[1]}. Growth gives an area room to absorb a shock.`,
       business: `How much the number of businesses based in the area changed from ${Y.business[0]} to ${Y.business[1]}. A growing business base means more firms to take on workers if one closes.`,
@@ -553,12 +553,16 @@
       const X = (i) => L + i / (yrs.length - 1) * (W0 - L - R), Yp = (v) => 10 + (hi - v) / (hi - lo) * (H - 40);
       [lo, 100, hi].forEach((v) => { el("line", { x1: L, x2: W0 - R, y1: Yp(v), y2: Yp(v), stroke: "var(--chart-grid)", "stroke-dasharray": v === 100 ? "" : "3 3" }, svg); txt(svg, L - 6, Yp(v) + 4, Math.round(v), { "text-anchor": "end" }); });
       yrs.forEach((y, i) => txt(svg, X(i), H - 8, y, { "text-anchor": "middle" }));
+      const labels = [];
       lines.forEach(([v, col, name]) => {
         const pts2 = v.map((u, i) => u == null ? null : `${X(i)},${Yp(u)}`).filter(Boolean);
         el("polyline", { points: pts2.join(" "), fill: "none", stroke: col, "stroke-width": 2.2, "stroke-linejoin": "round" }, svg);
         const lastI = v.map((u, i) => u == null ? -1 : i).filter((i) => i >= 0).pop();
-        if (lastI != null) txt(svg, X(lastI) + 6, Yp(v[lastI]) + 4, name.length > 14 ? name.slice(0, 13) + "…" : name, { fill: col });
+        if (lastI != null) labels.push({ x: X(lastI) + 6, y: Yp(v[lastI]) + 4, s: name.length > 16 ? name.slice(0, 15) + "…" : name, col });
       });
+      // keep the end labels from sitting on top of each other
+      labels.sort((a, b) => a.y - b.y).forEach((l, i, a) => { if (i && l.y - a[i - 1].y < 14) l.y = a[i - 1].y + 14; });
+      labels.forEach((l) => txt(svg, l.x, l.y, l.s, { fill: l.col }));
       const cap = document.createElement("p"); cap.className = "intro"; cap.style.fontSize = ".85rem"; cap.style.marginTop = ".3rem";
       cap.textContent = `Employee jobs held by residents each year to 30 June, ${yrs[0]} set to 100.`;
       host.appendChild(cap);

@@ -182,7 +182,7 @@ def main() -> None:
     local = raw["growth"] - aus_g - mix
 
     # ---- peer groups ----
-    rem = remote.copy()
+    rem = remote[~remote["RA"].str.startswith(("Migratory", "No usual")) & (remote["persons"] > 0)].copy()
     rem["cap"] = rem["GCCSA"].str.startswith("Greater") | rem["GCCSA"].str.contains("Capital Territory")
     tot = rem.groupby("LGA_CODE_2021")["persons"].sum()
     cap = rem[rem["cap"]].groupby("LGA_CODE_2021")["persons"].sum().reindex(tot.index).fillna(0) / tot
@@ -211,8 +211,8 @@ def main() -> None:
         return "outer_regional"
 
     GROUPS = {
-        "cap_inner": ("Established capital city suburbs", "Council areas in a capital city with at least 1,500 residents per square kilometre"),
-        "cap_outer": ("Capital city growth and fringe areas", "Council areas in a capital city with fewer than 1,500 residents per square kilometre, mostly on the growing edge"),
+        "cap_inner": ("Denser capital city areas", "Council areas in a capital city with at least 1,500 residents per square kilometre, mostly established suburbs"),
+        "cap_outer": ("More spread-out capital city areas", "Council areas in a capital city with fewer than 1,500 residents per square kilometre, from outer suburbs and growth areas to the centres of smaller capitals such as Hobart and Darwin"),
         "regional_city": ("Regional cities", "Council areas outside the capitals that are classed as major cities, or have at least 50,000 residents"),
         "inner_regional": ("Inner regional towns and shires", "Smaller council areas where most residents live in inner regional Australia"),
         "outer_regional": ("Outer regional towns and shires", "Smaller council areas where most residents live in outer regional Australia"),

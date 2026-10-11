@@ -5,7 +5,7 @@ on:
     - cron: "0 21 3 * *"   # 4th of each month, about 8am Melbourne time
   workflow_dispatch:
   push:
-    branches: [main, claude/zealous-archimedes-8qq9t4]
+    branches: [main]
     paths:
       - "scripts/fetch_local_economy.py"
       - "scripts/build_local_economy.py"
