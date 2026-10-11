@@ -27,7 +27,7 @@
     .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
     .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); }
 
-    .pickbar { position: sticky; top: 64px; z-index: 900; display: flex; flex-wrap: wrap; gap: .6rem 1.1rem; align-items: center; margin: 1.8rem 0 0; padding: .7rem 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); background: var(--surface); }
+    .pickbar { position: sticky; top: 64px; z-index: 900; display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); gap: .6rem 1.1rem; align-items: center; margin: 1.8rem 0 0; padding: .7rem 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); background: var(--surface); }
     .pickbar .pick { display: flex; align-items: center; gap: .45rem; min-width: 0; }
     .pickbar .sw { width: 12px; height: 12px; border-radius: 50%; flex: none; }
     .pickbar .sw.b { background: transparent; border: 3px solid var(--cmp); }
@@ -50,8 +50,11 @@
     .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
     .seg button { font-size: .88rem; font-weight: 500; color: var(--muted); background: none; border: 0; padding: .3rem .9rem; border-radius: 999px; cursor: pointer; }
     .seg button.on { background: var(--ink); color: var(--surface); }
-    .pickbar select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .35rem .6rem; min-width: 15rem; max-width: 100%; }
-    .pickbar label { font-size: .85rem; color: var(--muted); }
+    .pickbar select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .35rem .6rem; min-width: 0; width: 100%; flex: 1 1 0; }
+    .pickbar label { font-size: .85rem; color: var(--muted); white-space: nowrap; }
+    @media (max-width: 1100px) { .pickbar .pick label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+    .whyno { font-size: .8rem; color: var(--muted); background: none; border: 0; padding: 0; margin-left: .5rem; text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; }
+    .whyno:hover, .whyno[aria-expanded="true"] { color: var(--ink); }
 
     .who { margin: 1.8rem 0 0; }
     .who h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(2rem, 5vw, 2.8rem); margin: 0; line-height: 1.1; }
@@ -236,12 +239,13 @@
     // ------------------------------------------------------------ explainer pop-ups
     let pop = null;
     function closePop() { if (pop) { pop.btn.setAttribute("aria-expanded", "false"); pop.box.remove(); pop = null; } }
-    function openPop(btn, ind, S) {
+    function openPop(btn, ind, S, kind) {
       if (pop && pop.btn === btn) { closePop(); return; }
       closePop();
       const box = document.createElement("div"); box.className = "pop"; box.setAttribute("role", "dialog");
-      box.innerHTML = `<b>${esc(ind.label)}</b>${esc(ind.explain || "")}` +
-        (ind.better ? ` ${ind.better === "higher" ? "Higher is better." : "Lower is better."}` : " Neither higher nor lower is better.") +
+      if (kind === "why") box.innerHTML = `<b>Why no winner?</b>${esc(ind.note || "A higher or lower figure is not better or worse in itself.")}`;
+      else box.innerHTML = `<b>${esc(ind.label)}</b>${esc(ind.explain || "")}` +
+        (ind.better ? ` ${ind.better === "higher" ? "Higher is better." : "Lower is better."}` : `<span style="display:block;margin-top:.45rem"><b style="display:inline">Why no better or worse?</b> ${esc(ind.note || "")}</span>`) +
         `<span class="src">Source: ${esc(S.source)}.</span>`;
       document.body.appendChild(box);
       const r = btn.getBoundingClientRect();
@@ -373,13 +377,30 @@
           const label = `<div class="lab">${esc(ind.label)}<button type="button" class="info" aria-label="What this means" aria-expanded="false">i</button></div>`;
           let left;
           if (c2) {
-            const v2 = c2.values[ind.id], wn = winner(ind, c, c2, stripPeers);
-            const wtext = wn === "a" ? `${esc(c.name)} does better` : wn === "b" ? `${esc(c2.name)} does better` : wn === "same" ? "About the same" : ind.better ? "Not available for both" : "Neither direction is better";
+            const v2 = c2.values[ind.id];
+            let wn = winner(ind, c, c2, stripPeers);
+            let wtext = wn === "a" ? `${esc(c.name)} does better` : wn === "b" ? `${esc(c2.name)} does better` : wn === "same" ? "About the same" : "Not available for both";
+            let whyno = "";
+            if (!ind.better && v && v2) {
+              // no right answer: say plainly which figure is higher and by how much
+              const hiC = v.v >= v2.v ? c : c2, lo = Math.min(v.v, v2.v), hi = Math.max(v.v, v2.v), gap = hi - lo;
+              const vals = stripPeers.filter((p) => p.values[ind.id]).map((p) => p.values[ind.id].v).sort((x, y) => x - y);
+              const q = (f) => vals[Math.min(vals.length - 1, Math.floor(f * (vals.length - 1)))];
+              const spread = vals.length >= 4 ? q(0.75) - q(0.25) : gap;
+              if (gap <= 0.1 * spread) wtext = "About the same";
+              else {
+                const by = ind.unit === "pct" ? (gap * 100).toFixed(gap < 0.1 ? 1 : 0) + " points" : fmt(gap, ind.unit);
+                const rel = lo > 0 ? ` (${Math.round(100 * gap / lo)}% more)` : "";
+                wtext = `${esc(hiC.name)}${hiC.name.endsWith("s") ? "'" : "'s"} figure is ${by} higher${rel}`;
+              }
+              wn = "same";
+              whyno = `<button type="button" class="whyno" aria-expanded="false">Why no winner?</button>`;
+            }
             left = `${label}<div class="duo">
                 <div class="who2"><i style="background:var(--a)"></i>${esc(c.name)}</div><div class="who2"><i style="border:2px solid var(--cmp)"></i>${esc(c2.name)}</div>
                 <div class="val">${v ? fmt(v.v, ind.unit) : "n/a"}</div><div class="val">${v2 ? fmt(v2.v, ind.unit) : "n/a"}</div>
               </div>
-              <span class="win ${wn}">${wtext}</span>
+              <span class="win ${wn}">${wtext}</span>${whyno}
               ${(v && v.swings) || (v2 && v2.swings) ? `<p class="warn">${esc([v && v.swings ? c.name : null, v2 && v2.swings ? c2.name : null].filter(Boolean).join(" and "))}: figures swing a lot between years, so treat this with care.</p>` : ""}`;
           } else {
             const yrs = Object.entries(v.years).map(([y, x]) => `${y} ${fmt(x, ind.unit)}`).join(" · ");
@@ -394,6 +415,8 @@
             `<details class="why"><summary>${c2 ? esc(x.name) + " in its own words" : "In the council's own words"}</summary><p>${esc(vv.why)}</p></details>`).join("");
           sec.appendChild(row);
           row.querySelector(".info").addEventListener("click", (e) => { e.stopPropagation(); openPop(e.currentTarget, ind, S); });
+          const wb = row.querySelector(".whyno");
+          if (wb) wb.addEventListener("click", (e) => { e.stopPropagation(); openPop(e.currentTarget, ind, S, "why"); });
           if (v && withData.length >= 2) strip(row.querySelector(".strip"), S, ind, c, withData, c2);
         });
       });
