@@ -1,0 +1,54 @@
+name: Update local economy explorer
+
+on:
+  schedule:
+    - cron: "0 21 3 * *"   # 4th of each month, about 8am Melbourne time
+  workflow_dispatch:
+  push:
+    branches: [main, claude/zealous-archimedes-8qq9t4]
+    paths:
+      - "scripts/fetch_local_economy.py"
+      - "scripts/build_local_economy.py"
+      - ".github/workflows/local-economy.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: local-economy
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy requests openpyxl
+      - name: Download data and rebuild
+        id: build
+        continue-on-error: true
+        timeout-minutes: 25
+        shell: bash
+        run: |
+          mkdir -p raw/local
+          set -o pipefail
+          { python -u scripts/fetch_local_economy.py && if [ -e scripts/build_local_economy.py ]; then python -u scripts/build_local_economy.py; fi; } 2>&1 | tee raw/local/build.log
+      - name: Save the changes
+        if: always()
+        run: |
+          git config user.name "local-economy-bot"
+          git config user.email "actions@users.noreply.github.com"
+          for p in raw/local data/local_economy.js data/local_economy_summary.js; do [ -e "$p" ] && git add -- "$p"; done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Local economy explorer: refresh $(date -u +%Y-%m-%d)"
+          git pull --rebase --autostash origin "$GITHUB_REF_NAME"
+          git push origin HEAD:"$GITHUB_REF_NAME"
+      - name: Report a failed build
+        if: steps.build.outcome == 'failure'
+        run: |
+          echo "The build failed. See raw/local/build.log"
+          exit 1
