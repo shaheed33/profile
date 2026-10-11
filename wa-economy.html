@@ -114,7 +114,7 @@
               <button type="button" data-span="3">3 years</button><button type="button" data-span="10" class="on">10 years</button><button type="button" data-span="99">All</button>
             </div>
           </div>
-          <p class="note">Bars are official growth in WA State Final Demand each quarter. Dots are what the model would have said at the time, trained only on earlier data. The open bar is this quarter's estimate.</p>
+          <p class="note">Bars show official growth in WA spending each quarter, compared with the quarter before. Dots are what the model would have said at the time, trained only on earlier data. The open bar is this quarter's estimate.</p>
           <div class="chart" id="hist"></div>
           <div class="key">
             <span><i class="sw bar"></i>Official figure</span>
@@ -217,21 +217,32 @@
       return "early " + d.toLocaleString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
     };
 
+    // spell months out in full, so "Jul to Sep 2026" reads "July to September 2026"
+    const MONTHS = { Jan: "January", Feb: "February", Mar: "March", Apr: "April", Jun: "June", Jul: "July", Aug: "August", Sep: "September", Oct: "October", Nov: "November", Dec: "December" };
+    const full = (t) => String(t).replace(/\b(Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/g, (m) => MONTHS[m]);
+    // plain names for the indicators
+    const PLAIN_IND = { "WA State Final Demand, chain volume, seasonally adjusted": "WA spending (State Final Demand, after inflation)",
+      "WA employed persons": "People employed in WA", "WA monthly hours worked": "Hours worked in WA", "Perth CPI, all groups": "Perth consumer prices (CPI)",
+      "WA construction work done, volume": "WA construction work, after inflation", "WA private business investment, volume": "WA business investment, after inflation",
+      "WA wage price index": "WA wages (wage price index)", "WA new dwelling approvals": "WA new homes approved",
+      "Iron ore price, USD per tonne": "Iron ore price, US$ a tonne", "Brent crude oil, USD per barrel": "Oil price (Brent), US$ a barrel",
+      "US dollars per Australian dollar": "Australian dollar, in US cents" };
+
     function headline() {
       const n = D.nowcast, lp = D.last_published;
-      $("nc-label").textContent = "Estimated growth, " + n.label;
+      $("nc-label").textContent = "Estimated growth, " + full(n.label) + " quarter";
       $("nc-point").textContent = sign(n.point) + "%";
       $("nc-range").textContent = "likely between " + sign(n.lo) + "% and " + sign(n.hi) + "%";
       const dir = n.point > lp.growth + 0.15 ? "a pick-up from" : n.point < lp.growth - 0.15 ? "a slowdown from" : "much the same as";
       const stageText = { "2 months in": "two of the quarter's three months of jobs figures, so it will firm up as the rest come in",
         "3 months in": "all three months of jobs figures, with a few other monthly figures still to come",
         "all monthly data in": "every monthly figure for the quarter" }[n.stage];
-      $("nc-context").textContent = "That would be " + dir + " the " + sign(lp.growth) + "% recorded in " + lp.label +
-        ", the latest official figure. The ABS number for " + n.label + " is due in " + nextRelease(n.q) + "." +
-        (stageText ? " This estimate uses " + stageText + "." : "");
+      $("nc-context").textContent = "That would be " + dir + " the " + sign(lp.growth) + "% recorded in the " + full(lp.label) +
+        " quarter, the latest official figure. The official number for " + full(n.label) + " is due in " + nextRelease(n.q) + "." +
+        (stageText ? " This estimate uses " + stageText + "." : "") + " Growth here means the change in spending from one quarter to the next, after taking out price rises.";
       const g = new Date(D.generated.replace("Z", ":00Z"));
       $("asof").textContent = "Updated " + g.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + " from the ABS and FRED";
-      $("generated").textContent = "Last run " + D.generated.replace("T", " ").replace("Z", " UTC") + " using " + n.model_name.toLowerCase() + ".";
+      $("generated").textContent = "Last updated " + g.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + ", using the " + n.model_name.toLowerCase() + " model.";
     }
 
     function history() {
@@ -309,7 +320,7 @@
     function accuracy() {
       const a = D.accuracy, tenths = Math.round(a.within_half_point * 10);
       let s = "Tested on " + a.quarters_tested + " quarters since " + a.from.slice(0, 4) + ", using only the figures that would have been out at this point in each quarter, the model's typical miss is " + a.rmse.toFixed(2) + " percentage points. ";
-      if (a.recent_rmse != null) s += "Most of that comes from the mining investment swings of 2011 to 2016. Since 2017 the typical miss is " + a.recent_rmse.toFixed(2) + ". ";
+      if (a.recent_rmse != null) s += "Most of that comes from the mining investment swings of 2011 to 2016. Since 2017 the typical miss is " + a.recent_rmse.toFixed(2) + " points. ";
       s += a.beats_naive
         ? "Simply assuming growth carries on at its recent average misses by " + a.naive_rmse.toFixed(2) + ". "
         : "That is no better than assuming growth carries on at its recent average, which misses by " + a.naive_rmse.toFixed(2) + ", so treat the estimate with care. ";
@@ -341,11 +352,12 @@
       D.indicators.forEach((s) => {
         const c = document.createElement("div"); c.className = "card-i";
         let v, sub;
-        if (s.id === "unemp") { v = s.latest.toFixed(1) + "%"; sub = s.year_ago != null ? sign(s.latest - s.year_ago) + " points on a year ago" : ""; }
-        else if (s.year_ago) { v = sign((s.latest / s.year_ago - 1) * 100) + "%"; sub = "on a year ago"; }
+        if (s.id === "unemp") { v = s.latest.toFixed(1) + "%"; sub = s.year_ago != null ? sign(s.latest - s.year_ago) + " points on a year earlier" : ""; }
+        else if (s.year_ago) { v = sign((s.latest / s.year_ago - 1) * 100) + "%"; sub = "on a year earlier"; }
         else { v = s.latest.toLocaleString("en-GB"); sub = ""; }
-        const label = s.label.replace(/WA State Final Demand, chain volume, seasonally adjusted/, "WA spending (State Final Demand, after inflation)");
-        c.innerHTML = `<h3>${label}</h3><p class="v">${v}</p><span class="p">${sub}${sub ? ", " : ""}${s.period}</span>`;
+        const label = PLAIN_IND[s.label] || s.label;
+        const per = "the " + full(s.period) + (/months/.test(s.period) ? "" : " quarter");
+        c.innerHTML = `<h3>${label}</h3><p class="v">${v}</p><span class="p">${sub}${sub ? ", " : ""}${per}</span>`;
         const pts = s.series.filter((p) => p[1] != null);
         if (pts.length > 2) {
           const Wp = 180, Hp = 34, vs = pts.map((p) => p[1]), lo = Math.min(...vs), hi = Math.max(...vs);
@@ -364,11 +376,11 @@
       sec.hidden = false;
       const words = ["none", "one", "two", "all three"][I.months_in];
       $("infl-text").textContent = "The ABS now measures Perth prices every month, and the quarterly figure is the average of the quarter's three months. With " +
-        words + " of them in, much of " + I.label + " is already known. This part is arithmetic on published figures, not a model, with any month still to come assumed to rise at its usual pace.";
+        words + " of them in, much of the " + full(I.label) + " quarter is already known. This part is arithmetic on published figures, not a model, with any month still to come assumed to rise at its usual pace.";
       const stats = $("infl-stats"); stats.innerHTML = "";
-      [[I.latest_annual != null ? sign(I.latest_annual) + "%" : "n/a", "Annual inflation, " + I.latest_month, (I.latest_monthly != null ? sign(I.latest_monthly) + "% on the month before" : "")],
-       [sign(I.q_annual.point) + "%", "Annual inflation, " + I.label + " so far", "likely " + sign(I.q_annual.lo) + "% to " + sign(I.q_annual.hi) + "%"],
-       [sign(I.last_q.annual) + "%", "Annual inflation, " + I.last_q.label, "latest official quarter"]].forEach(([v, h, p]) => {
+      [[I.latest_annual != null ? sign(I.latest_annual) + "%" : "n/a", "Annual inflation, " + full(I.latest_month), (I.latest_monthly != null ? sign(I.latest_monthly) + "% on the month before" : "")],
+       [sign(I.q_annual.point) + "%", "Annual inflation, " + full(I.label) + " so far", "likely " + sign(I.q_annual.lo) + "% to " + sign(I.q_annual.hi) + "%"],
+       [sign(I.last_q.annual) + "%", "Annual inflation, " + full(I.last_q.label), "latest official quarter"]].forEach(([v, h, p]) => {
         const c = document.createElement("div"); c.className = "card-i";
         c.innerHTML = `<h3>${h}</h3><p class="v">${v}</p><span class="p">${p}</span>`;
         stats.appendChild(c);
@@ -398,13 +410,13 @@
         const [yr, qq] = r.q.split("Q");
         if (qq === "1" && Number(yr) % every === 0) txt(svg, x(i) + 1, H - 6, yr);
         const hit = el("rect", { x: x(i), y: m.t, width: bw, height: H - m.t - m.b, fill: "transparent" }, svg);
-        const html = r.now ? `${I.label} so far<br>Annual inflation <b>${sign(a.point, 1)}%</b><br>Likely range <b>${sign(a.lo, 1)}</b> to <b>${sign(a.hi, 1)}%</b>`
+        const html = r.now ? `${full(I.label)} so far<br>Annual inflation <b>${sign(a.point, 1)}%</b><br>Likely range <b>${sign(a.lo, 1)}</b> to <b>${sign(a.hi, 1)}%</b>`
           : `${qlab(r.q)}<br>Annual inflation <b>${sign(r.v, 1)}%</b>`;
         hit.addEventListener("pointermove", (e) => showTip(e, html));
         hit.addEventListener("pointerleave", hideTip);
       });
     }
-    const qlab = (q) => { const [y, n] = q.split("Q"); return ["Jan to Mar", "Apr to Jun", "Jul to Sep", "Oct to Dec"][n - 1] + " " + y; };
+    const qlab = (q) => { const [y, n] = q.split("Q"); return ["January to March", "April to June", "July to September", "October to December"][n - 1] + " " + y; };
 
     function render() {
       headline(); history();

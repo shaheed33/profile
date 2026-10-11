@@ -319,7 +319,8 @@
     if (!D || !el) return;
     var sign = function (v) { var t = Math.abs(v).toFixed(1); return (Number(t) === 0 ? "" : v > 0 ? "+" : "−") + t + "%"; };
     var n = D.nowcast;
-    el.lastChild.textContent = sign(n.point) + " growth estimated for " + n.label;
+    var M = { Jan: "January", Feb: "February", Mar: "March", Apr: "April", Jun: "June", Jul: "July", Aug: "August", Sep: "September", Oct: "October", Nov: "November", Dec: "December" };
+    el.lastChild.textContent = sign(n.point) + " growth estimated, " + n.label.replace(/\b(Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/g, function (m) { return M[m]; }) + " quarter";
     el.hidden = false;
   });
   </script>

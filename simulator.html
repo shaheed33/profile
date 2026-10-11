@@ -68,7 +68,7 @@
   <main class="container-xl py-4">
     <ul class="nav nav-pills mb-3" aria-label="Simulator sections">
       <li class="nav-item"><a class="nav-link active" aria-current="page" href="simulator.html">Simulator</a></li>
-      <li class="nav-item"><a class="nav-link" href="replication.html">Replication: October 2024</a></li>
+      <li class="nav-item"><a class="nav-link" href="replication.html">How I checked the data</a></li>
     </ul>
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
       <symbol id="i-wind" viewBox="0 0 24 24"><path d="M11.2 10.6 12 22h0l.8-11.4" fill="currentColor"/><circle cx="12" cy="9" r="1.7" fill="currentColor"/><path d="M12 7.3c-.4-2.2-.2-4.4.6-6.3.9 2 .9 4.2-.6 6.3zM13.5 9.9c2.1.8 3.8 2.2 5 3.9-2.2.1-4.1-1-5-3.9zM10.5 9.9c-1.7 1.4-3.8 2.2-5.9 2.2 1.1-1.9 3-3 5.9-2.2z" fill="currentColor"/></symbol>
@@ -89,7 +89,7 @@
     <section class="card period-bar mb-4">
       <div class="card-body py-3">
         <div class="d-flex flex-wrap align-items-center gap-2">
-          <span class="fw-bold me-1">Weather from:</span>
+          <span class="fw-bold me-1">Test against the weather of</span>
           <div class="d-flex flex-wrap gap-2" role="group" aria-label="Weather period" id="period-buttons">
             <button type="button" class="btn btn-outline-primary" data-period="all" aria-pressed="false">All five years</button>
             <button type="button" class="btn btn-outline-primary" data-period="aug2021_jul2022" aria-pressed="false">2021 to 2022</button>
@@ -159,11 +159,11 @@
             <div class="form-check mt-1"><input class="form-check-input" type="checkbox" id="unlimited"><label class="form-check-label small" for="unlimited">No power limit</label></div>
           </div>
           <div class="mb-3">
-            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="loss">Round trip loss</label><output class="fw-bold text-nowrap ms-2" id="loss-out"></output></div>
+            <div class="d-flex justify-content-between"><label class="form-label mb-1" for="loss" title="The share of energy lost between charging storage and getting it back out">Energy lost in storage</label><output class="fw-bold text-nowrap ms-2" id="loss-out"></output></div>
             <input type="range" class="form-range" id="loss" min="0" max="0.4" step="0.01">
           </div>
           <button class="btn btn-primary w-100" id="reset" type="button">Reset to the starting grid</button>
-          <p class="form-text mt-3 mb-0">Starting grid: 40 GW wind, 35 GW solar farms, 45 GW rooftop solar, 200 GWh of storage, no coal and 20% of gas.</p>
+          <p class="form-text mt-3 mb-0">The starting grid has 40 GW wind, 35 GW solar farms, 45 GW rooftop solar, 200 GWh of storage, no coal and 20% of gas.</p>
         </div></div>
       </div>
       <div class="col-lg-6 order-3 order-lg-2" aria-live="polite">
@@ -210,7 +210,7 @@
             <div id="short-chart" style="height: 240px;"></div>
           </div></div>
           <div class="card"><div class="card-header">How windy and sunny was it?</div><div class="card-body">
-            <p class="small text-body-secondary mb-2">Capacity factors: average output as a share of what was installed. These are the weather the grid is tested against. The calmest week is the lowest 7 day average for wind.</p>
+            <p class="small text-body-secondary mb-2">Capacity factor means average output as a share of what was installed. These figures describe the weather the grid is tested against. The calmest week is the lowest 7 day average for wind.</p>
             <div class="table-responsive"><table class="table table-sm small mb-0" id="weather-table"></table></div>
           </div></div>
         </div>
@@ -228,7 +228,7 @@
         <h2 class="h5">How it works</h2>
         <p>Each half hour's real wind, solar farm and rooftop solar output is divided by what was installed at the time. That gives the weather on its own, as a share of capacity. Your chosen fleet is then multiplied by that weather, so the same grid faces every year's conditions. Demand keeps each year's daily and seasonal pattern but is scaled to the 2025 to 2026 level.</p>
         <p>If supply is higher than demand, the surplus charges the storage until it is full, and anything beyond that is curtailed. If supply is lower, the storage covers the gap until it runs empty or reaches its power limit. Whatever is still missing counts as a shortfall. The storage starts full and, in the five year run, carries over from one year to the next.</p>
-        <p class="mb-0">Inspired by Andrew Grogan's <em>Open Electricity Simulation</em> spreadsheet (2024), shared in his <a href="https://www.linkedin.com/posts/andrew-grogan-be-phd-a56b5816_what-would-happen-if-the-nem-had-a-lot-more-share-7258764364134899712-KhCt" target="_blank" rel="noopener">LinkedIn post</a>. Data: AEMO via NEMOSIS, with rooftop solar capacity from AEMO's published figures. See <a href="replication.html">Replication</a>.</p>
+        <p class="mb-0">Inspired by Andrew Grogan's <em>Open Electricity Simulation</em> spreadsheet (2024), shared in his <a href="https://www.linkedin.com/posts/andrew-grogan-be-phd-a56b5816_what-would-happen-if-the-nem-had-a-lot-more-share-7258764364134899712-KhCt" target="_blank" rel="noopener">LinkedIn post</a>. Data comes from AEMO, downloaded with the NEMOSIS tool, with rooftop solar capacity from AEMO's published figures. See <a href="replication.html">how I checked the data</a>.</p>
       </div>
       <div class="col-md-6">
         <h2 class="h5">What it leaves out</h2>
@@ -359,7 +359,7 @@ if (typeof module !== "undefined") module.exports = { simulate, ANDREW_PRESET, G
 (function () {
   const $ = (id) => document.getElementById(id);
   const fmt = (x, d = 0) => (+x).toLocaleString("en-AU", { maximumFractionDigits: d, minimumFractionDigits: d });
-  const dFmt = (d) => d.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+  const dFmt = (d) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   const stepH = 0.5;
   const RELIABILITY = 0.002; // NEM reliability standard: unserved energy at most 0.002% of demand
   const YEAR_KEYS = ["aug2021_jul2022", "aug2022_jul2023", "aug2023_jul2024", "aug2024_jul2025", "aug2025_jul2026"];
@@ -547,7 +547,7 @@ if (typeof module !== "undefined") module.exports = { simulate, ANDREW_PRESET, G
       st.textContent = "This grid meets the NEM reliability standard: unmet demand is within 0.002% of all demand.";
       st.classList.add("ok");
     } else {
-      st.textContent = `Demand went unmet for ${fmt(s.hoursShort, 1)} hours (${fmt(unmetPct, 3)}% of all demand). The reliability standard allows 0.002%.`;
+      st.textContent = `Demand went unmet in ${fmt(s.hoursShort, 0)} hours, ${fmt(unmetPct, unmetPct < 0.1 ? 3 : 1)}% of all demand. The official reliability standard allows only 0.002%, the equivalent of about 10 minutes of a year's demand.`;
       st.classList.remove("ok");
     }
   }
@@ -574,7 +574,7 @@ if (typeof module !== "undefined") module.exports = { simulate, ANDREW_PRESET, G
     let w = 0, best = 0, bestEnd = -1;
     for (let i = 0; i < n; i++) { w += un[i] * stepH; if (i >= 336) w -= un[i - 336] * stepH; if (w > best) { best = w; bestEnd = i; } }
     $("worst-week").textContent = best <= 0 ? "There were no shortfalls, so there is no worst week."
-      : `Worst week: ${dFmt(times[Math.max(0, bestEnd - 335)])} to ${dFmt(times[bestEnd])}, with ${fmt(best / 1000, 1)} GWh of demand unmet.`;
+      : `The worst week ran from ${dFmt(times[Math.max(0, bestEnd - 335)])} to ${dFmt(times[bestEnd])}, with ${fmt(best / 1000, 1)} GWh of demand unmet.`;
     const keys = [], vals = [];
     for (let i = 0; i < n; i++) {
       const t = times[i], k = `${t.getFullYear()}-${t.getMonth()}`;

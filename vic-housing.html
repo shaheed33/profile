@@ -218,7 +218,7 @@
                 <th data-k="target" class="hide-sm">Target to 2051</th>
                 <th data-k="per_year">Needed a year</th>
                 <th data-k="approved_12m">Approved, last 12 months</th>
-                <th data-k="pace">Pace</th>
+                <th data-k="pace" title="Homes approved in the last 12 months as a share of the yearly number needed">Pace, approved against needed</th>
               </tr></thead>
               <tbody></tbody>
             </table>
@@ -310,11 +310,11 @@
       });
       const g = new Date(D.generated.replace("Z", ":00Z"));
       $("asof").textContent = "Updated " + g.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + " from the ABS and Plan for Victoria";
-      $("generated").textContent = "Last run " + D.generated.replace("T", " ").replace("Z", " UTC") + ". Homes finished to " + S.through + ", approvals by council to " + D.plan.approvals_through + ".";
+      $("generated").textContent = "Last updated " + new Date(D.generated.replace("Z", ":00Z")).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + ". Homes finished up to " + upTo(S.through) + ", and council approvals up to " + upTo(D.plan.approvals_through) + ".";
     }
 
     function race() {
-      $("race-note").textContent = "Ten quarters in, " + fmt(S.built) + " homes have been finished. A steady path to 800,000 would have reached " +
+      $("race-note").textContent = "From January 2024 to " + upTo(S.through) + ", " + fmt(S.built) + " homes were finished. A steady path to 800,000 would have reached " +
         fmt(S.on_track_by_now) + " by now, so the state is " + fmt(S.gap) + " homes behind.";
       const host = $("race"); host.innerHTML = "";
       const W = Math.max(300, host.clientWidth), H2 = W < 560 ? 230 : 300, m = { t: 14, r: 10, b: 28, l: 48 };

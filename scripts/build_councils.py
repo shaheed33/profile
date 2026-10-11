@@ -247,20 +247,20 @@ def trusted_years(values: dict[str, dict[str, float]], key: str, label: str, not
     if key in PLAUSIBLE:
         lo, hi = PLAUSIBLE[key]
         for y in [y for y, m in meds.items() if not lo <= m <= hi]:
-            notes.append(f"{label}: {y} left out, its typical value ({meds[y]:.3g}) is outside the plausible range")
+            notes.append(f"{label}, {y} left out. The typical figure that year ({meds[y]:.3g}) is not believable for this measure, which suggests the figures were mislabelled")
             del meds[y]
     if key not in SIGNED and len(meds) >= 2:
         far = lambda a, b: min(a, b) > 0 and max(a, b) / min(a, b) > JUMP  # noqa: E731
         if len(meds) == 2:
             a, b = meds.values()
             if far(a, b):
-                notes.append(f"{label}: years disagree ({a:.3g} against {b:.3g}), measure left out")
+                notes.append(f"{label}, left out because the years disagree ({a:.3g} against {b:.3g})")
                 meds = {}
         else:
             for y in list(meds):
                 ref = float(np.median([m for yy, m in meds.items() if yy != y]))
                 if far(meds[y], ref):
-                    notes.append(f"{label}: {y} left out, its typical value ({meds[y]:.3g}) is far from other years ({ref:.3g})")
+                    notes.append(f"{label}, {y} left out. The typical figure that year ({meds[y]:.3g}) is far from other years ({ref:.3g}), which suggests a change in how it was reported")
                     del meds[y]
     return {y: values[y] for y in meds}
 
@@ -304,7 +304,7 @@ def screen(councils: list[dict], indicators: list[dict], state: str, notes: list
             kept.append({**ind, "stability": round(st, 2) if st is not None else None, "explain": EXPLAIN.get(i),
                          "kind": "cost" if i in COST else "survey" if i in SURVEY else None})
             continue
-        notes.append(f"{state}, {ind['label']}: left out. {left[-1]['why']}")
+        notes.append(f"{state}, {ind['label']}, left out. {left[-1]['why']}")
         for c in councils:
             c["values"].pop(i, None)
     for ind in kept:

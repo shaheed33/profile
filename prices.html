@@ -131,7 +131,7 @@
           <div class="card-header"><span class="measure-name">Average</span> price by hour of day, by year <span class="season-label text-body-secondary"></span></div>
           <div class="card-body">
             <div class="play"><button class="btn btn-outline-primary btn-sm" type="button" id="play" aria-pressed="false">▶ Play the years</button><span class="yr" id="play-yr" aria-live="polite"></span></div>
-            <p class="text-body-secondary mb-2">Each line is one year. Press play to watch the midday dip deepen as solar grows. The shaded bands mark the midday window (10:00 to 15:00) and the evening window (17:00 to 21:00). Compare how the midday dip and the evening peak change from year to year. The daily pattern in winter is quite different from spring, so the Season menu lets you compare like with like.</p>
+            <p class="text-body-secondary mb-2">Each line is one year. Press play to watch the midday dip deepen as solar grows. The shaded bands mark the midday window (10am to 3pm) and the evening window (5pm to 9pm). Compare how the midday dip and the evening peak change from year to year. The daily pattern in winter is quite different from spring, so the Season menu lets you compare like with like.</p>
             <div id="c-hourly" class="pchart"></div>
           </div>
         </section>
@@ -156,13 +156,13 @@
         <section class="card mb-4 reveal">
           <div class="card-header">Price by hour and month</div>
           <div class="card-body">
-            <p class="text-body-secondary mb-2">Each column is a month and each row an hour of the day. Blue is cheap and red is expensive. The colour scale is capped at the 95th percentile so a few extreme months don't wash out the pattern.</p>
+            <p class="text-body-secondary mb-2">Each column is a month and each row an hour of the day. Blue is cheap and red is expensive. The colours stop getting redder above the highest 5% of prices, so a few extreme months don't wash out the pattern.</p>
             <div id="c-heat"></div>
           </div>
         </section>
 
         <section class="card mb-4 reveal">
-          <div class="card-header">Price duration curves</div>
+          <div class="card-header">How often prices are low or high in a year</div>
           <div class="card-body">
             <p class="text-body-secondary mb-2">Every 5 minute price in the year, sorted from highest to lowest. The further right the line dips below zero, the more often prices were negative. The chart is cut at $600/MWh, and real spikes go much higher.</p>
             <div id="c-duration" class="pchart"></div>
@@ -172,12 +172,12 @@
         <section class="mb-4">
           <h2 class="h5">Data and definitions</h2>
           <ul class="text-body-secondary">
-            <li>Source: AEMO dispatch prices (MMSDM <code>DISPATCHPRICE</code>), excluding intervention pricing runs.</li>
-            <li>Times are NEM time (AEST, with no daylight saving). Each 5 minute interval is counted in the hour it starts.</li>
+            <li>Prices are AEMO's dispatch prices (MMSDM <code>DISPATCHPRICE</code>), excluding intervention pricing runs.</li>
+            <li>Times are eastern standard time all year (AEST, the market's clock, with no daylight saving). Each 5 minute interval is counted in the hour it starts.</li>
             <li>Yearly charts use full calendar years only. The monthly charts use every month available.</li>
             <li>Seasons follow the Southern Hemisphere. Summer is December to February, autumn is March to May, winter is June to August and spring is September to November. Within each calendar year, summer means January, February and December of that year.</li>
             <li>Simple average is the plain average of the 5 minute prices. Demand weighted average weights each price by grid demand at that time (AEMO <code>TOTALDEMAND</code>, which excludes electricity people use from their own rooftop solar). Median is the middle value, which is not pulled up by price spikes.</li>
-            <li>Prices are nominal and not adjusted for inflation.</li>
+            <li>Prices are in dollars of the day, not adjusted for inflation.</li>
           </ul>
         </section>
       </div>
@@ -195,9 +195,9 @@
     if (!P) { document.querySelector("main").insertAdjacentHTML("afterbegin",
       '<div class="alert alert-warning">The price data file (data/prices_data.js) is missing.</div>'); return; }
 
-    const fmtDate = (s) => new Date(s + "T00:00").toLocaleDateString("en-AU", { month: "short", year: "numeric" });
+    const fmtDate = (s) => new Date(s + "T00:00").toLocaleDateString("en-GB", { month: "long", year: "numeric" });
     document.getElementById("period").textContent =
-      `AEMO data · ${fmtDate(P.first)} to ${fmtDate(P.last)} · yearly charts ${P.years[0]} to ${P.years[P.years.length - 1]}`;
+      `AEMO data from ${fmtDate(P.first)} to ${fmtDate(P.last)}. Yearly figures cover ${P.years[0]} to ${P.years[P.years.length - 1]}.`;
 
     // Major events marked on the "over time" chart
     const EVENTS = [
@@ -236,14 +236,15 @@
       { type: "rect", xref: "x", yref: "paper", x0: 9.5, x1: 14.5, y0: 0, y1: 1, fillcolor: "gold", opacity: 0.12, line: { width: 0 }, layer: "below" },
       { type: "rect", xref: "x", yref: "paper", x0: 16.5, x1: 20.5, y0: 0, y1: 1, fillcolor: "red", opacity: 0.06, line: { width: 0 }, layer: "below" },
     ];
-    const hourAxis = { title: { text: "Hour of day (NEM time)" }, tickmode: "array", tickvals: [0, 3, 6, 9, 12, 15, 18, 21], ticktext: ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"] };
+    const hourAxis = { title: { text: "Hour of day (eastern standard time)" }, tickmode: "array", tickvals: [0, 3, 6, 9, 12, 15, 18, 21], ticktext: ["midnight", "3am", "6am", "9am", "midday", "3pm", "6pm", "9pm"] };
     const pct = (a, q) => { const s = a.filter((x) => x != null).sort((x, y) => x - y); return s[Math.floor((s.length - 1) * q)]; };
     const bySeason = (obj, reg, season) => (P.seasons ? obj[reg][season] : obj[reg]);
     const money = (x) => (x < 0 ? "−$" : "$") + Math.abs(x).toFixed(0);
 
     // Headline figures for the latest full year, compared with the first
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const hh = (h) => String(h).padStart(2, "0") + ":00";
+    // hours as people say them, 10am or 5pm
+    const hh = (h) => h === 0 ? "midnight" : h === 12 ? "midday" : (h % 12) + (h < 12 ? "am" : "pm");
     const avg = (a, from, to) => { let t = 0; for (let h = from; h <= to; h++) t += a[h]; return t / (to - from + 1); };
     const argOf = (a, better) => a.reduce((b, x, i) => (better(x, a[b]) ? i : b), 0);
     function countUp(el, to, fmt) {
@@ -270,10 +271,10 @@
         card("k-lo", "solar", "solar", "solar", "Cheapest hour", "") + card("k-hi", "moon", "wind", "wind", "Dearest hour", "") +
         card("k-gap", "gap", "battery", "battery", "Evening premium", "") + card("k-neg", "neg", "hydro", "hydro", "Prices below zero", "");
       const set = (id, val, fmt, sub) => { const el = document.getElementById(id); countUp(el, val, fmt); el.nextElementSibling.innerHTML = sub; };
-      set("k-lo", a[lo], (x) => hh(lo) + " · " + money(x), `Average at that hour in ${when}, about ${cents(a[lo])} a kWh before network and retail costs. In ${Y0}: <em>${money(a0[lo0])}</em> at ${hh(lo0)}.`);
-      set("k-hi", a[hi], (x) => hh(hi) + " · " + money(x), `Average at that hour in ${when}, about ${cents(a[hi])} a kWh before network and retail costs. In ${Y0}: <em>${money(a0[hi0])}</em> at ${hh(hi0)}.`);
-      set("k-gap", gap, (x) => money(x), `Evening (17:00 to 21:00) minus midday (10:00 to 15:00) in ${when}. In ${Y0}: <em>${money(gap0)}</em>. A rough guide to what a battery can earn.`);
-      set("k-neg", neg[n], (x) => x.toFixed(0) + "%", `of 5 minute prices were negative at ${hh(n)} in ${when}. In ${Y0}: <em>${neg0.toFixed(0)}%</em>.`);
+      set("k-lo", a[lo], (x) => hh(lo) + " · " + money(x), `The average wholesale price per MWh for the hour from ${hh(lo)} in ${when}, about ${cents(a[lo])} a kWh before network and retail costs. In ${Y0} the cheapest was <em>${money(a0[lo0])}</em> at ${hh(lo0)}.`);
+      set("k-hi", a[hi], (x) => hh(hi) + " · " + money(x), `The average wholesale price per MWh for the hour from ${hh(hi)} in ${when}, about ${cents(a[hi])} a kWh before network and retail costs. In ${Y0} the dearest was <em>${money(a0[hi0])}</em> at ${hh(hi0)}.`);
+      set("k-gap", gap, (x) => money(x), `How much more a MWh costs in the evening (5pm to 9pm) than at midday (10am to 3pm), in ${when}. In ${Y0} the gap was <em>${money(gap0)}</em>. A rough guide to what a battery can earn by charging at midday and selling in the evening.`);
+      set("k-neg", neg[n], (x) => x.toFixed(0) + "%", `of the time, prices were below zero in the hour from ${hh(n)} in ${when}. In ${Y0} the highest share was <em>${neg0.toFixed(0)}%</em>.`);
     }
 
     // Play the years one by one on the hourly chart
@@ -345,8 +346,8 @@
         text: "<b>" + (i + 1) + "</b>", showarrow: false, font: { size: 11, color: e.where === "Global" ? "#6f42c1" : "#555" },
         hovertext: fullDate(e.date) + ": " + e.label }));
       Plotly.react("c-trend", [
-        { x: mx, y: T.evening, name: "Evening (17:00 to 21:00)", type: "scatter", mode: "lines", line: { color: "#C8372D", width: 2 }, hovertemplate: "%{y:$,.0f}" },
-        { x: mx, y: T.midday, name: "Midday (10:00 to 15:00)", type: "scatter", mode: "lines", line: { color: "#E3A008", width: 2 }, hovertemplate: "%{y:$,.0f}" },
+        { x: mx, y: T.evening, name: "Evening (5pm to 9pm)", type: "scatter", mode: "lines", line: { color: "#C8372D", width: 2 }, hovertemplate: "%{y:$,.0f}" },
+        { x: mx, y: T.midday, name: "Midday (10am to 3pm)", type: "scatter", mode: "lines", line: { color: "#E3A008", width: 2 }, hovertemplate: "%{y:$,.0f}" },
         { x: mx, y: T.spread, name: "Spread (evening minus midday)", type: "scatter", mode: "lines", line: { color: "#2563EB", width: 2, dash: "dot" }, hovertemplate: "%{y:$,.0f}" },
       ], { ...base(), margin: { l: 60, r: 20, t: 25, b: 50 }, shapes: evShapes, annotations: evNotes, legend: { orientation: "h", y: -0.15 },
         xaxis: { ...base().xaxis, type: "date" }, yaxis: { ...base().yaxis, title: { text: "$/MWh" } } }, config);
@@ -365,7 +366,7 @@
       // 5. Duration curves
       Plotly.react("c-duration", ys.map((y, i) => {
         const d = P.duration[reg][y];
-        return { x: P.pcts, y: d.values, name: `${y}: ${d.below0}% below $0, ${d.above300}% above $300`,
+        return { x: P.pcts, y: d.values, name: `${y}, below $0 ${d.below0}% of the time, above $300 ${d.above300}%`,
           type: "scatter", mode: "lines", line: { color: yc(i, ys.length), width: 2 }, hovertemplate: "%{y:$,.0f}/MWh" };
       }), { ...base(), hovermode: "closest",
         xaxis: { ...base().xaxis, title: { text: "% of the year (prices sorted from highest to lowest)" }, ticksuffix: "%" },

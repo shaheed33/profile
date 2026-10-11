@@ -305,7 +305,7 @@
       else box.innerHTML = `<b>${esc(ind.label)}</b>${esc(ind.explain || "")}` +
         (ind.better ? `<span class="more">${ind.better === "higher" ? "Higher is better." : "Lower is better."}${ind.kind === "cost" ? " It measures cost, so a lower figure means cheaper to run, which is not always the same as a better service." : ""}${ind.kind === "survey" ? " It comes from a survey of a few hundred residents, so gaps of a few points are within the margin of error." : ""}</span>`
           : `<span class="more"><b style="display:inline">Why no better or worse?</b> ${esc(ind.note || "")}</span>`) +
-        `<span class="src">Source: ${esc(S.source)}. Consistency from year to year: ${ind.stability != null ? ind.stability.toFixed(2) : "n/a"} out of 1.</span>`;
+        `<span class="src">From ${esc(S.source)}. Consistency from one year to the next ${ind.stability != null ? ind.stability.toFixed(2) : "n/a"} out of 1.</span>`;
       document.body.appendChild(box);
       const r = btn.getBoundingClientRect();
       box.style.left = Math.max(12, Math.min(r.left + scrollX - 10, scrollX + innerWidth - box.offsetWidth - 12)) + "px";
@@ -523,32 +523,35 @@
       const groups = {};
       S.left_out.forEach((i) => (groups[i.category] = groups[i.category] || []).push([i.label, i.why]));
       S.not_used.forEach((i) => (groups[i.category] = groups[i.category] || []).push([i.label, i.why]));
-      const extra = D.notes.filter((x) => x.startsWith(state === "vic" ? "Victoria" : "NSW") && !/left out\. /.test(x));
+      const extra = D.notes.filter((x) => x.startsWith(state === "vic" ? "Victoria" : "NSW") && /\d{4}-\d{2} left out/.test(x));
       $("notused").innerHTML = `<p>${S.name} publishes more measures than this page uses. These are the ones left out, grouped by the reason. The tests are applied by the script that builds this page, so they are the same for every council.</p>` +
         Object.entries(groups).map(([g, arr]) => `<h4>${esc(g)}</h4><ul>${arr.map(([l, w]) => `<li><b>${esc(l)}</b>. ${esc(w)}</li>`).join("")}</ul>`).join("") +
         (extra.length ? `<h4>Single years left out</h4><ul>${extra.map((x) => `<li>${esc(x.replace(/^[^,]+, /, ""))}.</li>`).join("")}</ul>` : "");
-      $("sources").textContent = "Victoria: " + D.states.vic.source + ", full data set for 2020-21 to 2024-25. New South Wales: " + D.states.nsw.source +
+      $("sources").textContent = "Victorian figures come from " + D.states.vic.source + ", the full data set for 2020-21 to 2024-25. New South Wales figures come from " + D.states.nsw.source +
         ", spreadsheets for 2022-23, 2023-24 and 2024-25. Both are refreshed here once a year when the governments publish new figures.";
-      $("generated").textContent = "Built " + D.generated.replace("T", " ").replace("Z", " UTC") + ".";
+      $("generated").textContent = "Last updated " + new Date(D.generated.replace("Z", ":00Z")).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + ".";
       try { history.replaceState(null, "", "#" + state + "/" + encodeURIComponent(current) + (other ? "/vs/" + encodeURIComponent(other) : "")); } catch (e) {}
     }
 
+    // the main list runs A to Z; the comparison list puts similar councils first
     function options(sel, S, blank) {
       sel.innerHTML = blank ? `<option value="">No comparison</option>` : "";
-      [...new Set(S.councils.map((c) => c.group))].sort().forEach((g) => {
-        const og = document.createElement("optgroup"); og.label = g;
-        S.councils.filter((c) => c.group === g).forEach((c) => { const o = document.createElement("option"); o.value = c.name; o.textContent = c.name; og.appendChild(o); });
-        sel.appendChild(og);
+      const az = [...S.councils].sort((a, b) => a.name.localeCompare(b.name));
+      const add = (host, c) => { const o = document.createElement("option"); o.value = c.name; o.textContent = c.name; host.appendChild(o); };
+      const me = blank && S.councils.find((c) => c.name === current);
+      if (!me) { az.forEach((c) => add(sel, c)); return; }
+      [["Similar councils", az.filter((c) => c.group === me.group && c.name !== me.name)], ["All other councils", az.filter((c) => c.group !== me.group)]].forEach(([l, list]) => {
+        const og = document.createElement("optgroup"); og.label = l; list.forEach((c) => add(og, c)); sel.appendChild(og);
       });
     }
     function fill() {
       const S = D.states[state];
-      options($("pick"), S, false); options($("pick2"), S, true);
       if (!S.councils.some((c) => c.name === current)) current = S.councils[Math.floor(Math.random() * S.councils.length)].name;
+      options($("pick"), S, false); options($("pick2"), S, true);
       if (!S.councils.some((c) => c.name === other)) other = "";
       $("pick").value = current; $("pick2").value = other;
     }
-    function select(name) { current = name; if (other === name) other = ""; $("pick").value = name; $("pick2").value = other; render(); }
+    function select(name) { current = name; if (other === name) other = ""; options($("pick2"), D.states[state], true); $("pick").value = name; $("pick2").value = other; render(); }
     function setOther(name) { other = name === current ? "" : name; $("pick2").value = other; render(); }
     function setState(s) { state = s; document.querySelectorAll(".seg button").forEach((b) => b.classList.toggle("on", b.dataset.state === s)); fill(); render(); }
 
