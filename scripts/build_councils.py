@@ -102,6 +102,59 @@ NSW_CONTEXT = [("Population 2", "Population", "num", None), ("Council Area", "Ar
                ("Population Density", "Residents per km²", "num", None),
                ("Population Change over 5 years", "Population growth over five years", "pct", None),
                ("Socio-Economic Index Rating", "Socio-economic index rating", "num", "A higher rating means less disadvantage.")]
+# plain-English explainers shown behind the (i) button on the page
+EXPLAIN = {
+    # Victoria
+    "WC2": "How often a bin that was put out on time was not collected. A figure of 4 means 4 missed bins for every 10,000 bin collections.",
+    "WC5": "The share of everything collected from household bins (garbage, recycling, green and food waste) that was recycled or composted instead of going to landfill.",
+    "WC3": "What it costs the council, per garbage bin, to collect and dispose of household rubbish for a year. Recycling and green bins are not included.",
+    "SP1": "The typical number of days from lodging a planning permit application to the council's decision. Half of applications take longer and half take less time.",
+    "SP2": "The share of planning decisions made within the time the law sets, which is 60 days for standard applications and 10 days for simple VicSmart ones.",
+    "SP3": "What it costs the council to run its planning permit service, divided by the number of applications it received.",
+    "R2": "The share of the council's sealed local roads that meet the condition standard the council sets for itself. Councils set their own standards, so compare with some care.",
+    "R5": "Residents' rating of the council's sealed local roads, from 0 to 100, in the Victorian Government's yearly community satisfaction survey.",
+    "R1": "The number of requests and complaints from residents about sealed local roads, for every 100 km of road the council looks after.",
+    "LB8": "Visits to the council's libraries in a year, divided by the number of residents.",
+    "LB6": "Items borrowed from the council's libraries in a year, divided by the number of residents.",
+    "LB5": "What the council spends to run its library service, divided by the number of residents.",
+    "AF6": "Visits to council swimming pools and aquatic centres in a year, divided by the number of residents.",
+    "AF7": "What each pool visit costs the council after entry fees and other income. A negative figure means the pools bring in more than they cost.",
+    "AM1": "The average number of days the council took to respond to a request about animals, such as a barking dog, a stray or a dog attack.",
+    "AM5": "Of the cats and dogs the council collected, the share it found new homes for. It can go above 100% when animals collected one year are rehomed the next.",
+    "FS1": "The average number of days from a complaint about food, for example from a cafe or takeaway, to the council's first action on it.",
+    "FS4": "The share of critical and major food safety breaches found at food businesses that the council followed up.",
+    "MC4": "The share of children enrolled with the council's maternal and child health service who attended at least once during the year.",
+    "MC3": "What the maternal and child health service costs the council for each hour of nursing it delivers.",
+    "G5": "Residents' rating, from 0 to 100, of how well the council makes decisions in the community's interest, from the state's yearly community satisfaction survey.",
+    "G2": "Residents' rating, from 0 to 100, of how well the council consults and engages with the community, from the state's yearly survey.",
+    "G1": "The share of council decisions made in meetings closed to the public, for example on confidential contracts or legal matters.",
+    "G3": "The share of council meetings that councillors attended.",
+    "G4": "The cost of having elected councillors, including allowances, expenses, training and support, divided by the number of councillors.",
+    "L1": "The council's cash and other assets it can use within a year, for every dollar of bills it must pay within a year. Above 1 means it can cover them, and most councils aim well above that.",
+    "O2": "The council's total loans compared with a year of rates income. A figure of 10% means debt equal to about five weeks of rates.",
+    "O5": "What the council spends renewing and upgrading roads, buildings and other assets, compared with how fast those assets wear out. Staying below 100% for long builds up a backlog of worn assets.",
+    "E4": "Total rates divided by the number of rateable properties. It depends on property values, the mix of homes and businesses, and the services the council offers.",
+    "E2": "The council's total spending divided by the number of rateable properties.",
+    # NSW
+    "da_days": "The average number of days from lodging a development application to the council's decision. It counts every day, including time spent waiting for the applicant to provide more information.",
+    "recycling": "The share of household waste collected by the council that was recycled or composted rather than sent to landfill.",
+    "waste_charge": "The average yearly charge households pay for the council's domestic waste service.",
+    "asset_maint": "What the council spent maintaining its roads, buildings and other assets, compared with what it estimates was needed. 100% or more means maintenance is keeping up.",
+    "renewal": "Spending on renewing buildings and infrastructure compared with how fast they wear out. The NSW benchmark is 100% or more.",
+    "backlog": "The estimated cost of bringing assets in poor condition up to a satisfactory standard, as a share of the value of all the council's assets. The NSW benchmark is under 2%.",
+    "library_loans": "Items borrowed from the council's public libraries in a year, per resident, from State Library of NSW figures.",
+    "library_spend": "What the council spends on library services, per resident.",
+    "pets": "Of the cats and dogs microchipped in the area, the share also registered with the council, as NSW law requires.",
+    "admin": "Spending on running the council itself, such as governance, administration and corporate support, per resident.",
+    "staff": "The number of residents for each full-time equivalent council staff member.",
+    "op_perf": "Whether day-to-day income covers day-to-day costs, leaving out grants for building new assets. Above zero means a surplus. The NSW benchmark is zero or more.",
+    "own_source": "The share of income the council raises itself from rates, fees and charges, rather than receiving as grants.",
+    "liquidity": "Cash and other short-term assets the council is free to use, for every dollar of bills due within a year. A figure of 2 means two dollars available for each dollar owed. The NSW benchmark is 1.5 or more.",
+    "cash_cover": "How many months of regular spending the council could pay from its cash and short-term investments if no money came in.",
+    "outstanding": "The share of rates and charges owed to the council that were still unpaid at the end of the financial year. The NSW benchmark is under 5% for city councils and under 10% for rural ones.",
+    "res_rate": "The average yearly rates paid per residential property.",
+}
+
 NSW_FILES = [("2022-23", "nsw_2022_23.xlsx"), ("2023-24", "nsw_2023_24.xlsx"), ("2024-25", "nsw_2024_25.xlsx")]
 VIC_GROUPS = {"metro": "Metropolitan", "interface": "Interface", "regional city": "Regional city",
               "large shire": "Large shire", "small shire": "Small shire"}
@@ -183,7 +236,7 @@ def screen(councils: list[dict], indicators: list[dict], state: str, notes: list
             left.append({**ind, "why": f"Councils' positions change a lot from year to year (consistency {st:.2f} out of 1), "
                                        "so the figures say more about one-off events or accounting timing than performance."})
         else:
-            kept.append({**ind, "stability": round(st, 2) if st is not None else None})
+            kept.append({**ind, "stability": round(st, 2) if st is not None else None, "explain": EXPLAIN.get(i)})
             continue
         notes.append(f"{state}, {ind['label']}: left out. {left[-1]['why']}")
         for c in councils:

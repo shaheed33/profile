@@ -16,18 +16,37 @@
   <style>
     :root {
       --good: #1F6FB2; --good-soft: #E3EEF8; --bad: #B4502A; --bad-soft: #F6E4DA; --mid: #6B7280; --mid-soft: #EEF0F3;
-      --dot: #B9C2D0; --live: #1E8A5A; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14);
+      --dot: #B9C2D0; --live: #1E8A5A; --a: #1F3D73; --a-soft: #E3E9F3; --cmp: #0F7A6E; --cmp-soft: #DDF1EE; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14);
     }
     [data-theme="dark"] {
       --good: #8FB3EE; --good-soft: #1B2A42; --bad: #E58A5F; --bad-soft: #33221A; --mid: #9AA6BA; --mid-soft: #1F2836;
-      --dot: #3F4B5E; --live: #5FD39B; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+      --dot: #3F4B5E; --live: #5FD39B; --a: #A9C1EE; --a-soft: #1C2940; --cmp: #5EC8B8; --cmp-soft: #12302C; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5);
     }
     .page { max-width: 1000px; }
     .lead { max-width: 60ch; margin-bottom: .6rem; }
     .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
     .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); }
 
-    .pickbar { display: flex; flex-wrap: wrap; gap: .8rem 1.2rem; align-items: center; margin: 1.8rem 0 0; padding: 1rem 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+    .pickbar { position: sticky; top: 64px; z-index: 900; display: flex; flex-wrap: wrap; gap: .6rem 1.1rem; align-items: center; margin: 1.8rem 0 0; padding: .7rem 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); background: var(--surface); }
+    .pickbar .pick { display: flex; align-items: center; gap: .45rem; min-width: 0; }
+    .pickbar .sw { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+    .pickbar .sw.b { background: transparent; border: 3px solid var(--cmp); }
+    .pickbar .sw.a { background: var(--a); }
+    .pickbar .clear { font-size: .8rem; color: var(--muted); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 0; }
+    .info { display: inline-flex; align-items: center; justify-content: center; width: 1.15rem; height: 1.15rem; margin-left: .3rem; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font: 600 .72rem/1 Georgia, serif; font-style: italic; cursor: pointer; vertical-align: 1px; padding: 0; }
+    .info:hover, .info[aria-expanded="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
+    .pop { position: absolute; z-index: 950; max-width: min(340px, calc(100vw - 24px)); background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); border-radius: 10px; padding: .75rem .9rem; font-size: .88rem; line-height: 1.5; }
+    .pop b { display: block; margin-bottom: .25rem; }
+    .pop .src { display: block; margin-top: .45rem; font-size: .78rem; color: var(--muted); }
+    .duo { display: grid; grid-template-columns: auto auto; justify-content: start; gap: .1rem 1.4rem; margin-top: .25rem; }
+    .duo .who2 { font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: .35rem; }
+    .duo .who2 i { width: 9px; height: 9px; border-radius: 50%; }
+    .duo .val { margin-top: 0; }
+    .win { display: inline-flex; align-items: center; gap: .35rem; font-size: .8rem; font-weight: 600; border-radius: 999px; padding: .12rem .6rem; margin-top: .35rem; }
+    .win.a { color: var(--a); background: var(--a-soft); }
+    .win.b { color: var(--cmp); background: var(--cmp-soft); }
+    .win.same, .win.none { color: var(--mid); background: var(--mid-soft); }
+    .cmpnote { margin: 1rem 0 0; padding: .7rem 1rem; border-left: 3px solid var(--cmp); background: var(--cmp-soft); border-radius: 0 10px 10px 0; color: var(--soft); max-width: 72ch; }
     .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
     .seg button { font-size: .88rem; font-weight: 500; color: var(--muted); background: none; border: 0; padding: .3rem .9rem; border-radius: 999px; cursor: pointer; }
     .seg button.on { background: var(--ink); color: var(--surface); }
@@ -91,7 +110,13 @@
       .row { grid-template-columns: 1fr; }
       .summary { grid-template-columns: 1fr; gap: 1rem; }
       .glance .n { font-size: 2rem; }
-      .pickbar select { min-width: 0; width: 100%; }
+      .pickbar { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .45rem .5rem; padding: .5rem 0; }
+      .pickbar .seg { grid-column: 1 / -1; justify-self: start; }
+      .pickbar .seg button { padding: .2rem .75rem; font-size: .82rem; }
+      .pickbar .pick { gap: .35rem; }
+      .pickbar .pick label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      .pickbar select { min-width: 0; width: 100%; flex: 1 1 0; font-size: .88rem; padding: .3rem .4rem; }
+      .pickbar .clear { font-size: 1rem; text-decoration: none; }
     }
   </style>
 </head>
@@ -117,10 +142,10 @@
         <p class="lead">Councils collect bins, decide planning permits, look after local roads and run libraries. Both Victoria and New South Wales make every council report the same figures each year. This page lines your council up against councils like it, never against the whole state, so a small country shire is not judged against inner Melbourne or Sydney.</p>
       </div>
 
-      <div class="pickbar">
+      <div class="pickbar" id="pickbar">
         <div class="seg" aria-label="State"><button type="button" data-state="vic" class="on">Victoria</button><button type="button" data-state="nsw">New South Wales</button></div>
-        <label for="pick">Council</label>
-        <select id="pick"></select>
+        <div class="pick"><i class="sw a" aria-hidden="true"></i><label for="pick">Council</label><select id="pick"></select></div>
+        <div class="pick"><i class="sw b" aria-hidden="true"></i><label for="pick2">Compare with</label><select id="pick2"></select><button type="button" class="clear" id="clear" aria-label="Clear the comparison" title="Clear the comparison" hidden>×</button></div>
       </div>
 
       <div id="content">
@@ -191,7 +216,7 @@
       if (v == null) return "n/a";
       if (unit === "pct") return (v * 100).toFixed(Math.abs(v) < 0.1 ? 1 : 0) + "%";
       if (unit === "days") return (v < 10 ? v.toFixed(1) : Math.round(v)) + " days";
-      if (unit === "dollars") return "$" + (v >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(2));
+      if (unit === "dollars") return (v < 0 ? "−$" : "$") + (Math.abs(v) >= 100 ? Math.round(Math.abs(v)).toLocaleString("en-GB") : Math.abs(v).toFixed(2));
       if (unit === "score") return Math.round(v) + " out of 100";
       if (unit === "ratio") return v.toFixed(2);
       return v >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(1);
@@ -201,7 +226,33 @@
       high: "Higher than most similar councils", mid: "About typical for similar councils", low: "Lower than most similar councils",
     };
 
-    let state = "vic", current = null;
+    // keep the picker bar just under the site header, whatever its height
+    const header = document.querySelector(".site-header");
+    const placeBar = () => { $("pickbar").style.top = (header ? header.offsetHeight : 0) + "px"; };
+    placeBar();
+
+    let state = "vic", current = null, other = "";
+
+    // ------------------------------------------------------------ explainer pop-ups
+    let pop = null;
+    function closePop() { if (pop) { pop.btn.setAttribute("aria-expanded", "false"); pop.box.remove(); pop = null; } }
+    function openPop(btn, ind, S) {
+      if (pop && pop.btn === btn) { closePop(); return; }
+      closePop();
+      const box = document.createElement("div"); box.className = "pop"; box.setAttribute("role", "dialog");
+      box.innerHTML = `<b>${esc(ind.label)}</b>${esc(ind.explain || "")}` +
+        (ind.better ? ` ${ind.better === "higher" ? "Higher is better." : "Lower is better."}` : " Neither higher nor lower is better.") +
+        `<span class="src">Source: ${esc(S.source)}.</span>`;
+      document.body.appendChild(box);
+      const r = btn.getBoundingClientRect();
+      box.style.left = Math.max(12, Math.min(r.left + scrollX - 10, scrollX + innerWidth - box.offsetWidth - 12)) + "px";
+      box.style.top = (r.bottom + scrollY + 8) + "px";
+      btn.setAttribute("aria-expanded", "true");
+      pop = { btn, box };
+    }
+    document.addEventListener("click", (e) => { if (pop && !pop.box.contains(e.target) && e.target !== pop.btn) closePop(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePop(); });
+    addEventListener("scroll", () => { if (pop && pop.btn.getBoundingClientRect().bottom < 0) closePop(); }, { passive: true });
 
     function contextChips(S, c) {
       const box = $("chips"); box.innerHTML = "";
@@ -216,26 +267,47 @@
       if (state === "nsw") { const s = document.createElement("span"); s.innerHTML = `OLG group <b>${c.olg_group}</b>`; box.appendChild(s); }
     }
 
-    function strip(host, S, ind, c, peers) {
+    // which of two councils does better on one measure: "a", "b", "same" or "none"
+    function winner(ind, a, b, peers) {
+      const va = a.values[ind.id], vb = b.values[ind.id];
+      if (!va || !vb) return "none";
+      if (!ind.better) return "none";
+      const vals = peers.filter((p) => p.values[ind.id]).map((p) => p.values[ind.id].v).sort((x, y) => x - y);
+      const q = (f) => vals[Math.min(vals.length - 1, Math.floor(f * (vals.length - 1)))];
+      const spread = vals.length >= 4 ? q(0.75) - q(0.25) : Math.abs(va.v - vb.v);
+      if (Math.abs(va.v - vb.v) <= 0.1 * spread || va.v === vb.v) return "same";
+      const aHigher = va.v > vb.v;
+      return (ind.better === "higher") === aHigher ? "a" : "b";
+    }
+
+    function strip(host, S, ind, c, peers, c2) {
       const W = Math.max(260, host.clientWidth || 300), H = 46, pad = 10;
-      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `${c.name} against ${peers.length - 1} similar councils` }, host);
-      const vals = peers.map((p) => p.values[ind.id].v);
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `${c.name} against similar councils` }, host);
+      const vals = peers.map((p) => p.values[ind.id].v).concat(c2 && c2.values[ind.id] ? [c2.values[ind.id].v] : []);
       let lo = Math.min(...vals), hi = Math.max(...vals); if (hi === lo) { hi += 1; lo -= 1; }
       const x = (v) => pad + (v - lo) / (hi - lo) * (W - 2 * pad);
       el("line", { x1: pad, x2: W - pad, y1: 18, y2: 18, stroke: css("--line"), "stroke-width": 2 }, svg);
-      const sorted = [...vals].sort((a, b) => a - b), med = sorted[Math.floor(sorted.length / 2)];
+      const sorted = peers.map((p) => p.values[ind.id].v).sort((a, b) => a - b), med = sorted[Math.floor(sorted.length / 2)];
       el("line", { x1: x(med), x2: x(med), y1: 8, y2: 28, stroke: css("--muted"), "stroke-width": 1.5 }, svg);
       peers.forEach((p) => {
-        if (p === c) return;
+        if (p === c || p === c2) return;
         const v = p.values[ind.id].v;
         const d = el("circle", { cx: x(v), cy: 18, r: 4.5, fill: css("--dot"), stroke: css("--surface"), "stroke-width": 1, style: "cursor:pointer" }, svg);
-        d.addEventListener("pointermove", (e) => showTip(e, `${esc(p.name)}<br><b>${fmt(v, ind.unit)}</b>`));
+        d.addEventListener("pointermove", (e) => showTip(e, `${esc(p.name)}<br><b>${fmt(v, ind.unit)}</b><br><span style="color:var(--muted)">Click to compare</span>`));
         d.addEventListener("pointerleave", hideTip);
-        d.addEventListener("click", () => select(p.name, true));
+        d.addEventListener("click", () => setOther(p.name));
       });
+      if (c2 && c2.values[ind.id]) {
+        const v2 = c2.values[ind.id].v;
+        const d = el("circle", { cx: x(v2), cy: 18, r: 6.5, fill: css("--surface"), stroke: css("--cmp"), "stroke-width": 3.5 }, svg);
+        d.addEventListener("pointermove", (e) => showTip(e, `${esc(c2.name)}<br><b>${fmt(v2, ind.unit)}</b>`));
+        d.addEventListener("pointerleave", hideTip);
+      }
       const v = c.values[ind.id], band = v.band || "none";
-      const col = band === "better" ? css("--good") : band === "worse" ? css("--bad") : css("--ink");
-      el("circle", { cx: x(v.v), cy: 18, r: 7.5, fill: col, stroke: css("--surface"), "stroke-width": 2 }, svg);
+      const col = c2 ? css("--a") : band === "better" ? css("--good") : band === "worse" ? css("--bad") : css("--ink");
+      const me = el("circle", { cx: x(v.v), cy: 18, r: 7.5, fill: col, stroke: css("--surface"), "stroke-width": 2 }, svg);
+      me.addEventListener("pointermove", (e) => showTip(e, `${esc(c.name)}<br><b>${fmt(v.v, ind.unit)}</b>`));
+      me.addEventListener("pointerleave", hideTip);
       txt(svg, pad, H - 2, fmt(lo, ind.unit));
       txt(svg, W - pad, H - 2, fmt(hi, ind.unit), { "text-anchor": "end" });
       if (x(med) > pad + 55 && x(med) < W - pad - 55) txt(svg, x(med), H - 2, "typical", { "text-anchor": "middle" });
@@ -246,51 +318,86 @@
     }
 
     function render() {
+      closePop();
       const S = D.states[state], c = S.councils.find((x) => x.name === current) || S.councils[0];
       current = c.name;
+      const c2 = other ? S.councils.find((x) => x.name === other && x.name !== c.name) : null;
+      if (!c2) other = "";
+      $("clear").hidden = !c2;
       const peers = S.councils.filter((x) => x.group === c.group);
-      $("name").textContent = c.name;
-      $("peer").textContent = "Compared with the " + (peers.length - 1) + " other " + (S.group_text[c.group] || c.group.toLowerCase() + " councils") +
-        " in " + S.name + ", using " + S.peer_note + ". Figures are averages for " + S.years + ".";
+      const sameGroup = c2 && c2.group === c.group;
+      const stripPeers = c2 && !sameGroup ? S.councils.filter((x) => x.group === c.group || x.group === c2.group) : peers;
+
+      $("name").innerHTML = c2 ? `<span style="color:var(--a)">${esc(c.name)}</span> <span style="color:var(--muted);font-size:.6em">and</span> <span style="color:var(--cmp)">${esc(c2.name)}</span>` : esc(c.name);
+      $("peer").textContent = c2
+        ? (sameGroup ? "Both are " + (S.group_text[c.group] || c.group) + ", so this is a like-for-like comparison. Dots show the other councils in the group." :
+          c.name + " is in the " + c.group.toLowerCase() + " group and " + c2.name + " in the " + c2.group.toLowerCase() + " group. Councils in different groups face different conditions, so read this comparison with care.") +
+          " Figures are averages for " + S.years + "."
+        : "Compared with the " + (peers.length - 1) + " other " + (S.group_text[c.group] || c.group.toLowerCase() + " councils") +
+          " in " + S.name + ", using " + S.peer_note + ". Figures are averages for " + S.years + ".";
       contextChips(S, c);
 
       const judged = S.indicators.filter((i) => i.better && c.values[i.id] && c.values[i.id].band);
-      const n = (b) => judged.filter((i) => c.values[i.id].band === b).length;
-      $("glance").innerHTML = [["better", "better than most similar councils"], ["typical", "about typical"], ["worse", "weaker than most"]]
-        .map(([b, l]) => `<div><div class="n" style="color:var(${b === "better" ? "--good" : b === "worse" ? "--bad" : "--ink"})">${n(b)}</div><div class="l">of ${judged.length} measures ${l}</div></div>`).join("");
       const pos = (i) => c.values[i.id].pos;
-      const best = judged.filter((i) => c.values[i.id].band === "better").sort((a, b) => pos(b) - pos(a)).slice(0, 4);
-      const worst = judged.filter((i) => c.values[i.id].band === "worse").sort((a, b) => pos(a) - pos(b)).slice(0, 4);
-      const li = (arr, none) => arr.length ? arr.map((i) => `<li>${esc(i.label)} <span class="text-body-secondary">(${esc(i.theme.toLowerCase())})</span></li>`).join("") : `<li>${none}</li>`;
-      $("summary").innerHTML = `<div><h3>Stands out for</h3><ul>${li(best, "No measure in the top quarter of its group")}</ul></div>
-        <div><h3>Worth a closer look</h3><ul>${li(worst, "No measure in the bottom quarter of its group")}</ul></div>`;
+      if (c2) {
+        const both = S.indicators.filter((i) => i.better && c.values[i.id] && c2.values[i.id]);
+        const w = (k) => both.filter((i) => winner(i, c, c2, stripPeers) === k);
+        const A = w("a"), B = w("b"), same = w("same");
+        $("glance").innerHTML = [[A.length, `measures where ${esc(c.name)} does better`, "--a"], [same.length, "about the same", "--ink"], [B.length, `measures where ${esc(c2.name)} does better`, "--cmp"]]
+          .map(([n, l, col]) => `<div><div class="n" style="color:var(${col})">${n}</div><div class="l">${l}, of ${both.length}</div></div>`).join("");
+        const li = (arr, none) => arr.length ? arr.slice(0, 5).map((i) => `<li>${esc(i.label)} <span class="text-body-secondary">(${esc(i.theme.toLowerCase())})</span></li>`).join("") : `<li>${none}</li>`;
+        $("summary").innerHTML = `<div><h3 style="color:var(--a)">Where ${esc(c.name)} does better</h3><ul>${li(A, "None")}</ul></div>
+          <div><h3 style="color:var(--cmp)">Where ${esc(c2.name)} does better</h3><ul>${li(B, "None")}</ul></div>`;
+      } else {
+        const n = (b) => judged.filter((i) => c.values[i.id].band === b).length;
+        $("glance").innerHTML = [["better", "better than most similar councils"], ["typical", "about typical"], ["worse", "weaker than most"]]
+          .map(([b, l]) => `<div><div class="n" style="color:var(${b === "better" ? "--good" : b === "worse" ? "--bad" : "--ink"})">${n(b)}</div><div class="l">of ${judged.length} measures ${l}</div></div>`).join("");
+        const best = judged.filter((i) => c.values[i.id].band === "better").sort((a, b) => pos(b) - pos(a)).slice(0, 4);
+        const worst = judged.filter((i) => c.values[i.id].band === "worse").sort((a, b) => pos(a) - pos(b)).slice(0, 4);
+        const li = (arr, none) => arr.length ? arr.map((i) => `<li>${esc(i.label)} <span class="text-body-secondary">(${esc(i.theme.toLowerCase())})</span></li>`).join("") : `<li>${none}</li>`;
+        $("summary").innerHTML = `<div><h3>Stands out for</h3><ul>${li(best, "No measure in the top quarter of its group")}</ul></div>
+          <div><h3>Worth a closer look</h3><ul>${li(worst, "No measure in the bottom quarter of its group")}</ul></div>`;
+      }
 
       const themes = $("themes"); themes.innerHTML = "";
       [...new Set(S.indicators.map((i) => i.theme))].forEach((t) => {
-        const inds = S.indicators.filter((i) => i.theme === t && c.values[i.id]);
+        const inds = S.indicators.filter((i) => i.theme === t && (c.values[i.id] || (c2 && c2.values[i.id])));
         if (!inds.length) return;
         const sec = document.createElement("section"); sec.className = "theme";
         sec.innerHTML = `<h3>${esc(t)}</h3>`;
+        themes.appendChild(sec);
         inds.forEach((ind) => {
-          const v = c.values[ind.id], band = v.band || "none";
-          const withData = peers.filter((p) => p.values[ind.id]);
-          const yrs = Object.entries(v.years).map(([y, x]) => `${y} ${fmt(x, ind.unit)}`).join(" · ");
-          const verdict = band === "none" ? "Too few similar councils to compare" : VERDICT[band];
+          const v = c.values[ind.id], band = v ? (v.band || "none") : "none";
+          const withData = stripPeers.filter((p) => p.values[ind.id]);
           const row = document.createElement("div"); row.className = "row";
-          row.innerHTML = `<div>
-              <div class="lab">${esc(ind.label)}</div>
-              <div class="val">${fmt(v.v, ind.unit)}</div>
-              <div class="yrs">${yrs}</div>
+          const label = `<div class="lab">${esc(ind.label)}<button type="button" class="info" aria-label="What this means" aria-expanded="false">i</button></div>`;
+          let left;
+          if (c2) {
+            const v2 = c2.values[ind.id], wn = winner(ind, c, c2, stripPeers);
+            const wtext = wn === "a" ? `${esc(c.name)} does better` : wn === "b" ? `${esc(c2.name)} does better` : wn === "same" ? "About the same" : ind.better ? "Not available for both" : "Neither direction is better";
+            left = `${label}<div class="duo">
+                <div class="who2"><i style="background:var(--a)"></i>${esc(c.name)}</div><div class="who2"><i style="border:2px solid var(--cmp)"></i>${esc(c2.name)}</div>
+                <div class="val">${v ? fmt(v.v, ind.unit) : "n/a"}</div><div class="val">${v2 ? fmt(v2.v, ind.unit) : "n/a"}</div>
+              </div>
+              <span class="win ${wn}">${wtext}</span>
+              ${(v && v.swings) || (v2 && v2.swings) ? `<p class="warn">${esc([v && v.swings ? c.name : null, v2 && v2.swings ? c2.name : null].filter(Boolean).join(" and "))}: figures swing a lot between years, so treat this with care.</p>` : ""}`;
+          } else {
+            const yrs = Object.entries(v.years).map(([y, x]) => `${y} ${fmt(x, ind.unit)}`).join(" · ");
+            const verdict = band === "none" ? "Too few similar councils to compare" : VERDICT[band];
+            left = `${label}<div class="val">${fmt(v.v, ind.unit)}</div><div class="yrs">${yrs}</div>
               <span class="verdict ${band}">${verdict}</span>
               ${ind.note ? `<p class="note">${esc(ind.note)}</p>` : ""}
-              ${v.swings ? `<p class="warn">This council's own figures swing a lot between years, so treat the comparison with care.</p>` : ""}
-            </div><div class="strip"></div>
-            ${v.why ? `<details class="why"><summary>In the council's own words</summary><p>${esc(v.why)}</p></details>` : ""}`;
+              ${v.swings ? `<p class="warn">This council's own figures swing a lot between years, so treat the comparison with care.</p>` : ""}`;
+          }
+          const whys = [[c, v], [c2, c2 && c2.values[ind.id]]].filter(([x, vv]) => x && vv && vv.why);
+          row.innerHTML = `<div>${left}</div><div class="strip"></div>` + whys.map(([x, vv]) =>
+            `<details class="why"><summary>${c2 ? esc(x.name) + " in its own words" : "In the council's own words"}</summary><p>${esc(vv.why)}</p></details>`).join("");
           sec.appendChild(row);
-          themes.appendChild(sec);
-          if (withData.length >= 2) strip(row.querySelector(".strip"), S, ind, c, withData);
+          row.querySelector(".info").addEventListener("click", (e) => { e.stopPropagation(); openPop(e.currentTarget, ind, S); });
+          if (v && withData.length >= 2) strip(row.querySelector(".strip"), S, ind, c, withData, c2);
         });
       });
+      if (c2 && !sameGroup) themes.insertAdjacentHTML("afterbegin", `<p class="cmpnote">These two councils are in different official groups. The dots show both groups together, and "does better" compares the two figures directly.</p>`);
 
       $("leftout").innerHTML = S.left_out.length ? S.left_out.map((i) => `<li><b>${esc(i.label)}</b>. ${esc(i.why)}</li>`).join("")
         : "<li>None for " + S.name + ".</li>";
@@ -299,27 +406,40 @@
       $("sources").textContent = "Victoria: " + D.states.vic.source + ", full data set for 2020-21 to 2024-25. New South Wales: " + D.states.nsw.source +
         ", spreadsheets for 2022-23, 2023-24 and 2024-25. Both are refreshed here once a year when the governments publish new figures.";
       $("generated").textContent = "Built " + D.generated.replace("T", " ").replace("Z", " UTC") + ".";
-      try { history.replaceState(null, "", "#" + state + "/" + encodeURIComponent(current)); } catch (e) {}
+      try { history.replaceState(null, "", "#" + state + "/" + encodeURIComponent(current) + (other ? "/vs/" + encodeURIComponent(other) : "")); } catch (e) {}
     }
 
-    function fill() {
-      const S = D.states[state], pick = $("pick"); pick.innerHTML = "";
+    function options(sel, S, blank) {
+      sel.innerHTML = blank ? `<option value="">No comparison</option>` : "";
       [...new Set(S.councils.map((c) => c.group))].sort().forEach((g) => {
         const og = document.createElement("optgroup"); og.label = g;
         S.councils.filter((c) => c.group === g).forEach((c) => { const o = document.createElement("option"); o.value = c.name; o.textContent = c.name; og.appendChild(o); });
-        pick.appendChild(og);
+        sel.appendChild(og);
       });
-      if (!S.councils.some((c) => c.name === current)) current = S.councils[Math.floor(Math.random() * S.councils.length)].name;
-      pick.value = current;
     }
-    function select(name, scroll) { current = name; $("pick").value = name; render(); if (scroll) $("name").scrollIntoView({ behavior: "smooth" }); }
+    function fill() {
+      const S = D.states[state];
+      options($("pick"), S, false); options($("pick2"), S, true);
+      if (!S.councils.some((c) => c.name === current)) current = S.councils[Math.floor(Math.random() * S.councils.length)].name;
+      if (!S.councils.some((c) => c.name === other)) other = "";
+      $("pick").value = current; $("pick2").value = other;
+    }
+    function select(name) { current = name; if (other === name) other = ""; $("pick").value = name; $("pick2").value = other; render(); }
+    function setOther(name) { other = name === current ? "" : name; $("pick2").value = other; render(); }
     function setState(s) { state = s; document.querySelectorAll(".seg button").forEach((b) => b.classList.toggle("on", b.dataset.state === s)); fill(); render(); }
 
-    document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => setState(b.dataset.state)));
+    document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => { other = ""; setState(b.dataset.state); }));
     $("pick").addEventListener("change", (e) => select(e.target.value));
+    $("pick2").addEventListener("change", (e) => setOther(e.target.value));
+    $("clear").addEventListener("click", () => setOther(""));
     const h = decodeURIComponent(location.hash.slice(1)).split("/");
-    if (h[0] === "vic" || h[0] === "nsw") { state = h[0]; current = h.slice(1).join("/"); }
-    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+    if (h[0] === "vic" || h[0] === "nsw") {
+      state = h[0];
+      const vs = h.indexOf("vs");
+      current = h.slice(1, vs > 0 ? vs : undefined).join("/");
+      other = vs > 0 ? h.slice(vs + 1).join("/") : "";
+    }
+    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { placeBar(); render(); }, 150); });
     window.onThemeChange = render;
     setState(state);
   })();
