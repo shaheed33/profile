@@ -1,0 +1,395 @@
+"""
+Builds data/local_economy.js for local-economy.html: what makes your local economy tick?
+
+Reads the files saved by scripts/fetch_local_economy.py in raw/local/ and works out,
+for every council area in Australia:
+
+  * what its residents do for a living, and what it specialises in compared with
+    Australia (location quotients), from ABS Jobs in Australia
+  * five resilience dimensions, each scored 0 to 100 against similar areas only
+      diversity     how evenly jobs are spread across industries
+      exposure      share of jobs in industries tied to commodity prices and the
+                    shift to net zero (mining, manufacturing, energy, farming)
+      growth        change in jobs over five years, split into what the industry
+                    mix explains and what is local (shift-share)
+      business      change in the number of businesses
+      income        median employee income
+  * how its industries changed over ten years (Census 2011, 2016 and 2021)
+  * coal-fired power stations in the area and their closure years, taken from
+    the newest AEMO NEM Generation Information file in raw/ (never typed in by
+    hand). Only each station's council area is set here, in STATIONS.
+
+Similar areas are grouped by where people live (capital city or not, and the ABS
+remoteness of residents' mesh blocks) and by size. Every dimension is tested for
+reliability before it is scored (see RELIABLE below).
+
+    python scripts/build_local_economy.py
+"""
+from __future__ import annotations
+
+import json
+import re
+from datetime import datetime, timezone
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+RAW = ROOT / "raw" / "local"
+OUT = ROOT / "data" / "local_economy.js"
+SUMMARY = ROOT / "data" / "local_economy_summary.js"
+
+MIN_JOBS = 1000        # fewer resident employee jobs than this: too small to score reliably
+# Changes over time are noisier than levels in small areas: tested by size, councils'
+# order on growth only holds up (consistency 0.6 or more) from about 5,000 jobs
+DIM_MIN = {"growth": 5000, "business": 5000}
+MIN_PEERS = 8          # smallest peer group allowed
+RELIABLE = 0.6         # rank correlation a dimension must reach when its inputs shift by a year
+STATES = {"1": "NSW", "2": "Vic", "3": "Qld", "4": "SA", "5": "WA", "6": "Tas", "7": "NT", "8": "ACT", "9": "Other"}
+
+# ANZSIC divisions, in the order of LEED_5..LEED_23 and EMP_IND_2..EMP_IND_20
+INDUSTRIES = [
+    ("A", "Agriculture, forestry and fishing", "Farming, forestry and fishing"),
+    ("B", "Mining", "Mining"),
+    ("C", "Manufacturing", "Manufacturing"),
+    ("D", "Electricity, gas, water and waste services", "Energy, water and waste"),
+    ("E", "Construction", "Construction"),
+    ("F", "Wholesale trade", "Wholesale"),
+    ("G", "Retail trade", "Retail"),
+    ("H", "Accommodation and food services", "Hospitality"),
+    ("I", "Transport, postal and warehousing", "Transport and logistics"),
+    ("J", "Information media and telecommunications", "Media and telecoms"),
+    ("K", "Financial and insurance services", "Finance and insurance"),
+    ("L", "Rental, hiring and real estate services", "Real estate and hiring"),
+    ("M", "Professional, scientific and technical services", "Professional services"),
+    ("N", "Administrative and support services", "Administrative services"),
+    ("O", "Public administration and safety", "Government and safety"),
+    ("P", "Education and training", "Education"),
+    ("Q", "Health care and social assistance", "Health and care"),
+    ("R", "Arts and recreation services", "Arts and recreation"),
+    ("S", "Other services", "Other services"),
+]
+LEED_IND = [f"LEED_{i}" for i in range(5, 24)]
+CEN_IND = [f"EMP_IND_{i}" for i in range(2, 21)]
+EXPOSED = ["A", "B", "C", "D"]
+
+# Where each coal-fired power station in the National Electricity Market is, by
+# council area (2021 boundaries). Closure years come from AEMO's file, not from here.
+# A coal station in AEMO's file that is missing from this list stops the build.
+STATIONS = {
+    "Bayswater": "Muswellbrook", "Eraring": "Lake Macquarie", "Mt Piper": "Lithgow",
+    "Vales Point": "Central Coast (NSW)",
+    "Loy Yang A": "Latrobe (Vic.)", "Loy Yang B": "Latrobe (Vic.)", "Yallourn": "Latrobe (Vic.)",
+    "Callide B": "Banana", "Callide C": "Banana", "Gladstone": "Gladstone", "Kogan Creek": "Western Downs",
+    "Millmerran": "Toowoomba", "Stanwell": "Rockhampton", "Tarong North": "South Burnett", "Tarong": "South Burnett",
+}
+
+DIMENSIONS = [
+    ("diversity", "Diversity", "higher"),
+    ("exposure", "Exposure to swings and transition", "lower"),
+    ("growth", "Jobs growth", "higher"),
+    ("business", "Business growth", "higher"),
+    ("income", "Incomes", "higher"),
+]
+
+
+def load() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    reg = pd.read_csv(RAW / "regional.csv.gz", dtype={"LGA_2021": str, "TIME_PERIOD": str})
+    reg["OBS_VALUE"] = pd.to_numeric(reg["OBS_VALUE"], errors="coerce")
+    reg = reg.dropna(subset=["OBS_VALUE"])
+    names = pd.read_csv(RAW / "lga_names.csv", dtype=str)
+    remote = pd.read_csv(RAW / "lga_remote.csv", dtype={"LGA_CODE_2021": str})
+    return reg, names, remote
+
+
+def table(reg: pd.DataFrame, measures: list[str]) -> dict[str, pd.DataFrame]:
+    """{measure: councils x years}"""
+    sub = reg[reg["MEASURE"].isin(measures)]
+    return {m: g.pivot_table(index="LGA_2021", columns="TIME_PERIOD", values="OBS_VALUE")
+            for m, g in sub.groupby("MEASURE")}
+
+
+def rank_corr(a: pd.Series, b: pd.Series) -> float:
+    d = pd.concat([a, b], axis=1).dropna()
+    return float(d.iloc[:, 0].rank().corr(d.iloc[:, 1].rank())) if len(d) > 20 else float("nan")
+
+
+def main() -> None:
+    reg, names, remote = load()
+    name = dict(zip(names["code"], names["name"]))
+    T = table(reg, ["LEED_24"] + LEED_IND + ["CABEE_5", "CABEE_3", "CABEE_4", "CABEE_38", "ERP_P_20",
+                                            "LAND", "INCOME_2", "LF_4"])
+    jobs = T["LEED_24"]
+    yrs = sorted(c for c in jobs.columns if jobs[c].notna().sum() > 400)
+    Y, Y0 = yrs[-1], yrs[-6] if len(yrs) >= 6 else yrs[0]
+    last3 = yrs[-3:]
+    print(f"Jobs years {yrs[0]} to {Y}; growth {Y0} to {Y}; structure from {last3}")
+
+    ind = {code: T[m] for (code, _, _), m in zip(INDUSTRIES, LEED_IND)}
+    nat = {k: v.sum() for k, v in ind.items()}           # Australia, by year
+    nat_total = sum(nat.values())
+
+    def shares(cols) -> pd.DataFrame:
+        s = pd.DataFrame({k: ind[k][cols].sum(axis=1) for k in ind})
+        return s.div(s.sum(axis=1), axis=0)
+
+    sh = shares(last3)
+    nat_sh = pd.Series({k: nat[k][last3].sum() for k in ind}) / sum(nat[k][last3].sum() for k in ind)
+
+    # ---- dimensions (raw values) ----
+    def diversity(s):  # effective number of industries, 1 / Herfindahl
+        return 1 / (s ** 2).sum(axis=1)
+
+    raw = pd.DataFrame(index=jobs.index)
+    raw["diversity"] = diversity(sh)
+    raw["exposure"] = sh[EXPOSED].sum(axis=1)
+    raw["growth"] = jobs[Y] / jobs[Y0] - 1
+    biz = T["CABEE_5"]
+    byrs = sorted(c for c in biz.columns if biz[c].notna().sum() > 400)
+    B, B0 = byrs[-1], byrs[0]
+    raw["business"] = biz[B] / biz[B0] - 1
+    inc = T["INCOME_2"]
+    iyrs = sorted(c for c in inc.columns if inc[c].notna().sum() > 400)
+    raw["income"] = inc[iyrs[-1]]
+    print(f"Businesses {B0} to {B}; incomes {iyrs[-1]}")
+
+    # ---- reliability: does each dimension hold up when its inputs move by a year? ----
+    alt = pd.DataFrame(index=jobs.index)
+    # level measures: one year against the year before (no overlap); growth: the
+    # window moved by a year at each end
+    one, prev = shares([Y]), shares([yrs[-2]])
+    raw_one = pd.DataFrame({"diversity": diversity(one), "exposure": one[EXPOSED].sum(axis=1)})
+    alt["diversity"] = diversity(prev)
+    alt["exposure"] = prev[EXPOSED].sum(axis=1)
+    alt["growth"] = jobs[yrs[-2]] / jobs[yrs[0]] - 1
+    alt["growth_late"] = jobs[Y] / jobs[yrs[1]] - 1
+    alt["business"] = biz[byrs[-2]] / biz[B0] - 1
+    alt["business_late"] = biz[B] / biz[byrs[1]] - 1
+    alt["income"] = inc[iyrs[-2]]
+    elig = {d: jobs[Y] >= DIM_MIN.get(d, MIN_JOBS) for d, _, _ in DIMENSIONS}
+    reliability = {
+        "diversity": rank_corr(raw_one.loc[elig["diversity"], "diversity"], alt.loc[elig["diversity"], "diversity"]),
+        "exposure": rank_corr(raw_one.loc[elig["exposure"], "exposure"], alt.loc[elig["exposure"], "exposure"]),
+        "growth": rank_corr(alt.loc[elig["growth"], "growth"], alt.loc[elig["growth"], "growth_late"]),
+        "business": rank_corr(alt.loc[elig["business"], "business"], alt.loc[elig["business"], "business_late"]),
+        "income": rank_corr(raw.loc[elig["income"], "income"], alt.loc[elig["income"], "income"]),
+    }
+    reliability = {k: round(v, 2) for k, v in reliability.items()}
+    # the same tests for the areas too small to be scored on growth, for the method notes
+    small = (jobs[Y] >= MIN_JOBS) & (jobs[Y] < 5000)
+    small_rel = {"growth": round(rank_corr(alt.loc[small, "growth"], alt.loc[small, "growth_late"]), 2),
+                 "business": round(rank_corr(alt.loc[small, "business"], alt.loc[small, "business_late"]), 2)}
+    print("  in areas with 1,000 to 5,000 jobs:", small_rel)
+    print("reliability (rank correlation, inputs moved back a year):", reliability)
+
+    # ---- shift-share ----
+    base = pd.DataFrame({k: ind[k][Y0] for k in ind})
+    nat_g = {k: nat[k][Y] / nat[k][Y0] - 1 for k in ind}
+    expected = sum(base[k].fillna(0) * nat_g[k] for k in ind) / base.sum(axis=1)
+    ind_g = nat_total[Y] / nat_total[Y0] - 1           # Australia, from the industry figures
+    mix = expected - ind_g
+    # Australia's growth from total jobs, the same measure as each area's growth, so
+    # Australia + industry mix + local adds up to the area's growth exactly
+    aus_jobs = jobs.sum()
+    aus_g = aus_jobs[Y] / aus_jobs[Y0] - 1
+    local = raw["growth"] - aus_g - mix
+
+    # ---- peer groups ----
+    rem = remote[~remote["RA"].str.startswith(("Migratory", "No usual")) & (remote["persons"] > 0)].copy()
+    rem["cap"] = rem["GCCSA"].str.startswith("Greater") | rem["GCCSA"].str.contains("Capital Territory")
+    tot = rem.groupby("LGA_CODE_2021")["persons"].sum()
+    cap = rem[rem["cap"]].groupby("LGA_CODE_2021")["persons"].sum().reindex(tot.index).fillna(0) / tot
+    ra = rem.pivot_table(index="LGA_CODE_2021", columns="RA", values="persons", aggfunc="sum").fillna(0)
+    ra = ra.div(ra.sum(axis=1), axis=0)
+    print("remoteness areas:", list(ra.columns))
+    main_ra = ra.idxmax(axis=1)
+    pop = T["ERP_P_20"]
+    pop = pop[pop.columns.max()]
+    land = T["LAND"]
+    land = land[land.columns.max()] / 100            # hectares to km2
+    density = pop / land
+
+    def group(c: str) -> str | None:
+        if c not in tot.index or tot[c] == 0:
+            return None
+        r = str(main_ra.get(c, ""))
+        if cap.get(c, 0) >= 0.5:
+            return "cap_inner" if density.get(c, 0) >= 1500 else "cap_outer"
+        if "Remote" in r:
+            return "remote"
+        if r.startswith("Major") or pop.get(c, 0) >= 50000:
+            return "regional_city"
+        if r.startswith("Inner"):
+            return "inner_regional"
+        return "outer_regional"
+
+    GROUPS = {
+        "cap_inner": ("Denser capital city areas", "Council areas in a capital city with at least 1,500 residents per square kilometre, mostly established suburbs"),
+        "cap_outer": ("More spread-out capital city areas", "Council areas in a capital city with fewer than 1,500 residents per square kilometre, from outer suburbs and growth areas to the centres of smaller capitals such as Hobart and Darwin"),
+        "regional_city": ("Regional cities", "Council areas outside the capitals that are classed as major cities, or have at least 50,000 residents"),
+        "inner_regional": ("Inner regional towns and shires", "Smaller council areas where most residents live in inner regional Australia"),
+        "outer_regional": ("Outer regional towns and shires", "Smaller council areas where most residents live in outer regional Australia"),
+        "remote": ("Remote and very remote areas", "Council areas where most residents live in remote or very remote Australia"),
+    }
+
+    # ---- assemble councils ----
+    codes = [c for c in jobs.index if c in name and jobs.loc[c, Y] == jobs.loc[c, Y] and group(c)]
+    codes = [c for c in codes if not name[c].startswith(("Unincorporated", "No usual", "Migratory"))]
+    df = pd.DataFrame(index=codes)
+    df["group"] = [group(c) for c in codes]
+    df["scored"] = jobs.loc[codes, Y] >= MIN_JOBS
+    for g, n in df[df["scored"]].groupby("group").size().items():
+        print(f"  {g}: {n} scored")
+
+    scores = pd.DataFrame(index=codes)
+    for d, _, better in DIMENSIONS:
+        ok = df["scored"] & elig[d].reindex(df.index).fillna(False)
+        for g, idx in df[ok].groupby("group").groups.items():
+            v = raw.loc[idx, d]
+            if v.notna().sum() < MIN_PEERS:
+                continue
+            # position among similar areas on a 0 to 100 scale, so the middle area scores 50
+            p = (v.rank(method="average") - 0.5) / v.notna().sum() * 100
+            scores.loc[idx, d] = p if better == "higher" else 100 - p
+
+    census = census_shares()
+    links = council_page_names()
+    coal, coal_month = coal_closures()
+    missing = set(coal) - {name[c] for c in codes}
+    if missing:
+        raise SystemExit(f"Coal station council areas not found: {missing}")
+    out = []
+    for c in codes:
+        rec = {
+            "code": c, "name": name[c], "state": STATES.get(c[0], ""), "group": df.loc[c, "group"],
+            "scored": bool(df.loc[c, "scored"]),
+            "pop": _int(pop.get(c)), "km2": _int(land.get(c)),
+            "jobs": _int(jobs.loc[c, Y]),
+            "jobs_hist": {y: _int(jobs.loc[c, y]) for y in yrs if jobs.loc[c, y] == jobs.loc[c, y]},
+            "biz_hist": {y: _int(biz.loc[c, y]) for y in byrs if c in biz.index and biz.loc[c, y] == biz.loc[c, y]},
+            "share": [round(float(sh.loc[c, k]) * 100, 2) if sh.loc[c, k] == sh.loc[c, k] else None for k, _, _ in INDUSTRIES],
+            "raw": {d: _r(raw.loc[c, d], 4) for d, _, _ in DIMENSIONS},
+            "score": {d: _r(scores.loc[c, d], 1) for d, _, _ in DIMENSIONS} if df.loc[c, "scored"] else None,
+            "mix": _r(mix.get(c), 4), "local": _r(local.get(c), 4), "expected": _r(expected.get(c), 4),
+            "unemp": _r(T["LF_4"].loc[c].dropna().iloc[-1] if "LF_4" in T and c in T["LF_4"].index and T["LF_4"].loc[c].notna().any() else None, 1),
+            "ra": {k: round(float(v) * 100) for k, v in ra.loc[c].items() if v >= 0.005} if c in ra.index else {},
+        }
+        # Census industry shares by year (residents' main job), for the ten-year view
+        rec["census"] = {y: [_r(census.loc[(c, y), k] * 100, 1) if (c, y) in census.index else None
+                             for k, _, _ in INDUSTRIES]
+                         for y in ("2011", "2016", "2021") if (c, y) in census.index}
+        if name[c] in coal:
+            rec["coal"] = sorted(coal[name[c]], key=lambda x: (x["first"] or 9999))
+        st = {"NSW": "nsw", "Vic": "vic"}.get(rec["state"])
+        if st and _norm(name[c]) in links.get(st, {}):
+            rec["link"] = [st, links[st][_norm(name[c])]]
+        out.append(rec)
+    for st in ("vic", "nsw"):
+        got = {r["link"][1] for r in out if r.get("link", [None])[0] == st}
+        miss = sorted(set(links.get(st, {}).values()) - got)
+        print(f"{st}: {len(got)} linked to councils.html; not linked {miss}")
+
+    data = {
+        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "years": {"jobs": [Y0, Y], "jobs_all": yrs, "structure": last3, "business": [B0, B], "income": iyrs[-1]},
+        "industries": [{"code": k, "name": n, "short": s} for k, n, s in INDUSTRIES],
+        "exposed": EXPOSED,
+        "australia": {"share": [round(float(nat_sh[k]) * 100, 2) for k, _, _ in INDUSTRIES],
+                      "growth": round(float(aus_g), 4),
+                      "jobs_hist": {y: _int(aus_jobs[y]) for y in yrs},
+                      "growth_by_industry": [round(float(nat_g[k]), 4) for k, _, _ in INDUSTRIES]},
+        "dimensions": [{"id": d, "label": l, "better": b, "reliability": reliability[d]} for d, l, b in DIMENSIONS],
+        "groups": {k: {"label": a, "about": b, "n": int((df["group"] == k).sum()),
+                       "scored": int(((df["group"] == k) & df["scored"]).sum())} for k, (a, b) in GROUPS.items()},
+        "coal_source": coal_month,
+        "min_jobs": MIN_JOBS, "dim_min": DIM_MIN, "small_reliability": small_rel, "councils": out,
+    }
+    OUT.write_text("// Built by scripts/build_local_economy.py from ABS data\nwindow.LOCAL_ECONOMY = "
+                   + json.dumps(data, separators=(",", ":"), allow_nan=False) + ";\n", encoding="utf-8")
+    SUMMARY.write_text("window.LOCAL_ECONOMY_SUMMARY = " + json.dumps(
+        {"councils": len(out), "scored": int(df["scored"].sum()), "generated": data["generated"]}) + ";\n", encoding="utf-8")
+    print(f"Wrote {OUT.name}: {len(out)} council areas, {int(df['scored'].sum())} scored, "
+          f"{OUT.stat().st_size / 1e3:.0f} kB")
+
+
+def coal_closures() -> tuple[dict[str, list], str | None]:
+    """Coal-fired stations from the newest AEMO Generation Information workbook,
+    grouped by site, with each unit's capacity, status and expected closure year."""
+    import openpyxl
+    files = sorted((ROOT / "raw").glob("NEM_Generation_Information_*.xlsx"),
+                   key=lambda f: datetime.strptime(" ".join(f.stem.split("_")[-2:]), "%b %Y"))
+    if not files:
+        print("No AEMO Generation Information file in raw/, so no closures shown")
+        return {}, None
+    f = files[-1]
+    rows = list(openpyxl.load_workbook(f, read_only=True, data_only=True)["Generator Information"].iter_rows(values_only=True))
+    hi = next(i for i, r in enumerate(rows[:20]) if r and "Expected Closure Year" in [str(x).strip() for x in r if x])
+    H = {str(h).strip(): i for i, h in enumerate(rows[hi]) if h}
+    sites: dict[str, list] = {}
+    for r in rows[hi + 1:]:
+        if not r or r[H["Technology Type"]] != "Coal" or r[H["Commitment Status"]] not in ("In Service", "Announced Withdrawal"):
+            continue
+        sites.setdefault(str(r[H["Site Name"]]).strip(), []).append(r)
+    out: dict[str, list] = {}
+    for site, units in sites.items():
+        key = next((k for k in sorted(STATIONS, key=len, reverse=True) if site.lower().startswith(k.lower())), None)
+        if key is None:
+            raise SystemExit(f"AEMO lists a coal station not in STATIONS: {site}. Add its council area.")
+        yrs = []
+        for u in units:
+            y = u[H["Expected Closure Year"]]
+            y = int(y) if isinstance(y, (int, float)) and y < 2100 else None   # AEMO uses 2200 for no year given
+            yrs.append(y)
+        mw = sum(float(u[H["Unit Capacity (MW AC)"]] or 0) for u in units)
+        announced = any(u[H["Commitment Status"]] == "Announced Withdrawal" for u in units)
+        dates = [u[H["Closure Date"]] for u in units if isinstance(u[H["Closure Date"]], datetime)]
+        out.setdefault(STATIONS[key], []).append({
+            "site": key, "mw": round(mw), "units": len(units),
+            "first": min((y for y in yrs if y), default=None), "last": max((y for y in yrs if y), default=None),
+            "status": "announced" if announced else "expected",
+            "date": min(dates).strftime("%B %Y") if dates else None})
+    month = datetime.strptime(" ".join(f.stem.split("_")[-2:]), "%b %Y").strftime("%B %Y")
+    print(f"Coal closures from AEMO {month}:", {k: [(x['site'], x['first'], x['last']) for x in v] for k, v in out.items()})
+    return out, month
+
+
+def census_shares() -> pd.DataFrame:
+    """Census T34, persons, share of employed residents who stated an industry,
+    indexed by (council, year), one column per ANZSIC division."""
+    t = pd.read_csv(RAW / "census_ind.csv.gz", dtype=str)
+    t = t[(t["SEXP"] == "3") & t["INDP"].isin([k for k, _, _ in INDUSTRIES])]
+    t["OBS_VALUE"] = pd.to_numeric(t["OBS_VALUE"], errors="coerce")
+    p = t.pivot_table(index=["REGION", "TIME_PERIOD"], columns="INDP", values="OBS_VALUE", aggfunc="sum")
+    return p.div(p.sum(axis=1), axis=0)
+
+
+def _norm(n: str) -> str:
+    """Council names as both pages can agree on them: no 'Shire', 'City', or state tag."""
+    n = re.sub(r"\s*\((NSW|Vic\.?|Qld|SA|WA|Tas\.?|NT|ACT|[A-Z]+\.?)\)", "", n)
+    n = re.sub(r"^Borough of\s+", "", n)
+    n = {"Moreland": "Merri-bek"}.get(n.strip(), n)  # renamed in 2022
+    n = re.sub(r"\b(Shire|City|Rural City|Borough|Council|Regional|Municipal)\b", "", n, flags=re.I)
+    return re.sub(r"[^a-z]", "", n.lower())
+
+
+def council_page_names() -> dict[str, dict[str, str]]:
+    """Names used on councils.html, so each Victorian and NSW area can link to it."""
+    p = ROOT / "data" / "councils.js"
+    if not p.exists():
+        return {}
+    t = p.read_text(encoding="utf-8")
+    d = json.loads(t[t.index("{"): t.rindex("}") + 1])
+    return {s: {_norm(c["name"]): c["name"] for c in d["states"][s]["councils"]} for s in d["states"]}
+
+
+def _int(v):
+    return None if v is None or v != v else int(round(float(v)))
+
+
+def _r(v, n):
+    return None if v is None or v != v else round(float(v), n)
+
+
+if __name__ == "__main__":
+    main()

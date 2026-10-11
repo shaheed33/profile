@@ -132,6 +132,15 @@
           </a>
         </li>
         <li>
+          <a class="project" href="local-economy.html">
+            <div class="tags" aria-hidden="true"><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-growth"/></svg></span><span style="background:var(--k-coal);color:var(--c-coal)"><svg><use href="#i-coal"/></svg></span></div>
+            <h2>What makes your local economy tick?</h2>
+            <p>Every council area in Australia, what its residents do for a living, where its jobs growth comes from, and how resilient it is to a downturn or a change in a big industry, scored only against similar areas.</p>
+            <span class="stat" id="local-stat" hidden><i></i><span></span></span>
+            <span class="where">Local economy explorer</span>
+          </a>
+        </li>
+        <li>
           <a class="project" href="councils.html">
             <div class="tags" aria-hidden="true"><span style="background:var(--k-hydro);color:var(--c-hydro)"><svg><use href="#i-home"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-growth"/></svg></span></div>
             <h2>How does your council compare?</h2>
@@ -236,6 +245,15 @@
   <script src="data/wa_economy.js" defer></script>
   <script src="data/vic_housing.js" defer></script>
   <script src="data/councils_summary.js" defer></script>
+  <script src="data/local_economy_summary.js" defer></script>
+  <script>
+  window.addEventListener("DOMContentLoaded", function () {
+    var L = window.LOCAL_ECONOMY_SUMMARY, el = document.getElementById("local-stat");
+    if (!L || !el) return;
+    el.lastChild.textContent = L.councils + " council areas · " + L.scored + " scored";
+    el.hidden = false;
+  });
+  </script>
   <script>
   // Counts on the council card, from a small summary written with the comparison data
   window.addEventListener("DOMContentLoaded", function () {

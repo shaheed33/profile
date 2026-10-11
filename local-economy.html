@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What makes your local economy tick? | Abdulla Shaheed</title>
+  <meta name="description" content="Every council area in Australia, what its residents do for a living, how resilient its economy is compared with similar areas, and where its jobs growth comes from, using official ABS figures.">
+  <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="What makes your local economy tick?">
+  <meta property="og:description" content="Every council area in Australia, its industries, its resilience compared with similar areas, and where its jobs growth comes from.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shaheed.work/local-economy">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    :root {
+      --good: #1F6FB2; --good-soft: #E3EEF8; --bad: #B4502A; --bad-soft: #F6E4DA; --mid: #6B7280; --mid-soft: #EEF0F3;
+      --dot: #B9C2D0; --live: #1E8A5A; --a: #1F3D73; --a-soft: #E3E9F3; --cmp: #0F7A6E; --cmp-soft: #DDF1EE; --aus: #C2410C;
+      --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14);
+    }
+    [data-theme="dark"] {
+      --good: #8FB3EE; --good-soft: #1B2A42; --bad: #E58A5F; --bad-soft: #33221A; --mid: #9AA6BA; --mid-soft: #1F2836;
+      --dot: #3F4B5E; --live: #5FD39B; --a: #A9C1EE; --a-soft: #1C2940; --cmp: #5EC8B8; --cmp-soft: #12302C; --aus: #F59E6B;
+      --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+    }
+    .page { max-width: 1000px; }
+    .lead { max-width: 62ch; margin-bottom: .6rem; }
+    .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
+    .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); }
+
+    /* the frozen picker bar */
+    .pickbar { position: sticky; top: 64px; z-index: 900; display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); gap: .6rem 1.1rem; align-items: center; margin: 1.8rem 0 0; padding: .7rem 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); background: var(--surface); }
+    .pickbar .pick { display: flex; align-items: center; gap: .45rem; min-width: 0; }
+    .pickbar .sw { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+    .pickbar .sw.b { background: transparent; border: 3px solid var(--cmp); }
+    .pickbar .sw.a { background: var(--a); }
+    .pickbar .clear { font-size: 1rem; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 0 .2rem; }
+    .pickbar select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .35rem .6rem; min-width: 0; width: 100%; flex: 1 1 0; }
+    .pickbar label { font-size: .85rem; color: var(--muted); white-space: nowrap; }
+    .pickbar #state { width: auto; flex: none; }
+    @media (max-width: 1100px) { .pickbar .pick label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+
+    .who { margin: 1.8rem 0 0; }
+    .who h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(2rem, 5vw, 2.8rem); margin: 0; line-height: 1.1; }
+    .who .peer { color: var(--soft); margin: .4rem 0 0; font-size: 1.05rem; max-width: 75ch; }
+    .chips { display: flex; flex-wrap: wrap; gap: .4rem .5rem; margin: .9rem 0 0; }
+    .chips span { font-size: .82rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .65rem; }
+    .chips b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .chips .b2 b { color: var(--cmp); }
+    .xlink { display: inline-block; margin: .8rem 0 0; font-size: .92rem; }
+
+    /* the score */
+    .scorebox { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: 1.6rem 2.2rem; margin: 1.8rem 0 0; padding: 1.4rem 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); animation: rise .35s ease both; }
+    .big { display: flex; flex-direction: column; gap: .35rem; }
+    .big .k { font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .big .n { font-family: "Newsreader", Georgia, serif !important; font-size: 4.2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+    .big .n small { font-size: 1.2rem; color: var(--muted); }
+    .big .n .vs { color: var(--cmp); font-size: 2.4rem; margin-left: .6rem; }
+    .big .band { font-weight: 600; }
+    .big .range { font-size: .88rem; color: var(--soft); }
+    .dims { display: flex; flex-direction: column; gap: .7rem; }
+    .dim { display: grid; grid-template-columns: 13rem minmax(0, 1fr) 3rem; gap: .7rem; align-items: center; }
+    .dim .dl { display: flex; align-items: center; font-size: .92rem; }
+    .dim .bar { position: relative; height: 12px; background: var(--mid-soft); border-radius: 999px; }
+    .dim .bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--a); transition: width .45s ease; }
+    .dim .bar em { position: absolute; top: -4px; width: 4px; height: 20px; margin-left: -2px; border-radius: 2px; background: var(--cmp); transition: left .45s ease; }
+    .dim .bar s { position: absolute; left: 50%; top: -3px; bottom: -3px; border-left: 1px dashed var(--muted); opacity: .6; }
+    .dim .dv { font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+    .dim .sub { grid-column: 2 / 4; font-size: .8rem; color: var(--muted); margin-top: -.4rem; }
+    .dim.off { opacity: .45; }
+    .weights { grid-column: 1 / -1; }
+    .weights summary { cursor: pointer; font-size: .9rem; color: var(--muted); list-style: none; }
+    .weights summary::-webkit-details-marker { display: none; }
+    .weights summary::before { content: "+ "; }
+    .weights[open] summary::before { content: "\2212 "; }
+    .wgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: .8rem 1.4rem; margin: .8rem 0 0; }
+    .wgrid label { display: flex; flex-direction: column; gap: .2rem; font-size: .85rem; color: var(--soft); }
+    .wgrid input { width: 100%; accent-color: var(--a); }
+    .wgrid output { font-weight: 600; color: var(--ink); }
+    .reset { font-size: .82rem; background: none; border: 1px solid var(--line); border-radius: 999px; padding: .15rem .7rem; color: var(--muted); cursor: pointer; margin-top: .8rem; }
+
+    .findings { margin: 1.4rem 0 0; padding: 0; list-style: none; display: grid; gap: .55rem; }
+    .findings li { padding-left: 1.3rem; position: relative; color: var(--soft); max-width: 78ch; }
+    .findings li::before { content: ""; position: absolute; left: 0; top: .6em; width: 7px; height: 7px; border-radius: 50%; background: var(--a); }
+
+    .block { margin: 2.8rem 0 0; scroll-margin-top: 150px; animation: rise .35s ease both; }
+    .block h3 { display: flex; align-items: center; gap: .7rem; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.5rem; margin: 0 0 .3rem; }
+    .block .intro { color: var(--soft); max-width: 72ch; margin: 0 0 .8rem; }
+    @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .ticon { width: 34px; height: 34px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+    .ticon svg { width: 20px; height: 20px; }
+    .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .chart text { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .chart text.lab { fill: var(--ink); }
+    .key { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; font-size: .82rem; color: var(--muted); margin: .5rem 0 0; }
+    .key i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
+    .key i.t { width: 3px; border-radius: 1px; background: var(--aus); }
+    .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 2.4rem; }
+    .shift { display: flex; flex-direction: column; gap: .45rem; }
+    .shift .r { display: grid; grid-template-columns: 11rem minmax(0, 1fr) 4.2rem; gap: .6rem; align-items: center; font-size: .9rem; }
+    .shift .r .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+    .shift .r.tot { border-top: 1px solid var(--line); padding-top: .45rem; }
+    .moves { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 2rem; }
+    .moves h4 { font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 .4rem; }
+    .moves ol { margin: 0; padding-left: 1.2rem; color: var(--soft); }
+    .moves li { margin: .25rem 0; }
+    .moves b { font-variant-numeric: tabular-nums; }
+    .up { color: var(--good); } .down { color: var(--bad); }
+    .cmpnote { margin: 1rem 0 0; padding: .7rem 1rem; border-left: 3px solid var(--cmp); background: var(--cmp-soft); border-radius: 0 10px 10px 0; color: var(--soft); max-width: 72ch; }
+    .warnbox { margin: 1.2rem 0 0; padding: .8rem 1rem; border-left: 3px solid var(--bad); background: var(--mid-soft); border-radius: 0 10px 10px 0; color: var(--soft); max-width: 72ch; }
+
+    .info { display: inline-flex; align-items: center; justify-content: center; width: 1.15rem; height: 1.15rem; margin-left: .35rem; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font: 600 .72rem/1 Georgia, serif; font-style: italic; cursor: pointer; vertical-align: 1px; padding: 0; flex: none; }
+    .info:hover, .info[aria-expanded="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
+    .pop { position: absolute; z-index: 950; max-width: min(340px, calc(100vw - 24px)); background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); border-radius: 10px; padding: .75rem .9rem; font-size: .88rem; line-height: 1.5; }
+    .pop b { display: block; margin-bottom: .25rem; }
+    .pop .more { display: block; margin-top: .45rem; }
+    .pop .src { display: block; margin-top: .45rem; font-size: .78rem; color: var(--muted); }
+
+    .section { margin: 3.4rem 0 0; }
+    .section h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.75rem; margin: 0; }
+    .method details { border-top: 1px solid var(--line); padding: .8rem 0; }
+    .method details:last-of-type { border-bottom: 1px solid var(--line); }
+    .method summary { cursor: pointer; font-weight: 600; list-style: none; }
+    .method summary::-webkit-details-marker { display: none; }
+    .method summary::before { content: "+"; display: inline-block; width: 1.3rem; color: var(--good); font-weight: 400; }
+    .method details[open] summary::before { content: "\2212"; }
+    .method p, .method ol, .method ul { color: var(--soft); max-width: 74ch; margin: .6rem 0 0 1.3rem; }
+    .method li { margin: .35rem 0; }
+    .method table { margin: .6rem 0 0 1.3rem; font-size: .88rem; border-collapse: collapse; }
+    .method td, .method th { padding: .25rem .9rem .25rem 0; border-bottom: 1px solid var(--line); text-align: left; font-variant-numeric: tabular-nums; }
+
+    .tip { position: fixed; pointer-events: none; background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); font-size: .82rem; line-height: 1.45; padding: .45rem .65rem; border-radius: 8px; opacity: 0; transition: opacity .12s; max-width: 260px; z-index: 1100; }
+    .tip.on { opacity: 1; }
+    .empty { padding: 1.2rem 1.3rem; border-left: 3px solid var(--bad); background: var(--mid-soft); border-radius: 0 10px 10px 0; max-width: 70ch; }
+
+    @media (max-width: 767.98px) {
+      .scorebox, .twocol, .moves { grid-template-columns: 1fr; }
+      .dim { grid-template-columns: minmax(0, 1fr) 2.6rem; gap: .3rem .6rem; }
+      .dim .dl { grid-column: 1 / -1; }
+      .dim .sub { grid-column: 1 / -1; margin-top: 0; }
+      .shift .r { grid-template-columns: 8rem minmax(0, 1fr) 3.8rem; }
+      .pickbar { grid-template-columns: auto minmax(0, 1fr); gap: .45rem .5rem; padding: .5rem 0; }
+      .pickbar .pick:last-child { grid-column: 1 / -1; }
+      .pickbar select { font-size: .88rem; padding: .3rem .4rem; }
+      .block { scroll-margin-top: 170px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .block, .scorebox { animation: none; } .dim .bar i, .dim .bar em { transition: none; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container-xl bar">
+      <a class="brand" href="index.html">Abdulla Shaheed</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html#projects">Projects</a>
+        <a href="index.html#education">Education</a>
+        <a href="index.html#contact">Contact</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container-xl py-4">
+    <div class="page">
+      <div class="hero-wrap">
+        <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
+        <div class="live"><i></i>Every council area in Australia</div>
+        <h1>What makes your local economy tick?</h1>
+        <p class="lead">Pick any council area to see what its residents do for a living, what it specialises in, where its jobs growth has come from, and how well placed it is to ride out a downturn or a change in a big industry. Every area is compared only with areas like it, using official ABS figures.</p>
+      </div>
+
+      <div class="pickbar" id="pickbar">
+        <select id="state" aria-label="State or territory"></select>
+        <div class="pick"><i class="sw a" aria-hidden="true"></i><label for="pick">Area</label><select id="pick"></select></div>
+        <div class="pick"><i class="sw b" aria-hidden="true"></i><label for="pick2">Compare with</label><select id="pick2"></select><button type="button" class="clear" id="clear" aria-label="Clear the comparison" title="Clear the comparison" hidden>×</button></div>
+      </div>
+
+      <div id="content">
+        <section class="who" aria-live="polite">
+          <h2 id="name"></h2>
+          <p class="peer" id="peer"></p>
+          <div class="chips" id="chips"></div>
+          <a class="xlink" id="xlink" hidden></a>
+        </section>
+
+        <section class="scorebox" id="scorebox"></section>
+        <ul class="findings" id="findings"></ul>
+        <div id="blocks"></div>
+      </div>
+
+      <section class="section method">
+        <h2>How the score works, and its limits</h2>
+        <details open>
+          <summary>The rules this page follows</summary>
+          <ol>
+            <li><b>Like with like.</b> Each area is scored only against similar areas, grouped by whether most residents live in a capital city, how remote they are, how densely settled the area is and its size. A farming shire is never scored against an inner city suburb.</li>
+            <li><b>Five separate parts.</b> Resilience has no single official measure, so the score is built from five parts that economists commonly use. How spread out jobs are across industries, how many jobs are in industries exposed to commodity prices or the shift to net zero, jobs growth, business growth, and incomes. Each part is shown on its own.</li>
+            <li><b>Scores are positions, not grades.</b> A score of 70 means the area does better on that part than about 70% of similar areas. It does not mean 70% of some ideal.</li>
+            <li><b>You choose what matters.</b> The overall score weights the five parts equally unless you change the weights. The page also shows how far the result moves across hundreds of other reasonable weightings, so a result that depends on one choice of weights is easy to spot.</li>
+            <li><b>Only parts that hold up.</b> Every part is tested by moving its figures by a year and checking that areas keep much the same order. A part whose order changes a lot (a consistency score below 0.6 out of 1) is shown but left out of the overall score. All five parts currently pass.</li>
+            <li><b>Small areas are treated with care.</b> Areas whose residents hold fewer than <span id="minjobs">1,000</span> employee jobs are described but not scored, because a single business opening or closing can swing their figures. Changes over time are noisier than levels, so jobs growth and business growth are only scored for areas with at least <span id="mingrowth">5,000</span> jobs. In smaller areas their order changes too much from one period to the next to be trusted (<span id="smallrel"></span>).</li>
+            <li><b>Careful words.</b> A large share of jobs in mining, manufacturing, energy or farming is shown as exposure to swings and change, not as a forecast of job losses. Many of these industries are growing.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>What each part measures</summary>
+          <div id="dimhelp"></div>
+        </details>
+        <details>
+          <summary>Coal power station closures</summary>
+          <p>Closure years come straight from AEMO's Generation Information register, which each power station owner updates. A formally announced closure has been notified to AEMO with a date. An expected closure year is the owner's current plan and can change, as several have in recent years. Each station is placed in the council area where it stands. The page is rebuilt each month, so new AEMO releases flow through without anything being typed in by hand.</p>
+        </details>
+        <details>
+          <summary>Where the growth comes from, explained</summary>
+          <p>Jobs growth in an area is split into two parts, a method economists call shift-share analysis. The industry mix part is the growth the area would have had if each of its industries had grown at the Australian rate for that industry. An area full of fast-growing industries gets a boost from its mix even if nothing special happens locally. The local part is everything else, such as population growth, new investment or a business closing. It is worked out as actual growth minus expected growth.</p>
+        </details>
+        <details>
+          <summary>What these figures cannot tell you</summary>
+          <p>The jobs figures count jobs held by people who live in the area, wherever they work, because that is how the ABS publishes them. An area with a big hospital that most staff commute into will show fewer health jobs than the area that houses those staff. For most questions about how exposed residents are to a downturn, that is the right way round.</p>
+          <p>The ABS counts every employee job held at any time during the year, including second jobs and short ones. Years with a lot of people changing jobs, such as 2022, show more jobs everywhere, which is why each area's growth is compared with Australia's and with similar areas rather than read on its own.</p>
+          <p>The figures cover employee jobs. Owner-operators without employees, who are common in farming and trades, are not counted in the industry mix. Industries are broad divisions, so coal mining cannot be separated from other mining, and a coal-fired power station sits inside energy, water and waste with water utilities.</p>
+          <p>Resilience depends on more than these five parts, including skills, infrastructure, distance to markets and local leadership. Treat the score as a starting point for questions, not a verdict.</p>
+        </details>
+        <details>
+          <summary>How the similar-area groups are made</summary>
+          <p>Each area is placed by where most of its residents live, using the ABS remoteness classification and the 2021 Census count for each of Australia's 368,000 mesh blocks, the smallest areas the ABS publishes.</p>
+          <div id="grouphelp"></div>
+        </details>
+        <details>
+          <summary>Sources</summary>
+          <p id="sources">ABS Jobs in Australia (employee jobs by industry and residence), ABS Counts of Australian Businesses, ABS Personal Income in Australia, ABS Estimated Resident Population, the 2021 Census time series on industry of employment, and the ABS Australian Statistical Geography Standard, all through the ABS Data by Region service, and AEMO's NEM Generation Information register for coal power stations. Built with an open method that refreshes each month.</p>
+          <p id="generated" class="small text-body-secondary"></p>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Data from the Australian Bureau of Statistics and AEMO.</footer>
+  <div class="tip" id="tip" role="tooltip"></div>
+
+  <script src="data/local_economy.js" onerror="void 0"></script>
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    $("year").textContent = new Date().getFullYear();
+    const D = window.LOCAL_ECONOMY;
+    if (!D) { $("content").innerHTML = '<p class="empty">The figures could not be loaded.</p>'; return; }
+    const NS = "http://www.w3.org/2000/svg", tip = $("tip");
+    const el = (tag, attrs = {}, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+    const txt = (parent, x, y, s, attrs = {}) => { const t = el("text", { x, y, ...attrs }, parent); t.textContent = s; return t; };
+    const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const showTip = (e, html) => {
+      tip.innerHTML = html; tip.classList.add("on");
+      tip.style.left = Math.max(8, Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8)) + "px";
+      tip.style.top = Math.max(8, e.clientY - tip.offsetHeight - 12) + "px";
+    };
+    const hideTip = () => tip.classList.remove("on");
+    const num = (v) => v == null ? "n/a" : Math.round(v).toLocaleString("en-GB");
+    const pct = (v, d = 1) => v == null ? "n/a" : (v * 100).toFixed(d) + "%";
+    const signed = (v, d = 1) => v == null ? "n/a" : (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v * 100).toFixed(d) + "%";
+    const pts = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + " points";
+    const median = (a) => { const s = a.filter((x) => x != null).sort((x, y) => x - y); if (!s.length) return null; const m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+    const quant = (a, q) => { const s = a.filter((x) => x != null).sort((x, y) => x - y); return s.length ? s[Math.min(s.length - 1, Math.floor(q * s.length))] : null; };
+
+    const IND = D.industries, AUS = D.australia, Y = D.years;
+    const STATES = [["NSW", "New South Wales"], ["Vic", "Victoria"], ["Qld", "Queensland"], ["SA", "South Australia"], ["WA", "Western Australia"], ["Tas", "Tasmania"], ["NT", "Northern Territory"], ["ACT", "Australian Capital Territory"]];
+    const byState = {};
+    D.councils.forEach((c) => (byState[c.state] = byState[c.state] || []).push(c));
+    Object.values(byState).forEach((l) => l.sort((a, b) => a.name.localeCompare(b.name)));
+    const DIMS = D.dimensions.map((d) => ({ ...d, used: d.reliability == null || d.reliability >= 0.6 }));
+    const DIM = Object.fromEntries(DIMS.map((d) => [d.id, d]));
+    $("minjobs").textContent = num(D.min_jobs);
+    $("mingrowth").textContent = num(D.dim_min.growth);
+    $("smallrel").textContent = `consistency ${D.small_reliability.growth.toFixed(2)} for jobs growth and ${D.small_reliability.business.toFixed(2)} for business growth in areas with ${num(D.min_jobs)} to ${num(D.dim_min.growth)} jobs`;
+
+    // ---- what each part means, in a sentence or two
+    const HELP = {
+      diversity: "How evenly residents' jobs are spread across the 19 main industries. An area that depends on a few industries is hit harder when one of them has a bad year. It is measured as the number of equal-sized industries that would give the same spread, so 10 is more diverse than 5. Cities where health and education dominate can score low here even though those are steady employers, which is why exposure is scored separately.",
+      exposure: "The share of residents' jobs in farming, mining, manufacturing, and energy, water and waste. These industries swing with commodity prices, weather and trade, and face the biggest changes from the shift to net zero. A lower share scores higher. It is exposure, not a forecast, and many of these industries are growing.",
+      growth: `How much the number of employee jobs held by residents changed from ${Y.jobs[0]} to ${Y.jobs[1]}. Growth gives an area room to absorb a shock.`,
+      business: `How much the number of businesses based in the area changed from ${Y.business[0]} to ${Y.business[1]}. A growing business base means more firms to take on workers if one closes.`,
+      income: `The median income of employees living in the area in ${Y.income}. Higher incomes give households more of a cushion in a downturn. Costs of living differ between places, which is one reason areas are only compared with similar areas.`,
+    };
+    const DIMICON = {
+      diversity: ["--k-wind", "--c-wind", '<rect x="3" y="12" width="3.5" height="8" rx="1"/><rect x="8.5" y="8" width="3.5" height="12" rx="1"/><rect x="14" y="10" width="3.5" height="10" rx="1"/><path d="M20.5 20V6"/>'],
+      exposure: ["--k-coal", "--c-coal", '<path d="M12 3 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.3"/>'],
+      growth: ["--k-battery", "--c-battery", '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>'],
+      business: ["--k-solar", "--c-solar", '<path d="M3 21h18M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5M9 11h.01M15 11h.01"/>'],
+      income: ["--k-hydro", "--c-hydro", '<circle cx="12" cy="12" r="9"/><path d="M15 9.2c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .8-3 2.1s1.3 1.8 3 2.2 3 1 3 2.3-1.3 2.1-3 2.1c-1.5 0-2.7-.6-3.1-1.7M12 6v1.7M12 16.4V18"/>'],
+      industry: ["--k-wind", "--c-wind", '<path d="M3 21h18M5 21V10l5 3V10l5 3V6h4v15"/>'],
+      coal: ["--k-coal", "--c-coal", '<path d="M3 21V12l5 3V12l5 3V8h3V4h3v17z"/>'],
+      change: ["--k-solar", "--c-solar", '<path d="M4 7h13l-3-3M20 17H7l3 3"/>'],
+    };
+    const icon = (k) => { const [bg, fg, inner] = DIMICON[k]; return `<span class="ticon" style="background:var(${bg});color:var(${fg})" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${inner}</svg></span>`; };
+    const rawText = (d, v) => v == null ? "n/a" : d === "diversity" ? v.toFixed(1) + " industries" : d === "exposure" ? pct(v) + " of jobs" : d === "income" ? "$" + num(v) : signed(v);
+    $("dimhelp").innerHTML = DIMS.map((d) => `<p><b>${esc(d.label)}.</b> ${esc(HELP[d.id])} Consistency when its figures move back a year ${d.reliability != null ? d.reliability.toFixed(2) : "n/a"} out of 1${d.used ? "" : ", so it is left out of the overall score"}${D.dim_min[d.id] ? `. Scored only for areas with at least ${num(D.dim_min[d.id])} jobs` : ""}.</p>`).join("");
+    $("grouphelp").innerHTML = "<ul>" + Object.values(D.groups).map((g) => `<li><b>${esc(g.label)}</b>, ${g.scored} scored areas. ${esc(g.about)}.</li>`).join("") + "</ul>";
+    $("generated").textContent = "Figures last rebuilt " + new Date(D.generated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + ".";
+
+    // keep the picker bar just under the site header
+    const header = document.querySelector(".site-header");
+    const placeBar = () => { $("pickbar").style.top = (header ? header.offsetHeight : 0) + "px"; };
+    placeBar();
+
+    // ---- pop-ups
+    let pop = null;
+    function closePop() { if (pop) { pop.btn.setAttribute("aria-expanded", "false"); pop.box.remove(); pop = null; } }
+    function openPop(btn, html) {
+      if (pop && pop.btn === btn) { closePop(); return; }
+      closePop();
+      const box = document.createElement("div"); box.className = "pop"; box.setAttribute("role", "dialog"); box.innerHTML = html;
+      document.body.appendChild(box);
+      const r = btn.getBoundingClientRect();
+      box.style.left = Math.max(12, Math.min(r.left + scrollX - 10, scrollX + innerWidth - box.offsetWidth - 12)) + "px";
+      box.style.top = (r.bottom + scrollY + 8) + "px";
+      btn.setAttribute("aria-expanded", "true");
+      pop = { btn, box };
+    }
+    document.addEventListener("click", (e) => { if (pop && !pop.box.contains(e.target) && e.target !== pop.btn) closePop(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePop(); });
+    addEventListener("scroll", () => { if (pop && pop.btn.getBoundingClientRect().bottom < 0) closePop(); }, { passive: true });
+    const info = (html, label) => { const b = document.createElement("button"); b.type = "button"; b.className = "info"; b.textContent = "i"; b.setAttribute("aria-label", "About " + label); b.setAttribute("aria-expanded", "false"); b.addEventListener("click", (e) => { e.stopPropagation(); openPop(b, html); }); return b; };
+
+    // ---- weights and scores
+    const DEFAULT = Object.fromEntries(DIMS.map((d) => [d.id, 1]));
+    let W = { ...DEFAULT };
+    try { const s = JSON.parse(localStorage.getItem("le-weights") || "null"); if (s) DIMS.forEach((d) => { if (s[d.id] != null) W[d.id] = s[d.id]; }); } catch (e) {}
+    const peers = (c) => D.councils.filter((p) => p.group === c.group && p.scored);
+    const overallRaw = (c, w) => {
+      let s = 0, t = 0;
+      DIMS.forEach((d) => { if (d.used && c.score[d.id] != null && w[d.id] > 0) { s += w[d.id] * c.score[d.id]; t += w[d.id]; } });
+      return t ? s / t : null;
+    };
+    // overall score = position among similar areas on the weighted mix of parts
+    const overall = (c, w) => {
+      const list = peers(c).map((p) => overallRaw(p, w)).filter((v) => v != null), me = overallRaw(c, w);
+      if (me == null || !list.length) return null;
+      const below = list.filter((v) => v < me - 1e-9).length, same = list.filter((v) => Math.abs(v - me) <= 1e-9).length;
+      return ((below + same / 2) / list.length) * 100;
+    };
+    // the same, under many other reasonable weightings (fixed seed, so it does not flicker)
+    function sensitivity(c) {
+      let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+      const out = [];
+      for (let i = 0; i < 300; i++) {
+        const w = {}; DIMS.forEach((d) => (w[d.id] = -Math.log(1 - rnd())));
+        out.push(overall(c, w));
+      }
+      return [quant(out, 0.1), quant(out, 0.9)];
+    }
+    const band = (s) => s >= 80 ? "Among the most resilient fifth of similar areas" : s >= 60 ? "More resilient than most similar areas" : s > 40 ? "Around the middle of similar areas" : s > 20 ? "Less resilient than most similar areas" : "Among the least resilient fifth of similar areas";
+
+    // ---- picker
+    let state = "Vic", current = null, other = null;
+    const find = (st, name) => (byState[st] || []).find((c) => c.name === name || (c.link && c.link[1] === name));
+    $("state").innerHTML = STATES.filter(([k]) => byState[k]).map(([k, n]) => `<option value="${k}">${k}</option>`).join("");
+    function fill() {
+      $("state").value = state;
+      $("pick").innerHTML = byState[state].map((c) => `<option>${esc(c.name)}</option>`).join("");
+      $("pick2").innerHTML = '<option value="">Pick an area</option>' + STATES.filter(([k]) => byState[k]).map(([k, n]) =>
+        `<optgroup label="${n}">` + byState[k].map((c) => `<option value="${k}|${esc(c.name)}">${esc(c.name)}</option>`).join("") + "</optgroup>").join("");
+      if (!current || current.state !== state) {
+        const l = byState[state].filter((c) => c.scored);
+        current = l[Math.floor(Math.random() * l.length)];
+      }
+      $("pick").value = current.name;
+      $("pick2").value = other ? other.state + "|" + other.name : "";
+    }
+    $("state").addEventListener("change", (e) => { state = e.target.value; current = null; fill(); render(); });
+    $("pick").addEventListener("change", (e) => { current = find(state, e.target.value); if (other === current) other = null; render(); });
+    $("pick2").addEventListener("change", (e) => { const [s, n] = e.target.value.split("|"); other = e.target.value ? find(s, n) : null; if (other === current) other = null; $("pick2").value = other ? other.state + "|" + other.name : ""; render(); });
+    $("clear").addEventListener("click", () => { other = null; $("pick2").value = ""; render(); });
+
+    // ---- rendering
+    function render() {
+      closePop();
+      const c = current, c2 = other;
+      $("clear").hidden = !c2;
+      history.replaceState(null, "", "#" + encodeURIComponent(c.state.toLowerCase() + "/" + c.name) + (c2 ? "/vs/" + encodeURIComponent(c2.state.toLowerCase() + "/" + c2.name) : ""));
+      const G = D.groups[c.group];
+      $("name").innerHTML = c2 ? `<span style="color:var(--a)">${esc(c.name)}</span> <span style="color:var(--muted);font-size:.6em">and</span> <span style="color:var(--cmp)">${esc(c2.name)}</span>` : esc(c.name);
+      const G2 = c2 && D.groups[c2.group];
+      $("peer").innerHTML = `${esc(STATES.find((s) => s[0] === c.state)[1])}. Compared with ${G.scored} similar areas, <b>${esc(G.label.toLowerCase())}</b>.` +
+        (c2 ? (c2.group === c.group ? ` ${esc(c2.name)} is in the same group, so the two scores can be compared directly.` : ` ${esc(c2.name)} is in a different group, ${esc(G2.label.toLowerCase())}, so each score shows its position in its own group.`) : "");
+      $("peer").appendChild(info(`<b>${esc(G.label)}</b>${esc(G.about)}. Areas are only scored against their own group, so a remote shire is never measured against a capital city suburb.`, "this group"));
+      chips(c, c2);
+      const x = $("xlink");
+      if (c.link) { x.hidden = false; x.href = "councils.html#" + c.link[0] + "/" + encodeURIComponent(c.link[1]); x.textContent = `How does ${c.link[1]} council perform on services? Compare it with similar councils →`; }
+      else x.hidden = true;
+      scorebox(c, c2);
+      findings(c);
+      blocks(c, c2);
+    }
+
+    function chips(c, c2) {
+      const box = $("chips"); box.innerHTML = "";
+      const add = (k, v, v2) => { const s = document.createElement("span"); s.innerHTML = `${k} <b>${v}</b>` + (c2 ? ` <span class="b2"><b>${v2}</b></span>` : ""); s.className = ""; box.appendChild(s); };
+      add("Residents", num(c.pop), c2 && num(c2.pop));
+      add("Employee jobs held by residents", num(c.jobs), c2 && num(c2.jobs));
+      const b = (k) => k.biz_hist[Y.business[1]];
+      add("Businesses", num(b(c)), c2 && num(b(c2)));
+      if (c.unemp != null) add("Unemployment at the 2021 Census", c.unemp.toFixed(1) + "%", c2 && (c2.unemp != null ? c2.unemp.toFixed(1) + "%" : "n/a"));
+    }
+
+    function scorebox(c, c2) {
+      const box = $("scorebox"); box.innerHTML = "";
+      const big = document.createElement("div"); big.className = "big";
+      if (!c.scored) {
+        big.innerHTML = `<span class="k">Resilience score</span><span class="band">Not scored</span><span class="range">Residents hold fewer than ${num(D.min_jobs)} employee jobs, so one business opening or closing can swing the figures. The industry mix and growth are still shown below.</span>`;
+        box.appendChild(big);
+      } else {
+        const s = overall(c, W), s2 = c2 && c2.scored ? overall(c2, W) : null, [lo, hi] = sensitivity(c);
+        big.innerHTML = `<span class="k">Resilience score</span><span class="n">${Math.round(s)}<small> out of 100</small>${s2 != null ? `<span class="vs">${Math.round(s2)}</span>` : ""}</span>
+          <span class="band">${band(s)}</span>
+          <span class="range">More resilient than about ${Math.round(s)}% of similar areas. Across 300 other reasonable weightings it ranges from ${Math.round(lo)} to ${Math.round(hi)}${hi - lo > 30 ? ", so the result depends a lot on what you think matters most" : ""}.</span>`;
+        const k = big.querySelector(".k"); k.appendChild(info("<b>What the score means</b>The score is this area's position among similar areas, after combining the five parts with the weights below. 70 means it scores higher than about 70% of similar areas. It is not a grade out of 100." + (c2 ? (c2.group === c.group ? "" : " The second area is in a different group, so each score shows its position in its own group and the two are not directly comparable.") : ""), "the score"));
+        box.appendChild(big);
+      }
+      const dims = document.createElement("div"); dims.className = "dims";
+      DIMS.forEach((d) => {
+        const row = document.createElement("div"); row.className = "dim" + (d.used ? "" : " off");
+        const v = c.score ? c.score[d.id] : null, v2 = c2 && c2.score ? c2.score[d.id] : null;
+        const elig = (p) => p.jobs >= (D.dim_min[d.id] || D.min_jobs);
+        const med = median(D.councils.filter((p) => p.group === c.group && elig(p)).map((p) => p.raw[d.id]));
+        const why = !d.used ? ". Left out of the score, it did not pass the consistency test" : c.scored && v == null ? `. Not scored, residents hold fewer than ${num(D.dim_min[d.id] || D.min_jobs)} jobs, too few for a reliable figure` : "";
+        row.innerHTML = `<div class="dl">${esc(d.label)}</div><div class="bar">${v != null ? `<i style="width:${v}%"></i>` : ""}<s></s>${v2 != null ? `<em style="left:${v2}%"></em>` : ""}</div><div class="dv">${v != null ? Math.round(v) : "–"}</div>
+          <div class="sub">${rawText(d.id, c.raw[d.id])}${c2 ? ` <span style="color:var(--cmp)">${rawText(d.id, c2.raw[d.id])}</span>` : ""}. Typical for similar areas ${rawText(d.id, med)}${why}.</div>`;
+        row.querySelector(".dl").appendChild(info(`<b>${esc(d.label)}</b>${esc(HELP[d.id])}<span class="src">Consistency when its figures move back a year ${d.reliability != null ? d.reliability.toFixed(2) : "n/a"} out of 1. The middle line marks a typical similar area.</span>`, d.label));
+        row.addEventListener("mousemove", (e) => { if (v != null) showTip(e, `${esc(c.name)} scores higher than about ${Math.round(v)}% of similar areas on ${esc(d.label.toLowerCase())}` + (v2 != null ? `<br><span style="color:var(--cmp)">${esc(c2.name)} ${Math.round(v2)}</span>` : "")); });
+        row.addEventListener("mouseleave", hideTip);
+        dims.appendChild(row);
+      });
+      box.appendChild(dims);
+      if (c.scored) {
+        const w = document.createElement("details"); w.className = "weights";
+        if (DIMS.some((d) => W[d.id] !== 1)) w.open = true;
+        w.innerHTML = `<summary>Change what matters to you</summary><div class="wgrid">${DIMS.filter((d) => d.used).map((d) => `<label>${esc(d.label)}<input type="range" min="0" max="3" step="0.5" value="${W[d.id]}" data-d="${d.id}"><output>${wlabel(W[d.id])}</output></label>`).join("")}</div><button type="button" class="reset">Back to equal weights</button>`;
+        w.querySelectorAll("input").forEach((inp) => inp.addEventListener("input", () => { W[inp.dataset.d] = +inp.value; inp.nextElementSibling.textContent = wlabel(+inp.value); save(); refresh(); }));
+        w.querySelector(".reset").addEventListener("click", () => { W = { ...DEFAULT }; save(); render(); });
+        box.appendChild(w);
+      }
+    }
+    const wlabel = (v) => v === 0 ? "Ignore" : v < 1 ? "Less" : v === 1 ? "Normal" : v <= 2 ? "More" : "Most";
+    const save = () => { try { localStorage.setItem("le-weights", JSON.stringify(W)); } catch (e) {} };
+    // only the headline numbers change while a slider moves
+    function refresh() {
+      const c = current, c2 = other, big = document.querySelector(".big");
+      if (!c.scored || !big) return;
+      const s = overall(c, W), s2 = c2 && c2.scored ? overall(c2, W) : null;
+      big.querySelector(".n").innerHTML = `${Math.round(s)}<small> out of 100</small>${s2 != null ? `<span class="vs">${Math.round(s2)}</span>` : ""}`;
+      big.querySelector(".band").textContent = band(s);
+      const r = big.querySelector(".range"); r.textContent = r.textContent.replace(/^More resilient than about \d+%/, `More resilient than about ${Math.round(s)}%`);
+    }
+
+    // ---- plain-English findings
+    function findings(c) {
+      const out = [], A = AUS.share, sh = c.share;
+      const order = IND.map((d, i) => i).filter((i) => sh[i] != null).sort((a, b) => sh[b] - sh[a]);
+      const top = order[0];
+      out.push(`${IND[top].short} is the biggest employer of residents, with ${sh[top].toFixed(0)}% of their jobs, against ${A[top].toFixed(0)}% across Australia.`);
+      const spec = order.filter((i) => sh[i] >= 2 && sh[i] / A[i] >= 1.4).sort((a, b) => sh[b] / A[b] - sh[a] / A[a]).slice(0, 3);
+      if (spec.length) out.push(`It specialises in ${list(spec.map((i) => `${IND[i].short.toLowerCase()} (${(sh[i] / A[i]).toFixed(1)} times the Australian share)`))}.`);
+      const ex = D.exposed.map((k) => IND.findIndex((d) => d.code === k));
+      const exq = quant(D.councils.filter((p) => p.group === c.group).map((p) => p.raw.exposure), 0.75);
+      if (c.raw.exposure != null && exq != null && c.raw.exposure >= exq) {
+        const mx = ex.filter((i) => sh[i] != null).sort((a, b) => sh[b] - sh[a])[0];
+        out.push(`A larger share of jobs than in most similar areas is in industries tied to commodity prices, weather or the shift to net zero, ${pct(c.raw.exposure, 0)} in all, mostly ${IND[mx].short.toLowerCase()}. That means more exposure to swings, not that jobs will be lost.`);
+      }
+      if (c.raw.growth != null) {
+        const g = c.raw.growth, ag = AUS.growth;
+        let s = `Jobs held by residents ${g >= 0 ? "grew" : "fell"} ${pct(Math.abs(g))} from ${Y.jobs[0]} to ${Y.jobs[1]}, against ${pct(ag)} across Australia.`;
+        if (c.mix != null && c.local != null) {
+          s += Math.abs(c.local) > Math.abs(c.mix)
+            ? ` Most of the gap is down to local factors (${pts(c.local * 100)}) rather than its mix of industries (${pts(c.mix * 100)}).`
+            : ` Much of the gap is down to its mix of industries (${pts(c.mix * 100)}) rather than local factors (${pts(c.local * 100)}).`;
+        }
+        out.push(s);
+      }
+      (c.coal || []).forEach((x) => out.push(`${x.site} coal-fired power station (${num(x.mw)} MW) is in the area. ${coalStatus(x)}`));
+      const ch = c.census;
+      if (ch["2011"] && ch["2021"]) {
+        const d = IND.map((x, i) => [i, ch["2021"][i] - ch["2011"][i]]).filter((x) => !isNaN(x[1])).sort((a, b) => b[1] - a[1]);
+        const up = d[0], dn = d[d.length - 1];
+        if (up && dn && up[1] >= 1 && dn[1] <= -1) out.push(`Over the ten years to 2021, residents' work shifted most toward ${IND[up[0]].short.toLowerCase()} (${pts(up[1])}) and away from ${IND[dn[0]].short.toLowerCase()} (${pts(dn[1])}).`);
+      }
+      $("findings").innerHTML = out.map((s) => `<li>${esc(s)}</li>`).join("");
+    }
+    const list = (a) => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+
+    // ---- sections
+    function blocks(c, c2) {
+      const host = $("blocks"); host.innerHTML = "";
+      const sec = (id, title, intro) => { const s = document.createElement("section"); s.className = "block"; s.innerHTML = `<h3>${icon(id)}${esc(title)}</h3>${intro ? `<p class="intro">${intro}</p>` : ""}`; host.appendChild(s); return s; };
+
+      const s1 = sec("industry", "What residents do for a living", `Share of employee jobs held by residents in each industry, averaged over ${Y.structure[0]} to ${Y.structure[Y.structure.length - 1]}. The orange line marks Australia.`);
+      industries(s1, c, c2);
+
+      const s2 = sec("growth", "Where the jobs growth came from", `Change in employee jobs held by residents, ${Y.jobs[0]} to ${Y.jobs[1]}, split into the part its mix of industries explains and the local part.`);
+      shift(s2, c, c2);
+
+      if (c.coal || (c2 && c2.coal)) {
+        const s4 = sec("coal", "Coal power stations in the area", `Closure years as reported to AEMO by each station's owner, from AEMO's Generation Information release of ${esc(D.coal_source)}. AEMO updates it every few months, and this page follows.`);
+        coal(s4, c, c2);
+      }
+
+      const s3 = sec("change", "How the area changed in ten years", "Share of employed residents in each industry at the 2011 and 2021 Censuses, on today's council boundaries.");
+      tenYears(s3, c, c2);
+    }
+
+    function industries(host, c, c2) {
+      const wrap = document.createElement("div"); wrap.className = "chart"; host.appendChild(wrap);
+      const W0 = Math.max(320, wrap.clientWidth || host.clientWidth || 900), narrow = W0 < 600;
+      const LW = narrow ? 150 : 210, RW = narrow ? 44 : 90, rowH = c2 ? 26 : 22;
+      const order = IND.map((d, i) => i).sort((a, b) => (c.share[b] || 0) - (c.share[a] || 0));
+      const max = Math.max(...order.map((i) => Math.max(c.share[i] || 0, AUS.share[i] || 0, c2 ? c2.share[i] || 0 : 0)));
+      const H = order.length * rowH + 6, svg = el("svg", { viewBox: `0 0 ${W0} ${H}`, role: "img", "aria-label": "Industry shares compared with Australia" }, wrap);
+      const x = (v) => LW + (v / max) * (W0 - LW - RW);
+      order.forEach((i, r) => {
+        const y = r * rowH + 4, v = c.share[i], a = AUS.share[i], v2 = c2 ? c2.share[i] : null, exposed = D.exposed.includes(IND[i].code);
+        const g = el("g", {}, svg);
+        txt(g, LW - 8, y + (c2 ? 13 : 12), narrow ? IND[i].short.replace(" and ", " & ") : IND[i].short, { "text-anchor": "end", class: "lab", "font-weight": exposed ? 600 : 400 });
+        if (v != null) el("rect", { x: LW, y: y + 2, width: Math.max(1, x(v) - LW), height: c2 ? 9 : 13, rx: 2, fill: "var(--a)", opacity: exposed ? 1 : .8 }, g);
+        if (v2 != null) el("rect", { x: LW, y: y + 13, width: Math.max(1, x(v2) - LW), height: 8, rx: 2, fill: "var(--cmp)" }, g);
+        el("rect", { x: x(a) - 1, y: y, width: 2.5, height: c2 ? 22 : 17, fill: "var(--aus)" }, g);
+        const lq = v != null && a ? v / a : null;
+        txt(g, Math.max(x(v || 0), x(a)) + 6, y + (c2 ? 11 : 12), v != null ? v.toFixed(1) + "%" + (!narrow && lq >= 1.4 && v >= 2 ? `  ${lq.toFixed(1)}×` : "") : "");
+        el("rect", { x: 0, y, width: W0, height: rowH, fill: "transparent" }, g);
+        g.addEventListener("mousemove", (e) => showTip(e, `<b>${esc(IND[i].name)}</b><br>${esc(c.name)} ${v != null ? v.toFixed(1) + "%" : "n/a"}` + (c2 ? `<br><span style="color:var(--cmp)">${esc(c2.name)} ${v2 != null ? v2.toFixed(1) + "%" : "n/a"}</span>` : "") + `<br>Australia ${a.toFixed(1)}%` + (lq ? `<br>${lq.toFixed(1)} times the Australian share` : "") + (exposed ? "<br>Counted in exposure to swings and transition" : "")));
+        g.addEventListener("mouseleave", hideTip);
+      });
+      const k = document.createElement("div"); k.className = "key";
+      k.innerHTML = `<span><i style="background:var(--a)"></i>${esc(c.name)}</span>` + (c2 ? `<span><i style="background:var(--cmp)"></i>${esc(c2.name)}</span>` : "") + `<span><i class="t"></i>Australia</span><span>Bold industries count toward exposure. × marks a specialisation, at least 1.4 times the Australian share.</span>`;
+      host.appendChild(k);
+    }
+
+    function shift(host, c, c2) {
+      const one = (k) => {
+        const box = document.createElement("div"); box.className = "shift";
+        if (k.raw.growth == null) { box.innerHTML = "<p>Not enough figures.</p>"; return box; }
+        const rows = [["Australia overall", AUS.growth], ["Its industry mix", k.mix], ["Local factors", k.local], [k.name, k.raw.growth]];
+        const m = Math.max(...rows.map((r) => Math.abs(r[1] || 0)), 0.01);
+        box.innerHTML = rows.map((r, i) => {
+          const v = r[1] || 0, w = Math.abs(v) / m * 50;
+          const col = i === 3 ? (k === current ? "var(--a)" : "var(--cmp)") : i === 0 ? "var(--aus)" : v >= 0 ? "var(--good)" : "var(--bad)";
+          return `<div class="r${i === 3 ? " tot" : ""}"><span>${i === 3 ? "<b>" + esc(r[0]) + "</b>" : esc(r[0])}</span><span style="position:relative;height:12px;background:var(--mid-soft);border-radius:3px"><i style="position:absolute;top:0;bottom:0;border-radius:3px;background:${col};${v >= 0 ? `left:50%;width:${w}%` : `right:50%;width:${w}%`}"></i><s style="position:absolute;left:50%;top:-3px;bottom:-3px;border-left:1px solid var(--muted)"></s></span><span class="v">${i === 0 || i === 3 ? signed(v) : pts(v * 100).replace(" points", "")}</span></div>`;
+        }).join("");
+        return box;
+      };
+      const wrap = document.createElement("div"); wrap.className = c2 ? "twocol" : "";
+      wrap.appendChild(one(c)); if (c2) wrap.appendChild(one(c2));
+      host.appendChild(wrap);
+      const p = document.createElement("p"); p.className = "intro"; p.style.marginTop = ".8rem";
+      p.textContent = `Australia's growth, plus or minus the effect of the industry mix, plus or minus local factors, adds up to the area's growth. Industry mix is the growth expected if each of the area's industries grew at its Australian rate.`;
+      host.appendChild(p);
+      // jobs over time, indexed so areas of any size can share a chart
+      const wrap2 = document.createElement("div"); wrap2.className = "chart"; host.appendChild(wrap2);
+      const yrs = Y.jobs_all, W0 = Math.max(320, wrap2.clientWidth || 900), H = 170, L = 40, R = 110;
+      const idx = (h) => yrs.map((y) => h[y] != null && h[yrs[0]] ? h[y] / h[yrs[0]] * 100 : null);
+      const lines = [[idx(AUS.jobs_hist), "var(--aus)", "Australia"], [idx(c.jobs_hist), "var(--a)", c.name]];
+      if (c2) lines.push([idx(c2.jobs_hist), "var(--cmp)", c2.name]);
+      const vals = lines.flatMap((l) => l[0]).filter((v) => v != null), lo = Math.min(95, ...vals), hi = Math.max(105, ...vals);
+      const svg = el("svg", { viewBox: `0 0 ${W0} ${H}`, role: "img", "aria-label": "Jobs over time, indexed" }, wrap2);
+      const X = (i) => L + i / (yrs.length - 1) * (W0 - L - R), Yp = (v) => 10 + (hi - v) / (hi - lo) * (H - 40);
+      [lo, 100, hi].forEach((v) => { el("line", { x1: L, x2: W0 - R, y1: Yp(v), y2: Yp(v), stroke: "var(--chart-grid)", "stroke-dasharray": v === 100 ? "" : "3 3" }, svg); txt(svg, L - 6, Yp(v) + 4, Math.round(v), { "text-anchor": "end" }); });
+      yrs.forEach((y, i) => txt(svg, X(i), H - 8, y, { "text-anchor": "middle" }));
+      const labels = [];
+      lines.forEach(([v, col, name]) => {
+        const pts2 = v.map((u, i) => u == null ? null : `${X(i)},${Yp(u)}`).filter(Boolean);
+        el("polyline", { points: pts2.join(" "), fill: "none", stroke: col, "stroke-width": 2.2, "stroke-linejoin": "round" }, svg);
+        const lastI = v.map((u, i) => u == null ? -1 : i).filter((i) => i >= 0).pop();
+        if (lastI != null) labels.push({ x: X(lastI) + 6, y: Yp(v[lastI]) + 4, s: name.length > 16 ? name.slice(0, 15) + "…" : name, col });
+      });
+      // keep the end labels from sitting on top of each other
+      labels.sort((a, b) => a.y - b.y).forEach((l, i, a) => { if (i && l.y - a[i - 1].y < 14) l.y = a[i - 1].y + 14; });
+      labels.forEach((l) => txt(svg, l.x, l.y, l.s, { fill: l.col }));
+      const cap = document.createElement("p"); cap.className = "intro"; cap.style.fontSize = ".85rem"; cap.style.marginTop = ".3rem";
+      cap.textContent = `Employee jobs held by residents each year to 30 June, ${yrs[0]} set to 100.`;
+      host.appendChild(cap);
+    }
+
+    const coalStatus = (x) => x.status === "announced" ? `The owner has formally told AEMO it will close${x.date ? " in " + x.date : " in " + x.first}.`
+      : x.first ? `The owner's expected closure year is ${x.first === x.last ? x.first : x.first + " to " + x.last}. Expected years can move earlier or later.`
+      : "No closure year has been given to AEMO.";
+    function coal(host, c, c2) {
+      const all = [c, c2].filter((k) => k && k.coal).flatMap((k) => k.coal.map((x) => ({ ...x, k })));
+      const now = new Date().getFullYear(), end = Math.max(now + 10, ...all.map((x) => (x.last || now) + 2));
+      const wrap = document.createElement("div"); wrap.className = "chart"; host.appendChild(wrap);
+      const W0 = Math.max(320, wrap.clientWidth || 900), narrow = W0 < 600, LW = narrow ? 120 : 190, rowH = 34, H = all.length * rowH + 26;
+      const svg = el("svg", { viewBox: `0 0 ${W0} ${H}`, role: "img", "aria-label": "Coal power station closure years" }, wrap);
+      const X = (y) => LW + (y - now) / (end - now) * (W0 - LW - 20);
+      for (let y = now; y <= end; y++) if ((y - now) % (narrow ? 10 : 5) === 0) { el("line", { x1: X(y), x2: X(y), y1: 0, y2: H - 20, stroke: "var(--chart-grid)" }, svg); txt(svg, X(y), H - 4, y, { "text-anchor": "middle" }); }
+      all.forEach((x, i) => {
+        const y = i * rowH + 6, col = x.k === c ? "var(--a)" : "var(--cmp)", g = el("g", {}, svg);
+        txt(g, LW - 8, y + 12, x.site, { "text-anchor": "end", class: "lab" });
+        txt(g, LW - 8, y + 25, `${num(x.mw)} MW`, { "text-anchor": "end", "font-size": 11 });
+        if (x.first) {
+          el("rect", { x: LW, y: y + 5, width: Math.max(2, X(x.first) - LW), height: 10, rx: 3, fill: col, opacity: .85 }, g);
+          if (x.last > x.first) el("rect", { x: X(x.first), y: y + 5, width: X(x.last) - X(x.first), height: 10, rx: 3, fill: col, opacity: .4 }, g);
+          txt(g, X(x.last) + 6, y + 14, x.first === x.last ? x.first : `${x.first} to ${x.last}`, { class: "lab", "font-weight": 600 });
+        } else {
+          el("rect", { x: LW, y: y + 5, width: W0 - LW - 20, height: 10, rx: 3, fill: "none", stroke: col, "stroke-dasharray": "4 3" }, g);
+          txt(g, LW + 6, y + 27, "No closure year given", { "font-size": 11 });
+        }
+        el("rect", { x: 0, y, width: W0, height: rowH, fill: "transparent" }, g);
+        g.addEventListener("mousemove", (e) => showTip(e, `<b>${esc(x.site)}</b>, ${esc(x.k.name)}<br>${num(x.mw)} MW across ${x.units} unit${x.units > 1 ? "s" : ""}<br>${esc(coalStatus(x))}`));
+        g.addEventListener("mouseleave", hideTip);
+      });
+      const p = document.createElement("div"); p.className = "findings"; p.style.marginTop = ".8rem";
+      p.innerHTML = all.map((x) => `<p class="intro" style="margin:.2rem 0"><b>${esc(x.site)}</b>${c2 ? ` (${esc(x.k.name)})` : ""}, ${num(x.mw)} MW. ${esc(coalStatus(x))}</p>`).join("");
+      host.appendChild(p);
+      const n = document.createElement("p"); n.className = "intro"; n.style.fontSize = ".85rem";
+      n.textContent = "Many workers live in neighbouring areas, so a closure reaches beyond the council area the station sits in. The jobs figures above cannot separate power station jobs from water and waste jobs, so they do not show how many residents work at the station. AEMO's register covers the eastern and southern states, not Western Australia or the Northern Territory.";
+      host.appendChild(n);
+    }
+
+    function tenYears(host, c, c2) {
+      const one = (k) => {
+        const ch = k.census, box = document.createElement("div");
+        if (!ch["2011"] || !ch["2021"]) { box.innerHTML = "<p>Census figures are not available for this area.</p>"; return box; }
+        const d = IND.map((x, i) => [i, ch["2021"][i] - ch["2011"][i], ch["2011"][i], ch["2021"][i]]).filter((x) => !isNaN(x[1]));
+        const up = d.filter((x) => x[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 4), dn = d.filter((x) => x[1] < 0).sort((a, b) => a[1] - b[1]).slice(0, 4);
+        const li = (x) => `<li>${esc(IND[x[0]].short)} <b class="${x[1] > 0 ? "up" : "down"}">${pts(x[1])}</b><br><small style="color:var(--muted)">${x[2].toFixed(1)}% in 2011, ${x[3].toFixed(1)}% in 2021</small></li>`;
+        box.innerHTML = (c2 ? `<p style="font-weight:600;margin:0 0 .5rem;color:${k === current ? "var(--a)" : "var(--cmp)"}">${esc(k.name)}</p>` : "") +
+          `<div class="moves"><div><h4>Grew the most</h4><ol>${up.map(li).join("") || "<li>None</li>"}</ol></div><div><h4>Shrank the most</h4><ol>${dn.map(li).join("") || "<li>None</li>"}</ol></div></div>`;
+        return box;
+      };
+      const wrap = document.createElement("div"); wrap.className = c2 ? "twocol" : "";
+      wrap.appendChild(one(c)); if (c2) wrap.appendChild(one(c2));
+      host.appendChild(wrap);
+      const p = document.createElement("p"); p.className = "intro"; p.style.fontSize = ".85rem"; p.style.marginTop = ".8rem";
+      p.textContent = "Changes are in percentage points of all employed residents. The Census counts everyone's main job, including owner-operators, so the shares differ a little from the jobs figures above.";
+      host.appendChild(p);
+    }
+
+    // ---- start
+    const h = decodeURIComponent(location.hash.slice(1)).split("/");
+    const st = (s) => STATES.map((x) => x[0]).find((k) => k.toLowerCase() === (s || "").toLowerCase());
+    if (st(h[0])) {
+      const vs = h.indexOf("vs");
+      state = st(h[0]);
+      current = find(state, h.slice(1, vs > 0 ? vs : undefined).join("/")) || null;
+      if (vs > 0 && st(h[vs + 1])) other = find(st(h[vs + 1]), h.slice(vs + 2).join("/")) || null;
+    }
+    fill(); render();
+    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { placeBar(); render(); }, 150); });
+    window.onThemeChange = render;
+  })();
+  </script>
+  <script src="js/theme.js"></script>
+  <script src="js/ambient.js"></script>
+</body>
+</html>
