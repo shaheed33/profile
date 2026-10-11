@@ -27,12 +27,20 @@ TARGETS_URL = "https://engage.vic.gov.au/project/developing-a-new-plan-for-Victo
 LGA_URL = ("https://geo.abs.gov.au/arcgis/rest/services/ASGS2025/LGA/MapServer/0/query"
            "?where=state_code_2021%3D%272%27&outFields=LGA_CODE_2025,LGA_NAME_2025,AREA_ALBERS_SQKM"
            "&returnGeometry=true&outSR=4326&maxAllowableOffset=0.004&geometryPrecision=3&f=geojson")
+# spellings on the page that differ from the official (ABS) council names
+ALIASES = {"Murrundindi": "Murrindindi", "North Grampians": "Northern Grampians"}
 BROWSER = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
                          "Chrome/129.0 Safari/537.36"}
 
 
 def _num(s: str | None) -> int | None:
     return int(s.replace(",", "")) if s else None
+
+
+def _clean(name: str) -> str:
+    name = re.sub(r"\s+(Shire|City|Rural City|Borough)?\s*Council$", "", name.strip()).strip()
+    name = re.sub(r"^Borough of\s+", "", name).rstrip("*").strip()
+    return ALIASES.get(name, name)
 
 
 def fetch_targets() -> list[dict]:
@@ -54,7 +62,7 @@ def fetch_targets() -> list[dict]:
             continue
         else:
             name = head
-        name = re.sub(r"\s+(Shire|City)?\s*Council$", "", name.strip()).strip()
+        name = _clean(name)
         # homes in 2023 is the last number before the target (wording varies by council)
         pre = [n for n in re.findall(r"\d[\d,]*", body.split("Additional")[0]) if n != "2023"]
         homes = re.match(r"([\d,]+)", pre[-1]) if pre else None
@@ -80,8 +88,7 @@ def fetch_targets() -> list[dict]:
     # A few councils are missing from the lists but are on the page's map, whose
     # hotspots carry the same text. Use those (final targets only, not drafts).
     for m in re.finditer(r'"title":"([^"]+)"[^{}]*?"description":"(.*?)"\}', page):
-        name = re.sub(r"\s+(Shire|City|Rural City|Borough)?\s*Council$", "", m.group(1).strip()).strip()
-        name = re.sub(r"^Borough of\s+", "", name)
+        name = _clean(m.group(1))
         body = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " | ", m.group(2)))
         if name in rows or "Additional number of homes to 2051" not in body:
             continue
