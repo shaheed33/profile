@@ -33,7 +33,8 @@ RAW = ROOT / "raw" / "councils"
 OUT = ROOT / "data" / "councils.js"
 MIN_PEERS = 5          # fewer councils with data than this: no comparison shown
 JUMP = 1.8             # a year's median this many times off the others' is not trusted
-STABLE = 0.5           # councils' ranks must hold up from year to year at least this well
+STABLE = 0.6           # councils' ranks must hold up from year to year at least this well
+BUNCH = 0.4            # more than this share of councils reporting the identical figure: it cannot tell them apart
 SWING = 2.0            # a council's own range over the years, in multiples of the peer spread
 
 # id, theme, everyday label, unit, better ("higher", "lower" or None), note
@@ -42,22 +43,29 @@ VIC = [
     ("WC2", "Bins and recycling", "Bins missed, per 10,000 collections", "num", "lower", None),
     ("WC5", "Bins and recycling", "Kerbside waste kept out of landfill", "pct", "higher", None),
     ("WC3", "Bins and recycling", "Cost of collecting a garbage bin, a year", "dollars", "lower", None),
+    ("WC4", "Bins and recycling", "Cost of collecting a recycling bin, a year", "dollars", "lower", None),
     ("SP1", "Planning permits", "Days to decide a planning application", "days", "lower", "Median days."),
     ("SP2", "Planning permits", "Planning decisions made on time", "pct", "higher", None),
     ("SP4", "Planning permits", "Decisions upheld when appealed at VCAT", "pct", "higher", None),
     ("SP3", "Planning permits", "Cost of the planning service, per application", "dollars", "lower", None),
-    ("R2", "Local roads", "Sealed roads kept to the council's standard", "pct", "higher", None),
     ("R5", "Local roads", "Residents' satisfaction with local roads", "score", "higher", "Score out of 100, from the state's community survey."),
     ("R1", "Local roads", "Complaints about sealed roads, per 100 km", "num", "lower", None),
+    ("R4", "Local roads", "Cost of resealing a road, per square metre", "dollars", "lower", None),
     ("LB8", "Libraries", "Library visits per resident", "num", "higher", None),
     ("LB6", "Libraries", "Library loans per resident", "num", "higher", None),
+    ("LB7", "Libraries", "Residents who are active library members", "pct", "higher", None),
+    ("LB2", "Libraries", "Library collection bought in the last five years", "pct", "higher", None),
     ("LB5", "Libraries", "Library spending per resident", "dollars", None, "Spending less sounds efficient, but it can mean shorter opening hours or fewer books. Spending more can mean a better library."),
     ("AF6", "Pools and leisure", "Pool visits per resident", "num", "higher", None),
     ("AF7", "Pools and leisure", "Net cost to the council per pool visit", "dollars", "lower", None),
     ("AM1", "Pets and animals", "Days to respond to an animal request", "days", "lower", None),
     ("AM5", "Pets and animals", "Collected animals rehomed", "pct", "higher", None),
+    ("AM2", "Pets and animals", "Collected animals returned to their owners", "pct", "higher", None),
+    ("AM6", "Pets and animals", "Animal management spending per resident", "dollars", None, "More spending can mean more patrols and faster responses, or less efficiency. The figure alone cannot tell which."),
     ("FS1", "Food safety", "Days to act on a food complaint", "days", "lower", None),
     ("FS4", "Food safety", "Serious food safety breaches followed up", "pct", "higher", None),
+    ("FS2", "Food safety", "Food premises given their required safety assessment", "pct", "higher", None),
+    ("FS3", "Food safety", "Cost of food safety checks, per registered food business", "dollars", "lower", None),
     ("MC4", "Maternal and child health", "Children taking part in maternal and child health checks", "pct", "higher", None),
     ("MC3", "Maternal and child health", "Cost of the service, per hour of nursing", "dollars", "lower", None),
     ("G5", "Decisions and trust", "Residents' satisfaction with council decisions", "score", "higher", "Score out of 100, from the state's community survey."),
@@ -67,16 +75,22 @@ VIC = [
     ("G4", "Decisions and trust", "Cost of elected councillors, per councillor", "dollars", "lower", None),
     ("OP1", "Money", "Underlying surplus, as a share of income", "pct", "higher", "Above zero means everyday income covers everyday costs."),
     ("L1", "Money", "Current assets for each dollar of bills due within a year", "ratio", "higher", None),
+    ("L2", "Money", "Unrestricted cash for each dollar of bills due within a year", "ratio", "higher", None),
     ("O2", "Money", "Borrowings compared with rates", "pct", "lower", None),
+    ("O3", "Money", "Loan repayments compared with rates", "pct", "lower", None),
+    ("O4", "Money", "Long-term debts compared with the council's own income", "pct", "lower", None),
     ("O5", "Money", "Spending on renewing assets compared with their wear", "pct", "higher", "100% means assets are renewed as fast as they wear out."),
     ("C7", "Money", "Staff turnover", "pct", "lower", None),
     ("E4", "Money", "Average rates per property", "dollars", None, "Lower rates sound better, but rates mostly follow property values, so councils with dearer homes collect more per property without charging more in the dollar. Higher rates can also pay for more services."),
     ("E2", "Money", "Spending per property", "dollars", None, "More spending can mean more or better services, or it can mean waste. The figure alone cannot tell which."),
+    ("S2", "Money", "Rates as a share of property values", "pct", None, "A lower share sounds cheaper, but councils with low property values need a higher share just to fund the same services."),
 ]
 VIC_CONTEXT = [("C6", "Socio-economic disadvantage decile", "num", "1 is the most disadvantaged tenth of Victoria, 10 the least."),
                ("C3", "Residents per km of local road", "num", None),
                ("C5", "Recurrent grants per resident", "dollars", None),
-               ("C1", "Council spending per resident", "dollars", None)]
+               ("C1", "Council spending per resident", "dollars", None),
+               ("C4", "Own income per resident", "dollars", "Rates, fees and charges the council raises itself, per resident."),
+               ("C2", "Infrastructure per resident", "dollars", "Value of roads, buildings and other assets the council looks after, per resident.")]
 
 # NSW: column name prefix in the OLG spreadsheet
 NSW = [
@@ -102,6 +116,38 @@ NSW_CONTEXT = [("Population 2", "Population", "num", None), ("Council Area", "Ar
                ("Population Density", "Residents per km²", "num", None),
                ("Population Change over 5 years", "Population growth over five years", "pct", None),
                ("Socio-Economic Index Rating", "Socio-economic index rating", "num", "A higher rating means less disadvantage.")]
+# measures of what a service costs to run: a lower figure is "cheaper to run", which
+# is not quite the same as better, so the page words their verdicts that way
+COST = {"WC3", "WC4", "SP3", "R4", "AF7", "FS3", "MC3", "G4", "admin"}
+# residents' survey scores, which carry a margin of error of several points
+SURVEY = {"R5", "G2", "G5"}
+
+# official measures not used on the page, and why (the ones that fail the automatic
+# tests are added to this list when the script runs)
+NOT_USED = {
+    "vic": [
+        ("Sealed roads kept to the council's standard", "Not comparable", "Each council sets its own road standard, so a high figure can mean good roads or a low bar."),
+        ("Cost of rebuilding a sealed road, per square metre", "Not comparable", "It swings with the kind of road projects a council happens to do in a year."),
+        ("Animal management prosecutions", "Too few cases", "Most councils take only a handful of cases a year, so the figure is nearly always 0% or 100%."),
+        ("Health inspections of council pools", "Cannot tell councils apart", "Most councils report exactly one inspection per pool."),
+        ("Rates compared with the council's income", "Not a measure of performance", "It describes how a council is funded, not how well it performs."),
+        ("Population, density, grants, disadvantage and similar background figures", "Background, not performance", "These are shown as context under each council's name instead."),
+        ("Kerbside bin requests, physical library collection use and active borrowers", "No longer reported", "These were dropped from the framework before 2022-23."),
+    ],
+    "nsw": [
+        ("Spending on each service per resident, such as environment, recreation or community services", "Not a measure of performance", "These reflect what a community chooses to fund, not how well the council performs. Library spending is kept, with no verdict, because it is the clearest example."),
+        ("Mayor and councillor fees", "Not set by councils", "They are set by the independent Local Government Remuneration Tribunal according to council size."),
+        ("General manager pay", "Not a measure of performance", "It mostly follows the size of the council."),
+        ("Code of conduct complaints", "Too few cases", "Most councils have a handful or none each year, so one complaint changes the picture."),
+        ("Councillors' gender, age and background", "Not a measure of performance", "It describes who was elected, not how the council performs."),
+        ("Typical water and sewer bills", "Not comparable", "Only some councils run water and sewer services; elsewhere a separate utility does."),
+        ("Number of development applications and their value", "Not a measure of performance", "They show how much building activity there is, not how well the council handles it."),
+        ("Pools, halls, libraries, open space and road length", "Background, not performance", "They mostly reflect the size and spread of the area."),
+        ("Debt service ratio and grants share of income", "Already covered", "They repeat what debt cover and own income already show."),
+        ("Audited financial statements on time", "No data", "The column is empty in the published spreadsheets."),
+    ],
+}
+
 # plain-English explainers shown behind the (i) button on the page
 EXPLAIN = {
     # Victoria
@@ -135,6 +181,18 @@ EXPLAIN = {
     "O5": "What the council spends renewing and upgrading roads, buildings and other assets, compared with how fast those assets wear out. Staying below 100% for long builds up a backlog of worn assets.",
     "E4": "Total rates divided by the number of rateable properties. It depends on property values, the mix of homes and businesses, and the services the council offers.",
     "E2": "The council's total spending divided by the number of rateable properties.",
+    "WC4": "What it costs the council, per recycling bin, to collect and process recycling for a year.",
+    "R4": "What it costs the council to reseal a square metre of sealed road. Resealing is the regular top layer that keeps roads waterproof and smooth.",
+    "LB7": "The share of residents who are registered library members and borrowed or used the library during the year.",
+    "LB2": "The share of the library collection bought in the last five years. A fresher collection usually means more up-to-date books and media.",
+    "AM2": "Of the cats and dogs the council collected, the share returned to their owners.",
+    "AM6": "What the council spends on animal management, such as registrations, patrols and the pound, divided by the number of residents.",
+    "FS2": "The share of registered food businesses that received the safety assessment the law requires that year.",
+    "FS3": "What the council's food safety service costs, divided by the number of registered food businesses it oversees.",
+    "L2": "Cash the council is free to spend, for every dollar of bills due within a year. It leaves out money already set aside for specific purposes. Below 1 means it relies on other assets or new income to pay those bills.",
+    "O3": "Loan repayments in the year, including interest, compared with a year of rates income.",
+    "O4": "Debts due after more than a year, compared with the income the council raises itself from rates, fees and charges.",
+    "S2": "Total rates compared with the total value of rateable property. Roughly, the rate in the dollar that owners pay.",
     # NSW
     "da_days": "The average number of days from lodging a development application to the council's decision. It counts every day, including time spent waiting for the applicant to provide more information.",
     "recycling": "The share of household waste collected by the council that was recycled or composted rather than sent to landfill.",
@@ -230,13 +288,21 @@ def screen(councils: list[dict], indicators: list[dict], state: str, notes: list
         i = ind["id"]
         st = stability(councils, i)
         have = sum(i in c["values"] for c in councils)
+        latest = [list(c["values"][i]["years"].values())[-1] for c in councils if i in c["values"]]
+        same = max(np.unique(np.round(latest, 6), return_counts=True)[1]) / len(latest) if latest else 0
         if have < MIN_PEERS * 2:
-            left.append({**ind, "why": "Too few councils have reliable figures."})
+            left.append({**ind, "category": "Too few councils", "why": "Too few councils have reliable figures."})
+        elif same > BUNCH:
+            left.append({**ind, "category": "Cannot tell councils apart",
+                         "why": f"{round(100 * same)}% of councils report exactly the same figure, so it cannot separate them."})
         elif st is not None and st < STABLE:
-            left.append({**ind, "why": f"Councils' positions change a lot from year to year (consistency {st:.2f} out of 1), "
-                                       "so the figures say more about one-off events or accounting timing than performance."})
+            left.append({**ind, "category": "Not consistent from year to year",
+                         "why": f"Councils' positions change a lot from one year to the next (consistency {st:.2f} out of 1, "
+                                f"below the {STABLE} this page requires), so the figures say more about one-off events or "
+                                "accounting timing than performance."})
         else:
-            kept.append({**ind, "stability": round(st, 2) if st is not None else None, "explain": EXPLAIN.get(i)})
+            kept.append({**ind, "stability": round(st, 2) if st is not None else None, "explain": EXPLAIN.get(i),
+                         "kind": "cost" if i in COST else "survey" if i in SURVEY else None})
             continue
         notes.append(f"{state}, {ind['label']}: left out. {left[-1]['why']}")
         for c in councils:
@@ -323,7 +389,8 @@ def build_vic(notes: list[str]) -> dict:
     inds, left = screen(councils, [{"id": i, "theme": t, "label": l, "unit": u, "better": b, "note": n}
                                    for i, t, l, u, b, n in VIC], "Victoria", notes)
     return {
-        "name": "Victoria", "left_out": left, "source": "Know Your Council, Local Government Performance Reporting Framework, Victorian Government",
+        "name": "Victoria", "left_out": left,
+        "not_used": [{"label": l, "category": c, "why": w} for l, c, w in NOT_USED["vic"]], "source": "Know Your Council, Local Government Performance Reporting Framework, Victorian Government",
         "years": "2022-23 to 2024-25", "peer_note": "Victoria's official council groups", "group_text": VIC_GROUP_TEXT,
         "indicators": inds,
         "context": [{"id": i, "label": l, "unit": u, "note": n} for i, l, u, n in VIC_CONTEXT],
@@ -384,7 +451,8 @@ def build_nsw(notes: list[str]) -> dict:
     inds, left = screen(councils, [{"id": i, "theme": t, "label": l, "unit": u, "better": b, "note": n}
                                    for i, t, l, u, b, n, _ in NSW], "NSW", notes)
     return {
-        "name": "New South Wales", "left_out": left, "source": "Your Council time series data, Office of Local Government NSW",
+        "name": "New South Wales", "left_out": left,
+        "not_used": [{"label": l, "category": c, "why": w} for l, c, w in NOT_USED["nsw"]], "source": "Your Council time series data, Office of Local Government NSW",
         "years": "2022-23 to 2024-25", "peer_note": "the Office of Local Government's council classifications",
         "group_text": {g: g.lower() + " councils" for g in groups},
         "indicators": inds,
