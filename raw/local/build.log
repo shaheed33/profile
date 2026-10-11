@@ -1,0 +1,43 @@
+
+== fetch_names
+council code list CL_LGA_2021 578
+
+== fetch_regional
+jobs: 65,671 rows, 21 measures, 544 councils, years 2018 to 2023
+business: 68,442 rows, 29 measures, 540 councils, years 2021 to 2025
+people: 15,714 rows, 8 measures, 547 councils, years 2011 to 2025
+census: 32,304 rows, 21 measures, 547 councils, years 2011 to 2021
+  saved regional.csv.gz (0.9 MB)
+
+== fetch_census_industry
+census T34: 106785 rows; columns ['DATAFLOW', 'INDP', 'SEXP', 'REGION', 'REGION_TYPE', 'STATE', 'TIME_PERIOD', 'OBS_VALUE']
+  DATAFLOW: ['ABS:C21_T34_LGA(1.0.0)']
+  INDP: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', '_N', '_T']
+  SEXP: ['1', '2', '3']
+  REGION_TYPE: ['LGA2021']
+  STATE: ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+  TIME_PERIOD: ['2011', '2016', '2021']
+  saved census_ind.csv.gz (0.6 MB)
+
+== fetch_remoteness
+LGA allocation columns ['MB_CODE_2021', 'LGA_CODE_2021', 'LGA_NAME_2021', 'STATE_CODE_2021', 'STATE_NAME_2021', 'AUS_CODE_2021', 'AUS_NAME_2021', 'AREA_ALBERS_SQKM', 'ASGS_LOCI_URI_2021']
+RA allocation columns ['SA1_CODE_2021', 'RA_CODE_2021', 'RA_NAME_2021', 'STATE_CODE_2021', 'STATE_NAME_2021', 'AUS_CODE_2021', 'AUS_NAME_2021', 'AREA_ALBERS_SQKM', 'ASGS_LOCI_URI_2021']
+MB allocation columns ['MB_CODE_2021', 'MB_CATEGORY_2021', 'CHANGE_FLAG_2021', 'CHANGE_LABEL_2021', 'SA1_CODE_2021', 'SA2_CODE_2021', 'SA2_NAME_2021', 'SA3_CODE_2021', 'SA3_NAME_2021', 'SA4_CODE_2021', 'SA4_NAME_2021', 'GCCSA_CODE_2021', 'GCCSA_NAME_2021', 'STATE_CODE_2021', 'STATE_NAME_2021', 'AUS_CODE_2021', 'AUS_NAME_2021', 'AREA_ALBERS_SQKM', 'ASGS_LOCI_URI_2021']
+mesh block count files ['/census/guide-census-data/mesh-block-counts/2021/Mesh%20Block%20Counts%2C%202021.xlsx']
+Traceback (most recent call last):
+  File "/home/runner/work/profile/profile/scripts/fetch_local_economy.py", line 214, in <module>
+    main()
+  File "/home/runner/work/profile/profile/scripts/fetch_local_economy.py", line 205, in main
+    f()
+  File "/home/runner/work/profile/profile/scripts/fetch_local_economy.py", line 169, in fetch_remoteness
+    cnt = pd.concat(counts)
+          ^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/concat.py", line 466, in concat
+    result = _get_result(
+             ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/concat.py", line 653, in _get_result
+    indexers[ax] = obj_labels.get_indexer(new_labels)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/indexes/base.py", line 3728, in get_indexer
+    raise InvalidIndexError(self._requires_unique_msg)
+pandas.errors.InvalidIndexError: Reindexing only valid with uniquely valued Index objects
