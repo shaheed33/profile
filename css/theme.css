@@ -142,3 +142,23 @@ footer { color: var(--muted); }
   -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
 body { overflow-x: hidden; overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) { .site-nav a::after { transition: none; } }
+
+/* "More projects" strip at the foot of project pages (js/more.js) */
+.more-projects { margin-top: 3.5rem; padding-top: 1.6rem; padding-bottom: 1.2rem; border-top: 1px solid var(--line); }
+.more-projects h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.45rem; margin: 0 0 .9rem; }
+.more-projects ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: .7rem; }
+.more-projects li a { display: block; height: 100%; padding: .75rem .9rem; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); text-decoration: none; font-weight: 500; line-height: 1.35; transition: background .2s, border-color .2s; }
+.more-projects li a:hover { background: var(--accent-soft); border-color: var(--accent); }
+.more-projects li span { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .2rem; }
+.more-projects .home { display: inline-block; margin-top: 1rem; font-size: .92rem; }
+
+/* "Key terms in plain English" boxes on the energy pages */
+.terms { margin: .9rem 0 0; max-width: 46rem; font-size: .92rem; }
+.terms summary { cursor: pointer; color: var(--accent); font-weight: 500; list-style: none; display: inline-flex; align-items: center; gap: .4rem; }
+.terms summary::-webkit-details-marker { display: none; }
+.terms summary::before { content: "+"; display: inline-flex; align-items: center; justify-content: center; width: 1.2rem; height: 1.2rem; border-radius: 50%; border: 1px solid currentColor; font-size: .85rem; line-height: 1; }
+.terms[open] summary::before { content: "\2212"; }
+.terms dl { margin: .7rem 0 0; padding: .9rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: .5rem 1.2rem; }
+.terms dt { font-weight: 600; color: var(--ink); }
+.terms dd { margin: 0; color: var(--soft); }
+@media (max-width: 575.98px) { .terms dl { grid-template-columns: 1fr; gap: .15rem; } .terms dd { margin-bottom: .45rem; } }

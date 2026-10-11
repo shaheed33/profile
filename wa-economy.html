@@ -131,7 +131,7 @@
           </div>
           <div>
             <h2>What the model leans on most</h2>
-            <p class="note">How much worse the model gets when each indicator is scrambled. Longer means more useful.</p>
+            <p class="note">Each indicator's share of the model's accuracy, worked out by scrambling one indicator at a time and seeing how much worse the estimates get. Longer means the model relies on it more.</p>
             <div class="chart" id="importance"></div>
           </div>
         </section>
@@ -274,9 +274,12 @@
       });
     }
 
+    // model names with a few plain words on what each one is
+    const PLAIN = { naive: "Recent average (a simple yardstick)", ar: "Momentum only (a simple yardstick)", ridge: "Ridge regression (straight-line model)",
+      forest: "Random forest (many decision trees)", boost: "Gradient boosting (trees that fix errors)", blend: "Blend of the three" };
     function hbars(id, list, diverging, fmt) {
       const host = $(id); host.innerHTML = "";
-      const rows = list.slice(0, 8), W = Math.max(290, host.clientWidth), rowH = 30, lab = Math.min(190, W * 0.47);
+      const rows = list.slice(0, 8), W = Math.max(290, host.clientWidth), rowH = 30, lab = Math.min(225, W * 0.5);
       const H = rows.length * rowH + (diverging ? 26 : 6);
       const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" }, host);
       const max = Math.max(...rows.map((r) => Math.abs(r.value))) || 1, plotW = W - lab - 58;
@@ -284,13 +287,16 @@
       if (diverging) el("line", { x1: zero, x2: zero, y1: 0, y2: rows.length * rowH + 6, stroke: css("--muted") }, svg);
       rows.forEach((r, i) => {
         const yy = i * rowH + 6, w = Math.abs(r.value) * scale, pos = r.value >= 0;
-        txt(svg, 0, yy + 14, r.label, W < 380 ? { "font-size": 11 } : { fill: css("--ink") });
+        const t = txt(svg, 0, yy + 14, r.label, W < 380 ? { "font-size": 11 } : { fill: css("--ink") });
+        // shorten a label that would run under its bar; the full name is in the tooltip
+        let full = r.label;
+        while (t.getComputedTextLength && t.getComputedTextLength() > lab - 8 && full.length > 6) { full = full.slice(0, -1); t.textContent = full.trimEnd() + "…"; }
         el("rect", { x: pos ? zero : zero - w, y: yy + 4, width: Math.max(w, 1), height: 14, rx: 2, fill: diverging ? (pos ? css("--est") : css("--neg")) : css("--accent"), opacity: 0.9 }, svg);
         if (diverging) txt(svg, W, yy + 15, fmt(r.value), { "text-anchor": "end" });
         else txt(svg, zero + w + 6, yy + 15, fmt(r.value));
-        if (r.input != null) {
+        if (r.input != null || full !== r.label) {
           const hit = el("rect", { x: 0, y: yy, width: W, height: rowH, fill: "transparent" }, svg);
-          hit.addEventListener("pointermove", (e) => showTip(e, `${r.label}<br>This quarter's reading <b>${sign(r.input, 2)}</b>`));
+          hit.addEventListener("pointermove", (e) => showTip(e, r.label + (r.input != null ? `<br>This quarter's reading <b>${sign(r.input, 2)}</b>` : "")));
           hit.addEventListener("pointerleave", hideTip);
         }
       });
@@ -311,7 +317,7 @@
       $("acc-text").textContent = s;
       const host = $("models"); host.innerHTML = "";
       const rows = [...D.models].sort((p, q) => p.rmse - q.rmse);
-      const W = Math.max(300, host.clientWidth), small = W < 560, rowH = 32, lab = small ? 150 : 230, H = rows.length * rowH + 30;
+      const W = Math.max(300, host.clientWidth), small = W < 560, rowH = 32, lab = small ? 150 : 290, H = rows.length * rowH + 30;
       const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Typical miss of each model" }, host);
       const max = Math.max(...rows.map((r) => r.rmse)) * 1.1, x = (v) => lab + v / max * (W - lab - (small ? 48 : 200));
       const tick = max > 2 ? 0.5 : 0.25;
@@ -322,7 +328,8 @@
       txt(svg, lab - 26, H - 6, "typical miss", { "text-anchor": "end", "font-size": 11 });
       rows.forEach((r, i) => {
         const yy = i * rowH + 14, chosen = r.id === D.nowcast.model, bench = r.id === "naive" || r.id === "ar";
-        txt(svg, 0, yy + 4, small ? r.name.replace(" (benchmark)", "") : r.name, { fill: chosen ? css("--est") : css("--ink"), "font-weight": chosen ? 600 : 400, "font-size": small ? 11 : 12 });
+        const nm = PLAIN[r.id] && !small ? PLAIN[r.id] : r.name;
+        txt(svg, 0, yy + 4, small ? r.name.replace(" (benchmark)", "") : nm, { fill: chosen ? css("--est") : css("--ink"), "font-weight": chosen ? 600 : 400, "font-size": small ? 11 : 12 });
         el("line", { x1: x(0), x2: x(r.rmse), y1: yy, y2: yy, stroke: css("--line"), "stroke-width": 2 }, svg);
         el("circle", { cx: x(r.rmse), cy: yy, r: chosen ? 7 : 5, fill: chosen ? css("--est") : bench ? css("--surface") : css("--ink"), stroke: bench ? css("--muted") : "none", "stroke-width": 1.5 }, svg);
         txt(svg, x(r.rmse) + 12, yy + 4, r.rmse.toFixed(2) + (chosen && !small ? "  used for the estimate" : ""), { fill: chosen ? css("--est") : css("--muted") });
@@ -337,7 +344,8 @@
         if (s.id === "unemp") { v = s.latest.toFixed(1) + "%"; sub = s.year_ago != null ? sign(s.latest - s.year_ago) + " points on a year ago" : ""; }
         else if (s.year_ago) { v = sign((s.latest / s.year_ago - 1) * 100) + "%"; sub = "on a year ago"; }
         else { v = s.latest.toLocaleString("en-GB"); sub = ""; }
-        c.innerHTML = `<h3>${s.label}</h3><p class="v">${v}</p><span class="p">${sub}${sub ? ", " : ""}${s.period}</span>`;
+        const label = s.label.replace(/WA State Final Demand, chain volume, seasonally adjusted/, "WA spending (State Final Demand, after inflation)");
+        c.innerHTML = `<h3>${label}</h3><p class="v">${v}</p><span class="p">${sub}${sub ? ", " : ""}${s.period}</span>`;
         const pts = s.series.filter((p) => p[1] != null);
         if (pts.length > 2) {
           const Wp = 180, Hp = 34, vs = pts.map((p) => p[1]), lo = Math.min(...vs), hi = Math.max(...vs);
@@ -401,7 +409,8 @@
     function render() {
       headline(); history();
       hbars("drivers", D.drivers, true, (v) => sign(v, 2));
-      hbars("importance", D.importance.filter((r) => r.value > 0), false, (v) => v.toFixed(3));
+      const imp = D.importance.filter((r) => r.value > 0), impTot = imp.reduce((t, r) => t + r.value, 0) || 1;
+      hbars("importance", imp, false, (v) => Math.round(v / impTot * 100) + "%");
       accuracy(); inflation(); indicators();
     }
     document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
@@ -413,6 +422,7 @@
     render();
   })();
   </script>
+  <script src="js/more.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ambient.js"></script>
 </body>
