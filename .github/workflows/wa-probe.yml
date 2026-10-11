@@ -2,7 +2,9 @@ name: Probe (temporary)
 on:
   push:
     branches: [claude/zealous-archimedes-8qq9t4]
-    paths: [".github/probe/**", ".github/workflows/wa-probe.yml"]
+    paths: [".github/workflows/wa-probe.yml", "scripts/fetch_vic_static.py"]
+permissions:
+  contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
@@ -11,5 +13,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install -q pandas requests lxml beautifulsoup4
-      - run: python -u .github/probe/probe.py
+      - run: pip install -q requests
+      - run: python -u scripts/fetch_vic_static.py
+      - run: |
+          git config user.name probe; git config user.email actions@users.noreply.github.com
+          git add data/vic_targets.csv data/vic_lga.js
+          git commit -qm "Victorian council targets and boundaries" && git push origin HEAD
