@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>How does your council compare? | Abdulla Shaheed</title>
-  <meta name="description" content="Every council in Victoria and New South Wales, compared fairly with similar councils on bins, planning, roads, libraries, money and more, using official figures.">
+  <meta name="description" content="Every council in Victoria and New South Wales, compared fairly with similar councils on bins, planning, roads, libraries, money and more, using only reliable official figures.">
   <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
   <meta property="og:title" content="How does your council compare?">
-  <meta property="og:description" content="Victorian and NSW councils compared fairly with similar councils, using official government figures.">
+  <meta property="og:description" content="Victorian and NSW councils compared fairly with similar councils, using only reliable official figures.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://shaheed.work/councils">
   <meta name="twitter:card" content="summary">
@@ -23,76 +23,101 @@
       --dot: #3F4B5E; --live: #5FD39B; --a: #A9C1EE; --a-soft: #1C2940; --cmp: #5EC8B8; --cmp-soft: #12302C; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5);
     }
     .page { max-width: 1000px; }
-    .lead { max-width: 60ch; margin-bottom: .6rem; }
+    .lead { max-width: 62ch; margin-bottom: .6rem; }
     .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
     .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); }
 
+    /* the frozen picker bar */
     .pickbar { position: sticky; top: 64px; z-index: 900; display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); gap: .6rem 1.1rem; align-items: center; margin: 1.8rem 0 0; padding: .7rem 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); background: var(--surface); }
     .pickbar .pick { display: flex; align-items: center; gap: .45rem; min-width: 0; }
     .pickbar .sw { width: 12px; height: 12px; border-radius: 50%; flex: none; }
     .pickbar .sw.b { background: transparent; border: 3px solid var(--cmp); }
     .pickbar .sw.a { background: var(--a); }
-    .pickbar .clear { font-size: .8rem; color: var(--muted); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 0; }
-    .info { display: inline-flex; align-items: center; justify-content: center; width: 1.15rem; height: 1.15rem; margin-left: .3rem; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font: 600 .72rem/1 Georgia, serif; font-style: italic; cursor: pointer; vertical-align: 1px; padding: 0; }
-    .info:hover, .info[aria-expanded="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
-    .pop { position: absolute; z-index: 950; max-width: min(340px, calc(100vw - 24px)); background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); border-radius: 10px; padding: .75rem .9rem; font-size: .88rem; line-height: 1.5; }
-    .pop b { display: block; margin-bottom: .25rem; }
-    .pop .src { display: block; margin-top: .45rem; font-size: .78rem; color: var(--muted); }
-    .duo { display: grid; grid-template-columns: auto auto; justify-content: start; gap: .1rem 1.4rem; margin-top: .25rem; }
-    .duo .who2 { font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: .35rem; }
-    .duo .who2 i { width: 9px; height: 9px; border-radius: 50%; }
-    .duo .val { margin-top: 0; }
-    .win { display: inline-flex; align-items: center; gap: .35rem; font-size: .8rem; font-weight: 600; border-radius: 999px; padding: .12rem .6rem; margin-top: .35rem; }
-    .win.a { color: var(--a); background: var(--a-soft); }
-    .win.b { color: var(--cmp); background: var(--cmp-soft); }
-    .win.same, .win.none { color: var(--mid); background: var(--mid-soft); }
-    .cmpnote { margin: 1rem 0 0; padding: .7rem 1rem; border-left: 3px solid var(--cmp); background: var(--cmp-soft); border-radius: 0 10px 10px 0; color: var(--soft); max-width: 72ch; }
+    .pickbar .clear { font-size: 1rem; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 0 .2rem; }
     .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
     .seg button { font-size: .88rem; font-weight: 500; color: var(--muted); background: none; border: 0; padding: .3rem .9rem; border-radius: 999px; cursor: pointer; }
     .seg button.on { background: var(--ink); color: var(--surface); }
     .pickbar select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .35rem .6rem; min-width: 0; width: 100%; flex: 1 1 0; }
     .pickbar label { font-size: .85rem; color: var(--muted); white-space: nowrap; }
     @media (max-width: 1100px) { .pickbar .pick label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
-    .whyno { font-size: .8rem; color: var(--muted); background: none; border: 0; padding: 0; margin-left: .5rem; text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; }
-    .whyno:hover, .whyno[aria-expanded="true"] { color: var(--ink); }
 
+    /* council header */
     .who { margin: 1.8rem 0 0; }
     .who h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(2rem, 5vw, 2.8rem); margin: 0; line-height: 1.1; }
-    .who .peer { color: var(--soft); margin: .4rem 0 0; font-size: 1.05rem; }
+    .who .peer { color: var(--soft); margin: .4rem 0 0; font-size: 1.05rem; max-width: 75ch; }
     .chips { display: flex; flex-wrap: wrap; gap: .4rem .5rem; margin: .9rem 0 0; }
     .chips span { font-size: .82rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .65rem; }
     .chips b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 
-    .glance { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 1.6rem 0 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .glance > div { padding: 1rem 1rem 1rem 0; }
-    .glance > div + div { padding-left: 1.2rem; border-left: 1px solid var(--line); }
-    .glance .n { font-family: "Newsreader", Georgia, serif !important; font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
-    .glance .l { font-size: .9rem; color: var(--muted); margin-top: .25rem; }
+    /* report card: one row per theme, one square per measure */
+    .rcard { margin: 1.6rem 0 0; border-top: 1px solid var(--line); }
+    .rcard .line { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: .8rem; align-items: center; padding: .45rem 0; border-bottom: 1px solid var(--line); }
+    .rcard .tname { display: flex; align-items: center; gap: .55rem; font-size: .92rem; cursor: pointer; background: none; border: 0; padding: 0; color: var(--ink); text-align: left; }
+    .rcard .tname:hover { text-decoration: underline; }
+    .sq { display: flex; flex-wrap: wrap; gap: 5px; }
+    .sq button { width: 22px; height: 22px; border-radius: 6px; border: 0; cursor: pointer; padding: 0; transition: transform .12s; }
+    .sq button:hover { transform: scale(1.18); }
+    .sq .better, .sq .a { background: var(--good); }
+    .sq .a { background: var(--a); }
+    .sq .b { background: transparent; box-shadow: inset 0 0 0 4px var(--cmp); }
+    .sq .worse { background: var(--bad); }
+    .sq .typical, .sq .same { background: var(--dot); }
+    .sq .neutral, .sq .none { background: transparent; box-shadow: inset 0 0 0 1.5px var(--dot); }
+    .cardkey { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; font-size: .82rem; color: var(--muted); margin: .7rem 0 0; }
+    .cardkey i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
+    .cardnote { font-size: .9rem; color: var(--soft); margin: .6rem 0 0; max-width: 78ch; }
     .summary { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 1.3rem 0 0; }
     .summary h3 { font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 .4rem; }
     .summary ul { margin: 0; padding-left: 1.1rem; color: var(--soft); }
     .summary li { margin: .2rem 0; }
 
-    .theme { margin: 2.6rem 0 0; }
-    .theme h3 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.5rem; margin: 0 0 .3rem; }
-    .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: .3rem 2rem; padding: .85rem 0; border-top: 1px solid var(--line); }
+    /* theme sections and measure rows */
+    .ticon { width: 34px; height: 34px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+    .ticon svg { width: 20px; height: 20px; }
+    .rcard .ticon { width: 26px; height: 26px; border-radius: 7px; }
+    .rcard .ticon svg { width: 16px; height: 16px; }
+    .theme { margin: 2.6rem 0 0; scroll-margin-top: 150px; animation: rise .35s ease both; }
+    .theme h3 { display: flex; align-items: center; gap: .7rem; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.5rem; margin: 0 0 .4rem; }
+    @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: .3rem 2rem; padding: .85rem 0; border-top: 1px solid var(--line); scroll-margin-top: 150px; }
+    .row.flash { animation: flash 1.2s ease; }
+    @keyframes flash { 0%, 40% { background: var(--mid-soft); } 100% { background: transparent; } }
     .row .lab { font-weight: 500; }
     .row .val { font-family: "Newsreader", Georgia, serif !important; font-size: 1.35rem; font-variant-numeric: tabular-nums; margin-top: .1rem; }
     .row .yrs { font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
-    .verdict { display: inline-flex; align-items: center; gap: .35rem; font-size: .8rem; font-weight: 600; border-radius: 999px; padding: .12rem .6rem; margin-top: .35rem; }
+    .verdict, .win { display: inline-flex; align-items: center; gap: .35rem; font-size: .8rem; font-weight: 600; border-radius: 999px; padding: .12rem .6rem; margin-top: .35rem; }
     .verdict.better { color: var(--good); background: var(--good-soft); }
     .verdict.worse { color: var(--bad); background: var(--bad-soft); }
     .verdict.typical, .verdict.mid, .verdict.high, .verdict.low, .verdict.none { color: var(--mid); background: var(--mid-soft); }
+    .win.a { color: var(--a); background: var(--a-soft); }
+    .win.b { color: var(--cmp); background: var(--cmp-soft); }
+    .win.same, .win.none, .win.diff { color: var(--mid); background: var(--mid-soft); }
     .row .note { font-size: .82rem; color: var(--muted); margin: .3rem 0 0; }
     .row .warn { font-size: .82rem; color: var(--bad); margin: .3rem 0 0; }
+    .duo { display: grid; grid-template-columns: auto auto; justify-content: start; gap: .1rem 1.4rem; margin-top: .25rem; }
+    .duo .who2 { font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: .35rem; }
+    .duo .who2 i { width: 9px; height: 9px; border-radius: 50%; }
+    .duo .val { margin-top: 0; }
     .strip svg { display: block; width: 100%; height: auto; overflow: visible; }
     .strip text { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+    .strip circle.me { transition: cx .45s ease; }
     details.why { grid-column: 1 / -1; font-size: .88rem; color: var(--soft); }
     details.why summary { cursor: pointer; color: var(--muted); font-size: .82rem; list-style: none; }
     details.why summary::-webkit-details-marker { display: none; }
     details.why summary::before { content: "+ "; }
     details.why[open] summary::before { content: "\2212 "; }
     details.why p { margin: .35rem 0 0; padding-left: .8rem; border-left: 2px solid var(--line); max-width: 75ch; }
+    .cmpnote { margin: 1rem 0 0; padding: .7rem 1rem; border-left: 3px solid var(--cmp); background: var(--cmp-soft); border-radius: 0 10px 10px 0; color: var(--soft); max-width: 72ch; }
+
+    /* explainer pop-ups */
+    .info { display: inline-flex; align-items: center; justify-content: center; width: 1.15rem; height: 1.15rem; margin-left: .3rem; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font: 600 .72rem/1 Georgia, serif; font-style: italic; cursor: pointer; vertical-align: 1px; padding: 0; }
+    .info:hover, .info[aria-expanded="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
+    .whyno { font-size: .8rem; color: var(--muted); background: none; border: 0; padding: 0; margin-left: .5rem; text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; }
+    .whyno:hover, .whyno[aria-expanded="true"] { color: var(--ink); }
+    .pop { position: absolute; z-index: 950; max-width: min(340px, calc(100vw - 24px)); background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); border-radius: 10px; padding: .75rem .9rem; font-size: .88rem; line-height: 1.5; }
+    .pop b { display: block; margin-bottom: .25rem; }
+    .pop .more { display: block; margin-top: .45rem; }
+    .pop .src { display: block; margin-top: .45rem; font-size: .78rem; color: var(--muted); }
 
     .section { margin: 3.4rem 0 0; }
     .section h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.75rem; margin: 0; }
@@ -102,25 +127,26 @@
     .method summary::-webkit-details-marker { display: none; }
     .method summary::before { content: "+"; display: inline-block; width: 1.3rem; color: var(--good); font-weight: 400; }
     .method details[open] summary::before { content: "\2212"; }
-    .method p, .method ol, .method ul { color: var(--soft); max-width: 72ch; margin: .6rem 0 0 1.3rem; }
-    .method li { margin: .3rem 0; }
+    .method p, .method ol, .method ul { color: var(--soft); max-width: 74ch; margin: .6rem 0 0 1.3rem; }
+    .method li { margin: .35rem 0; }
+    .method h4 { font-size: .8rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 1rem 0 0 1.3rem; }
 
-    .tip { position: fixed; pointer-events: none; background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); font-size: .82rem; line-height: 1.45; padding: .45rem .65rem; border-radius: 8px; opacity: 0; transition: opacity .12s; max-width: 240px; z-index: 1100; }
+    .tip { position: fixed; pointer-events: none; background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); font-size: .82rem; line-height: 1.45; padding: .45rem .65rem; border-radius: 8px; opacity: 0; transition: opacity .12s; max-width: 260px; z-index: 1100; }
     .tip.on { opacity: 1; }
     .empty { padding: 1.2rem 1.3rem; border-left: 3px solid var(--bad); background: var(--mid-soft); border-radius: 0 10px 10px 0; max-width: 70ch; }
 
     @media (max-width: 767.98px) {
       .row { grid-template-columns: 1fr; }
       .summary { grid-template-columns: 1fr; gap: 1rem; }
-      .glance .n { font-size: 2rem; }
+      .rcard .line { grid-template-columns: 1fr; gap: .35rem; }
       .pickbar { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .45rem .5rem; padding: .5rem 0; }
       .pickbar .seg { grid-column: 1 / -1; justify-self: start; }
       .pickbar .seg button { padding: .2rem .75rem; font-size: .82rem; }
       .pickbar .pick { gap: .35rem; }
-      .pickbar .pick label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-      .pickbar select { min-width: 0; width: 100%; flex: 1 1 0; font-size: .88rem; padding: .3rem .4rem; }
-      .pickbar .clear { font-size: 1rem; text-decoration: none; }
+      .pickbar select { font-size: .88rem; padding: .3rem .4rem; }
+      .theme, .row { scroll-margin-top: 170px; }
     }
+    @media (prefers-reduced-motion: reduce) { .theme, .row.flash { animation: none; } .strip circle.me { transition: none; } }
   </style>
 </head>
 <body>
@@ -142,7 +168,7 @@
         <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
         <div class="live"><i></i>Official council figures</div>
         <h1>How does your council compare?</h1>
-        <p class="lead">Councils collect bins, decide planning permits, look after local roads and run libraries. Both Victoria and New South Wales make every council report the same figures each year. This page lines your council up against councils like it, never against the whole state, so a small country shire is not judged against inner Melbourne or Sydney.</p>
+        <p class="lead">Councils collect bins, decide planning permits, look after local roads and run libraries. Victoria and New South Wales make every council report the same figures each year. This page uses only the figures that hold up to testing, and lines your council up against councils like it, never against the whole state. Pick a second council to compare the two side by side.</p>
       </div>
 
       <div class="pickbar" id="pickbar">
@@ -157,7 +183,9 @@
           <p class="peer" id="peer"></p>
           <div class="chips" id="chips"></div>
         </section>
-        <div class="glance" id="glance"></div>
+        <div class="rcard" id="card"></div>
+        <div class="cardkey" id="cardkey"></div>
+        <p class="cardnote" id="cardnote"></p>
         <div class="summary" id="summary"></div>
         <div id="themes"></div>
       </div>
@@ -167,22 +195,25 @@
         <details open>
           <summary>The rules this page follows</summary>
           <ol>
-            <li>Every council is compared only with its official peer group, the groups each state government uses itself. Victoria and NSW are never compared with each other, because they measure different things in different ways.</li>
-            <li>There is no overall score and no league table. Each measure stands on its own, so a council's strengths and weaknesses both show.</li>
-            <li>Figures are averaged over up to three years, so one unusual year does not decide the result. Where a council's own figures swing much more than the gap between councils, the page says so.</li>
-            <li>A council is called better or weaker than most only when it sits in the top or bottom quarter of its group. Everything in between is typical.</li>
-            <li>Some measures have no right answer. Spending more on libraries can mean better service, not waste. Those are shown without a verdict.</li>
-            <li>Measures where councils' positions jump around from year to year are left out, as they say more about one-off events or accounting timing than about performance. Any year whose figures look mislabelled or out of range is left out too.</li>
-            <li>In Victoria, each council's own explanation of its result is shown next to it, in its own words.</li>
+            <li><b>Like with like.</b> Every council is compared only with its official peer group, the groups each state government uses itself. Victoria and NSW are never compared with each other, because they measure different things in different ways.</li>
+            <li><b>No overall score.</b> Each measure stands on its own. The report card shows where a council sits on each one, and the measures are not equally important, so the squares should not be added up into a score.</li>
+            <li><b>Several years, not one.</b> Figures are averaged over up to three years so one unusual year does not decide the result, and each year is shown. Where a council's own figures swing much more than the gap between councils, the page says so.</li>
+            <li><b>Only clear differences count.</b> A council is called better or weaker than most only when it sits in the top or bottom quarter of its group. In a two-council comparison, gaps smaller than a tenth of the usual spread between councils are called about the same. For residents' survey scores, which come from a few hundred residents per council, gaps under 4 points are within the margin of error and are also called about the same.</li>
+            <li><b>Cost is not the same as quality.</b> Measures of what a service costs to run are labelled cheaper or costlier to run, not better or worse, because a cheaper service can be a thinner one.</li>
+            <li><b>Some measures have no right answer.</b> Rates, spending per resident and similar figures are shown with the reason, but without a verdict.</li>
+            <li><b>No winner across groups.</b> When two councils from different groups are compared, the page shows both figures and the difference, but does not name a winner.</li>
+            <li><b>Only reliable measures.</b> Every official measure is tested before it is used. It is left out if councils' positions change a lot from one year to the next (a consistency score below 0.6 out of 1), if so many councils report exactly the same figure that it cannot separate them, if each council defines it differently, or if it reflects choices or circumstances rather than performance. A year whose figures look mislabelled is left out too. The full list is below.</li>
+            <li><b>The council's side.</b> In Victoria, each council's own explanation of its result is shown next to it, in its own words.</li>
           </ol>
         </details>
         <details>
-          <summary>What these figures cannot tell you</summary>
-          <p>They describe what councils report, not everything they do. Results reflect things councils do not control, such as the size and spread of the area, how fast it is growing, the age and income of residents, and the grants it receives. A council can also choose to spend more to provide more. The context shown under each council's name is there to keep this in view.</p>
+          <summary>Measures not included, and why</summary>
+          <div id="notused"></div>
         </details>
         <details>
-          <summary>Measures left out, and why</summary>
-          <ul id="leftout"></ul>
+          <summary>What these figures cannot tell you</summary>
+          <p>The figures are reported by the councils themselves. Victoria's are checked by the state and partly audited, and NSW's financial figures come from audited statements, but definitions can still be applied a little differently from one council to the next.</p>
+          <p>They describe what councils report, not everything they do. Results also reflect things councils do not control, such as the size and spread of the area, how fast it is growing, the age and income of residents, and the grants it receives. The context under each council's name is there to keep this in view. A good result here is a reason to ask how, and a weak one a reason to ask why, not a final judgement.</p>
         </details>
         <details>
           <summary>Sources</summary>
@@ -208,6 +239,7 @@
     const txt = (parent, x, y, s, attrs = {}) => { const t = el("text", { x, y, ...attrs }, parent); t.textContent = s; return t; };
     const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
     const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
     const showTip = (e, html) => {
       tip.innerHTML = html; tip.classList.add("on");
       tip.style.left = Math.max(8, Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8)) + "px";
@@ -215,18 +247,41 @@
     };
     const hideTip = () => tip.classList.remove("on");
 
+    // a simple picture for each theme, so the topic registers at a glance
+    const ICON = {
+      "Bins and recycling": ["--k-hydro", "--c-hydro", '<path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/><path d="M10 11v6M14 11v6"/>'],
+      "Planning permits": ["--k-wind", "--c-wind", '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 16l3-3 3 3M10 15.5V19h4v-3.5"/>'],
+      "Local roads": ["--k-coal", "--c-coal", '<path d="M7 21 10.5 3M17 21 13.5 3"/><path d="M12 6v2M12 11v2.5M12 17v3"/>'],
+      "Roads and community assets": ["--k-coal", "--c-coal", '<path d="M3 17h18M3 13c3.5-5 14.5-5 18 0"/><path d="M6 17v-4.5M18 17v-4.5M10 17v-5.5M14 17v-5.5"/>'],
+      "Libraries": ["--k-solar", "--c-solar", '<path d="M3 6.5c3-1.2 6-1 9 1 3-2 6-2.2 9-1V19c-3-1.2-6-1-9 1-3-2-6-2.2-9-1z"/><path d="M12 7.5V20"/>'],
+      "Pools and leisure": ["--k-wind", "--c-wind", '<path d="M3 16c2 0 2.2-1.6 4.5-1.6S10 16 12 16s2.3-1.6 4.5-1.6S19 16 21 16M3 20c2 0 2.2-1.6 4.5-1.6S10 20 12 20s2.3-1.6 4.5-1.6S19 20 21 20"/><path d="M8 13V6a2 2 0 0 1 4 0M14 13V6a2 2 0 0 1 4 0M8 9h6"/>'],
+      "Pets and animals": ["--k-battery", "--c-battery", '<circle cx="6.5" cy="10" r="1.8"/><circle cx="10" cy="6.5" r="1.8"/><circle cx="14" cy="6.5" r="1.8"/><circle cx="17.5" cy="10" r="1.8"/><path d="M12 12c-2.8 0-5 3.4-5 5.5 0 1.6 1.3 2.5 2.7 2.5.9 0 1.5-.5 2.3-.5s1.4.5 2.3.5c1.4 0 2.7-.9 2.7-2.5 0-2.1-2.2-5.5-5-5.5z"/>'],
+      "Food safety": ["--k-solar", "--c-solar", '<path d="M7 3v7a2 2 0 0 0 4 0V3M9 12v9"/><path d="M17 21V3c-2.2 1.2-3.5 4-3.5 7.5H17"/>'],
+      "Maternal and child health": ["--k-battery", "--c-battery", '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>'],
+      "Decisions and trust": ["--k-wind", "--c-wind", '<path d="M4 5h16v10H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/>'],
+      "Running the council": ["--k-coal", "--c-coal", '<path d="M3 21h18M4 10h16M12 3l9 5H3z"/><path d="M6.5 10v8M10.5 10v8M13.5 10v8M17.5 10v8"/>'],
+      "Money": ["--k-hydro", "--c-hydro", '<circle cx="12" cy="12" r="9"/><path d="M15 9.2c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .8-3 2.1s1.3 1.8 3 2.2 3 1 3 2.3-1.3 2.1-3 2.1c-1.5 0-2.7-.6-3.1-1.7M12 6v1.7M12 16.4V18"/>'],
+    };
+    const icon = (t) => {
+      const [bg, fg, inner] = ICON[t] || ["--mid-soft", "--muted", '<circle cx="12" cy="12" r="6"/>'];
+      return `<span class="ticon" style="background:var(${bg});color:var(${fg})" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${inner}</svg></span>`;
+    };
+
     const fmt = (v, unit) => {
       if (v == null) return "n/a";
-      if (unit === "pct") return (v * 100).toFixed(Math.abs(v) < 0.1 ? 1 : 0) + "%";
+      if (unit === "pct") return (v * 100).toFixed(Math.abs(v) < 0.01 ? 2 : Math.abs(v) < 0.1 ? 1 : 0) + "%";
       if (unit === "days") return (v < 10 ? v.toFixed(1) : Math.round(v)) + " days";
       if (unit === "dollars") return (v < 0 ? "−$" : "$") + (Math.abs(v) >= 100 ? Math.round(Math.abs(v)).toLocaleString("en-GB") : Math.abs(v).toFixed(2));
       if (unit === "score") return Math.round(v) + " out of 100";
       if (unit === "ratio") return v.toFixed(2);
       return v >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(1);
     };
-    const VERDICT = {
-      better: "Better than most similar councils", typical: "About typical for similar councils", worse: "Weaker than most similar councils",
-      high: "Higher than most similar councils", mid: "About typical for similar councils", low: "Lower than most similar councils",
+    const verdictText = (ind, band) => {
+      if (band === "none") return "Too few similar councils to compare";
+      if (ind.kind === "cost" && band === "better") return "Cheaper to run than most similar councils";
+      if (ind.kind === "cost" && band === "worse") return "Costlier to run than most similar councils";
+      return { better: "Better than most similar councils", typical: "About typical for similar councils", worse: "Weaker than most similar councils",
+        high: "Higher than most similar councils", mid: "About typical for similar councils", low: "Lower than most similar councils" }[band];
     };
 
     // keep the picker bar just under the site header, whatever its height
@@ -236,17 +291,19 @@
 
     let state = "vic", current = null, other = "";
 
-    // ------------------------------------------------------------ explainer pop-ups
+    // ------------------------------------------------------------ pop-ups
     let pop = null;
     function closePop() { if (pop) { pop.btn.setAttribute("aria-expanded", "false"); pop.box.remove(); pop = null; } }
     function openPop(btn, ind, S, kind) {
       if (pop && pop.btn === btn) { closePop(); return; }
       closePop();
       const box = document.createElement("div"); box.className = "pop"; box.setAttribute("role", "dialog");
-      if (kind === "why") box.innerHTML = `<b>Why no winner?</b>${esc(ind.note || "A higher or lower figure is not better or worse in itself.")}`;
+      if (kind === "why") box.innerHTML = `<b>Why no winner?</b>${esc(ind.note || "")}`;
+      else if (kind === "group") box.innerHTML = `<b>Why no winner?</b>These councils are in different official groups, which face different conditions such as size, density and growth. The figures and the gap are shown, but calling a winner would not be like for like.`;
       else box.innerHTML = `<b>${esc(ind.label)}</b>${esc(ind.explain || "")}` +
-        (ind.better ? ` ${ind.better === "higher" ? "Higher is better." : "Lower is better."}` : `<span style="display:block;margin-top:.45rem"><b style="display:inline">Why no better or worse?</b> ${esc(ind.note || "")}</span>`) +
-        `<span class="src">Source: ${esc(S.source)}.</span>`;
+        (ind.better ? `<span class="more">${ind.better === "higher" ? "Higher is better." : "Lower is better."}${ind.kind === "cost" ? " It measures cost, so a lower figure means cheaper to run, which is not always the same as a better service." : ""}${ind.kind === "survey" ? " It comes from a survey of a few hundred residents, so gaps of a few points are within the margin of error." : ""}</span>`
+          : `<span class="more"><b style="display:inline">Why no better or worse?</b> ${esc(ind.note || "")}</span>`) +
+        `<span class="src">Source: ${esc(S.source)}. Consistency from year to year: ${ind.stability != null ? ind.stability.toFixed(2) : "n/a"} out of 1.</span>`;
       document.body.appendChild(box);
       const r = btn.getBoundingClientRect();
       box.style.left = Math.max(12, Math.min(r.left + scrollX - 10, scrollX + innerWidth - box.offsetWidth - 12)) + "px";
@@ -258,30 +315,41 @@
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePop(); });
     addEventListener("scroll", () => { if (pop && pop.btn.getBoundingClientRect().bottom < 0) closePop(); }, { passive: true });
 
-    function contextChips(S, c) {
+    function contextChips(S, c, c2) {
+      // background figures; with two councils, both side by side in their colours
       const box = $("chips"); box.innerHTML = "";
+      const pair = (a, b) => c2 ? `<b style="color:var(--a)">${a}</b> · <b style="color:var(--cmp)">${b}</b>` : `<b>${a}</b>`;
       S.context.forEach((k) => {
-        const v = c.context[k.id];
-        if (v == null) return;
+        const v = c.context[k.id], v2 = c2 ? c2.context[k.id] : null;
+        if (v == null && v2 == null) return;
         const s = document.createElement("span");
-        s.innerHTML = `${esc(k.label)} <b>${fmt(v, k.unit)}</b>`;
+        s.innerHTML = `${esc(k.label)} ${pair(fmt(v, k.unit), fmt(v2, k.unit))}`;
         if (k.note) s.title = k.note;
         box.appendChild(s);
       });
-      if (state === "nsw") { const s = document.createElement("span"); s.innerHTML = `OLG group <b>${c.olg_group}</b>`; box.appendChild(s); }
+      if (state === "nsw") { const s = document.createElement("span"); s.innerHTML = `OLG group ${pair(c.olg_group, c2 && c2.olg_group)}`; s.title = "The Office of Local Government's finer grouping of NSW councils"; box.appendChild(s); }
     }
 
-    // which of two councils does better on one measure: "a", "b", "same" or "none"
-    function winner(ind, a, b, peers) {
-      const va = a.values[ind.id], vb = b.values[ind.id];
-      if (!va || !vb) return "none";
-      if (!ind.better) return "none";
+    const spreadOf = (ind, peers) => {
       const vals = peers.filter((p) => p.values[ind.id]).map((p) => p.values[ind.id].v).sort((x, y) => x - y);
       const q = (f) => vals[Math.min(vals.length - 1, Math.floor(f * (vals.length - 1)))];
-      const spread = vals.length >= 4 ? q(0.75) - q(0.25) : Math.abs(va.v - vb.v);
-      if (Math.abs(va.v - vb.v) <= 0.1 * spread || va.v === vb.v) return "same";
-      const aHigher = va.v > vb.v;
-      return (ind.better === "higher") === aHigher ? "a" : "b";
+      return vals.length >= 4 ? q(0.75) - q(0.25) : 0;
+    };
+    // compare two councils on one measure: "a", "b", "same", "diff" (no winner called) or "none"
+    function winner(ind, a, b, peers, sameGroup) {
+      const va = a.values[ind.id], vb = b.values[ind.id];
+      if (!va || !vb) return "none";
+      const gap = Math.abs(va.v - vb.v);
+      const tol = Math.max(0.1 * spreadOf(ind, peers), ind.kind === "survey" ? 4 : 0);
+      if (gap <= tol || va.v === vb.v) return "same";
+      if (!ind.better || !sameGroup) return "diff";
+      return (ind.better === "higher") === (va.v > vb.v) ? "a" : "b";
+    }
+    function diffText(ind, a, b) {
+      const va = a.values[ind.id].v, vb = b.values[ind.id].v, hiC = va >= vb ? a : b, lo = Math.min(va, vb), gap = Math.abs(va - vb);
+      const by = ind.unit === "pct" ? (gap * 100).toFixed(gap < 0.01 ? 2 : gap < 0.1 ? 1 : 0) + " points" : ind.unit === "score" ? Math.round(gap) + " points" : fmt(gap, ind.unit);
+      const rel = lo > 0 && ind.unit !== "pct" && ind.unit !== "score" ? ` (${Math.round(100 * gap / lo)}% more)` : "";
+      return `${esc(hiC.name)}${hiC.name.endsWith("s") ? "'" : "'s"} figure is ${by} higher${rel}`;
     }
 
     function strip(host, S, ind, c, peers, c2) {
@@ -309,16 +377,23 @@
       }
       const v = c.values[ind.id], band = v.band || "none";
       const col = c2 ? css("--a") : band === "better" ? css("--good") : band === "worse" ? css("--bad") : css("--ink");
-      const me = el("circle", { cx: x(v.v), cy: 18, r: 7.5, fill: col, stroke: css("--surface"), "stroke-width": 2 }, svg);
+      const me = el("circle", { class: "me", cx: x(v.v), cy: 18, r: 7.5, fill: col, stroke: css("--surface"), "stroke-width": 2 }, svg);
       me.addEventListener("pointermove", (e) => showTip(e, `${esc(c.name)}<br><b>${fmt(v.v, ind.unit)}</b>`));
       me.addEventListener("pointerleave", hideTip);
       txt(svg, pad, H - 2, fmt(lo, ind.unit));
       txt(svg, W - pad, H - 2, fmt(hi, ind.unit), { "text-anchor": "end" });
       if (x(med) > pad + 55 && x(med) < W - pad - 55) txt(svg, x(med), H - 2, "typical", { "text-anchor": "middle" });
       if (ind.better) {
-        const right = ind.better === "higher";
-        txt(svg, right ? W - pad : pad, 6, right ? "better →" : "← better", { "text-anchor": right ? "end" : "start" });
+        const right = ind.better === "higher", word = ind.kind === "cost" ? "cheaper" : "better";
+        txt(svg, right ? W - pad : pad, 6, right ? word + " →" : "← " + word, { "text-anchor": right ? "end" : "start" });
       }
+    }
+
+    const yearsLine = (ind, v) => Object.entries(v.years).map(([y, x]) => `${y} ${ind.unit === "score" ? Math.round(x) : fmt(x, ind.unit)}`).join(" · ");
+    function jump(id) {
+      const r = document.getElementById(id); if (!r) return;
+      r.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (r.classList.contains("row")) { r.classList.remove("flash"); void r.offsetWidth; r.classList.add("flash"); }
     }
 
     function render() {
@@ -329,85 +404,104 @@
       if (!c2) other = "";
       $("clear").hidden = !c2;
       const peers = S.councils.filter((x) => x.group === c.group);
-      const sameGroup = c2 && c2.group === c.group;
+      const sameGroup = !c2 || c2.group === c.group;
       const stripPeers = c2 && !sameGroup ? S.councils.filter((x) => x.group === c.group || x.group === c2.group) : peers;
+      const themesOf = [...new Set(S.indicators.map((i) => i.theme))];
 
       $("name").innerHTML = c2 ? `<span style="color:var(--a)">${esc(c.name)}</span> <span style="color:var(--muted);font-size:.6em">and</span> <span style="color:var(--cmp)">${esc(c2.name)}</span>` : esc(c.name);
       $("peer").textContent = c2
-        ? (sameGroup ? "Both are " + (S.group_text[c.group] || c.group) + ", so this is a like-for-like comparison. Dots show the other councils in the group." :
-          c.name + " is in the " + c.group.toLowerCase() + " group and " + c2.name + " in the " + c2.group.toLowerCase() + " group. Councils in different groups face different conditions, so read this comparison with care.") +
+        ? (sameGroup ? "Both are " + (S.group_text[c.group] || c.group) + ", so this is a like-for-like comparison. Grey dots show the other councils in the group." :
+          c.name + " is in the " + c.group.toLowerCase() + " group and " + c2.name + " in the " + c2.group.toLowerCase() + " group. Councils in different groups face different conditions, so the page shows the figures and the gaps but does not name a winner.") +
           " Figures are averages for " + S.years + "."
         : "Compared with the " + (peers.length - 1) + " other " + (S.group_text[c.group] || c.group.toLowerCase() + " councils") +
           " in " + S.name + ", using " + S.peer_note + ". Figures are averages for " + S.years + ".";
-      contextChips(S, c);
+      contextChips(S, c, c2);
+
+      // the report card
+      const cls = (ind) => {
+        if (c2) { const w = winner(ind, c, c2, stripPeers, sameGroup); return w === "a" || w === "b" || w === "same" ? w : "neutral"; }
+        const v = c.values[ind.id]; if (!v) return "none";
+        return !ind.better ? "neutral" : v.band === "better" || v.band === "worse" || v.band === "typical" ? v.band : "none";
+      };
+      const card = $("card"); card.innerHTML = "";
+      themesOf.forEach((t) => {
+        const inds = S.indicators.filter((i) => i.theme === t && (c.values[i.id] || (c2 && c2.values[i.id])));
+        if (!inds.length) return;
+        const line = document.createElement("div"); line.className = "line";
+        line.innerHTML = `<button type="button" class="tname">${icon(t)}${esc(t)}</button><div class="sq"></div>`;
+        line.querySelector(".tname").addEventListener("click", () => jump("t-" + slug(t)));
+        inds.forEach((ind) => {
+          const k = cls(ind), b = document.createElement("button");
+          b.type = "button"; b.className = k; b.setAttribute("aria-label", ind.label);
+          const v = c.values[ind.id], v2 = c2 && c2.values[ind.id];
+          const detail = c2 ? `${esc(c.name)} <b>${v ? fmt(v.v, ind.unit) : "n/a"}</b><br>${esc(c2.name)} <b>${v2 ? fmt(v2.v, ind.unit) : "n/a"}</b>`
+            : (v ? `<b>${fmt(v.v, ind.unit)}</b><br>${ind.better ? verdictText(ind, v.band || "none") : "No better or worse"}` : "No figure");
+          b.addEventListener("pointermove", (e) => showTip(e, `${esc(ind.label)}<br>${detail}`));
+          b.addEventListener("pointerleave", hideTip);
+          b.addEventListener("click", () => { hideTip(); jump("m-" + ind.id); });
+          line.querySelector(".sq").appendChild(b);
+        });
+        card.appendChild(line);
+      });
+      const key = c2
+        ? [["a", `${esc(c.name)} does better`], ["b", `${esc(c2.name)} does better`], ["same", "About the same"], ["neutral", sameGroup ? "No right answer" : "No winner called"]]
+        : [["better", "Better than most similar councils"], ["typical", "About typical"], ["worse", "Weaker than most"], ["neutral", "No right answer"]];
+      $("cardkey").innerHTML = key.map(([k, l]) => `<span><i class="${k}" style="${k === "a" ? "background:var(--a)" : k === "b" ? "box-shadow:inset 0 0 0 3px var(--cmp)" : k === "better" ? "background:var(--good)" : k === "worse" ? "background:var(--bad)" : k === "neutral" ? "box-shadow:inset 0 0 0 1.5px var(--dot)" : "background:var(--dot)"}"></i>${l}</span>`).join("");
 
       const judged = S.indicators.filter((i) => i.better && c.values[i.id] && c.values[i.id].band);
       const pos = (i) => c.values[i.id].pos;
+      const li = (arr, none) => arr.length ? arr.slice(0, 5).map((i) => `<li><a href="#m-${i.id}" data-jump="m-${i.id}">${esc(i.label)}</a> <span class="text-body-secondary">(${esc(i.theme.toLowerCase())})</span></li>`).join("") : `<li>${none}</li>`;
       if (c2) {
         const both = S.indicators.filter((i) => i.better && c.values[i.id] && c2.values[i.id]);
-        const w = (k) => both.filter((i) => winner(i, c, c2, stripPeers) === k);
-        const A = w("a"), B = w("b"), same = w("same");
-        $("glance").innerHTML = [[A.length, `measures where ${esc(c.name)} does better`, "--a"], [same.length, "about the same", "--ink"], [B.length, `measures where ${esc(c2.name)} does better`, "--cmp"]]
-          .map(([n, l, col]) => `<div><div class="n" style="color:var(${col})">${n}</div><div class="l">${l}, of ${both.length}</div></div>`).join("");
-        const li = (arr, none) => arr.length ? arr.slice(0, 5).map((i) => `<li>${esc(i.label)} <span class="text-body-secondary">(${esc(i.theme.toLowerCase())})</span></li>`).join("") : `<li>${none}</li>`;
-        $("summary").innerHTML = `<div><h3 style="color:var(--a)">Where ${esc(c.name)} does better</h3><ul>${li(A, "None")}</ul></div>
-          <div><h3 style="color:var(--cmp)">Where ${esc(c2.name)} does better</h3><ul>${li(B, "None")}</ul></div>`;
+        const w = (k) => both.filter((i) => winner(i, c, c2, stripPeers, sameGroup) === k);
+        const A = w("a"), B = w("b");
+        $("cardnote").textContent = sameGroup
+          ? `Each square is one measure. Of the ${both.length} measures with a right answer, ${c.name} does better on ${A.length}, ${c2.name} on ${B.length}, and the two are about the same on ${w("same").length}. Some measures matter more than others, so this is a guide to where each is stronger, not a score.`
+          : `Each square is one measure. Because the councils are in different groups, no winner is called. Filled squares show where the two are about the same.`;
+        $("summary").innerHTML = sameGroup ? `<div><h3 style="color:var(--a)">Where ${esc(c.name)} does better</h3><ul>${li(A, "None")}</ul></div>
+          <div><h3 style="color:var(--cmp)">Where ${esc(c2.name)} does better</h3><ul>${li(B, "None")}</ul></div>` : "";
       } else {
         const n = (b) => judged.filter((i) => c.values[i.id].band === b).length;
-        $("glance").innerHTML = [["better", "better than most similar councils"], ["typical", "about typical"], ["worse", "weaker than most"]]
-          .map(([b, l]) => `<div><div class="n" style="color:var(${b === "better" ? "--good" : b === "worse" ? "--bad" : "--ink"})">${n(b)}</div><div class="l">of ${judged.length} measures ${l}</div></div>`).join("");
-        const best = judged.filter((i) => c.values[i.id].band === "better").sort((a, b) => pos(b) - pos(a)).slice(0, 4);
-        const worst = judged.filter((i) => c.values[i.id].band === "worse").sort((a, b) => pos(a) - pos(b)).slice(0, 4);
-        const li = (arr, none) => arr.length ? arr.map((i) => `<li>${esc(i.label)} <span class="text-body-secondary">(${esc(i.theme.toLowerCase())})</span></li>`).join("") : `<li>${none}</li>`;
+        $("cardnote").textContent = `Each square is one measure, so you can see at a glance where ${c.name} stands out. Of ${judged.length} measures with a right answer, it is better than most similar councils on ${n("better")}, typical on ${n("typical")} and weaker on ${n("worse")}. Some measures matter more than others, so this is a guide, not a score. Click a square to jump to it.`;
+        const best = judged.filter((i) => c.values[i.id].band === "better").sort((a, b) => pos(b) - pos(a));
+        const worst = judged.filter((i) => c.values[i.id].band === "worse").sort((a, b) => pos(a) - pos(b));
         $("summary").innerHTML = `<div><h3>Stands out for</h3><ul>${li(best, "No measure in the top quarter of its group")}</ul></div>
           <div><h3>Worth a closer look</h3><ul>${li(worst, "No measure in the bottom quarter of its group")}</ul></div>`;
       }
+      $("summary").querySelectorAll("[data-jump]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); jump(a.dataset.jump); }));
 
+      // the measures, theme by theme
       const themes = $("themes"); themes.innerHTML = "";
-      [...new Set(S.indicators.map((i) => i.theme))].forEach((t) => {
+      if (c2 && !sameGroup) themes.insertAdjacentHTML("beforeend", `<p class="cmpnote">These two councils are in different official groups. The grey dots show both groups together, and each measure shows the two figures and the gap without naming a winner.</p>`);
+      themesOf.forEach((t) => {
         const inds = S.indicators.filter((i) => i.theme === t && (c.values[i.id] || (c2 && c2.values[i.id])));
         if (!inds.length) return;
-        const sec = document.createElement("section"); sec.className = "theme";
-        sec.innerHTML = `<h3>${esc(t)}</h3>`;
+        const sec = document.createElement("section"); sec.className = "theme"; sec.id = "t-" + slug(t);
+        sec.innerHTML = `<h3>${icon(t)}${esc(t)}</h3>`;
         themes.appendChild(sec);
         inds.forEach((ind) => {
           const v = c.values[ind.id], band = v ? (v.band || "none") : "none";
           const withData = stripPeers.filter((p) => p.values[ind.id]);
-          const row = document.createElement("div"); row.className = "row";
+          const row = document.createElement("div"); row.className = "row"; row.id = "m-" + ind.id;
           const label = `<div class="lab">${esc(ind.label)}<button type="button" class="info" aria-label="What this means" aria-expanded="false">i</button></div>`;
           let left;
           if (c2) {
-            const v2 = c2.values[ind.id];
-            let wn = winner(ind, c, c2, stripPeers);
-            let wtext = wn === "a" ? `${esc(c.name)} does better` : wn === "b" ? `${esc(c2.name)} does better` : wn === "same" ? "About the same" : "Not available for both";
-            let whyno = "";
-            if (!ind.better && v && v2) {
-              // no right answer: say plainly which figure is higher and by how much
-              const hiC = v.v >= v2.v ? c : c2, lo = Math.min(v.v, v2.v), hi = Math.max(v.v, v2.v), gap = hi - lo;
-              const vals = stripPeers.filter((p) => p.values[ind.id]).map((p) => p.values[ind.id].v).sort((x, y) => x - y);
-              const q = (f) => vals[Math.min(vals.length - 1, Math.floor(f * (vals.length - 1)))];
-              const spread = vals.length >= 4 ? q(0.75) - q(0.25) : gap;
-              if (gap <= 0.1 * spread) wtext = "About the same";
-              else {
-                const by = ind.unit === "pct" ? (gap * 100).toFixed(gap < 0.1 ? 1 : 0) + " points" : fmt(gap, ind.unit);
-                const rel = lo > 0 ? ` (${Math.round(100 * gap / lo)}% more)` : "";
-                wtext = `${esc(hiC.name)}${hiC.name.endsWith("s") ? "'" : "'s"} figure is ${by} higher${rel}`;
-              }
-              wn = "same";
-              whyno = `<button type="button" class="whyno" aria-expanded="false">Why no winner?</button>`;
-            }
+            const v2 = c2.values[ind.id], wn = winner(ind, c, c2, stripPeers, sameGroup);
+            const wtext = wn === "a" ? `${esc(c.name)} ${ind.kind === "cost" ? "runs it for less" : "does better"}` : wn === "b" ? `${esc(c2.name)} ${ind.kind === "cost" ? "runs it for less" : "does better"}`
+              : wn === "same" ? "About the same" : wn === "diff" ? diffText(ind, c, c2) : "Not available for both";
+            const why = wn === "diff" ? `<button type="button" class="whyno" data-kind="${ind.better ? "group" : "why"}" aria-expanded="false">Why no winner?</button>` : "";
+            const ys = (x, vv) => vv ? `<div class="yrs">${esc(x.name)}: ${yearsLine(ind, vv)}</div>` : "";
             left = `${label}<div class="duo">
                 <div class="who2"><i style="background:var(--a)"></i>${esc(c.name)}</div><div class="who2"><i style="border:2px solid var(--cmp)"></i>${esc(c2.name)}</div>
                 <div class="val">${v ? fmt(v.v, ind.unit) : "n/a"}</div><div class="val">${v2 ? fmt(v2.v, ind.unit) : "n/a"}</div>
-              </div>
-              <span class="win ${wn}">${wtext}</span>${whyno}
+              </div>${ys(c, v)}${ys(c2, v2)}
+              <span class="win ${wn}">${wtext}</span>${why}
               ${(v && v.swings) || (v2 && v2.swings) ? `<p class="warn">${esc([v && v.swings ? c.name : null, v2 && v2.swings ? c2.name : null].filter(Boolean).join(" and "))}: figures swing a lot between years, so treat this with care.</p>` : ""}`;
           } else {
-            const yrs = Object.entries(v.years).map(([y, x]) => `${y} ${fmt(x, ind.unit)}`).join(" · ");
-            const verdict = band === "none" ? "Too few similar councils to compare" : VERDICT[band];
-            left = `${label}<div class="val">${fmt(v.v, ind.unit)}</div><div class="yrs">${yrs}</div>
-              <span class="verdict ${band}">${verdict}</span>
+            left = `${label}<div class="val">${fmt(v.v, ind.unit)}</div><div class="yrs">${yearsLine(ind, v)}</div>
+              <span class="verdict ${band}">${ind.better ? verdictText(ind, band) : verdictText(ind, band)}</span>
               ${ind.note ? `<p class="note">${esc(ind.note)}</p>` : ""}
+              ${ind.kind === "survey" ? `<p class="note">From a survey of a few hundred residents, so gaps of a few points are within the margin of error.</p>` : ""}
               ${v.swings ? `<p class="warn">This council's own figures swing a lot between years, so treat the comparison with care.</p>` : ""}`;
           }
           const whys = [[c, v], [c2, c2 && c2.values[ind.id]]].filter(([x, vv]) => x && vv && vv.why);
@@ -416,16 +510,19 @@
           sec.appendChild(row);
           row.querySelector(".info").addEventListener("click", (e) => { e.stopPropagation(); openPop(e.currentTarget, ind, S); });
           const wb = row.querySelector(".whyno");
-          if (wb) wb.addEventListener("click", (e) => { e.stopPropagation(); openPop(e.currentTarget, ind, S, "why"); });
+          if (wb) wb.addEventListener("click", (e) => { e.stopPropagation(); openPop(e.currentTarget, ind, S, wb.dataset.kind); });
           if (v && withData.length >= 2) strip(row.querySelector(".strip"), S, ind, c, withData, c2);
         });
       });
-      if (c2 && !sameGroup) themes.insertAdjacentHTML("afterbegin", `<p class="cmpnote">These two councils are in different official groups. The dots show both groups together, and "does better" compares the two figures directly.</p>`);
 
-      $("leftout").innerHTML = S.left_out.length ? S.left_out.map((i) => `<li><b>${esc(i.label)}</b>. ${esc(i.why)}</li>`).join("")
-        : "<li>None for " + S.name + ".</li>";
+      // measures not included
+      const groups = {};
+      S.left_out.forEach((i) => (groups[i.category] = groups[i.category] || []).push([i.label, i.why]));
+      S.not_used.forEach((i) => (groups[i.category] = groups[i.category] || []).push([i.label, i.why]));
       const extra = D.notes.filter((x) => x.startsWith(state === "vic" ? "Victoria" : "NSW") && !/left out\. /.test(x));
-      if (extra.length) $("leftout").innerHTML += extra.map((x) => `<li>${esc(x.replace(/^[^,]+, /, ""))}.</li>`).join("");
+      $("notused").innerHTML = `<p>${S.name} publishes more measures than this page uses. These are the ones left out, grouped by the reason. The tests are applied by the script that builds this page, so they are the same for every council.</p>` +
+        Object.entries(groups).map(([g, arr]) => `<h4>${esc(g)}</h4><ul>${arr.map(([l, w]) => `<li><b>${esc(l)}</b>. ${esc(w)}</li>`).join("")}</ul>`).join("") +
+        (extra.length ? `<h4>Single years left out</h4><ul>${extra.map((x) => `<li>${esc(x.replace(/^[^,]+, /, ""))}.</li>`).join("")}</ul>` : "");
       $("sources").textContent = "Victoria: " + D.states.vic.source + ", full data set for 2020-21 to 2024-25. New South Wales: " + D.states.nsw.source +
         ", spreadsheets for 2022-23, 2023-24 and 2024-25. Both are refreshed here once a year when the governments publish new figures.";
       $("generated").textContent = "Built " + D.generated.replace("T", " ").replace("Z", " UTC") + ".";
