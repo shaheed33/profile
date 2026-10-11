@@ -77,6 +77,25 @@ def fetch_targets() -> list[dict]:
             prev["region"] = "Metropolitan Melbourne and regional"
         else:
             rows[name] = rec
+    # A few councils are missing from the lists but are on the page's map, whose
+    # hotspots carry the same text. Use those (final targets only, not drafts).
+    for m in re.finditer(r'"title":"([^"]+)"[^{}]*?"description":"(.*?)"\}', page):
+        name = re.sub(r"\s+(Shire|City|Rural City|Borough)?\s*Council$", "", m.group(1).strip()).strip()
+        name = re.sub(r"^Borough of\s+", "", name)
+        body = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " | ", m.group(2)))
+        if name in rows or "Additional number of homes to 2051" not in body:
+            continue
+        pre = [n for n in re.findall(r"\d[\d,]*", body.split("Additional")[0]) if n != "2023"]
+        target = re.search(r"to 2051\s*-?\s*\+?\s*([\d,]+)", body)
+        if not (pre and target):
+            continue
+        green = re.search(r"Greenfield target \+?([\d,]+)", body)
+        non_green = re.search(r"Non-greenfield target \+?([\d,]+)", body)
+        rows[name] = {"council": name, "region": "from the map", "homes_2023": _num(pre[-1]),
+                      "target_2051": _num(target.group(1)),
+                      "greenfield": _num(green.group(1)) if green else "",
+                      "non_greenfield": _num(non_green.group(1)) if non_green else ""}
+        print("from the map:", rows[name])
     out = sorted(rows.values(), key=lambda r: r["council"])
     total = sum(r["target_2051"] for r in out)
     print(f"{len(out)} councils, {total:,} homes to 2051")
