@@ -47,7 +47,7 @@ def fetch_targets() -> list[dict]:
     text = requests.get(TARGETS_URL, headers=BROWSER, timeout=60).text
     page = html.unescape(text).replace("\\/", "/").replace('\\"', '"')
     page = page.replace(" ", " ").replace("&nbsp;", " ")
-    rows, region = {}, None
+    rows, region, seen = {}, None, set()
     pat = r'<summary class="details__summary">(.*?)</summary>\s*<div class="details__content">(.*?)</div>'
     for m in re.finditer(pat, page, re.S):
         head = re.sub(r"<[^>]+>", "", m.group(1)).strip()
@@ -75,6 +75,9 @@ def fetch_targets() -> list[dict]:
                "target_2051": _num(target.group(1)),
                "greenfield": _num(green.group(1)) if green else "",
                "non_greenfield": _num(non_green.group(1)) if non_green else ""}
+        if (name, rec["homes_2023"]) in seen:
+            continue            # the same entry repeated further down the page
+        seen.add((name, rec["homes_2023"]))
         if name in rows:
             # Mitchell is listed in both: its greenfield part is inside Melbourne's
             # growth boundary and the rest is regional. One target, two home counts.
@@ -98,7 +101,9 @@ def fetch_targets() -> list[dict]:
             continue
         green = re.search(r"Greenfield target \+?([\d,]+)", body)
         non_green = re.search(r"Non-greenfield target \+?([\d,]+)", body)
-        rows[name] = {"council": name, "region": "from the map", "homes_2023": _num(pre[-1]),
+        # Hume is a Melbourne growth-area council (it is in the map legend's growth areas)
+        rows[name] = {"council": name, "region": "Metropolitan Melbourne" if name == "Hume" else "Regional Victoria",
+                      "homes_2023": _num(pre[-1]),
                       "target_2051": _num(target.group(1)),
                       "greenfield": _num(green.group(1)) if green else "",
                       "non_greenfield": _num(non_green.group(1)) if non_green else ""}
