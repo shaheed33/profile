@@ -163,14 +163,15 @@ def fetch_remoteness() -> None:
                     continue
                 f.columns = [str(c) for c in f.loc[hdr[0]]]
                 f = f.loc[hdr[0] + 1:]
-            counts.append(f)
+            f = f.loc[:, ~pd.Index(f.columns).duplicated()]
+            pc = [c for c in f.columns if re.fullmatch(r"Person.*", str(c), re.I)]
+            if pc:
+                counts.append(pd.DataFrame({"MB_CODE_2021": f["MB_CODE_2021"].astype(str).values,
+                                            "persons": f[pc[0]].values}))
     if not counts:
         raise SystemExit("No mesh block counts found")
-    cnt = pd.concat(counts)
-    print("mesh block count columns", list(cnt.columns), len(cnt))
-    pcol = col(cnt, r"Person.*")
-    cnt = cnt[[col(cnt, "MB_CODE_2021"), pcol]].rename(columns={pcol: "persons"})
-    cnt.columns = ["MB_CODE_2021", "persons"]
+    cnt = pd.concat(counts, ignore_index=True)
+    print(f"mesh block counts: {len(cnt):,} mesh blocks")
     cnt["persons"] = pd.to_numeric(cnt["persons"], errors="coerce").fillna(0)
     a = lga[[col(lga, "MB_CODE_2021"), col(lga, "LGA_CODE_2021")]]
     a.columns = ["MB_CODE_2021", "LGA_CODE_2021"]
