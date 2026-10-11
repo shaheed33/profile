@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Is Victoria building enough homes? | Abdulla Shaheed</title>
+  <meta name="description" content="Victoria's promise of 800,000 homes in ten years, tracked every month against what is actually being built, down to every council.">
+  <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="Is Victoria building enough homes?">
+  <meta property="og:description" content="The 800,000 homes promise, tracked monthly against what is being built, council by council.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shaheed.work/vic-housing">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    :root {
+      --need: #B4502A; --have: #1F3D73; --live: #1E8A5A;
+      --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14);
+      /* diverging scale for council pace: behind (red) . about on pace (grey) . ahead (blue) */
+      --p0: #B5402F; --p1: #E7A08C; --p2: #E7E5E1; --p3: #9DB8E0; --p4: #2F5DA8;
+    }
+    [data-theme="dark"] {
+      --need: #E58A5F; --have: #A9C1EE; --live: #5FD39B;
+      --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+      --p0: #E06B55; --p1: #8A4537; --p2: #3A3F48; --p3: #3E5E8E; --p4: #8FB3EE;
+    }
+    .page { max-width: 1040px; }
+    .lead { max-width: 58ch; margin-bottom: .6rem; }
+    .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
+    .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); position: relative; }
+    .live i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--live); animation: ping 1.8s ease-out infinite; }
+    @keyframes ping { from { transform: scale(1); opacity: .7; } to { transform: scale(3); opacity: 0; } }
+    .src { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .7rem; }
+
+    .duel { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); margin: 2rem 0 0; }
+    .duel > div { padding: 1.3rem 0 1.4rem; }
+    .duel > div + div { padding-left: 2rem; border-left: 1px solid var(--line); }
+    .eyebrow { margin: 0; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .big { margin: .2rem 0 .1rem; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(3.6rem, 10vw, 6rem); line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+    .big small { font-size: .32em; letter-spacing: 0; color: var(--muted); margin-left: .35rem; }
+    .need { color: var(--need); } .have { color: var(--have); }
+    .sub { margin: 0; color: var(--muted); font-size: .95rem; }
+    .verdict { font-size: 1.12rem; color: var(--soft); max-width: 62ch; margin: 1.2rem 0 0; }
+    .verdict b { color: var(--ink); font-weight: 600; }
+
+    .bar2 { margin: 1.4rem 0 .4rem; }
+    .bar2 .row { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 4rem; gap: .8rem; align-items: center; margin: .45rem 0; font-size: .9rem; color: var(--muted); }
+    .bar2 .track { height: 12px; background: var(--track); border-radius: 999px; overflow: hidden; }
+    .bar2 .fill { height: 100%; border-radius: 999px; }
+    .bar2 .v { font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; }
+
+    .section { margin: 3.4rem 0 0; }
+    .section h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.75rem; margin: 0; }
+    .section .note { color: var(--muted); max-width: 66ch; margin: .45rem 0 1.1rem; }
+    .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .chart text { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .key { display: flex; gap: 1.3rem; flex-wrap: wrap; font-size: .86rem; color: var(--muted); margin-top: .7rem; }
+    .sw { display: inline-block; width: 14px; height: 3px; margin-right: .4rem; vertical-align: 3px; border-radius: 2px; }
+    .sw.box { height: 11px; width: 11px; vertical-align: -1px; }
+
+    .flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .step { padding: 1.1rem 1rem 1.1rem 0; position: relative; }
+    .step + .step { padding-left: 1.4rem; }
+    .step + .step::before { content: "→"; position: absolute; left: -.35rem; top: 1.05rem; color: var(--muted); font-size: 1.2rem; }
+    .step .lab { font-size: .82rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+    .step .num { font-family: "Newsreader", Georgia, serif !important; font-size: 2.2rem; line-height: 1.15; font-variant-numeric: tabular-nums; }
+    .step p { margin: .2rem 0 0; font-size: .88rem; color: var(--muted); }
+    .aside { margin: 1rem 0 0; padding: .9rem 1.1rem; border-left: 3px solid var(--have); background: var(--accent-soft); border-radius: 0 10px 10px 0; max-width: 70ch; color: var(--soft); }
+
+    .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+    .seg button { font-size: .85rem; font-weight: 500; color: var(--muted); background: none; border: 0; padding: .25rem .8rem; border-radius: 999px; cursor: pointer; }
+    .seg button.on { background: var(--ink); color: var(--surface); }
+    .tools { display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; margin-bottom: .9rem; }
+    .tools select { font: inherit; font-size: .9rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .3rem .6rem; max-width: 100%; }
+    .mapwrap { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+    #map path { stroke: var(--surface); stroke-width: .6; cursor: pointer; transition: opacity .15s; }
+    #map path.sel { stroke: var(--ink); stroke-width: 1.8; }
+    #map path:hover { opacity: .85; }
+    .legend { display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .82rem; color: var(--muted); margin-top: .6rem; }
+    .card { border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.2rem; }
+    .card h3 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.5rem; margin: 0; }
+    .card .tag { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; font-weight: 600; margin: .35rem 0 .7rem; }
+    .card .tag i { width: 10px; height: 10px; border-radius: 3px; }
+    .card dl { display: grid; grid-template-columns: 1fr auto; gap: .35rem 1rem; margin: 0; font-size: .92rem; }
+    .card dt { color: var(--muted); font-weight: 400; }
+    .card dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+    .card p { font-size: .92rem; color: var(--soft); margin: .8rem 0 0; }
+    .meter { height: 10px; background: var(--track); border-radius: 999px; position: relative; margin: .9rem 0 .2rem; }
+    .meter span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; }
+    .meter b { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--ink); }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.6rem; }
+
+    table.tbl { width: 100%; border-collapse: collapse; font-size: .9rem; font-variant-numeric: tabular-nums; }
+    .tbl th { text-align: right; font-weight: 600; color: var(--muted); font-size: .8rem; letter-spacing: .03em; padding: .45rem .5rem; border-bottom: 1px solid var(--ink); cursor: pointer; white-space: nowrap; user-select: none; }
+    .tbl th:first-child, .tbl td:first-child { text-align: left; padding-left: 0; }
+    .tbl td { text-align: right; padding: .42rem .5rem; border-bottom: 1px solid var(--line); }
+    .tbl tr { cursor: pointer; }
+    .tbl tbody tr:hover td { background: var(--track); }
+    .tbl .dot { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: .45rem; vertical-align: 0; }
+    .tablebox { max-height: 460px; overflow: auto; margin-top: 1rem; }
+    .tablebox thead th { position: sticky; top: 0; background: var(--surface); }
+
+    .method details { border-top: 1px solid var(--line); padding: .8rem 0; }
+    .method details:last-of-type { border-bottom: 1px solid var(--line); }
+    .method summary { cursor: pointer; font-weight: 600; list-style: none; }
+    .method summary::-webkit-details-marker { display: none; }
+    .method summary::before { content: "+"; display: inline-block; width: 1.3rem; color: var(--need); font-weight: 400; }
+    .method details[open] summary::before { content: "\2212"; }
+    .method p { color: var(--soft); max-width: 70ch; margin: .6rem 0 0 1.3rem; }
+
+    .tip { position: fixed; pointer-events: none; background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); font-size: .82rem; line-height: 1.45; padding: .5rem .7rem; border-radius: 8px; opacity: 0; transition: opacity .12s; max-width: 260px; z-index: 1100; }
+    .tip.on { opacity: 1; }
+    .tip b { font-variant-numeric: tabular-nums; }
+    .empty { padding: 1.2rem 1.3rem; border-left: 3px solid var(--need); background: var(--track); border-radius: 0 10px 10px 0; max-width: 70ch; }
+
+    @media (max-width: 767.98px) {
+      .duel { grid-template-columns: 1fr; }
+      .duel > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+      .flow { grid-template-columns: 1fr 1fr; }
+      .step:nth-child(3) { padding-left: 0; }
+      .step:nth-child(3)::before { display: none; }
+      .mapwrap, .split { grid-template-columns: 1fr; }
+      .bar2 .row { grid-template-columns: 7rem minmax(0, 1fr) 3.4rem; }
+      .tbl .hide-sm { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container-xl bar">
+      <a class="brand" href="index.html">Abdulla Shaheed</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html#projects">Projects</a>
+        <a href="index.html#education">Education</a>
+        <a href="index.html#contact">Contact</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container-xl py-4">
+    <div class="page">
+      <div class="hero-wrap">
+        <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
+        <div class="live"><i></i>Housing tracker, updated monthly</div>
+        <h1>Is Victoria building enough homes?</h1>
+        <p class="lead">In 2023 the Victorian Government set a goal of 800,000 new homes in the ten years from 2024. This page checks, every month, how many are actually being finished, and whether each council is approving enough to meet its share of the state's longer plan to 2051.</p>
+        <span class="src" id="asof">Data from the ABS and Plan for Victoria</span>
+      </div>
+
+      <div id="content">
+        <section class="duel" aria-live="polite">
+          <div>
+            <p class="eyebrow">Homes needed each day</p>
+            <p class="big need" id="d-need">&nbsp;</p>
+            <p class="sub" id="d-need-sub"></p>
+          </div>
+          <div>
+            <p class="eyebrow">Homes being finished each day</p>
+            <p class="big have" id="d-have">&nbsp;</p>
+            <p class="sub" id="d-have-sub"></p>
+          </div>
+        </section>
+        <p class="verdict" id="verdict"></p>
+        <div class="bar2" id="bars"></div>
+
+        <section class="section">
+          <h2>The race so far</h2>
+          <p class="note" id="race-note"></p>
+          <div class="chart" id="race"></div>
+          <div class="key">
+            <span><i class="sw" style="background:var(--have)"></i>Homes finished since January 2024</span>
+            <span><i class="sw" style="background:var(--need)"></i>Steady path to 800,000</span>
+            <span><i class="sw" style="background:repeating-linear-gradient(90deg,var(--have) 0 4px,transparent 4px 7px)"></i>Where today's pace leads</span>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Has Victoria ever built this fast?</h2>
+          <p class="note" id="hist-note"></p>
+          <div class="chart" id="hist"></div>
+          <div class="key">
+            <span><i class="sw box" style="background:var(--have)"></i>Homes finished each year</span>
+            <span><i class="sw" style="background:var(--need)"></i>80,000 a year</span>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>From permit to front door</h2>
+          <p class="note" id="flow-note"></p>
+          <div class="flow" id="flow"></div>
+          <p class="aside" id="people"></p>
+        </section>
+
+        <section class="section">
+          <div class="tools" style="justify-content:space-between">
+            <h2 style="margin:0">How is your council going?</h2>
+            <div class="seg" aria-label="Map view"><button type="button" data-view="melb" class="on">Melbourne</button><button type="button" data-view="vic">All of Victoria</button></div>
+          </div>
+          <p class="note" id="council-note"></p>
+          <div class="tools">
+            <label for="pick" class="small text-body-secondary">Find a council</label>
+            <select id="pick"></select>
+          </div>
+          <div class="mapwrap">
+            <div>
+              <div class="chart" id="map"></div>
+              <div class="legend" id="legend"></div>
+            </div>
+            <div class="card" id="card"></div>
+          </div>
+          <div class="split" id="split"></div>
+          <div class="tablebox">
+            <table class="tbl" id="tbl">
+              <thead><tr>
+                <th data-k="name">Council</th>
+                <th data-k="target" class="hide-sm">Target to 2051</th>
+                <th data-k="per_year">Needed a year</th>
+                <th data-k="approved_12m">Approved, last 12 months</th>
+                <th data-k="pace">Pace</th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <section class="section method">
+        <h2>How to read this</h2>
+        <details open>
+          <summary>What counts as a home built</summary>
+          <p>Homes finished are the dwellings the Australian Bureau of Statistics counts as completed each quarter in its Building Activity survey, covering houses, townhouses and apartments, built privately or by government. The ten years are counted from January 2024 to December 2033. The government reports its own progress in its own way, which may differ.</p>
+        </details>
+        <details>
+          <summary>Why councils are judged on approvals</summary>
+          <p>Completions are not published by council, so the council view uses building approvals, the permits issued before building starts. Statewide, the homes finished in a year have been close to the number approved about a year earlier, so approvals are a fair early read. Each council's target to 2051 is spread evenly over the 28 years from 2024, and its approvals over the latest twelve months are compared with that yearly figure.</p>
+          <p>This yardstick is this page's own, not the government's. Plan for Victoria asks councils to make enough room in their planning rules for their target, and councils have argued the targets should be judged as capacity rather than homes completed. Approvals also depend on builders, buyers, interest rates and construction costs, not only on councils.</p>
+        </details>
+        <details>
+          <summary>Things to keep in mind</summary>
+          <p>Approvals bounce around from month to month, especially where a single apartment tower is approved, so a small council can look far ahead or far behind in one year. Mitchell's target is split, with homes inside Melbourne's growth boundary and in the regional part of the shire. Growth area councils such as Melton, Wyndham and Casey have targets that are mostly new estates on the urban fringe.</p>
+        </details>
+        <details>
+          <summary>Sources</summary>
+          <p>Australian Bureau of Statistics Data API for Building Activity (dwellings started, finished and under construction), Building Approvals for Victoria and for each local government area, and Victoria's estimated resident population. Council housing targets are the final 2051 targets published by the Victorian Government with Plan for Victoria in February 2025. Council boundaries are the ABS 2025 local government areas. The page refreshes each month after the ABS release.</p>
+          <p id="generated" class="small text-body-secondary"></p>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Data from the ABS and the Victorian Government.</footer>
+  <div class="tip" id="tip" role="tooltip"></div>
+
+  <script src="data/vic_housing.js" onerror="void 0"></script>
+  <script src="data/vic_lga.js" onerror="void 0"></script>
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    $("year").textContent = new Date().getFullYear();
+    const D = window.VIC_HOUSING, G = window.VIC_LGA;
+    if (!D) {
+      $("content").innerHTML = '<p class="empty">The first figures are being built from the latest ABS release and will appear here shortly.</p>';
+      return;
+    }
+    const NS = "http://www.w3.org/2000/svg", tip = $("tip");
+    const el = (tag, attrs = {}, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+    const txt = (parent, x, y, s, attrs = {}) => { const t = el("text", { x, y, ...attrs }, parent); t.textContent = s; return t; };
+    const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const fmt = (v) => Math.round(v).toLocaleString("en-GB");
+    const k = (v) => v >= 1e6 ? (v / 1e6).toFixed(2).replace(/0$/, "") + "m" : v >= 1000 ? Math.round(v / 1000) + "k" : String(Math.round(v));
+    const pct = (v) => Math.round(v * 100) + "%";
+    const qlab = (q) => { const [y, n] = q.split("Q"); return ["Jan to Mar", "Apr to Jun", "Jul to Sep", "Oct to Dec"][n - 1] + " " + y; };
+    const showTip = (e, html) => {
+      tip.innerHTML = html; tip.classList.add("on");
+      tip.style.left = Math.max(8, Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8)) + "px";
+      tip.style.top = Math.max(8, e.clientY - tip.offsetHeight - 12) + "px";
+    };
+    const hideTip = () => tip.classList.remove("on");
+    const S = D.statement, P = D.pipeline, H = D.history;
+
+    // pace bands, shared by the map, table and card
+    const BANDS = [
+      { max: 0.5, c: "--p0", label: "Well behind", text: "less than half the pace" },
+      { max: 0.8, c: "--p1", label: "Behind", text: "half to four fifths of the pace" },
+      { max: 1.2, c: "--p2", label: "About on pace", text: "within a fifth of the pace" },
+      { max: 2, c: "--p3", label: "Ahead", text: "up to twice the pace" },
+      { max: Infinity, c: "--p4", label: "Well ahead", text: "more than twice the pace" },
+    ];
+    const band = (p) => BANDS.find((b) => p < b.max);
+
+    function headline() {
+      $("d-need").innerHTML = Math.round(S.per_day_needed) + "<small>a day</small>";
+      $("d-have").innerHTML = Math.round(S.per_day_built) + "<small>a day</small>";
+      $("d-need-sub").textContent = "80,000 a year, or one home every " + S.minutes_needed.toFixed(1) + " minutes";
+      $("d-have-sub").textContent = fmt(S.pace_per_year) + " in the year to " + S.through + ", one every " + S.minutes_built.toFixed(1) + " minutes";
+      const late = S.finish_year - 2033;
+      $("verdict").innerHTML = "At today's pace, Victoria would reach 800,000 new homes in <b>" + S.finish_year + "</b>" +
+        (late > 0 ? ", about " + late + " year" + (late > 1 ? "s" : "") + " later than planned" : ", on time") +
+        ". To finish by the end of 2033 it now needs <b>" + fmt(S.needed_per_year_from_now) + " homes a year</b>, more than it has ever built in a single year.";
+      const bars = $("bars"); bars.innerHTML = "";
+      [["Time gone", S.share_time, "--muted"], ["Homes built", S.share_done, "--have"]].forEach(([l, v, c]) => {
+        const row = document.createElement("div"); row.className = "row";
+        row.innerHTML = `<span>${l}</span><div class="track"><div class="fill" style="width:${(v * 100).toFixed(1)}%;background:var(${c})"></div></div><span class="v">${pct(v)}</span>`;
+        bars.appendChild(row);
+      });
+      const g = new Date(D.generated.replace("Z", ":00Z"));
+      $("asof").textContent = "Updated " + g.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + " from the ABS and Plan for Victoria";
+      $("generated").textContent = "Last run " + D.generated.replace("T", " ").replace("Z", " UTC") + ". Homes finished to " + S.through + ", approvals by council to " + D.plan.approvals_through + ".";
+    }
+
+    function race() {
+      $("race-note").textContent = "Ten quarters in, " + fmt(S.built) + " homes have been finished. A steady path to 800,000 would have reached " +
+        fmt(S.on_track_by_now) + " by now, so the state is " + fmt(S.gap) + " homes behind.";
+      const host = $("race"); host.innerHTML = "";
+      const W = Math.max(300, host.clientWidth), H2 = W < 560 ? 230 : 300, m = { t: 14, r: 10, b: 28, l: 48 };
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H2}`, role: "img", "aria-label": "Homes finished since 2024 against the path to 800,000" }, host);
+      const startY = 2024, endY = Math.max(2034, S.finish_year + 1);
+      const tq = (q) => { const [y, n] = q.split("Q").map(Number); return y + n / 4; };
+      const x = (t) => m.l + (t - startY) / (endY - startY) * (W - m.l - m.r);
+      const y = (v) => m.t + (1 - v / 800000) * (H2 - m.t - m.b);
+      [0, 200000, 400000, 600000, 800000].forEach((v) => {
+        el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v ? css("--chart-grid") : css("--muted") }, svg);
+        txt(svg, m.l - 8, y(v) + 4, v ? k(v) : "0", { "text-anchor": "end" });
+      });
+      for (let yr = startY; yr <= endY; yr += (W < 560 ? 4 : 2)) txt(svg, x(yr), H2 - 8, String(yr), { "text-anchor": "middle" });
+      // the steady path, ending at 800,000 at the end of 2033
+      el("line", { x1: x(startY), y1: y(0), x2: x(2034), y2: y(800000), stroke: css("--need"), "stroke-width": 2 }, svg);
+      txt(svg, x(2034) - 6, y(800000) - 6, W < 560 ? "800,000 by 2033" : "800,000 by end of 2033", { "text-anchor": "end", fill: css("--need") });
+      const pts = [[startY, 0], ...S.cumulative.map(([q, v]) => [tq(q), v])];
+      el("path", { d: pts.map((p, i) => (i ? "L" : "M") + x(p[0]).toFixed(1) + "," + y(p[1]).toFixed(1)).join(""), fill: "none", stroke: css("--have"), "stroke-width": 2.5, "stroke-linejoin": "round" }, svg);
+      const last = pts[pts.length - 1], fin = last[0] + (800000 - last[1]) / S.pace_per_year;
+      el("line", { x1: x(last[0]), y1: y(last[1]), x2: x(fin), y2: y(800000), stroke: css("--have"), "stroke-width": 2, "stroke-dasharray": "5 4" }, svg);
+      el("circle", { cx: x(last[0]), cy: y(last[1]), r: 4.5, fill: css("--have"), stroke: css("--surface"), "stroke-width": 2 }, svg);
+      txt(svg, x(last[0]) + 8, y(last[1]) + 16, fmt(last[1]) + " so far", { fill: css("--ink") });
+      el("circle", { cx: x(fin), cy: y(800000), r: 4, fill: css("--surface"), stroke: css("--have"), "stroke-width": 2 }, svg);
+      const edge = x(fin) > W - 110;
+      txt(svg, edge ? x(fin) - 8 : x(fin), y(800000) + 18, S.finish_year + " at today's pace", { "text-anchor": edge ? "end" : "middle", fill: css("--ink") });
+      // hover per quarter
+      pts.slice(1).forEach(([t, v], i) => {
+        const q = S.cumulative[i][0], path = 800000 * (i + 1) / 40;
+        const hit = el("rect", { x: x(t - 0.125), y: m.t, width: Math.max(4, x(0.25) - x(0)), height: H2 - m.t - m.b, fill: "transparent" }, svg);
+        hit.addEventListener("pointermove", (e) => showTip(e, `To the end of ${qlab(q)}<br>Finished <b>${fmt(v)}</b><br>Steady path <b>${fmt(path)}</b>`));
+        hit.addEventListener("pointerleave", hideTip);
+      });
+    }
+
+    function history() {
+      const yr = {}; H.completed.forEach(([q, v]) => { const y = q.slice(0, 4); (yr[y] = yr[y] || []).push(v); });
+      const rows = Object.entries(yr).filter(([, a]) => a.length === 4).map(([y, a]) => ({ y, v: a.reduce((s, x) => s + x, 0) }));
+      const best = H.best_year;
+      $("hist-note").textContent = "Not since at least 1990. Victoria's best year was " + best.year + ", with " + fmt(best.homes) +
+        " homes finished. The target asks for 80,000 every year for ten years, and with the slow start, about " + fmt(S.needed_per_year_from_now) + " a year from here.";
+      const host = $("hist"); host.innerHTML = "";
+      const W = Math.max(300, host.clientWidth), H2 = W < 560 ? 210 : 260, m = { t: 14, r: 6, b: 26, l: 44 };
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H2}`, role: "img", "aria-label": "Homes finished in Victoria each year since 2000" }, host);
+      const top = 100000, y = (v) => m.t + (1 - v / top) * (H2 - m.t - m.b);
+      const bw = (W - m.l - m.r) / rows.length, gap = Math.max(2, bw * 0.18);
+      [0, 20000, 40000, 60000, 80000, 100000].forEach((v) => {
+        el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v ? css("--chart-grid") : css("--muted") }, svg);
+        txt(svg, m.l - 8, y(v) + 4, v ? k(v) : "0", { "text-anchor": "end" });
+      });
+      rows.forEach((r, i) => {
+        const x0 = m.l + i * bw;
+        el("rect", { x: x0 + gap / 2, y: y(r.v), width: bw - gap, height: y(0) - y(r.v), rx: Math.min(3, bw / 5), fill: css("--have"), opacity: r.y === String(best.year) ? 1 : 0.72 }, svg);
+        if (Number(r.y) % (W < 560 ? 10 : 5) === 0) txt(svg, x0 + bw / 2, H2 - 8, r.y, { "text-anchor": "middle" });
+        const hit = el("rect", { x: x0, y: m.t, width: bw, height: H2 - m.t - m.b, fill: "transparent" }, svg);
+        hit.addEventListener("pointermove", (e) => showTip(e, `${r.y}<br>Homes finished <b>${fmt(r.v)}</b>`));
+        hit.addEventListener("pointerleave", hideTip);
+      });
+      el("line", { x1: m.l, x2: W - m.r, y1: y(80000), y2: y(80000), stroke: css("--need"), "stroke-width": 2 }, svg);
+      txt(svg, m.l + 6, y(80000) - 6, "80,000 a year", { fill: css("--need") });
+    }
+
+    function flow() {
+      const f = $("flow"); f.innerHTML = "";
+      [["Approved", P.approved_12m, "in the year to " + P.approved_through],
+       ["Started", P.started_4q, "in the year to " + P.quarter],
+       ["Being built now", P.under_construction, "at the end of " + P.quarter],
+       ["Finished", P.completed_4q, "in the year to " + P.quarter]].forEach(([l, v, s]) => {
+        const d = document.createElement("div"); d.className = "step";
+        d.innerHTML = `<div class="lab">${l}</div><div class="num">${fmt(v)}</div><p>${s}</p>`;
+        f.appendChild(d);
+      });
+      const a = P.approved_12m, c = P.completed_4q;
+      $("flow-note").textContent = "A new home is counted three times on its way. It is approved, building starts, and later it is finished. " +
+        (a > c * 1.1 ? "Approvals are running well ahead of completions, a sign that more homes are on the way."
+          : a < c * 0.9 ? "Approvals are running below completions, a sign that building could slow."
+          : "Over the latest year the counts at each stage were close to one another, so the pipeline is steady but not growing.");
+      const pe = D.people;
+      $("people").textContent = (pe ? "For a sense of scale, Victoria's population grew by " + fmt(pe.added) + " people in the year to " + pe.q +
+        ". At 2.5 people a home, that is about " + fmt(pe.homes_worth) + " households. " : "") +
+        "Over the past five years, the homes finished each year came to about " + Math.round(P.finish_rate * 100) + " for every 100 approved a year earlier, so approvals are a fair early signal of what will be built.";
+    }
+
+    // ------------------------------------------------------------ councils
+    const C = D.councils, byCode = Object.fromEntries(C.map((c) => [c.code, c]));
+    let view = "melb", selected = (C.find((c) => c.name === "Melbourne") || C[0]).code, sortK = "pace", sortDir = 1;
+
+    function card(c) {
+      const b = band(c.pace), w = Math.min(c.pace / 2, 1) * 100;
+      const gf = c.greenfield ? ` Of the target, ${fmt(c.greenfield)} are planned on greenfield land at the urban fringe.` : "";
+      $("card").innerHTML = `<h3>${c.name}</h3>
+        <span class="tag"><i style="background:var(${b.c})"></i>${b.label}</span>
+        <dl>
+          <dt>Homes in 2023</dt><dd>${fmt(c.homes_2023)}</dd>
+          <dt>More homes needed by 2051</dt><dd>${fmt(c.target)}</dd>
+          <dt>That is, each year</dt><dd>${fmt(c.per_year)}</dd>
+          <dt>Approved in the last 12 months</dt><dd>${fmt(c.approved_12m)}</dd>
+          <dt>Approved since January 2024</dt><dd>${fmt(c.approved_since_2024)}</dd>
+        </dl>
+        <div class="meter" aria-hidden="true"><span style="width:${w}%;background:var(${b.c})"></span><b style="left:50%"></b></div>
+        <div class="small text-body-secondary" style="display:flex;justify-content:space-between"><span>0</span><span>pace needed</span><span>twice</span></div>
+        <p>${c.name} needs about <b>${fmt(c.per_year)}</b> more homes a year to reach its 2051 target. Over the last 12 months it approved <b>${fmt(c.approved_12m)}</b>, which is <b>${pct(c.pace)}</b> of that pace. Its target would grow its housing by ${Math.round(c.growth_pct)}% on 2023.${gf}</p>`;
+    }
+
+    function map() {
+      const host = $("map"); host.innerHTML = "";
+      if (!G) { host.innerHTML = '<p class="small text-body-secondary">Map unavailable.</p>'; return; }
+      const box = view === "melb" ? [144.45, -38.45, 145.62, -37.4] : [140.9, -39.2, 150.05, -33.95];
+      const kx = Math.cos(37.5 * Math.PI / 180), W = Math.max(300, host.clientWidth);
+      const sx = (box[2] - box[0]) * kx, sy = box[3] - box[1], H2 = W * sy / sx;
+      const X = (lon) => (lon - box[0]) * kx / sx * W, Y = (lat) => (box[3] - lat) / sy * H2;
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H2}`, role: "img", "aria-label": "Map of Victorian councils by approvals pace" }, host);
+      const clip = el("clipPath", { id: "mclip" }, el("defs", {}, svg)); el("rect", { x: 0, y: 0, width: W, height: H2 }, clip);
+      const g = el("g", { "clip-path": "url(#mclip)" }, svg);
+      const ring = (r) => r.map((p, i) => (i ? "L" : "M") + X(p[0]).toFixed(1) + "," + Y(p[1]).toFixed(1)).join("") + "Z";
+      G.features.forEach((f) => {
+        if (!f.geometry) return;   // the ABS "migratory, offshore and shipping" area has no shape
+        const c = byCode[f.properties.code];
+        const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+        const d = polys.map((p) => p.map(ring).join("")).join("");
+        const path = el("path", { d, fill: c ? css(band(c.pace).c) : css("--track"), "fill-rule": "evenodd", class: c && c.code === selected ? "sel" : "" }, g);
+        if (!c) return;
+        path.addEventListener("pointermove", (e) => showTip(e, `<b>${c.name}</b><br>Approved ${fmt(c.approved_12m)} in 12 months<br>Needs ${fmt(c.per_year)} a year<br>${band(c.pace).label}, ${pct(c.pace)} of pace`));
+        path.addEventListener("pointerleave", hideTip);
+        path.addEventListener("click", () => select(c.code));
+      });
+      const sel = g.querySelector("path.sel"); if (sel) g.appendChild(sel);
+      const lg = $("legend"); lg.innerHTML = "";
+      BANDS.forEach((b) => { const s = document.createElement("span"); s.innerHTML = `<i class="sw box" style="background:var(${b.c})"></i>${b.label}`; s.title = b.text; lg.appendChild(s); });
+    }
+
+    function table() {
+      const tb = document.querySelector("#tbl tbody"); tb.innerHTML = "";
+      const rows = [...C].sort((a, b) => (typeof a[sortK] === "string" ? a[sortK].localeCompare(b[sortK]) : a[sortK] - b[sortK]) * sortDir);
+      rows.forEach((c) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td><i class="dot" style="background:var(${band(c.pace).c})"></i>${c.name}</td><td class="hide-sm">${fmt(c.target)}</td><td>${fmt(c.per_year)}</td><td>${fmt(c.approved_12m)}</td><td>${pct(c.pace)}</td>`;
+        if (c.code === selected) tr.style.fontWeight = 600;
+        tr.addEventListener("click", () => select(c.code, true));
+        tb.appendChild(tr);
+      });
+    }
+
+    function councils() {
+      const ahead = C.filter((c) => c.pace >= 1).length, sp = D.plan.split;
+      $("council-note").textContent = "Plan for Victoria gives every council a target for extra homes by 2051, " + fmt(D.plan.total) +
+        " in all, or about " + fmt(D.plan.per_year) + " a year, in line with the 800,000 goal. Spread evenly, " + ahead + " of " + C.length +
+        " councils approved enough homes in the year to " + D.plan.approvals_through + " to keep pace. Colours show approvals against each council's yearly share.";
+      const pick = $("pick"); pick.innerHTML = "";
+      [...C].sort((a, b) => a.name.localeCompare(b.name)).forEach((c) => { const o = document.createElement("option"); o.value = c.code; o.textContent = c.name; pick.appendChild(o); });
+      pick.value = selected;
+      const split = $("split"); split.innerHTML = "";
+      [["Metropolitan Melbourne", sp.melbourne], ["Regional Victoria", sp.regional]].forEach(([l, s]) => {
+        const p = s.approved_12m / s.per_year, d = document.createElement("div");
+        d.innerHTML = `<p class="eyebrow">${l}</p><div class="bar2"><div class="row"><span>Approved</span><div class="track"><div class="fill" style="width:${Math.min(p, 1) * 100}%;background:var(${band(p).c})"></div></div><span class="v">${pct(p)}</span></div></div>
+          <p class="sub">${fmt(s.approved_12m)} approved in a year against ${fmt(s.per_year)} needed, across ${s.councils} councils.</p>`;
+        split.appendChild(d);
+      });
+      card(byCode[selected]); map(); table();
+    }
+
+    function select(code, scroll) {
+      selected = code; $("pick").value = code;
+      const c = byCode[code];
+      if (view === "melb" && !c.region.startsWith("Metropolitan")) { view = "vic"; segs(); }
+      card(c); map(); table();
+      if (scroll) $("map").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    const segs = () => document.querySelectorAll(".seg button").forEach((b) => b.classList.toggle("on", b.dataset.view === view));
+    document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => { view = b.dataset.view; segs(); map(); }));
+    $("pick").addEventListener("change", (e) => select(e.target.value));
+    document.querySelectorAll("#tbl th").forEach((th) => th.addEventListener("click", () => {
+      const key = th.dataset.k; sortDir = sortK === key ? -sortDir : (key === "name" ? 1 : -1); sortK = key; table();
+    }));
+
+    function render() { headline(); race(); history(); flow(); councils(); }
+    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { race(); history(); map(); }, 150); });
+    window.onThemeChange = render;
+    render();
+  })();
+  </script>
+  <script src="js/theme.js"></script>
+  <script src="js/ambient.js"></script>
+</body>
+</html>

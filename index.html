@@ -88,6 +88,7 @@
     <symbol id="i-coal" viewBox="0 0 24 24"><path d="M3 21V12l5 3V12l5 3V8h3V4h3v17z" fill="currentColor"/></symbol>
     <symbol id="i-price" viewBox="0 0 24 24"><path d="M3 15c3 0 4-6 7-6s3 8 6 8 3-10 5-12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-growth" viewBox="0 0 24 24"><path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="5" y="12" width="3.4" height="6" rx=".8" fill="currentColor"/><rect x="10.3" y="8" width="3.4" height="10" rx=".8" fill="currentColor"/><rect x="15.6" y="4" width="3.4" height="14" rx=".8" fill="currentColor"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 11.2 12 4l8.5 7.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9.5h4.5v-5h3v5H18V10" fill="currentColor"/></symbol>
     <symbol id="i-debt" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="2.6" fill="currentColor"/><path d="M5 6v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6V6M5 10v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-4M5 14v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-4" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
   </svg>
   <header class="site-header">
@@ -121,6 +122,15 @@
       <p class="label">Projects</p>
       <p class="projects-note">Side projects I build in my own time, out of curiosity and as a way to learn the subjects behind them.</p>
       <ul class="projects">
+        <li>
+          <a class="project" href="vic-housing.html">
+            <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-home"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-growth"/></svg></span></div>
+            <h2>Is Victoria building enough homes?</h2>
+            <p>The promise of 800,000 homes in ten years, checked every month against the homes actually being finished, with every council's progress towards its 2051 target on a map.</p>
+            <span class="stat" id="vic-stat" hidden><i></i><span></span></span>
+            <span class="where">Victorian housing tracker</span>
+          </a>
+        </li>
         <li>
           <a class="project" href="roadmap.html">
             <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-wind"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-solar"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-battery"/></svg></span></div>
@@ -215,6 +225,7 @@
   <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
   <script src="data/roadmap.js" defer></script>
   <script src="data/wa_economy.js" defer></script>
+  <script src="data/vic_housing.js" defer></script>
   <script>
   // Live figures on the NSW card, from the same data as the tracker
   window.addEventListener("DOMContentLoaded", function () {
@@ -223,6 +234,13 @@
     var op = R.summary.Operating.Wind + R.summary.Operating.Solar;
     var days = Math.max(0, Math.ceil((new Date("2030-01-01T00:00:00+11:00") - new Date()) / 864e5));
     el.lastChild.textContent = Math.round(op / (R.targets.generation_min_gw * 10)) + "% of the 12 GW built · " + days.toLocaleString("en-AU") + " days to 2030";
+    el.hidden = false;
+  });
+  // Homes a day on the Victorian card, from the same data as the tracker
+  window.addEventListener("DOMContentLoaded", function () {
+    var V = window.VIC_HOUSING, el = document.getElementById("vic-stat");
+    if (!V || !el) return;
+    el.lastChild.textContent = Math.round(V.statement.per_day_built) + " homes a day finished, " + Math.round(V.statement.per_day_needed) + " needed";
     el.hidden = false;
   });
   // Latest estimate on the WA card, from the same data as the nowcast page
