@@ -24,20 +24,37 @@ LGA allocation columns ['MB_CODE_2021', 'LGA_CODE_2021', 'LGA_NAME_2021', 'STATE
 RA allocation columns ['SA1_CODE_2021', 'RA_CODE_2021', 'RA_NAME_2021', 'STATE_CODE_2021', 'STATE_NAME_2021', 'AUS_CODE_2021', 'AUS_NAME_2021', 'AREA_ALBERS_SQKM', 'ASGS_LOCI_URI_2021']
 MB allocation columns ['MB_CODE_2021', 'MB_CATEGORY_2021', 'CHANGE_FLAG_2021', 'CHANGE_LABEL_2021', 'SA1_CODE_2021', 'SA2_CODE_2021', 'SA2_NAME_2021', 'SA3_CODE_2021', 'SA3_NAME_2021', 'SA4_CODE_2021', 'SA4_NAME_2021', 'GCCSA_CODE_2021', 'GCCSA_NAME_2021', 'STATE_CODE_2021', 'STATE_NAME_2021', 'AUS_CODE_2021', 'AUS_NAME_2021', 'AREA_ALBERS_SQKM', 'ASGS_LOCI_URI_2021']
 mesh block count files ['/census/guide-census-data/mesh-block-counts/2021/Mesh%20Block%20Counts%2C%202021.xlsx']
+mesh block counts: 368,333 mesh blocks
+joined 368,286 mesh blocks, 25,418,422 people
+  saved lga_remote.csv (865 rows)
+Jobs years 2018 to 2023; growth 2018 to 2023; structure from ['2021', '2022', '2023']
+Businesses 2021 to 2025; incomes 2023
+reliability (rank correlation, inputs moved back a year): {'diversity': 0.97, 'exposure': 1.0, 'growth': 0.7, 'business': 0.75, 'income': 0.98}
+remoteness areas: ['Inner Regional Australia', 'Major Cities of Australia', 'Migratory - Offshore - Shipping (ACT)', 'Migratory - Offshore - Shipping (NSW)', 'Migratory - Offshore - Shipping (NT)', 'Migratory - Offshore - Shipping (OT)', 'Migratory - Offshore - Shipping (Qld)', 'Migratory - Offshore - Shipping (SA)', 'Migratory - Offshore - Shipping (Tas.)', 'Migratory - Offshore - Shipping (Vic.)', 'Migratory - Offshore - Shipping (WA)', 'No usual address (ACT)', 'No usual address (NSW)', 'No usual address (NT)', 'No usual address (OT)', 'No usual address (Qld)', 'No usual address (SA)', 'No usual address (Tas.)', 'No usual address (Vic.)', 'No usual address (WA)', 'Outer Regional Australia', 'Outside Australia', 'Remote Australia', 'Very Remote Australia']
 Traceback (most recent call last):
-  File "/home/runner/work/profile/profile/scripts/fetch_local_economy.py", line 214, in <module>
+  File "/home/runner/work/profile/profile/scripts/build_local_economy.py", line 316, in <module>
     main()
-  File "/home/runner/work/profile/profile/scripts/fetch_local_economy.py", line 205, in main
-    f()
-  File "/home/runner/work/profile/profile/scripts/fetch_local_economy.py", line 169, in fetch_remoteness
-    cnt = pd.concat(counts)
-          ^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/concat.py", line 466, in concat
-    result = _get_result(
-             ^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/concat.py", line 653, in _get_result
-    indexers[ax] = obj_labels.get_indexer(new_labels)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/indexes/base.py", line 3728, in get_indexer
-    raise InvalidIndexError(self._requires_unique_msg)
-pandas.errors.InvalidIndexError: Reindexing only valid with uniquely valued Index objects
+  File "/home/runner/work/profile/profile/scripts/build_local_economy.py", line 177, in main
+    main_ra = ra.idxmax(axis=1)
+              ^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/frame.py", line 15876, in idxmax
+    res = data._reduce(
+          ^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/frame.py", line 13635, in _reduce
+    res = df._mgr.reduce(blk_func)
+          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/internals/managers.py", line 1694, in reduce
+    res_blocks = [blk.reduce(func) for blk in self.blocks]
+                  ^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/internals/blocks.py", line 358, in reduce
+    result = func(self.values)
+             ^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/frame.py", line 13565, in blk_func
+    return op(values, axis=axis, skipna=skipna, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/nanops.py", line 1170, in nanargmax
+    result = _maybe_arg_null_out(result, axis, mask, skipna)  # type: ignore[arg-type]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/nanops.py", line 1489, in _maybe_arg_null_out
+    raise ValueError("Encountered all NA values")
+ValueError: Encountered all NA values
