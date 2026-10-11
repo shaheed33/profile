@@ -23,15 +23,31 @@
     .label { font-size: .95rem; font-weight: 500; color: var(--muted); margin-bottom: 1rem; }
 
     .projects-note { color: var(--muted); max-width: 46rem; margin: -.4rem 0 1.4rem; }
-    .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--ink); list-style: none; padding: 0; margin: 0 0 4.5rem; }
+    .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--ink); list-style: none; padding: 0; margin: 0 0 3rem; }
     .projects li { border-bottom: 1px solid var(--line); }
     .projects li:nth-child(even) { border-left: 1px solid var(--line); }
     .project { display: flex; flex-direction: column; height: 100%; padding: 1.6rem 2rem 1.8rem 0; color: inherit; text-decoration: none; }
     .projects li:nth-child(even) .project { padding: 1.6rem 0 1.8rem 2rem; }
-    @media (min-width: 992px) { .projects li:nth-last-child(-n+2) { border-bottom: 0; } }
+    @media (min-width: 992px) { .projects li:nth-last-child(-n+2):nth-child(odd), .projects li:last-child { border-bottom: 0; } }
     .project h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.6rem; line-height: 1.15; letter-spacing: -.01em; margin: 0 0 .7rem; }
     .project p { color: var(--muted); margin: 0 0 1.1rem; flex: 1; }
-    .project .where { font-size: .9rem; font-weight: 500; color: var(--accent); }
+    .project .where { font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 .35rem; }
+    .pgroup { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem 1rem; margin: 2.2rem 0 .8rem; }
+    .pgroup h3 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.45rem; margin: 0; }
+    .pgroup p { color: var(--muted); margin: 0; }
+    .projects + .pgroup { margin-top: 0; }
+    @media (min-width: 992px) {
+      .projects.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .projects.three li, .projects.three li:nth-child(even) { border-left: 0; border-bottom: 0; }
+      .projects.three li + li { border-left: 1px solid var(--line); }
+      .projects.three .project, .projects.three li:nth-child(even) .project { padding: 1.6rem 1.6rem 1.8rem; }
+      .projects.three li:first-child .project { padding-left: 0; }
+      .projects.three li:last-child .project { padding-right: 0; }
+    }
+    .cta { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1.6rem 0 0; animation: rise .8s ease both; animation-delay: .25s; }
+    .cta a { display: inline-flex; align-items: center; gap: .4rem; font-weight: 500; text-decoration: none; border-radius: 999px; padding: .5rem 1.15rem; border: 1px solid var(--ink); color: var(--ink); }
+    .cta a.main { background: var(--ink); color: var(--surface); }
+    .cta a:hover { background: var(--accent-soft); color: var(--ink); }
     .project .stat { display: inline-flex; align-items: center; gap: .5rem; font-size: .88rem; color: var(--ink); background: var(--accent-soft); border-radius: 999px; padding: .2rem .75rem; margin: -.3rem 0 1rem; width: fit-content; font-variant-numeric: tabular-nums; }
     .project .stat i { width: 7px; height: 7px; border-radius: 50%; background: #1E8A5A; flex: none; }
     [data-theme="dark"] .project .stat i { background: #5FD39B; }
@@ -114,6 +130,7 @@
         <p>I work with data every day, using Stata, Python, R and Excel, and I have foundational training in PLEXOS energy modelling. I have also used GAUSS and MATLAB on a few occasions. Outside my main work I build side projects that turn public data into something people can use, from energy trackers to a nowcast of the WA economy. They start from curiosity, and each one is a way to learn a new subject and keep developing my skills.</p>
         <p>I've worked across economic development, statistics, tax and public finance in Maldives, in government ministries, state owned enterprises and a local authority company, from supporting small businesses and start-ups to managing public money.</p>
         <p>My PhD continues part time, which leaves room for applied work. I'm most interested in analytics, policy and research roles in economic development and energy, and especially where the two meet, in regional growth, investment and the energy transition.</p>
+        <div class="cta"><a class="main" href="#projects">See the projects ↓</a><a href="#contact">Get in touch</a></div>
       </div>
     </section>
     </div>
@@ -121,74 +138,90 @@
     <section id="projects">
       <p class="label">Projects</p>
       <p class="projects-note">Side projects I build in my own time, out of curiosity and as a way to learn the subjects behind them.</p>
-      <ul class="projects">
+      <div class="pgroup">
+        <h3>Places, housing and councils</h3>
+        <p>How local economies are doing, and how well councils serve their residents.</p>
+      </div>
+      <ul class="projects three">
         <li>
           <a class="project" href="vic-housing.html">
             <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-home"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-growth"/></svg></span></div>
+            <span class="where">Victorian housing tracker</span>
             <h2>Is Victoria building enough homes?</h2>
             <p>The promise of 800,000 homes in ten years, checked every month against the homes actually being finished, with every council's progress towards its 2051 target on a map.</p>
             <span class="stat" id="vic-stat" hidden><i></i><span></span></span>
-            <span class="where">Victorian housing tracker</span>
           </a>
         </li>
         <li>
           <a class="project" href="local-economy.html">
             <div class="tags" aria-hidden="true"><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-growth"/></svg></span><span style="background:var(--k-coal);color:var(--c-coal)"><svg><use href="#i-coal"/></svg></span></div>
+            <span class="where">Local economy explorer</span>
             <h2>What makes your local economy tick?</h2>
             <p>Every council area in Australia, what its residents do for a living, where its jobs growth comes from, and how resilient it is to a downturn or a change in a big industry, scored only against similar areas.</p>
             <span class="stat" id="local-stat" hidden><i></i><span></span></span>
-            <span class="where">Local economy explorer</span>
           </a>
         </li>
         <li>
           <a class="project" href="councils.html">
             <div class="tags" aria-hidden="true"><span style="background:var(--k-hydro);color:var(--c-hydro)"><svg><use href="#i-home"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-growth"/></svg></span></div>
+            <span class="where">Council comparisons</span>
             <h2>How does your council compare?</h2>
             <p>Every council in Victoria and New South Wales, lined up fairly against councils like it on bins, planning, roads, libraries and money, using the official figures each state collects.</p>
             <span class="stat" id="council-stat" hidden><i></i><span></span></span>
-            <span class="where">Council comparisons</span>
           </a>
         </li>
+      </ul>
+      <div class="pgroup">
+        <h3>Energy</h3>
+        <p>The shift from coal to wind, solar and storage, and what it means for prices.</p>
+      </div>
+      <ul class="projects three">
         <li>
           <a class="project" href="roadmap.html">
             <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-wind"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-solar"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-battery"/></svg></span></div>
+            <span class="where">NSW Roadmap tracker</span>
             <h2>Is NSW on track for 2030?</h2>
             <p>New wind, solar and storage in NSW measured against the Electricity Infrastructure Roadmap targets, updated from AEMO's quarterly project register.</p>
             <span class="stat" id="nsw-stat" hidden><i></i><span></span></span>
-            <span class="where">NSW Roadmap tracker</span>
-          </a>
-        </li>
-        <li>
-          <a class="project" href="wa-economy.html">
-            <div class="tags" aria-hidden="true"><span style="background:var(--k-hydro);color:var(--c-hydro)"><svg><use href="#i-growth"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-price"/></svg></span></div>
-            <h2>How fast is WA growing right now?</h2>
-            <p>A machine learning estimate of this quarter's growth in Western Australia's economy, read from jobs, wages, prices and the iron ore price before the official ABS figure is out.</p>
-            <span class="stat" id="wa-stat" hidden><i></i><span></span></span>
-            <span class="where">WA economy nowcast</span>
           </a>
         </li>
         <li>
           <a class="project" href="simulator.html">
             <div class="tags" aria-hidden="true"><span style="background:var(--k-coal);color:var(--c-coal)"><svg><use href="#i-coal"/></svg></span><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-wind"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-battery"/></svg></span></div>
+            <span class="where">Storage simulator</span>
             <h2>Could the NEM run without coal?</h2>
             <p>Change the mix of wind, solar and storage in Australia's National Electricity Market and see whether demand is still met.</p>
-            <span class="where">Storage simulator</span>
           </a>
         </li>
         <li>
           <a class="project" href="prices.html">
             <div class="tags" aria-hidden="true"><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-price"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-solar"/></svg></span></div>
+            <span class="where">NEM price patterns</span>
             <h2>When is electricity cheap?</h2>
             <p>Wholesale prices across the NEM by hour of day, season, year and region.</p>
-            <span class="where">NEM price patterns</span>
+          </a>
+        </li>
+      </ul>
+      <div class="pgroup">
+        <h3>The wider economy and public money</h3>
+        <p>Early reads on growth and inflation, and a plain-language look at public debt.</p>
+      </div>
+      <ul class="projects">
+        <li>
+          <a class="project" href="wa-economy.html">
+            <div class="tags" aria-hidden="true"><span style="background:var(--k-hydro);color:var(--c-hydro)"><svg><use href="#i-growth"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-price"/></svg></span></div>
+            <span class="where">WA economy nowcast</span>
+            <h2>How fast is WA growing right now?</h2>
+            <p>A machine learning estimate of this quarter's growth in Western Australia's economy, read from jobs, wages, prices and the iron ore price before the official ABS figure is out.</p>
+            <span class="stat" id="wa-stat" hidden><i></i><span></span></span>
           </a>
         </li>
         <li>
           <a class="project" href="https://mvdebtclock.org">
             <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-debt"/></svg></span></div>
+            <span class="where">mvdebtclock.org</span>
             <h2>Maldives National Debt Clock</h2>
             <p>A live tracker of what the government owes, what it pays in interest and where its revenue comes from, in plain language.</p>
-            <span class="where">mvdebtclock.org</span>
           </a>
         </li>
       </ul>

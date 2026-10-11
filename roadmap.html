@@ -220,6 +220,7 @@
       <h1>Is NSW on track for 2030?</h1>
       <p class="lead">A live check on whether NSW is building enough wind, solar and storage to replace its coal power stations.</p>
       <span class="src" id="asof"></span>
+      <details class="terms"><summary>Key terms in plain English</summary><dl><dt>NEM</dt><dd>The National Electricity Market, the shared grid and market for Queensland, NSW, the ACT, Victoria, South Australia and Tasmania. Western Australia and the Northern Territory run their own.</dd><dt>MW and GW</dt><dd>Power, how much can be produced at one moment. A gigawatt (GW) is 1,000 megawatts (MW). One unit of a large coal power station is about 0.5 to 0.7 GW.</dd><dt>MWh, GWh and TWh</dt><dd>Energy, power kept up over time. 1 GW running for one hour makes 1 GWh, and 1,000 GWh is 1 TWh. A battery's GW says how fast it can charge or discharge, and its GWh how much it can hold.</dd><dt>Long duration storage</dt><dd>Batteries and pumped hydro that can keep supplying power for 8 hours or more, long enough to cover a whole evening and night.</dd></dl></details>
       </div>
 
       <div class="clock" aria-label="Countdowns">
@@ -682,6 +683,7 @@
     $("partial").textContent = +lastYr === upd.getFullYear() && upd.getMonth() > 0 ? lastYr + " covers the year to the end of " + new Date(upd.getFullYear(), upd.getMonth() - 1, 1).toLocaleDateString("en-GB", { month: "long" }) + "." : "";
   })();
   </script>
+  <script src="js/more.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ambient.js"></script>
 </body>

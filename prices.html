@@ -72,6 +72,7 @@
       <h1 class="mb-2">When is electricity cheap?</h1>
       <p class="lead mb-2">Wholesale prices across Australia's National Electricity Market, hour by hour, year by year and region by region.</p>
       <span class="src" id="period"></span>
+      <details class="terms"><summary>Key terms in plain English</summary><dl><dt>NEM</dt><dd>The National Electricity Market, the shared grid and market for Queensland, NSW, the ACT, Victoria, South Australia and Tasmania. Western Australia and the Northern Territory run their own.</dd><dt>$ per MWh</dt><dd>The wholesale price retailers pay generators. $100 per MWh is 10 cents per kilowatt hour, the unit on your power bill. Bills are much higher than wholesale prices because they also pay for the poles and wires, retail costs and green schemes.</dd><dt>MW and GW</dt><dd>Power, how much can be produced at one moment. A gigawatt (GW) is 1,000 megawatts (MW). One unit of a large coal power station is about 0.5 to 0.7 GW.</dd><dt>Negative prices</dt><dd>Times when some generators pay to keep running rather than switch off, usually when sunshine and wind are plentiful and demand is low.</dd></dl></details>
     </div>
 
     <div class="kpis" id="kpis" aria-live="polite"></div>
@@ -255,6 +256,8 @@
         if (k < 1) requestAnimationFrame(step);
       })(t0);
     }
+    // wholesale $ per MWh as cents per kWh, the unit on a power bill
+    const cents = (v) => (v / 10).toFixed(v < 100 ? 1 : 0) + "c";
     function kpis(reg, season, HR, NG) {
       const Y = String(P.years[P.years.length - 1]), Y0 = String(P.years[0]), a = HR[Y], a0 = HR[Y0];
       const lo = argOf(a, (x, y) => x < y), hi = argOf(a, (x, y) => x > y), lo0 = argOf(a0, (x, y) => x < y), hi0 = argOf(a0, (x, y) => x > y);
@@ -267,8 +270,8 @@
         card("k-lo", "solar", "solar", "solar", "Cheapest hour", "") + card("k-hi", "moon", "wind", "wind", "Dearest hour", "") +
         card("k-gap", "gap", "battery", "battery", "Evening premium", "") + card("k-neg", "neg", "hydro", "hydro", "Prices below zero", "");
       const set = (id, val, fmt, sub) => { const el = document.getElementById(id); countUp(el, val, fmt); el.nextElementSibling.innerHTML = sub; };
-      set("k-lo", a[lo], (x) => hh(lo) + " · " + money(x), `Average at that hour in ${when}. In ${Y0}: <em>${money(a0[lo0])}</em> at ${hh(lo0)}.`);
-      set("k-hi", a[hi], (x) => hh(hi) + " · " + money(x), `Average at that hour in ${when}. In ${Y0}: <em>${money(a0[hi0])}</em> at ${hh(hi0)}.`);
+      set("k-lo", a[lo], (x) => hh(lo) + " · " + money(x), `Average at that hour in ${when}, about ${cents(a[lo])} a kWh before network and retail costs. In ${Y0}: <em>${money(a0[lo0])}</em> at ${hh(lo0)}.`);
+      set("k-hi", a[hi], (x) => hh(hi) + " · " + money(x), `Average at that hour in ${when}, about ${cents(a[hi])} a kWh before network and retail costs. In ${Y0}: <em>${money(a0[hi0])}</em> at ${hh(hi0)}.`);
       set("k-gap", gap, (x) => money(x), `Evening (17:00 to 21:00) minus midday (10:00 to 15:00) in ${when}. In ${Y0}: <em>${money(gap0)}</em>. A rough guide to what a battery can earn.`);
       set("k-neg", neg[n], (x) => x.toFixed(0) + "%", `of 5 minute prices were negative at ${hh(n)} in ${when}. In ${Y0}: <em>${neg0.toFixed(0)}%</em>.`);
     }
@@ -388,6 +391,7 @@
     } else items.forEach((el) => el.classList.add("in"));
   })();
   </script>
+  <script src="js/more.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ambient.js"></script>
 </body>
