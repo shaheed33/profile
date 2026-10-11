@@ -29,32 +29,16 @@ joined 368,286 mesh blocks, 25,418,422 people
   saved lga_remote.csv (865 rows)
 Jobs years 2018 to 2023; growth 2018 to 2023; structure from ['2021', '2022', '2023']
 Businesses 2021 to 2025; incomes 2023
-reliability (rank correlation, inputs moved back a year): {'diversity': 0.97, 'exposure': 1.0, 'growth': 0.7, 'business': 0.75, 'income': 0.98}
-remoteness areas: ['Inner Regional Australia', 'Major Cities of Australia', 'Migratory - Offshore - Shipping (ACT)', 'Migratory - Offshore - Shipping (NSW)', 'Migratory - Offshore - Shipping (NT)', 'Migratory - Offshore - Shipping (OT)', 'Migratory - Offshore - Shipping (Qld)', 'Migratory - Offshore - Shipping (SA)', 'Migratory - Offshore - Shipping (Tas.)', 'Migratory - Offshore - Shipping (Vic.)', 'Migratory - Offshore - Shipping (WA)', 'No usual address (ACT)', 'No usual address (NSW)', 'No usual address (NT)', 'No usual address (OT)', 'No usual address (Qld)', 'No usual address (SA)', 'No usual address (Tas.)', 'No usual address (Vic.)', 'No usual address (WA)', 'Outer Regional Australia', 'Outside Australia', 'Remote Australia', 'Very Remote Australia']
-Traceback (most recent call last):
-  File "/home/runner/work/profile/profile/scripts/build_local_economy.py", line 316, in <module>
-    main()
-  File "/home/runner/work/profile/profile/scripts/build_local_economy.py", line 177, in main
-    main_ra = ra.idxmax(axis=1)
-              ^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/frame.py", line 15876, in idxmax
-    res = data._reduce(
-          ^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/frame.py", line 13635, in _reduce
-    res = df._mgr.reduce(blk_func)
-          ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/internals/managers.py", line 1694, in reduce
-    res_blocks = [blk.reduce(func) for blk in self.blocks]
-                  ^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/internals/blocks.py", line 358, in reduce
-    result = func(self.values)
-             ^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/frame.py", line 13565, in blk_func
-    return op(values, axis=axis, skipna=skipna, **kwds)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/nanops.py", line 1170, in nanargmax
-    result = _maybe_arg_null_out(result, axis, mask, skipna)  # type: ignore[arg-type]
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/nanops.py", line 1489, in _maybe_arg_null_out
-    raise ValueError("Encountered all NA values")
-ValueError: Encountered all NA values
+  in areas with 1,000 to 5,000 jobs: {'growth': 0.51, 'business': 0.55}
+reliability (rank correlation, inputs moved back a year): {'diversity': 0.97, 'exposure': 1.0, 'growth': 0.82, 'business': 0.82, 'income': 0.98}
+remoteness areas: ['Inner Regional Australia', 'Major Cities of Australia', 'Outer Regional Australia', 'Remote Australia', 'Very Remote Australia']
+  cap_inner: 69 scored
+  cap_outer: 69 scored
+  inner_regional: 93 scored
+  outer_regional: 110 scored
+  regional_city: 41 scored
+  remote: 61 scored
+Coal closures from AEMO July 2026: {'Muswellbrook': [('Bayswater', 2033, 2033)], 'Banana': [('Callide B', 2031, 2031), ('Callide C', None, None)], 'Lake Macquarie': [('Eraring', 2029, 2029)], 'Gladstone': [('Gladstone', 2029, 2029)], 'Western Downs': [('Kogan Creek', 2042, 2042)], 'Latrobe (Vic.)': [('Loy Yang A', 2035, 2035), ('Loy Yang B', 2047, 2047), ('Yallourn', 2028, 2028)], 'Toowoomba': [('Millmerran', 2051, 2051)], 'Lithgow': [('Mt Piper', 2040, 2040)], 'Rockhampton': [('Stanwell', 2043, 2046)], 'South Burnett': [('Tarong', 2036, 2037), ('Tarong North', 2037, 2037)], 'Central Coast (NSW)': [('Vales Point', 2033, 2033)]}
+vic: 79 linked to councils.html; not linked []
+nsw: 128 linked to councils.html; not linked []
+Wrote local_economy.js: 539 council areas, 443 scored, 516 kB
