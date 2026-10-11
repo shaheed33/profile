@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How does your council compare? | Abdulla Shaheed</title>
+  <meta name="description" content="Every council in Victoria and New South Wales, compared fairly with similar councils on bins, planning, roads, libraries, money and more, using official figures.">
+  <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="How does your council compare?">
+  <meta property="og:description" content="Victorian and NSW councils compared fairly with similar councils, using official government figures.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shaheed.work/councils">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    :root {
+      --good: #1F6FB2; --good-soft: #E3EEF8; --bad: #B4502A; --bad-soft: #F6E4DA; --mid: #6B7280; --mid-soft: #EEF0F3;
+      --dot: #B9C2D0; --live: #1E8A5A; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14);
+    }
+    [data-theme="dark"] {
+      --good: #8FB3EE; --good-soft: #1B2A42; --bad: #E58A5F; --bad-soft: #33221A; --mid: #9AA6BA; --mid-soft: #1F2836;
+      --dot: #3F4B5E; --live: #5FD39B; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+    }
+    .page { max-width: 1000px; }
+    .lead { max-width: 60ch; margin-bottom: .6rem; }
+    .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
+    .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); }
+
+    .pickbar { display: flex; flex-wrap: wrap; gap: .8rem 1.2rem; align-items: center; margin: 1.8rem 0 0; padding: 1rem 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+    .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+    .seg button { font-size: .88rem; font-weight: 500; color: var(--muted); background: none; border: 0; padding: .3rem .9rem; border-radius: 999px; cursor: pointer; }
+    .seg button.on { background: var(--ink); color: var(--surface); }
+    .pickbar select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .35rem .6rem; min-width: 15rem; max-width: 100%; }
+    .pickbar label { font-size: .85rem; color: var(--muted); }
+
+    .who { margin: 1.8rem 0 0; }
+    .who h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(2rem, 5vw, 2.8rem); margin: 0; line-height: 1.1; }
+    .who .peer { color: var(--soft); margin: .4rem 0 0; font-size: 1.05rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: .4rem .5rem; margin: .9rem 0 0; }
+    .chips span { font-size: .82rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .65rem; }
+    .chips b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    .glance { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 1.6rem 0 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .glance > div { padding: 1rem 1rem 1rem 0; }
+    .glance > div + div { padding-left: 1.2rem; border-left: 1px solid var(--line); }
+    .glance .n { font-family: "Newsreader", Georgia, serif !important; font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
+    .glance .l { font-size: .9rem; color: var(--muted); margin-top: .25rem; }
+    .summary { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 1.3rem 0 0; }
+    .summary h3 { font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 .4rem; }
+    .summary ul { margin: 0; padding-left: 1.1rem; color: var(--soft); }
+    .summary li { margin: .2rem 0; }
+
+    .theme { margin: 2.6rem 0 0; }
+    .theme h3 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.5rem; margin: 0 0 .3rem; }
+    .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: .3rem 2rem; padding: .85rem 0; border-top: 1px solid var(--line); }
+    .row .lab { font-weight: 500; }
+    .row .val { font-family: "Newsreader", Georgia, serif !important; font-size: 1.35rem; font-variant-numeric: tabular-nums; margin-top: .1rem; }
+    .row .yrs { font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .verdict { display: inline-flex; align-items: center; gap: .35rem; font-size: .8rem; font-weight: 600; border-radius: 999px; padding: .12rem .6rem; margin-top: .35rem; }
+    .verdict.better { color: var(--good); background: var(--good-soft); }
+    .verdict.worse { color: var(--bad); background: var(--bad-soft); }
+    .verdict.typical, .verdict.mid, .verdict.high, .verdict.low, .verdict.none { color: var(--mid); background: var(--mid-soft); }
+    .row .note { font-size: .82rem; color: var(--muted); margin: .3rem 0 0; }
+    .row .warn { font-size: .82rem; color: var(--bad); margin: .3rem 0 0; }
+    .strip svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .strip text { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+    details.why { grid-column: 1 / -1; font-size: .88rem; color: var(--soft); }
+    details.why summary { cursor: pointer; color: var(--muted); font-size: .82rem; list-style: none; }
+    details.why summary::-webkit-details-marker { display: none; }
+    details.why summary::before { content: "+ "; }
+    details.why[open] summary::before { content: "\2212 "; }
+    details.why p { margin: .35rem 0 0; padding-left: .8rem; border-left: 2px solid var(--line); max-width: 75ch; }
+
+    .section { margin: 3.4rem 0 0; }
+    .section h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.75rem; margin: 0; }
+    .method details { border-top: 1px solid var(--line); padding: .8rem 0; }
+    .method details:last-of-type { border-bottom: 1px solid var(--line); }
+    .method summary { cursor: pointer; font-weight: 600; list-style: none; }
+    .method summary::-webkit-details-marker { display: none; }
+    .method summary::before { content: "+"; display: inline-block; width: 1.3rem; color: var(--good); font-weight: 400; }
+    .method details[open] summary::before { content: "\2212"; }
+    .method p, .method ol, .method ul { color: var(--soft); max-width: 72ch; margin: .6rem 0 0 1.3rem; }
+    .method li { margin: .3rem 0; }
+
+    .tip { position: fixed; pointer-events: none; background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); font-size: .82rem; line-height: 1.45; padding: .45rem .65rem; border-radius: 8px; opacity: 0; transition: opacity .12s; max-width: 240px; z-index: 1100; }
+    .tip.on { opacity: 1; }
+    .empty { padding: 1.2rem 1.3rem; border-left: 3px solid var(--bad); background: var(--mid-soft); border-radius: 0 10px 10px 0; max-width: 70ch; }
+
+    @media (max-width: 767.98px) {
+      .row { grid-template-columns: 1fr; }
+      .summary { grid-template-columns: 1fr; gap: 1rem; }
+      .glance .n { font-size: 2rem; }
+      .pickbar select { min-width: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container-xl bar">
+      <a class="brand" href="index.html">Abdulla Shaheed</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html#projects">Projects</a>
+        <a href="index.html#education">Education</a>
+        <a href="index.html#contact">Contact</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container-xl py-4">
+    <div class="page">
+      <div class="hero-wrap">
+        <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
+        <div class="live"><i></i>Official council figures</div>
+        <h1>How does your council compare?</h1>
+        <p class="lead">Councils collect bins, decide planning permits, look after local roads and run libraries. Both Victoria and New South Wales make every council report the same figures each year. This page lines your council up against councils like it, never against the whole state, so a small country shire is not judged against inner Melbourne or Sydney.</p>
+      </div>
+
+      <div class="pickbar">
+        <div class="seg" aria-label="State"><button type="button" data-state="vic" class="on">Victoria</button><button type="button" data-state="nsw">New South Wales</button></div>
+        <label for="pick">Council</label>
+        <select id="pick"></select>
+      </div>
+
+      <div id="content">
+        <section class="who" aria-live="polite">
+          <h2 id="name"></h2>
+          <p class="peer" id="peer"></p>
+          <div class="chips" id="chips"></div>
+        </section>
+        <div class="glance" id="glance"></div>
+        <div class="summary" id="summary"></div>
+        <div id="themes"></div>
+      </div>
+
+      <section class="section method">
+        <h2>How this is kept fair</h2>
+        <details open>
+          <summary>The rules this page follows</summary>
+          <ol>
+            <li>Every council is compared only with its official peer group, the groups each state government uses itself. Victoria and NSW are never compared with each other, because they measure different things in different ways.</li>
+            <li>There is no overall score and no league table. Each measure stands on its own, so a council's strengths and weaknesses both show.</li>
+            <li>Figures are averaged over up to three years, so one unusual year does not decide the result. Where a council's own figures swing much more than the gap between councils, the page says so.</li>
+            <li>A council is called better or weaker than most only when it sits in the top or bottom quarter of its group. Everything in between is typical.</li>
+            <li>Some measures have no right answer. Spending more on libraries can mean better service, not waste. Those are shown without a verdict.</li>
+            <li>Measures where councils' positions jump around from year to year are left out, as they say more about one-off events or accounting timing than about performance. Any year whose figures look mislabelled or out of range is left out too.</li>
+            <li>In Victoria, each council's own explanation of its result is shown next to it, in its own words.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>What these figures cannot tell you</summary>
+          <p>They describe what councils report, not everything they do. Results reflect things councils do not control, such as the size and spread of the area, how fast it is growing, the age and income of residents, and the grants it receives. A council can also choose to spend more to provide more. The context shown under each council's name is there to keep this in view.</p>
+        </details>
+        <details>
+          <summary>Measures left out, and why</summary>
+          <ul id="leftout"></ul>
+        </details>
+        <details>
+          <summary>Sources</summary>
+          <p id="sources"></p>
+          <p id="generated" class="small text-body-secondary"></p>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Data from the Victorian and NSW Governments.</footer>
+  <div class="tip" id="tip" role="tooltip"></div>
+
+  <script src="data/councils.js" onerror="void 0"></script>
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    $("year").textContent = new Date().getFullYear();
+    const D = window.COUNCILS;
+    if (!D) { $("content").innerHTML = '<p class="empty">The council figures could not be loaded.</p>'; return; }
+    const NS = "http://www.w3.org/2000/svg", tip = $("tip");
+    const el = (tag, attrs = {}, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+    const txt = (parent, x, y, s, attrs = {}) => { const t = el("text", { x, y, ...attrs }, parent); t.textContent = s; return t; };
+    const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const showTip = (e, html) => {
+      tip.innerHTML = html; tip.classList.add("on");
+      tip.style.left = Math.max(8, Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8)) + "px";
+      tip.style.top = Math.max(8, e.clientY - tip.offsetHeight - 12) + "px";
+    };
+    const hideTip = () => tip.classList.remove("on");
+
+    const fmt = (v, unit) => {
+      if (v == null) return "n/a";
+      if (unit === "pct") return (v * 100).toFixed(Math.abs(v) < 0.1 ? 1 : 0) + "%";
+      if (unit === "days") return (v < 10 ? v.toFixed(1) : Math.round(v)) + " days";
+      if (unit === "dollars") return "$" + (v >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(2));
+      if (unit === "score") return Math.round(v) + " out of 100";
+      if (unit === "ratio") return v.toFixed(2);
+      return v >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(1);
+    };
+    const VERDICT = {
+      better: "Better than most similar councils", typical: "About typical for similar councils", worse: "Weaker than most similar councils",
+      high: "Higher than most similar councils", mid: "About typical for similar councils", low: "Lower than most similar councils",
+    };
+
+    let state = "vic", current = null;
+
+    function contextChips(S, c) {
+      const box = $("chips"); box.innerHTML = "";
+      S.context.forEach((k) => {
+        const v = c.context[k.id];
+        if (v == null) return;
+        const s = document.createElement("span");
+        s.innerHTML = `${esc(k.label)} <b>${fmt(v, k.unit)}</b>`;
+        if (k.note) s.title = k.note;
+        box.appendChild(s);
+      });
+      if (state === "nsw") { const s = document.createElement("span"); s.innerHTML = `OLG group <b>${c.olg_group}</b>`; box.appendChild(s); }
+    }
+
+    function strip(host, S, ind, c, peers) {
+      const W = Math.max(260, host.clientWidth || 300), H = 46, pad = 10;
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `${c.name} against ${peers.length - 1} similar councils` }, host);
+      const vals = peers.map((p) => p.values[ind.id].v);
+      let lo = Math.min(...vals), hi = Math.max(...vals); if (hi === lo) { hi += 1; lo -= 1; }
+      const x = (v) => pad + (v - lo) / (hi - lo) * (W - 2 * pad);
+      el("line", { x1: pad, x2: W - pad, y1: 18, y2: 18, stroke: css("--line"), "stroke-width": 2 }, svg);
+      const sorted = [...vals].sort((a, b) => a - b), med = sorted[Math.floor(sorted.length / 2)];
+      el("line", { x1: x(med), x2: x(med), y1: 8, y2: 28, stroke: css("--muted"), "stroke-width": 1.5 }, svg);
+      peers.forEach((p) => {
+        if (p === c) return;
+        const v = p.values[ind.id].v;
+        const d = el("circle", { cx: x(v), cy: 18, r: 4.5, fill: css("--dot"), stroke: css("--surface"), "stroke-width": 1, style: "cursor:pointer" }, svg);
+        d.addEventListener("pointermove", (e) => showTip(e, `${esc(p.name)}<br><b>${fmt(v, ind.unit)}</b>`));
+        d.addEventListener("pointerleave", hideTip);
+        d.addEventListener("click", () => select(p.name, true));
+      });
+      const v = c.values[ind.id], band = v.band || "none";
+      const col = band === "better" ? css("--good") : band === "worse" ? css("--bad") : css("--ink");
+      el("circle", { cx: x(v.v), cy: 18, r: 7.5, fill: col, stroke: css("--surface"), "stroke-width": 2 }, svg);
+      txt(svg, pad, H - 2, fmt(lo, ind.unit));
+      txt(svg, W - pad, H - 2, fmt(hi, ind.unit), { "text-anchor": "end" });
+      if (x(med) > pad + 55 && x(med) < W - pad - 55) txt(svg, x(med), H - 2, "typical", { "text-anchor": "middle" });
+      if (ind.better) {
+        const right = ind.better === "higher";
+        txt(svg, right ? W - pad : pad, 6, right ? "better →" : "← better", { "text-anchor": right ? "end" : "start" });
+      }
+    }
+
+    function render() {
+      const S = D.states[state], c = S.councils.find((x) => x.name === current) || S.councils[0];
+      current = c.name;
+      const peers = S.councils.filter((x) => x.group === c.group);
+      $("name").textContent = c.name;
+      $("peer").textContent = "Compared with the " + (peers.length - 1) + " other " + (S.group_text[c.group] || c.group.toLowerCase() + " councils") +
+        " in " + S.name + ", using " + S.peer_note + ". Figures are averages for " + S.years + ".";
+      contextChips(S, c);
+
+      const judged = S.indicators.filter((i) => i.better && c.values[i.id] && c.values[i.id].band);
+      const n = (b) => judged.filter((i) => c.values[i.id].band === b).length;
+      $("glance").innerHTML = [["better", "better than most similar councils"], ["typical", "about typical"], ["worse", "weaker than most"]]
+        .map(([b, l]) => `<div><div class="n" style="color:var(${b === "better" ? "--good" : b === "worse" ? "--bad" : "--ink"})">${n(b)}</div><div class="l">of ${judged.length} measures ${l}</div></div>`).join("");
+      const pos = (i) => c.values[i.id].pos;
+      const best = judged.filter((i) => c.values[i.id].band === "better").sort((a, b) => pos(b) - pos(a)).slice(0, 4);
+      const worst = judged.filter((i) => c.values[i.id].band === "worse").sort((a, b) => pos(a) - pos(b)).slice(0, 4);
+      const li = (arr, none) => arr.length ? arr.map((i) => `<li>${esc(i.label)} <span class="text-body-secondary">(${esc(i.theme.toLowerCase())})</span></li>`).join("") : `<li>${none}</li>`;
+      $("summary").innerHTML = `<div><h3>Stands out for</h3><ul>${li(best, "No measure in the top quarter of its group")}</ul></div>
+        <div><h3>Worth a closer look</h3><ul>${li(worst, "No measure in the bottom quarter of its group")}</ul></div>`;
+
+      const themes = $("themes"); themes.innerHTML = "";
+      [...new Set(S.indicators.map((i) => i.theme))].forEach((t) => {
+        const inds = S.indicators.filter((i) => i.theme === t && c.values[i.id]);
+        if (!inds.length) return;
+        const sec = document.createElement("section"); sec.className = "theme";
+        sec.innerHTML = `<h3>${esc(t)}</h3>`;
+        inds.forEach((ind) => {
+          const v = c.values[ind.id], band = v.band || "none";
+          const withData = peers.filter((p) => p.values[ind.id]);
+          const yrs = Object.entries(v.years).map(([y, x]) => `${y} ${fmt(x, ind.unit)}`).join(" · ");
+          const verdict = band === "none" ? "Too few similar councils to compare" : VERDICT[band];
+          const row = document.createElement("div"); row.className = "row";
+          row.innerHTML = `<div>
+              <div class="lab">${esc(ind.label)}</div>
+              <div class="val">${fmt(v.v, ind.unit)}</div>
+              <div class="yrs">${yrs}</div>
+              <span class="verdict ${band}">${verdict}</span>
+              ${ind.note ? `<p class="note">${esc(ind.note)}</p>` : ""}
+              ${v.swings ? `<p class="warn">This council's own figures swing a lot between years, so treat the comparison with care.</p>` : ""}
+            </div><div class="strip"></div>
+            ${v.why ? `<details class="why"><summary>In the council's own words</summary><p>${esc(v.why)}</p></details>` : ""}`;
+          sec.appendChild(row);
+          themes.appendChild(sec);
+          if (withData.length >= 2) strip(row.querySelector(".strip"), S, ind, c, withData);
+        });
+      });
+
+      $("leftout").innerHTML = S.left_out.length ? S.left_out.map((i) => `<li><b>${esc(i.label)}</b>. ${esc(i.why)}</li>`).join("")
+        : "<li>None for " + S.name + ".</li>";
+      const extra = D.notes.filter((x) => x.startsWith(state === "vic" ? "Victoria" : "NSW") && !/left out\. /.test(x));
+      if (extra.length) $("leftout").innerHTML += extra.map((x) => `<li>${esc(x.replace(/^[^,]+, /, ""))}.</li>`).join("");
+      $("sources").textContent = "Victoria: " + D.states.vic.source + ", full data set for 2020-21 to 2024-25. New South Wales: " + D.states.nsw.source +
+        ", spreadsheets for 2022-23, 2023-24 and 2024-25. Both are refreshed here once a year when the governments publish new figures.";
+      $("generated").textContent = "Built " + D.generated.replace("T", " ").replace("Z", " UTC") + ".";
+      try { history.replaceState(null, "", "#" + state + "/" + encodeURIComponent(current)); } catch (e) {}
+    }
+
+    function fill() {
+      const S = D.states[state], pick = $("pick"); pick.innerHTML = "";
+      [...new Set(S.councils.map((c) => c.group))].sort().forEach((g) => {
+        const og = document.createElement("optgroup"); og.label = g;
+        S.councils.filter((c) => c.group === g).forEach((c) => { const o = document.createElement("option"); o.value = c.name; o.textContent = c.name; og.appendChild(o); });
+        pick.appendChild(og);
+      });
+      if (!S.councils.some((c) => c.name === current)) current = S.councils[Math.floor(Math.random() * S.councils.length)].name;
+      pick.value = current;
+    }
+    function select(name, scroll) { current = name; $("pick").value = name; render(); if (scroll) $("name").scrollIntoView({ behavior: "smooth" }); }
+    function setState(s) { state = s; document.querySelectorAll(".seg button").forEach((b) => b.classList.toggle("on", b.dataset.state === s)); fill(); render(); }
+
+    document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => setState(b.dataset.state)));
+    $("pick").addEventListener("change", (e) => select(e.target.value));
+    const h = decodeURIComponent(location.hash.slice(1)).split("/");
+    if (h[0] === "vic" || h[0] === "nsw") { state = h[0]; current = h.slice(1).join("/"); }
+    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+    window.onThemeChange = render;
+    setState(state);
+  })();
+  </script>
+  <script src="js/theme.js"></script>
+  <script src="js/ambient.js"></script>
+</body>
+</html>

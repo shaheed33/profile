@@ -9,6 +9,8 @@ Personal site of Shaheed, served at https://shaheed.work through Cloudflare
 - `replication.html` October 2024 replication for the simulator
 - `prices.html` NEM wholesale price patterns
 - `wa-economy.html` WA economy nowcast. `scripts/build_wa_economy.py` downloads ABS and FRED data into `raw/wa/`, backtests the machine learning models (`scripts/wa_model.py`, `scripts/wa_sources.py`) and writes `data/wa_economy.js`. Runs on the 20th of each month through `.github/workflows/wa-economy.yml`, and `raw/wa/build.log` keeps the last run's output
+- `vic-housing.html` Victorian housing tracker. `scripts/build_vic_housing.py` downloads ABS building data into `raw/vic/` and compares it with the Housing Statement and the Plan for Victoria council targets (`data/vic_targets.csv` and `data/vic_lga.js`, made by `scripts/fetch_vic_static.py`), writing `data/vic_housing.js`. Runs on the 22nd of each month through `.github/workflows/vic-housing.yml`
+- `councils.html` Victorian and NSW council comparisons. `scripts/build_councils.py` reads the official spreadsheets in `raw/councils/` (Know Your Council for Victoria, Your Council for NSW) and writes `data/councils.js`. Refresh by hand once a year: download the new spreadsheets into `raw/councils/` and run the script
 - `roadmap.html` NSW Roadmap tracker. `scripts/download_aemo.py` fetches the AEMO files into `raw/` and `scripts/build_roadmap.py` turns them into `data/roadmap.js`
 
 ## Other files

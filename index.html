@@ -132,6 +132,15 @@
           </a>
         </li>
         <li>
+          <a class="project" href="councils.html">
+            <div class="tags" aria-hidden="true"><span style="background:var(--k-hydro);color:var(--c-hydro)"><svg><use href="#i-home"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-growth"/></svg></span></div>
+            <h2>How does your council compare?</h2>
+            <p>Every council in Victoria and New South Wales, lined up fairly against councils like it on bins, planning, roads, libraries and money, using the official figures each state collects.</p>
+            <span class="stat" id="council-stat" hidden><i></i><span></span></span>
+            <span class="where">Council comparisons</span>
+          </a>
+        </li>
+        <li>
           <a class="project" href="roadmap.html">
             <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-wind"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-solar"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-battery"/></svg></span></div>
             <h2>Is NSW on track for 2030?</h2>
@@ -226,6 +235,16 @@
   <script src="data/roadmap.js" defer></script>
   <script src="data/wa_economy.js" defer></script>
   <script src="data/vic_housing.js" defer></script>
+  <script src="data/councils_summary.js" defer></script>
+  <script>
+  // Counts on the council card, from a small summary written with the comparison data
+  window.addEventListener("DOMContentLoaded", function () {
+    var C = window.COUNCILS_SUMMARY, el = document.getElementById("council-stat");
+    if (!C || !el) return;
+    el.lastChild.textContent = C.councils + " councils · " + C.measures + " official measures";
+    el.hidden = false;
+  });
+  </script>
   <script>
   // Live figures on the NSW card, from the same data as the tracker
   window.addEventListener("DOMContentLoaded", function () {
