@@ -279,6 +279,9 @@
     };
     const hideTip = () => tip.classList.remove("on");
     const S = D.statement, P = D.pipeline, H = D.history;
+    // "in the year to" reads best with the last month: "Jan to Mar 2026" becomes "March 2026"
+    const MONTHS = { Jan: "January", Feb: "February", Mar: "March", Apr: "April", May: "May", Jun: "June", Jul: "July", Aug: "August", Sep: "September", Oct: "October", Nov: "November", Dec: "December" };
+    const upTo = (q) => { const m = String(q).match(/(?:\w+ to )?(\w{3})\w* (\d{4})$/); return m && MONTHS[m[1]] ? MONTHS[m[1]] + " " + m[2] : q; };
 
     // pace bands, shared by the map, table and card
     const BANDS = [
@@ -294,7 +297,7 @@
       $("d-need").innerHTML = Math.round(S.per_day_needed) + "<small>a day</small>";
       $("d-have").innerHTML = Math.round(S.per_day_built) + "<small>a day</small>";
       $("d-need-sub").textContent = "80,000 a year, or one home every " + S.minutes_needed.toFixed(1) + " minutes";
-      $("d-have-sub").textContent = fmt(S.pace_per_year) + " in the year to " + S.through + ", one every " + S.minutes_built.toFixed(1) + " minutes";
+      $("d-have-sub").textContent = fmt(S.pace_per_year) + " in the year to " + upTo(S.through) + ", one every " + S.minutes_built.toFixed(1) + " minutes";
       const late = S.finish_year - 2033;
       $("verdict").innerHTML = "At today's pace, Victoria would reach 800,000 new homes in <b>" + S.finish_year + "</b>" +
         (late > 0 ? ", about " + late + " year" + (late > 1 ? "s" : "") + " later than planned" : ", on time") +
@@ -375,10 +378,10 @@
 
     function flow() {
       const f = $("flow"); f.innerHTML = "";
-      [["Approved", P.approved_12m, "in the year to " + P.approved_through],
-       ["Started", P.started_4q, "in the year to " + P.quarter],
-       ["Being built now", P.under_construction, "at the end of " + P.quarter],
-       ["Finished", P.completed_4q, "in the year to " + P.quarter]].forEach(([l, v, s]) => {
+      [["Approved", P.approved_12m, "in the year to " + upTo(P.approved_through)],
+       ["Started", P.started_4q, "in the year to " + upTo(P.quarter)],
+       ["Being built now", P.under_construction, "at the end of " + upTo(P.quarter)],
+       ["Finished", P.completed_4q, "in the year to " + upTo(P.quarter)]].forEach(([l, v, s]) => {
         const d = document.createElement("div"); d.className = "step";
         d.innerHTML = `<div class="lab">${l}</div><div class="num">${fmt(v)}</div><p>${s}</p>`;
         f.appendChild(d);
@@ -389,7 +392,7 @@
           : a < c * 0.9 ? "Approvals are running below completions, a sign that building could slow."
           : "Over the latest year the counts at each stage were close to one another, so the pipeline is steady but not growing.");
       const pe = D.people;
-      $("people").textContent = (pe ? "For a sense of scale, Victoria's population grew by " + fmt(pe.added) + " people in the year to " + pe.q +
+      $("people").textContent = (pe ? "For a sense of scale, Victoria's population grew by " + fmt(pe.added) + " people in the year to " + upTo(pe.q) +
         ". At 2.5 people a home, that is about " + fmt(pe.homes_worth) + " households. " : "") +
         "Over the past five years, the homes finished each year came to about " + Math.round(P.finish_rate * 100) + " for every 100 approved a year earlier, so approvals are a fair early signal of what will be built.";
     }
@@ -458,7 +461,7 @@
       const ahead = C.filter((c) => c.pace >= 1).length, sp = D.plan.split;
       $("council-note").textContent = "Plan for Victoria gives every council a target for extra homes by 2051, " + fmt(D.plan.total) +
         " in all, or about " + fmt(D.plan.per_year) + " a year, in line with the 800,000 goal. Spread evenly, " + ahead + " of " + C.length +
-        " councils approved enough homes in the year to " + D.plan.approvals_through + " to keep pace. Colours show approvals against each council's yearly share.";
+        " councils approved enough homes in the year to " + upTo(D.plan.approvals_through) + " to keep pace. Colours show approvals against each council's yearly share.";
       const pick = $("pick"); pick.innerHTML = "";
       [...C].sort((a, b) => a.name.localeCompare(b.name)).forEach((c) => { const o = document.createElement("option"); o.value = c.code; o.textContent = c.name; pick.appendChild(o); });
       pick.value = selected;
