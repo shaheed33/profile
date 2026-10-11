@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Replication: October 2024 | Shaheed</title>
+  <title>How I checked the data | Shaheed</title>
     <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/theme.css">
@@ -31,9 +31,9 @@
   <main class="container-xl py-4" style="max-width: 1100px;">
     <ul class="nav nav-pills mb-3" aria-label="Simulator sections">
       <li class="nav-item"><a class="nav-link" href="simulator.html">Simulator</a></li>
-      <li class="nav-item"><a class="nav-link active" aria-current="page" href="replication.html">Replication: October 2024</a></li>
+      <li class="nav-item"><a class="nav-link active" aria-current="page" href="replication.html">How I checked the data</a></li>
     </ul>
-    <h1 class="mb-2">Replication: October 2024</h1>
+    <h1 class="mb-2">How I checked the data</h1>
     <p class="lead">Andrew Grogan's spreadsheet, shared in his <a href="https://www.linkedin.com/posts/andrew-grogan-be-phd-a56b5816_what-would-happen-if-the-nem-had-a-lot-more-share-7258764364134899712-KhCt" target="_blank" rel="noopener">LinkedIn post</a>, uses data from Open Electricity. To check it independently, I rebuilt the same month from AEMO's raw data for every generating unit, using the NEMOSIS Python package, and ran his model on both versions.</p>
     <div id="missing" class="alert alert-warning d-none">The AEMO version of the data (data/nem_2024-10.js) has not been uploaded yet, so the comparison cannot be shown.</div>
     <p class="text-body-secondary" id="period"></p>
@@ -75,7 +75,7 @@
     <section class="mb-4">
       <h2 class="h5">Why the two versions differ</h2>
       <ul class="text-body-secondary">
-        <li><strong>Batteries.</strong> AEMO's unit data records much more battery charging and discharging than the extract in the spreadsheet. Many batteries were being moved onto new AEMO registration rules in 2024, and some may be missing from the older extract. The AEMO figures are consistent with real battery losses, with about 78% of charged energy returned. They also line up with AEMO's own reporting: its Quarterly Energy Dynamics report puts average battery output at 90 MW for October to December 2024. The AEMO rebuild gives about 81 MW for this month, while the spreadsheet extract gives about 14 MW.</li>
+        <li><strong>Batteries.</strong> AEMO's unit data records much more battery charging and discharging than the extract in the spreadsheet. Many batteries were being moved onto new AEMO registration rules in 2024, and some may be missing from the older extract. The AEMO figures are consistent with real battery losses, with about 78% of charged energy returned. They also line up with AEMO's own reporting, as its Quarterly Energy Dynamics report puts average battery output at 90 MW for October to December 2024. The AEMO rebuild gives about 81 MW for this month, while the spreadsheet extract gives about 14 MW.</li>
         <li><strong>A new wind farm.</strong> Port Augusta's wind farm was ramping up in October 2024. It appears in AEMO's unit data and accounts for most of the small extra wind.</li>
         <li><strong>Gas labels.</strong> Total gas matches closely, but AEMO and Open Electricity label a few gas units differently, so some output moves between combined cycle and open cycle gas.</li>
         <li><strong>Bioenergy.</strong> Sugar mill and landfill gas plants are grouped together in the AEMO version.</li>
@@ -83,7 +83,7 @@
       </ul>
       <h2 class="h5 mt-4">Method</h2>
       <ul class="text-body-secondary">
-        <li>AEMO tables: <code>DISPATCH_UNIT_SCADA</code> (output of every unit every 5 minutes) and <code>ROOFTOP_PV_ACTUAL</code> (rooftop solar every 30 minutes), downloaded with NEMOSIS.</li>
+        <li>The AEMO tables used are <code>DISPATCH_UNIT_SCADA</code> (output of every unit every 5 minutes) and <code>ROOFTOP_PV_ACTUAL</code> (rooftop solar every 30 minutes), downloaded with NEMOSIS.</li>
         <li>Each unit is matched to a fuel type using AEMO's registration list, with a short manual list for units that have closed or changed registration.</li>
         <li>5 minute values are averaged into half hours. Demand is total generation minus battery charging and pumped hydro pumping, the same as in Andrew's sheet.</li>
       </ul>
@@ -209,13 +209,13 @@ if (typeof module !== "undefined") module.exports = { simulate, ANDREW_PRESET, G
     const t0 = new Date(A.start);
     const times = Array.from({ length: n }, (_, i) => new Date(t0.getTime() + i * 1800000));
     const dfmt = (d) => d.toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
-    document.getElementById("period").textContent = `Period: ${dfmt(times[0])} to ${dfmt(times[n - 1])}, ${n.toLocaleString()} half hours.`;
+    document.getElementById("period").textContent = `The month checked runs from ${dfmt(times[0])} to ${dfmt(times[n - 1])}, ${n.toLocaleString()} half hours in all.`;
 
     const sum = (s, keys) => { let t = 0; for (const k of keys) { const a = s[k]; if (!a) continue; for (let i = 0; i < n; i++) t += a[i] || 0; } return t * step / 1000; };
     const GROUPS = [
       ["Brown coal", ["coal_brown"]], ["Black coal", ["coal_black"]],
       ["Gas (all types)", ["gas_steam", "gas_ccgt", "gas_ocgt", "gas_recip", "gas_wcmg"]],
-      ["Distillate", ["distillate"]], ["Bioenergy", ["bio_biogas", "bio_biomass"]],
+      ["Diesel and oil (distillate)", ["distillate"]], ["Bioenergy", ["bio_biogas", "bio_biomass"]],
       ["Hydro", ["hydro"]], ["Wind", ["wind"]], ["Utility solar", ["solar_utility"]], ["Rooftop solar", ["solar_rooftop"]],
       ["Batteries discharging", ["battery_discharging"]], ["Batteries charging", ["battery_charging"]],
       ["Pumped hydro pumping", ["phes_pumps"]], ["Demand", ["demand"]],

@@ -301,7 +301,7 @@
     const rawText = (d, v) => v == null ? "n/a" : d === "diversity" ? v.toFixed(1) + " industries" : d === "exposure" ? pct(v) + " of jobs" : d === "income" ? "$" + num(v) : signed(v);
     $("dimhelp").innerHTML = DIMS.map((d) => `<p><b>${esc(d.label)}.</b> ${esc(HELP[d.id])} Consistency when its figures move back a year ${d.reliability != null ? d.reliability.toFixed(2) : "n/a"} out of 1${d.used ? "" : ", so it is left out of the overall score"}${D.dim_min[d.id] ? `. Scored only for areas with at least ${num(D.dim_min[d.id])} jobs` : ""}.</p>`).join("");
     $("grouphelp").innerHTML = "<ul>" + Object.values(D.groups).map((g) => `<li><b>${esc(g.label)}</b>, ${g.scored} scored areas. ${esc(g.about)}.</li>`).join("") + "</ul>";
-    $("generated").textContent = "Figures last rebuilt " + new Date(D.generated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + ".";
+    $("generated").textContent = "Last updated " + new Date(D.generated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + ".";
 
     // keep the picker bar just under the site header
     const header = document.querySelector(".site-header");

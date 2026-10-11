@@ -220,7 +220,7 @@
       <h1>Is NSW on track for 2030?</h1>
       <p class="lead">A live check on whether NSW is building enough wind, solar and storage to replace its coal power stations.</p>
       <span class="src" id="asof"></span>
-      <details class="terms"><summary>Key terms in plain English</summary><dl><dt>NEM</dt><dd>The National Electricity Market, the shared grid and market for Queensland, NSW, the ACT, Victoria, South Australia and Tasmania. Western Australia and the Northern Territory run their own.</dd><dt>MW and GW</dt><dd>Power, how much can be produced at one moment. A gigawatt (GW) is 1,000 megawatts (MW). One unit of a large coal power station is about 0.5 to 0.7 GW.</dd><dt>MWh, GWh and TWh</dt><dd>Energy, power kept up over time. 1 GW running for one hour makes 1 GWh, and 1,000 GWh is 1 TWh. A battery's GW says how fast it can charge or discharge, and its GWh how much it can hold.</dd><dt>Long duration storage</dt><dd>Batteries and pumped hydro that can keep supplying power for 8 hours or more, long enough to cover a whole evening and night.</dd></dl></details>
+      <details class="terms"><summary>Key terms in plain English</summary><dl><dt>NEM</dt><dd>The National Electricity Market, the shared grid and market for Queensland, NSW, the ACT, Victoria, South Australia and Tasmania. Western Australia and the Northern Territory run their own.</dd><dt>MW and GW</dt><dd>Power, how much can be produced at one moment. A gigawatt (GW) is 1,000 megawatts (MW). One unit of a large coal power station is about 0.5 to 0.7 GW.</dd><dt>MWh, GWh and TWh</dt><dd>Energy, power kept up over time. 1 GW running for one hour makes 1 GWh, and 1,000 GWh is 1 TWh. A battery's GW says how fast it can charge or discharge, and its GWh how much it can hold.</dd><dt>Operating, committed, anticipated, proposed</dt><dd>How far along a project is. Operating projects are running. Committed ones have their finance and approvals and are being built. Anticipated ones are well advanced but not yet committed. Proposed ones have only been announced, and many will never be built.</dd><dt>Long duration storage</dt><dd>Batteries and pumped hydro that can keep supplying power for 8 hours or more, long enough to cover a whole evening and night.</dd></dl></details>
       </div>
 
       <div class="clock" aria-label="Countdowns">
@@ -368,7 +368,7 @@
     const TECH = { Wind: "wind", Solar: "solar", Battery: "battery", "Pumped hydro": "hydro", Coal: "coal" };
     const icon = t => '<span class="ic sm ' + TECH[t] + '" aria-hidden="true"><svg><use href="#i-' + TECH[t] + '"/></svg></span>';
     const startYr = R.baseline.slice(0, 4);
-    $("asof").textContent = "AEMO data · " + new Date(R.updated).toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + " release";
+    $("asof").textContent = "From AEMO's " + new Date(R.updated).toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + " project list";
 
     // Key dates, in Sydney time
     const T2030 = new Date("2030-01-01T00:00:00+11:00"), T2035 = new Date("2035-01-01T00:00:00+11:00"), T0 = new Date(R.baseline + "T00:00:00+11:00");
@@ -488,10 +488,10 @@
     $("pace").innerHTML =
       '<div class="need">Needed from now<b>' + gw(need) + " a year</b>" + num(need / 365.25, 1) + " MW every day</div>" +
       '<div class="got">Average over the last two years<b>' + gw(pastRate) + " a year</b>" + num(pastRate / 365.25, 1) + " MW every day</div>" +
-      "<div>At that pace, 12 GW arrives in<b>" + (arrive ? arrive.toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "never") + "</b>" +
+      "<div>At that pace, 12 GW arrives in<b>" + (arrive ? arrive.toLocaleDateString("en-GB", { month: "long", year: "numeric" }) : "never") + "</b>" +
       (arrive && arrive > T2030 ? "about " + num((arrive - T2030) / YEAR, 1) + " years late" : "on time") + "</div>";
-    if (R.aemo_total) $("recon").textContent = "Why AEMO's file shows more: it lists " + gw(R.aemo_total.gen_mw) + " of wind and solar running in NSW. " +
-      gw(R.aemo_total.gen_mw - op) + " of that was already running before the Roadmap began in January " + startYr + ", so it does not count towards the target.";
+    if (R.aemo_total) $("recon").textContent = "AEMO's file lists more, " + gw(R.aemo_total.gen_mw) + " of wind and solar running in NSW, because " +
+      gw(R.aemo_total.gen_mw - op) + " of it was already running before the Roadmap began in January " + startYr + " and does not count towards the target.";
 
     // Coal
     const coalTotal = R.coal.reduce((a, c) => a + c.mw, 0);
