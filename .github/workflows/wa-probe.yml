@@ -3,6 +3,8 @@ on:
   push:
     branches: [claude/zealous-archimedes-8qq9t4]
     paths: [".github/probe/**", ".github/workflows/wa-probe.yml"]
+permissions:
+  contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
@@ -13,3 +15,6 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install -q requests
       - run: python -u .github/probe/probe.py
+      - run: |
+          git config user.name probe; git config user.email actions@users.noreply.github.com
+          git add raw/councils && git commit -qm "Probe: council performance spreadsheets" && git push origin HEAD
