@@ -208,6 +208,10 @@
           <div id="dimhelp"></div>
         </details>
         <details>
+          <summary>Coal power station closures</summary>
+          <p>Closure years come straight from AEMO's Generation Information register, which each power station owner updates. A formally announced closure has been notified to AEMO with a date. An expected closure year is the owner's current plan and can change, as several have in recent years. Each station is placed in the council area where it stands. The page is rebuilt each month, so new AEMO releases flow through without anything being typed in by hand.</p>
+        </details>
+        <details>
           <summary>Where the growth comes from, explained</summary>
           <p>Jobs growth in an area is split into two parts, a method economists call shift-share analysis. The industry mix part is the growth the area would have had if each of its industries had grown at the Australian rate for that industry. An area full of fast-growing industries gets a boost from its mix even if nothing special happens locally. The local part is everything else, such as population growth, new investment or a business closing. It is worked out as actual growth minus expected growth.</p>
         </details>
@@ -225,14 +229,14 @@
         </details>
         <details>
           <summary>Sources</summary>
-          <p id="sources">ABS Jobs in Australia (employee jobs by industry and residence), ABS Counts of Australian Businesses, ABS Personal Income in Australia, ABS Estimated Resident Population, the 2021 Census time series on industry of employment, and the ABS Australian Statistical Geography Standard, all through the ABS Data by Region service. Built with an open method that refreshes each month.</p>
+          <p id="sources">ABS Jobs in Australia (employee jobs by industry and residence), ABS Counts of Australian Businesses, ABS Personal Income in Australia, ABS Estimated Resident Population, the 2021 Census time series on industry of employment, and the ABS Australian Statistical Geography Standard, all through the ABS Data by Region service, and AEMO's NEM Generation Information register for coal power stations. Built with an open method that refreshes each month.</p>
           <p id="generated" class="small text-body-secondary"></p>
         </details>
       </section>
     </div>
   </main>
 
-  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Data from the Australian Bureau of Statistics.</footer>
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Data from the Australian Bureau of Statistics and AEMO.</footer>
   <div class="tip" id="tip" role="tooltip"></div>
 
   <script src="data/local_economy.js" onerror="void 0"></script>
@@ -285,6 +289,7 @@
       business: ["--k-solar", "--c-solar", '<path d="M3 21h18M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5M9 11h.01M15 11h.01"/>'],
       income: ["--k-hydro", "--c-hydro", '<circle cx="12" cy="12" r="9"/><path d="M15 9.2c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .8-3 2.1s1.3 1.8 3 2.2 3 1 3 2.3-1.3 2.1-3 2.1c-1.5 0-2.7-.6-3.1-1.7M12 6v1.7M12 16.4V18"/>'],
       industry: ["--k-wind", "--c-wind", '<path d="M3 21h18M5 21V10l5 3V10l5 3V6h4v15"/>'],
+      coal: ["--k-coal", "--c-coal", '<path d="M3 21V12l5 3V12l5 3V8h3V4h3v17z"/>'],
       change: ["--k-solar", "--c-solar", '<path d="M4 7h13l-3-3M20 17H7l3 3"/>'],
     };
     const icon = (k) => { const [bg, fg, inner] = DIMICON[k]; return `<span class="ticon" style="background:var(${bg});color:var(${fg})" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${inner}</svg></span>`; };
@@ -472,6 +477,7 @@
         }
         out.push(s);
       }
+      (c.coal || []).forEach((x) => out.push(`${x.site} coal-fired power station (${num(x.mw)} MW) is in the area. ${coalStatus(x)}`));
       const ch = c.census;
       if (ch["2011"] && ch["2021"]) {
         const d = IND.map((x, i) => [i, ch["2021"][i] - ch["2011"][i]]).filter((x) => !isNaN(x[1])).sort((a, b) => b[1] - a[1]);
@@ -492,6 +498,11 @@
 
       const s2 = sec("growth", "Where the jobs growth came from", `Change in employee jobs held by residents, ${Y.jobs[0]} to ${Y.jobs[1]}, split into the part its mix of industries explains and the local part.`);
       shift(s2, c, c2);
+
+      if (c.coal || (c2 && c2.coal)) {
+        const s4 = sec("coal", "Coal power stations in the area", `Closure years as reported to AEMO by each station's owner, from AEMO's Generation Information release of ${esc(D.coal_source)}. AEMO updates it every few months, and this page follows.`);
+        coal(s4, c, c2);
+      }
 
       const s3 = sec("change", "How the area changed in ten years", "Share of employed residents in each industry at the 2011 and 2021 Censuses, on today's council boundaries.");
       tenYears(s3, c, c2);
@@ -566,6 +577,41 @@
       const cap = document.createElement("p"); cap.className = "intro"; cap.style.fontSize = ".85rem"; cap.style.marginTop = ".3rem";
       cap.textContent = `Employee jobs held by residents each year to 30 June, ${yrs[0]} set to 100.`;
       host.appendChild(cap);
+    }
+
+    const coalStatus = (x) => x.status === "announced" ? `The owner has formally told AEMO it will close${x.date ? " in " + x.date : " in " + x.first}.`
+      : x.first ? `The owner's expected closure year is ${x.first === x.last ? x.first : x.first + " to " + x.last}. Expected years can move earlier or later.`
+      : "No closure year has been given to AEMO.";
+    function coal(host, c, c2) {
+      const all = [c, c2].filter((k) => k && k.coal).flatMap((k) => k.coal.map((x) => ({ ...x, k })));
+      const now = new Date().getFullYear(), end = Math.max(now + 10, ...all.map((x) => (x.last || now) + 2));
+      const wrap = document.createElement("div"); wrap.className = "chart"; host.appendChild(wrap);
+      const W0 = Math.max(320, wrap.clientWidth || 900), narrow = W0 < 600, LW = narrow ? 120 : 190, rowH = 34, H = all.length * rowH + 26;
+      const svg = el("svg", { viewBox: `0 0 ${W0} ${H}`, role: "img", "aria-label": "Coal power station closure years" }, wrap);
+      const X = (y) => LW + (y - now) / (end - now) * (W0 - LW - 20);
+      for (let y = now; y <= end; y++) if ((y - now) % (narrow ? 10 : 5) === 0) { el("line", { x1: X(y), x2: X(y), y1: 0, y2: H - 20, stroke: "var(--chart-grid)" }, svg); txt(svg, X(y), H - 4, y, { "text-anchor": "middle" }); }
+      all.forEach((x, i) => {
+        const y = i * rowH + 6, col = x.k === c ? "var(--a)" : "var(--cmp)", g = el("g", {}, svg);
+        txt(g, LW - 8, y + 12, x.site, { "text-anchor": "end", class: "lab" });
+        txt(g, LW - 8, y + 25, `${num(x.mw)} MW`, { "text-anchor": "end", "font-size": 11 });
+        if (x.first) {
+          el("rect", { x: LW, y: y + 5, width: Math.max(2, X(x.first) - LW), height: 10, rx: 3, fill: col, opacity: .85 }, g);
+          if (x.last > x.first) el("rect", { x: X(x.first), y: y + 5, width: X(x.last) - X(x.first), height: 10, rx: 3, fill: col, opacity: .4 }, g);
+          txt(g, X(x.last) + 6, y + 14, x.first === x.last ? x.first : `${x.first} to ${x.last}`, { class: "lab", "font-weight": 600 });
+        } else {
+          el("rect", { x: LW, y: y + 5, width: W0 - LW - 20, height: 10, rx: 3, fill: "none", stroke: col, "stroke-dasharray": "4 3" }, g);
+          txt(g, LW + 6, y + 27, "No closure year given", { "font-size": 11 });
+        }
+        el("rect", { x: 0, y, width: W0, height: rowH, fill: "transparent" }, g);
+        g.addEventListener("mousemove", (e) => showTip(e, `<b>${esc(x.site)}</b>, ${esc(x.k.name)}<br>${num(x.mw)} MW across ${x.units} unit${x.units > 1 ? "s" : ""}<br>${esc(coalStatus(x))}`));
+        g.addEventListener("mouseleave", hideTip);
+      });
+      const p = document.createElement("div"); p.className = "findings"; p.style.marginTop = ".8rem";
+      p.innerHTML = all.map((x) => `<p class="intro" style="margin:.2rem 0"><b>${esc(x.site)}</b>${c2 ? ` (${esc(x.k.name)})` : ""}, ${num(x.mw)} MW. ${esc(coalStatus(x))}</p>`).join("");
+      host.appendChild(p);
+      const n = document.createElement("p"); n.className = "intro"; n.style.fontSize = ".85rem";
+      n.textContent = "Many workers live in neighbouring areas, so a closure reaches beyond the council area the station sits in. The jobs figures above cannot separate power station jobs from water and waste jobs, so they do not show how many residents work at the station. AEMO's register covers the eastern and southern states, not Western Australia or the Northern Territory.";
+      host.appendChild(n);
     }
 
     function tenYears(host, c, c2) {

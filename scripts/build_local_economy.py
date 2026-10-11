@@ -15,6 +15,9 @@ for every council area in Australia:
       business      change in the number of businesses
       income        median employee income
   * how its industries changed over ten years (Census 2011, 2016 and 2021)
+  * coal-fired power stations in the area and their closure years, taken from
+    the newest AEMO NEM Generation Information file in raw/ (never typed in by
+    hand). Only each station's council area is set here, in STATIONS.
 
 Similar areas are grouped by where people live (capital city or not, and the ABS
 remoteness of residents' mesh blocks) and by size. Every dimension is tested for
@@ -70,6 +73,17 @@ INDUSTRIES = [
 LEED_IND = [f"LEED_{i}" for i in range(5, 24)]
 CEN_IND = [f"EMP_IND_{i}" for i in range(2, 21)]
 EXPOSED = ["A", "B", "C", "D"]
+
+# Where each coal-fired power station in the National Electricity Market is, by
+# council area (2021 boundaries). Closure years come from AEMO's file, not from here.
+# A coal station in AEMO's file that is missing from this list stops the build.
+STATIONS = {
+    "Bayswater": "Muswellbrook", "Eraring": "Lake Macquarie", "Mt Piper": "Lithgow",
+    "Vales Point": "Central Coast (NSW)",
+    "Loy Yang A": "Latrobe (Vic.)", "Loy Yang B": "Latrobe (Vic.)", "Yallourn": "Latrobe (Vic.)",
+    "Callide B": "Banana", "Callide C": "Banana", "Gladstone": "Gladstone", "Kogan Creek": "Western Downs",
+    "Millmerran": "Toowoomba", "Stanwell": "Rockhampton", "Tarong North": "South Burnett", "Tarong": "South Burnett",
+}
 
 DIMENSIONS = [
     ("diversity", "Diversity", "higher"),
@@ -241,6 +255,10 @@ def main() -> None:
 
     census = census_shares()
     links = council_page_names()
+    coal, coal_month = coal_closures()
+    missing = set(coal) - {name[c] for c in codes}
+    if missing:
+        raise SystemExit(f"Coal station council areas not found: {missing}")
     out = []
     for c in codes:
         rec = {
@@ -261,6 +279,8 @@ def main() -> None:
         rec["census"] = {y: [_r(census.loc[(c, y), k] * 100, 1) if (c, y) in census.index else None
                              for k, _, _ in INDUSTRIES]
                          for y in ("2011", "2016", "2021") if (c, y) in census.index}
+        if name[c] in coal:
+            rec["coal"] = sorted(coal[name[c]], key=lambda x: (x["first"] or 9999))
         st = {"NSW": "nsw", "Vic": "vic"}.get(rec["state"])
         if st and _norm(name[c]) in links.get(st, {}):
             rec["link"] = [st, links[st][_norm(name[c])]]
@@ -282,6 +302,7 @@ def main() -> None:
         "dimensions": [{"id": d, "label": l, "better": b, "reliability": reliability[d]} for d, l, b in DIMENSIONS],
         "groups": {k: {"label": a, "about": b, "n": int((df["group"] == k).sum()),
                        "scored": int(((df["group"] == k) & df["scored"]).sum())} for k, (a, b) in GROUPS.items()},
+        "coal_source": coal_month,
         "min_jobs": MIN_JOBS, "dim_min": DIM_MIN, "small_reliability": small_rel, "councils": out,
     }
     OUT.write_text("// Built by scripts/build_local_economy.py from ABS data\nwindow.LOCAL_ECONOMY = "
@@ -290,6 +311,47 @@ def main() -> None:
         {"councils": len(out), "scored": int(df["scored"].sum()), "generated": data["generated"]}) + ";\n", encoding="utf-8")
     print(f"Wrote {OUT.name}: {len(out)} council areas, {int(df['scored'].sum())} scored, "
           f"{OUT.stat().st_size / 1e3:.0f} kB")
+
+
+def coal_closures() -> tuple[dict[str, list], str | None]:
+    """Coal-fired stations from the newest AEMO Generation Information workbook,
+    grouped by site, with each unit's capacity, status and expected closure year."""
+    import openpyxl
+    files = sorted((ROOT / "raw").glob("NEM_Generation_Information_*.xlsx"),
+                   key=lambda f: datetime.strptime(" ".join(f.stem.split("_")[-2:]), "%b %Y"))
+    if not files:
+        print("No AEMO Generation Information file in raw/, so no closures shown")
+        return {}, None
+    f = files[-1]
+    rows = list(openpyxl.load_workbook(f, read_only=True, data_only=True)["Generator Information"].iter_rows(values_only=True))
+    hi = next(i for i, r in enumerate(rows[:20]) if r and "Expected Closure Year" in [str(x).strip() for x in r if x])
+    H = {str(h).strip(): i for i, h in enumerate(rows[hi]) if h}
+    sites: dict[str, list] = {}
+    for r in rows[hi + 1:]:
+        if not r or r[H["Technology Type"]] != "Coal" or r[H["Commitment Status"]] not in ("In Service", "Announced Withdrawal"):
+            continue
+        sites.setdefault(str(r[H["Site Name"]]).strip(), []).append(r)
+    out: dict[str, list] = {}
+    for site, units in sites.items():
+        key = next((k for k in sorted(STATIONS, key=len, reverse=True) if site.lower().startswith(k.lower())), None)
+        if key is None:
+            raise SystemExit(f"AEMO lists a coal station not in STATIONS: {site}. Add its council area.")
+        yrs = []
+        for u in units:
+            y = u[H["Expected Closure Year"]]
+            y = int(y) if isinstance(y, (int, float)) and y < 2100 else None   # AEMO uses 2200 for no year given
+            yrs.append(y)
+        mw = sum(float(u[H["Unit Capacity (MW AC)"]] or 0) for u in units)
+        announced = any(u[H["Commitment Status"]] == "Announced Withdrawal" for u in units)
+        dates = [u[H["Closure Date"]] for u in units if isinstance(u[H["Closure Date"]], datetime)]
+        out.setdefault(STATIONS[key], []).append({
+            "site": key, "mw": round(mw), "units": len(units),
+            "first": min((y for y in yrs if y), default=None), "last": max((y for y in yrs if y), default=None),
+            "status": "announced" if announced else "expected",
+            "date": min(dates).strftime("%B %Y") if dates else None})
+    month = datetime.strptime(" ".join(f.stem.split("_")[-2:]), "%b %Y").strftime("%B %Y")
+    print(f"Coal closures from AEMO {month}:", {k: [(x['site'], x['first'], x['last']) for x in v] for k, v in out.items()})
+    return out, month
 
 
 def census_shares() -> pd.DataFrame:
