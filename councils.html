@@ -243,10 +243,9 @@
       if (pop && pop.btn === btn) { closePop(); return; }
       closePop();
       const box = document.createElement("div"); box.className = "pop"; box.setAttribute("role", "dialog");
-      if (kind === "why") box.innerHTML = `<b>Why no winner?</b>${esc(ind.note || "A higher or lower figure is not better or worse in itself.")} ` +
-        "The difference is shown so you can see it, but it is not counted as one council doing better than the other.";
+      if (kind === "why") box.innerHTML = `<b>Why no winner?</b>${esc(ind.note || "A higher or lower figure is not better or worse in itself.")}`;
       else box.innerHTML = `<b>${esc(ind.label)}</b>${esc(ind.explain || "")}` +
-        (ind.better ? ` ${ind.better === "higher" ? "Higher is better." : "Lower is better."}` : " Neither higher nor lower is better.") +
+        (ind.better ? ` ${ind.better === "higher" ? "Higher is better." : "Lower is better."}` : `<span style="display:block;margin-top:.45rem"><b style="display:inline">Why no better or worse?</b> ${esc(ind.note || "")}</span>`) +
         `<span class="src">Source: ${esc(S.source)}.</span>`;
       document.body.appendChild(box);
       const r = btn.getBoundingClientRect();
