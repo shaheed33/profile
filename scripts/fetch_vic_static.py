@@ -48,7 +48,9 @@ def fetch_targets() -> list[dict]:
             # the first council in each list sits under the list heading
             region = "Metropolitan Melbourne" if head.startswith("Metropolitan") else "Regional Victoria"
             name, body = body.split("|", 1)
-        elif region is None or "Number of" not in body and "number of" not in body:
+        elif region is None or "number of" not in body.lower():
+            if region is not None:
+                print("skipped:", head, "::", body[:120])
             continue
         else:
             name = head
@@ -78,6 +80,7 @@ def fetch_targets() -> list[dict]:
     out = sorted(rows.values(), key=lambda r: r["council"])
     total = sum(r["target_2051"] for r in out)
     print(f"{len(out)} councils, {total:,} homes to 2051")
+    print(", ".join(r["council"] for r in out))
     if len(out) != 79 or not 2_150_000 <= total <= 2_300_000:
         raise SystemExit("The targets page has changed shape; check it by hand before saving.")
     return out
