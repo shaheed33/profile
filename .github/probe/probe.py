@@ -1,36 +1,57 @@
-"""Temporary probe: Victorian housing targets and ABS council-level approvals."""
-import io, re, sys
+"""Temporary probe: Victorian housing targets table and ABS Victorian housing series."""
+import io, re, sys, json
 import pandas as pd, requests
+from bs4 import BeautifulSoup
 sys.path.insert(0, "scripts")
 import wa_sources as w
 B = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"}
-for url in ["https://www.planning.vic.gov.au/planforvictoria/housing-for-all-victorians/housing-targets",
-            "https://engage.vic.gov.au/project/developing-a-new-plan-for-Victoria/page/housing-targets-2051"]:
-    try:
-        r = requests.get(url, headers=B, timeout=60)
-        print("\n=== ", url, r.status_code, len(r.text))
-        try:
-            for i, t in enumerate(pd.read_html(io.StringIO(r.text))):
-                print(f"--- table {i} shape {t.shape}")
-                with pd.option_context("display.width", 300, "display.max_rows", 200, "display.max_colwidth", 60):
-                    print(t.to_string(index=False))
-        except Exception as e:
-            print("no tables:", e)
-        txt = re.sub(r"<[^>]+>", " ", r.text); txt = re.sub(r"\s+", " ", txt)
-        for kw in ["2051", "baseline", "net new", "greenfield", "established", "2.24"]:
-            for m in list(re.finditer(kw, txt))[:4]:
-                print(f"[{kw}]", txt[max(0, m.start() - 200): m.end() + 200])
-        links = re.findall(r'href="([^"]+\.(?:xlsx|csv|pdf|xls))"', r.text)
-        print("file links:", links[:30])
-    except Exception as e:
-        print(url, "failed", e)
-J = {**w.UA, "Accept": "application/vnd.sdmx.structure+json"}
-j = requests.get("https://data.api.abs.gov.au/rest/dataflow/ABS", headers=J, timeout=60).json()
-for f in j["data"]["dataflows"]:
-    if re.search(r"^BA|building", f["id"] + " " + f["name"], re.I):
-        print(f["id"], "|", f["name"])
-        try:
-            s = requests.get(f"https://data.api.abs.gov.au/rest/datastructure/ABS/{f['id']}", headers=J, timeout=60).json()
-            print("   dims", [d["id"] for d in sorted(s["data"]["dataStructures"][0]["dataStructureComponents"]["dimensionList"]["dimensions"], key=lambda d: d.get("position", 0))])
-        except Exception as e:
-            print("   structure failed", e)
+url = "https://engage.vic.gov.au/project/developing-a-new-plan-for-Victoria/page/housing-targets-2051"
+r = requests.get(url, headers=B, timeout=60)
+soup = BeautifulSoup(r.text, "lxml")
+for s in soup(["script", "style", "noscript"]):
+    s.decompose()
+tables = soup.find_all("table")
+print("tables:", len(tables))
+for i, t in enumerate(tables):
+    rows = [[c.get_text(" ", strip=True) for c in tr.find_all(["th", "td"])] for tr in t.find_all("tr")]
+    print(f"--- table {i} ({len(rows)} rows)")
+    for rw in rows:
+        print(" | ".join(rw))
+main = soup.get_text("\n", strip=True)
+i = main.find("2051")
+print("\n=== page text (first 6000 chars from first mention of targets)")
+k = max(0, main.lower().find("housing target"))
+print(main[k:k + 6000])
+links = [a.get("href") for a in soup.find_all("a") if a.get("href") and re.search(r"\.(xlsx|csv|pdf|xls)", a.get("href"), re.I)]
+print("file links:", links[:40])
+
+# ABS: which LGA approvals flows cover recent months, for Victoria
+for flow in ["BA_LGA2024", "BA_LGA2025", "BA_LGA2026"]:
+    u = f"{w.ABS_BASE}/ABS,{flow},/1.9.TOT.100.LGA..M?startPeriod=2023-01&format=csvfilewithlabels"
+    rr = requests.get(u, headers=w.UA, timeout=180)
+    print(f"\n=== {flow} HTTP {rr.status_code} {len(rr.text)/1e6:.2f}MB")
+    if rr.status_code != 200:
+        print(rr.text[:300]); continue
+    df = w.parse_abs_csv(rr.text).dropna(subset=["OBS_VALUE"])
+    vic = df[df["REGION__code"].str.startswith("2")]
+    print("dims", [c for c in df.columns if not c.endswith("__code")])
+    print("labels", {c: df[c].unique()[:4].tolist() for c in ["MEASURE", "SECTOR", "WORK_TYPE", "BUILDING_TYPE", "REGION_TYPE"]})
+    print("periods", df["TIME_PERIOD"].min(), df["TIME_PERIOD"].max(), "Vic LGAs", vic["REGION"].nunique())
+    print(vic.groupby(["REGION__code", "REGION"]).size().head(12).to_string())
+
+# ABS: Victoria commencements and completions, quarterly
+u = f"{w.ABS_BASE}/ABS,BUILDING_ACTIVITY,/.2.....Q?startPeriod=2015-01&format=csvfilewithlabels"
+rr = requests.get(u, headers=w.UA, timeout=240)
+print("\n=== BUILDING_ACTIVITY Vic", rr.status_code, f"{len(rr.text)/1e6:.1f}MB")
+df = w.parse_abs_csv(rr.text).dropna(subset=["OBS_VALUE"])
+g = df[df["MEASURE"].str.contains("Dwelling units", case=False)]
+g = g.groupby(["MEASURE__code", "MEASURE", "BLD_WORK_TYPE", "SECTOR_OWN", "TYPE_BLDG__code", "TYPE_BLDG", "TSEST", "PRICE_ADJ"]).agg(last=("TIME_PERIOD", "max"), n=("TIME_PERIOD", "size")).reset_index()
+g = g[g["SECTOR_OWN"].str.contains("Total") & g["BLD_WORK_TYPE"].str.contains("Total|New", regex=True)]
+with pd.option_context("display.width", 400, "display.max_rows", 100, "display.max_colwidth", 40):
+    print(g.to_string(index=False))
+# Victoria monthly approvals, state total, seasonally adjusted, all work types
+u = f"{w.ABS_BASE}/ABS,BA_GCCSA,/1.1.9..100..2.M?startPeriod=2023-01&format=csvfilewithlabels"
+rr = requests.get(u, headers=w.UA, timeout=180)
+df = w.parse_abs_csv(rr.text).dropna(subset=["OBS_VALUE"])
+print("\n=== BA_GCCSA Vic", rr.status_code)
+print(df.groupby(["WORK_TYPE__code", "WORK_TYPE", "TSEST"]).agg(last=("TIME_PERIOD", "max"), v=("OBS_VALUE", "last")).to_string())
