@@ -198,8 +198,8 @@
             <li><b>Five separate parts.</b> Resilience has no single official measure, so the score is built from five parts that economists commonly use. How spread out jobs are across industries, how many jobs are in industries exposed to commodity prices or the shift to net zero, jobs growth, business growth, and incomes. Each part is shown on its own.</li>
             <li><b>Scores are positions, not grades.</b> A score of 70 means the area does better on that part than about 70% of similar areas. It does not mean 70% of some ideal.</li>
             <li><b>You choose what matters.</b> The overall score weights the five parts equally unless you change the weights. The page also shows how far the result moves across hundreds of other reasonable weightings, so a result that depends on one choice of weights is easy to spot.</li>
-            <li><b>Only parts that hold up.</b> Every part is tested by moving its figures back a year and checking that areas keep much the same order. A part whose order changes a lot (a consistency score below 0.6 out of 1) is shown but left out of the overall score.</li>
-            <li><b>Small areas are not scored.</b> Areas with fewer than <span id="minjobs">1,000</span> employee jobs held by residents are described but not scored, because a single business opening or closing can swing their figures.</li>
+            <li><b>Only parts that hold up.</b> Every part is tested by moving its figures by a year and checking that areas keep much the same order. A part whose order changes a lot (a consistency score below 0.6 out of 1) is shown but left out of the overall score. All five parts currently pass.</li>
+            <li><b>Small areas are treated with care.</b> Areas whose residents hold fewer than <span id="minjobs">1,000</span> employee jobs are described but not scored, because a single business opening or closing can swing their figures. Changes over time are noisier than levels, so jobs growth and business growth are only scored for areas with at least <span id="mingrowth">5,000</span> jobs. In smaller areas their order changes too much from one period to the next to be trusted (<span id="smallrel"></span>).</li>
             <li><b>Careful words.</b> A large share of jobs in mining, manufacturing, energy or farming is shown as exposure to swings and change, not as a forecast of job losses. Many of these industries are growing.</li>
           </ol>
         </details>
@@ -214,6 +214,7 @@
         <details>
           <summary>What these figures cannot tell you</summary>
           <p>The jobs figures count jobs held by people who live in the area, wherever they work, because that is how the ABS publishes them. An area with a big hospital that most staff commute into will show fewer health jobs than the area that houses those staff. For most questions about how exposed residents are to a downturn, that is the right way round.</p>
+          <p>The ABS counts every employee job held at any time during the year, including second jobs and short ones. Years with a lot of people changing jobs, such as 2022, show more jobs everywhere, which is why each area's growth is compared with Australia's and with similar areas rather than read on its own.</p>
           <p>The figures cover employee jobs. Owner-operators without employees, who are common in farming and trades, are not counted in the industry mix. Industries are broad divisions, so coal mining cannot be separated from other mining, and a coal-fired power station sits inside energy, water and waste with water utilities.</p>
           <p>Resilience depends on more than these five parts, including skills, infrastructure, distance to markets and local leadership. Treat the score as a starting point for questions, not a verdict.</p>
         </details>
@@ -266,6 +267,8 @@
     const DIMS = D.dimensions.map((d) => ({ ...d, used: d.reliability == null || d.reliability >= 0.6 }));
     const DIM = Object.fromEntries(DIMS.map((d) => [d.id, d]));
     $("minjobs").textContent = num(D.min_jobs);
+    $("mingrowth").textContent = num(D.dim_min.growth);
+    $("smallrel").textContent = `consistency ${D.small_reliability.growth.toFixed(2)} for jobs growth and ${D.small_reliability.business.toFixed(2)} for business growth in areas with ${num(D.min_jobs)} to ${num(D.dim_min.growth)} jobs`;
 
     // ---- what each part means, in a sentence or two
     const HELP = {
@@ -286,7 +289,7 @@
     };
     const icon = (k) => { const [bg, fg, inner] = DIMICON[k]; return `<span class="ticon" style="background:var(${bg});color:var(${fg})" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${inner}</svg></span>`; };
     const rawText = (d, v) => v == null ? "n/a" : d === "diversity" ? v.toFixed(1) + " industries" : d === "exposure" ? pct(v) + " of jobs" : d === "income" ? "$" + num(v) : signed(v);
-    $("dimhelp").innerHTML = DIMS.map((d) => `<p><b>${esc(d.label)}.</b> ${esc(HELP[d.id])} Consistency when its figures move back a year ${d.reliability != null ? d.reliability.toFixed(2) : "n/a"} out of 1${d.used ? "" : ", so it is left out of the overall score"}.</p>`).join("");
+    $("dimhelp").innerHTML = DIMS.map((d) => `<p><b>${esc(d.label)}.</b> ${esc(HELP[d.id])} Consistency when its figures move back a year ${d.reliability != null ? d.reliability.toFixed(2) : "n/a"} out of 1${d.used ? "" : ", so it is left out of the overall score"}${D.dim_min[d.id] ? `. Scored only for areas with at least ${num(D.dim_min[d.id])} jobs` : ""}.</p>`).join("");
     $("grouphelp").innerHTML = "<ul>" + Object.values(D.groups).map((g) => `<li><b>${esc(g.label)}</b>, ${g.scored} scored areas. ${esc(g.about)}.</li>`).join("") + "</ul>";
     $("generated").textContent = "Figures last rebuilt " + new Date(D.generated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + ".";
 
@@ -371,8 +374,10 @@
       $("clear").hidden = !c2;
       history.replaceState(null, "", "#" + encodeURIComponent(c.state.toLowerCase() + "/" + c.name) + (c2 ? "/vs/" + encodeURIComponent(c2.state.toLowerCase() + "/" + c2.name) : ""));
       const G = D.groups[c.group];
-      $("name").textContent = c.name;
-      $("peer").innerHTML = `${esc(STATES.find((s) => s[0] === c.state)[1])}. Compared with ${G.scored} similar areas, <b>${esc(G.label.toLowerCase())}</b>.`;
+      $("name").innerHTML = c2 ? `<span style="color:var(--a)">${esc(c.name)}</span> <span style="color:var(--muted);font-size:.6em">and</span> <span style="color:var(--cmp)">${esc(c2.name)}</span>` : esc(c.name);
+      const G2 = c2 && D.groups[c2.group];
+      $("peer").innerHTML = `${esc(STATES.find((s) => s[0] === c.state)[1])}. Compared with ${G.scored} similar areas, <b>${esc(G.label.toLowerCase())}</b>.` +
+        (c2 ? (c2.group === c.group ? ` ${esc(c2.name)} is in the same group, so the two scores can be compared directly.` : ` ${esc(c2.name)} is in a different group, ${esc(G2.label.toLowerCase())}, so each score shows its position in its own group.`) : "");
       $("peer").appendChild(info(`<b>${esc(G.label)}</b>${esc(G.about)}. Areas are only scored against their own group, so a remote shire is never measured against a capital city suburb.`, "this group"));
       chips(c, c2);
       const x = $("xlink");
@@ -411,10 +416,11 @@
       DIMS.forEach((d) => {
         const row = document.createElement("div"); row.className = "dim" + (d.used ? "" : " off");
         const v = c.score ? c.score[d.id] : null, v2 = c2 && c2.score ? c2.score[d.id] : null;
-        const pv = peers(c).map((p) => p.raw[d.id]);
-        const med = median(c.scored ? pv : D.councils.filter((p) => p.group === c.group).map((p) => p.raw[d.id]));
+        const elig = (p) => p.jobs >= (D.dim_min[d.id] || D.min_jobs);
+        const med = median(D.councils.filter((p) => p.group === c.group && elig(p)).map((p) => p.raw[d.id]));
+        const why = !d.used ? ". Left out of the score, it did not pass the consistency test" : c.scored && v == null ? `. Not scored, residents hold fewer than ${num(D.dim_min[d.id] || D.min_jobs)} jobs, too few for a reliable figure` : "";
         row.innerHTML = `<div class="dl">${esc(d.label)}</div><div class="bar">${v != null ? `<i style="width:${v}%"></i>` : ""}<s></s>${v2 != null ? `<em style="left:${v2}%"></em>` : ""}</div><div class="dv">${v != null ? Math.round(v) : "–"}</div>
-          <div class="sub">${rawText(d.id, c.raw[d.id])}${c2 ? ` <span style="color:var(--cmp)">${rawText(d.id, c2.raw[d.id])}</span>` : ""}. Typical for similar areas ${rawText(d.id, med)}${d.used ? "" : ". Left out of the score, it did not pass the consistency test"}.</div>`;
+          <div class="sub">${rawText(d.id, c.raw[d.id])}${c2 ? ` <span style="color:var(--cmp)">${rawText(d.id, c2.raw[d.id])}</span>` : ""}. Typical for similar areas ${rawText(d.id, med)}${why}.</div>`;
         row.querySelector(".dl").appendChild(info(`<b>${esc(d.label)}</b>${esc(HELP[d.id])}<span class="src">Consistency when its figures move back a year ${d.reliability != null ? d.reliability.toFixed(2) : "n/a"} out of 1. The middle line marks a typical similar area.</span>`, d.label));
         row.addEventListener("mousemove", (e) => { if (v != null) showTip(e, `${esc(c.name)} scores higher than about ${Math.round(v)}% of similar areas on ${esc(d.label.toLowerCase())}` + (v2 != null ? `<br><span style="color:var(--cmp)">${esc(c2.name)} ${Math.round(v2)}</span>` : "")); });
         row.addEventListener("mouseleave", hideTip);

@@ -38,6 +38,9 @@ OUT = ROOT / "data" / "local_economy.js"
 SUMMARY = ROOT / "data" / "local_economy_summary.js"
 
 MIN_JOBS = 1000        # fewer resident employee jobs than this: too small to score reliably
+# Changes over time are noisier than levels in small areas: tested by size, councils'
+# order on growth only holds up (consistency 0.6 or more) from about 5,000 jobs
+DIM_MIN = {"growth": 5000, "business": 5000}
 MIN_PEERS = 8          # smallest peer group allowed
 RELIABLE = 0.6         # rank correlation a dimension must reach when its inputs shift by a year
 STATES = {"1": "NSW", "2": "Vic", "3": "Qld", "4": "SA", "5": "WA", "6": "Tas", "7": "NT", "8": "ACT", "9": "Other"}
@@ -150,21 +153,33 @@ def main() -> None:
     alt["business"] = biz[byrs[-2]] / biz[B0] - 1
     alt["business_late"] = biz[B] / biz[byrs[1]] - 1
     alt["income"] = inc[iyrs[-2]]
-    big = jobs[Y] >= MIN_JOBS
-    reliability = {d: round(rank_corr(raw.loc[big, d], alt.loc[big, d]), 2) for d, _, _ in DIMENSIONS}
-    for d in ("diversity", "exposure"):
-        reliability[d] = round(rank_corr(raw_one.loc[big, d], alt.loc[big, d]), 2)
-    reliability["growth"] = round(rank_corr(alt.loc[big, "growth"], alt.loc[big, "growth_late"]), 2)
-    reliability["business"] = round(rank_corr(alt.loc[big, "business"], alt.loc[big, "business_late"]), 2)
+    elig = {d: jobs[Y] >= DIM_MIN.get(d, MIN_JOBS) for d, _, _ in DIMENSIONS}
+    reliability = {
+        "diversity": rank_corr(raw_one.loc[elig["diversity"], "diversity"], alt.loc[elig["diversity"], "diversity"]),
+        "exposure": rank_corr(raw_one.loc[elig["exposure"], "exposure"], alt.loc[elig["exposure"], "exposure"]),
+        "growth": rank_corr(alt.loc[elig["growth"], "growth"], alt.loc[elig["growth"], "growth_late"]),
+        "business": rank_corr(alt.loc[elig["business"], "business"], alt.loc[elig["business"], "business_late"]),
+        "income": rank_corr(raw.loc[elig["income"], "income"], alt.loc[elig["income"], "income"]),
+    }
+    reliability = {k: round(v, 2) for k, v in reliability.items()}
+    # the same tests for the areas too small to be scored on growth, for the method notes
+    small = (jobs[Y] >= MIN_JOBS) & (jobs[Y] < 5000)
+    small_rel = {"growth": round(rank_corr(alt.loc[small, "growth"], alt.loc[small, "growth_late"]), 2),
+                 "business": round(rank_corr(alt.loc[small, "business"], alt.loc[small, "business_late"]), 2)}
+    print("  in areas with 1,000 to 5,000 jobs:", small_rel)
     print("reliability (rank correlation, inputs moved back a year):", reliability)
 
     # ---- shift-share ----
     base = pd.DataFrame({k: ind[k][Y0] for k in ind})
     nat_g = {k: nat[k][Y] / nat[k][Y0] - 1 for k in ind}
     expected = sum(base[k].fillna(0) * nat_g[k] for k in ind) / base.sum(axis=1)
-    aus_g = nat_total[Y] / nat_total[Y0] - 1
-    mix = expected - aus_g
-    local = raw["growth"] - expected
+    ind_g = nat_total[Y] / nat_total[Y0] - 1           # Australia, from the industry figures
+    mix = expected - ind_g
+    # Australia's growth from total jobs, the same measure as each area's growth, so
+    # Australia + industry mix + local adds up to the area's growth exactly
+    aus_jobs = jobs.sum()
+    aus_g = aus_jobs[Y] / aus_jobs[Y0] - 1
+    local = raw["growth"] - aus_g - mix
 
     # ---- peer groups ----
     rem = remote.copy()
@@ -215,10 +230,12 @@ def main() -> None:
 
     scores = pd.DataFrame(index=codes)
     for d, _, better in DIMENSIONS:
-        for g, idx in df[df["scored"]].groupby("group").groups.items():
+        ok = df["scored"] & elig[d].reindex(df.index).fillna(False)
+        for g, idx in df[ok].groupby("group").groups.items():
             v = raw.loc[idx, d]
-            p = v.rank(pct=True, method="average")
-            # percentile on a 0 to 100 scale, so the middle council scores about 50
+            if v.notna().sum() < MIN_PEERS:
+                continue
+            # position among similar areas on a 0 to 100 scale, so the middle area scores 50
             p = (v.rank(method="average") - 0.5) / v.notna().sum() * 100
             scores.loc[idx, d] = p if better == "higher" else 100 - p
 
@@ -260,12 +277,12 @@ def main() -> None:
         "exposed": EXPOSED,
         "australia": {"share": [round(float(nat_sh[k]) * 100, 2) for k, _, _ in INDUSTRIES],
                       "growth": round(float(aus_g), 4),
-                      "jobs_hist": {y: _int(nat_total[y]) for y in yrs},
+                      "jobs_hist": {y: _int(aus_jobs[y]) for y in yrs},
                       "growth_by_industry": [round(float(nat_g[k]), 4) for k, _, _ in INDUSTRIES]},
         "dimensions": [{"id": d, "label": l, "better": b, "reliability": reliability[d]} for d, l, b in DIMENSIONS],
         "groups": {k: {"label": a, "about": b, "n": int((df["group"] == k).sum()),
                        "scored": int(((df["group"] == k) & df["scored"]).sum())} for k, (a, b) in GROUPS.items()},
-        "min_jobs": MIN_JOBS, "councils": out,
+        "min_jobs": MIN_JOBS, "dim_min": DIM_MIN, "small_reliability": small_rel, "councils": out,
     }
     OUT.write_text("// Built by scripts/build_local_economy.py from ABS data\nwindow.LOCAL_ECONOMY = "
                    + json.dumps(data, separators=(",", ":"), allow_nan=False) + ";\n", encoding="utf-8")

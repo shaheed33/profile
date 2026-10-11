@@ -47,6 +47,7 @@
     .who .peer { color: var(--soft); margin: .4rem 0 0; font-size: 1.05rem; max-width: 75ch; }
     .chips { display: flex; flex-wrap: wrap; gap: .4rem .5rem; margin: .9rem 0 0; }
     .chips span { font-size: .82rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .65rem; }
+    .xlink { display: inline-block; margin: .8rem 0 0; font-size: .92rem; }
     .chips b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 
     /* report card: one row per theme, one square per measure */
@@ -182,6 +183,7 @@
           <h2 id="name"></h2>
           <p class="peer" id="peer"></p>
           <div class="chips" id="chips"></div>
+          <a class="xlink" id="xlink"></a>
         </section>
         <div class="rcard" id="card"></div>
         <div class="cardkey" id="cardkey"></div>
@@ -403,6 +405,8 @@
       const c2 = other ? S.councils.find((x) => x.name === other && x.name !== c.name) : null;
       if (!c2) other = "";
       $("clear").hidden = !c2;
+      $("xlink").href = "local-economy.html#" + state + "/" + encodeURIComponent(c.name);
+      $("xlink").textContent = `What makes the local economy tick? See ${c.name}'s industries, jobs growth and resilience →`;
       const peers = S.councils.filter((x) => x.group === c.group);
       const sameGroup = !c2 || c2.group === c.group;
       const stripPeers = c2 && !sameGroup ? S.councils.filter((x) => x.group === c.group || x.group === c2.group) : peers;
