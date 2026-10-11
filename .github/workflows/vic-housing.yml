@@ -1,0 +1,56 @@
+name: Update Victorian housing tracker
+
+on:
+  schedule:
+    - cron: "0 20 21 * *"   # 22nd of each month, about 7am Melbourne time, after the ABS building releases
+  workflow_dispatch:        # adds a "Run workflow" button in the Actions tab
+  push:
+    branches: [main]
+    paths:
+      - "scripts/build_vic_housing.py"
+      - "data/vic_targets.csv"
+      - ".github/workflows/vic-housing.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vic-housing
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy requests
+      - name: Download data and rebuild
+        id: build
+        continue-on-error: true
+        timeout-minutes: 15
+        shell: bash
+        run: |
+          mkdir -p raw/vic
+          set -o pipefail
+          python -u scripts/build_vic_housing.py 2>&1 | tee raw/vic/build.log
+      - name: Save the changes
+        if: always()
+        run: |
+          git config user.name "vic-housing-bot"
+          git config user.email "actions@users.noreply.github.com"
+          for f in raw/vic/*.csv; do [ -e "$f" ] && gzip -nkf "$f"; done
+          find raw/vic -name "*.gz" -size +90M -print -delete
+          for p in raw/vic/build.log raw/vic/*.gz data/vic_housing.js; do [ -e "$p" ] && git add -- "$p"; done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Victorian housing tracker: refresh $(date -u +%Y-%m-%d)"
+          git pull --rebase --autostash origin "$GITHUB_REF_NAME"
+          git push origin HEAD:"$GITHUB_REF_NAME"
+      - name: Report a failed build
+        if: steps.build.outcome == 'failure'
+        run: |
+          echo "The build failed. See raw/vic/build.log"
+          exit 1
