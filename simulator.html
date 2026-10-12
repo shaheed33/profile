@@ -57,8 +57,8 @@
     <div class="container-xl bar">
       <a class="brand" href="index.html">Abdulla Shaheed</a>
       <nav class="site-nav" aria-label="Main">
-        <a href="index.html#projects">Projects</a>
-        <a href="index.html#education">Education</a>
+        <a href="index.html#tools">Tools</a>
+        <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
         <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
@@ -80,10 +80,11 @@
     </svg>
     <div class="hero-wrap">
       <canvas class="ambient" data-mode="wind" aria-hidden="true"></canvas>
-      <h1 class="mb-2">Could the NEM run without coal?</h1>
-      <p class="lead mb-2">Build a future grid with your own mix of wind, solar and storage, then test it against real half hourly weather from Australia's east coast and see whether the lights stay on.</p>
+      <h1 class="mb-2" id="sim-h1">Could the NEM run without coal?</h1>
+      <p class="lead mb-2">Build your own mix of wind, solar and storage, then test it against real weather.</p>
+      <p class="explain">Build a future grid with your own mix of wind, solar and storage, then test it against real half hourly weather from Australia's east coast and see whether the lights stay on.</p>
       <details class="terms"><summary>Key terms in plain English</summary><dl><dt>NEM</dt><dd>The National Electricity Market, the shared grid and market for Queensland, NSW, the ACT, Victoria, South Australia and Tasmania. Western Australia and the Northern Territory run their own.</dd><dt>MW and GW</dt><dd>Power, how much can be produced at one moment. A gigawatt (GW) is 1,000 megawatts (MW). One unit of a large coal power station is about 0.5 to 0.7 GW.</dd><dt>MWh, GWh and TWh</dt><dd>Energy, power kept up over time. 1 GW running for one hour makes 1 GWh, and 1,000 GWh is 1 TWh. A battery's GW says how fast it can charge or discharge, and its GWh how much it can hold.</dd><dt>Capacity factor</dt><dd>Average output as a share of the most a wind or solar farm could produce. A wind farm with a 30% capacity factor produces, over a year, 30% of what it would if the wind blew perfectly all the time.</dd><dt>Curtailed</dt><dd>Power that could have been produced but was wasted because there was nowhere to use or store it.</dd></dl></details>
-      <p class="small text-body-secondary mb-3" style="max-width:62rem">The same grid faces every year's weather, so you can see which years were hardest. Each year runs from August to July. <span id="period-label"></span></p>
+      <p class="small text-body-secondary mb-3 explain" data-for="sim-h1" style="max-width:62rem">The same grid faces every year's weather, so you can see which years were hardest. Each year runs from August to July. <span id="period-label"></span></p>
     </div>
 
     <section class="card period-bar mb-4">
@@ -210,12 +211,13 @@
             <div id="short-chart" style="height: 240px;"></div>
           </div></div>
           <div class="card"><div class="card-header">How windy and sunny was it?</div><div class="card-body">
-            <p class="small text-body-secondary mb-2">Capacity factor means average output as a share of what was installed. These figures describe the weather the grid is tested against. The calmest week is the lowest 7 day average for wind.</p>
+            <p class="small text-body-secondary mb-2 explain">Capacity factor means average output as a share of what was installed. These figures describe the weather the grid is tested against. The calmest week is the lowest 7 day average for wind.</p>
             <div class="table-responsive"><table class="table table-sm small mb-0" id="weather-table"></table></div>
           </div></div>
         </div>
         <div id="pane-sens" role="tabpanel" hidden>
-          <p class="text-body-secondary">Each chart runs the selected weather many times, changing one thing while keeping your other settings. The green dashed line is the NEM reliability standard. The scale is logarithmic so small shortfalls stay visible. Long periods take a moment to calculate.</p>
+          <p class="fw-semibold mb-2" id="sens-h">How each setting changes the result</p>
+          <p class="text-body-secondary explain" data-for="sens-h">Each chart runs the selected weather many times, changing one thing while keeping your other settings. The green dashed line is the NEM reliability standard. The scale is logarithmic so small shortfalls stay visible. Long periods take a moment to calculate.</p>
           <div class="card mb-3"><div class="card-header">Storage energy: how much it can hold</div><div class="card-body p-2"><div id="sens-storage" class="sens-chart"></div></div></div>
           <div class="card mb-3"><div class="card-header">Building more or less wind and solar</div><div class="card-body p-2"><div id="sens-renew" class="sens-chart"></div></div></div>
           <div class="card"><div class="card-header">Storage power: how fast it can discharge</div><div class="card-body p-2"><div id="sens-power" class="sens-chart"></div></div></div>
@@ -225,13 +227,14 @@
 
     <div class="row g-4 mt-2">
       <div class="col-md-6">
-        <h2 class="h5">How it works</h2>
+        <details><summary class="h5" style="cursor:pointer">How it works</summary>
         <p>Each half hour's real wind, solar farm and rooftop solar output is divided by what was installed at the time. That gives the weather on its own, as a share of capacity. Your chosen fleet is then multiplied by that weather, so the same grid faces every year's conditions. Demand keeps each year's daily and seasonal pattern but is scaled to the 2025 to 2026 level.</p>
         <p>If supply is higher than demand, the surplus charges the storage until it is full, and anything beyond that is curtailed. If supply is lower, the storage covers the gap until it runs empty or reaches its power limit. Whatever is still missing counts as a shortfall. The storage starts full and, in the five year run, carries over from one year to the next.</p>
         <p class="mb-0">Inspired by Andrew Grogan's <em>Open Electricity Simulation</em> spreadsheet (2024), shared in his <a href="https://www.linkedin.com/posts/andrew-grogan-be-phd-a56b5816_what-would-happen-if-the-nem-had-a-lot-more-share-7258764364134899712-KhCt" target="_blank" rel="noopener">LinkedIn post</a>. Data comes from AEMO, downloaded with the NEMOSIS tool, with rooftop solar capacity from AEMO's published figures. See <a href="replication.html">how I checked the data</a>.</p>
+      </details>
       </div>
       <div class="col-md-6">
-        <h2 class="h5">What it leaves out</h2>
+        <details><summary class="h5" style="cursor:pointer">What it leaves out</summary>
         <ul class="mb-0">
           <li>The whole grid is treated as one place, with no transmission limits between states.</li>
           <li>Weather is taken from actual output. In recent years some wind and solar output was curtailed when prices were negative, so the weather is slightly understated.</li>
@@ -240,7 +243,7 @@
           <li>Hydro follows each year's actual output, including the effect of rainfall.</li>
           <li>The real reliability standard applies to each region and to expected outcomes over many possible years. Here it is applied to the whole NEM as a rough benchmark.</li>
           <li>Gas and coal follow each year's actual output pattern, scaled by your settings. They are not dispatched to fill gaps.</li>
-        </ul>
+        </ul></details>
       </div>
     </div>
   </main>
@@ -773,6 +776,7 @@ if (typeof module !== "undefined") module.exports = { simulate, ANDREW_PRESET, G
 })();
 
   </script>
+  <script src="js/explain.js"></script>
   <script src="js/more.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ambient.js"></script>

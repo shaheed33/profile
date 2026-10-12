@@ -1,1 +1,1 @@
-window.LOCAL_ECONOMY_SUMMARY = {"councils": 539, "scored": 443, "generated": "2026-10-11"};
+window.LOCAL_ECONOMY_SUMMARY = {"councils": 539, "scored": 443, "generated": "2026-10-12", "example": {"name": "Greater Geelong", "overall": 89, "score": {"diversity": 42.7, "exposure": 81.7, "growth": 76.8, "business": 93.9, "income": 64.6}, "labels": {"diversity": "Diversity", "exposure": "Exposure to swings and transition", "growth": "Jobs growth", "business": "Business growth", "income": "Incomes"}}};

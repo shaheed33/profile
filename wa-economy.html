@@ -79,8 +79,8 @@
     <div class="container-xl bar">
       <a class="brand" href="index.html">Abdulla Shaheed</a>
       <nav class="site-nav" aria-label="Main">
-        <a href="index.html#projects">Projects</a>
-        <a href="index.html#education">Education</a>
+        <a href="index.html#tools">Tools</a>
+        <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
         <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
@@ -93,18 +93,19 @@
         <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
         <div class="live"><i></i>Machine learning nowcast</div>
         <h1>How fast is WA's economy growing right now?</h1>
-        <p class="lead">Official figures on spending in Western Australia arrive about two months after each quarter ends. This model reads the indicators that come out sooner, such as jobs, wages, house approvals and the iron ore price, and estimates the answer early.</p>
+        <p class="lead">An early estimate of WA's growth, months before the official figure.</p>
+        <p class="explain">Official figures on spending in Western Australia arrive about two months after each quarter ends. This model reads the indicators that come out sooner, such as jobs, wages, house approvals and the iron ore price, and estimates the answer early.</p>
         <span class="src" id="asof">Data from the ABS and FRED</span>
       </div>
 
       <div id="content">
         <section class="headline" aria-live="polite">
           <div>
-            <p class="eyebrow" id="nc-label">Loading</p>
+            <p class="eyebrow"><span id="nc-label">Loading</span></p>
             <p class="figure" id="nc-point">&nbsp;</p>
             <p class="range" id="nc-range"></p>
           </div>
-          <p class="context" id="nc-context"></p>
+          <div><p class="context" id="nc-short-p"><span id="nc-short"></span></p><p class="context explain" id="nc-context" data-for="nc-short-p"></p></div>
         </section>
 
         <section class="section">
@@ -114,7 +115,7 @@
               <button type="button" data-span="3">3 years</button><button type="button" data-span="10" class="on">10 years</button><button type="button" data-span="99">All</button>
             </div>
           </div>
-          <p class="note">Bars show official growth in WA spending each quarter, compared with the quarter before. Dots are what the model would have said at the time, trained only on earlier data. The open bar is this quarter's estimate.</p>
+          <p class="note explain">Bars show official growth in WA spending each quarter, compared with the quarter before. Dots are what the model would have said at the time, trained only on earlier data. The open bar is this quarter's estimate.</p>
           <div class="chart" id="hist"></div>
           <div class="key">
             <span><i class="sw bar"></i>Official figure</span>
@@ -126,25 +127,26 @@
         <section class="section two">
           <div>
             <h2>What is moving this estimate</h2>
-            <p class="note">How far each indicator pushes the estimate above or below an ordinary quarter, in percentage points.</p>
+            <p class="note explain">How far each indicator pushes the estimate above or below an ordinary quarter, in percentage points.</p>
             <div class="chart" id="drivers"></div>
           </div>
           <div>
             <h2>What the model leans on most</h2>
-            <p class="note">Each indicator's share of the model's accuracy, worked out by scrambling one indicator at a time and seeing how much worse the estimates get. Longer means the model relies on it more.</p>
+            <p class="note explain">Each indicator's share of the model's accuracy, worked out by scrambling one indicator at a time and seeing how much worse the estimates get. Longer means the model relies on it more.</p>
             <div class="chart" id="importance"></div>
           </div>
         </section>
 
         <section class="section">
           <h2>Is it any good?</h2>
-          <p class="note" id="acc-text"></p>
+          <p class="note" id="acc-short"></p>
+          <p class="note explain" id="acc-text"></p>
           <div class="chart" id="models"></div>
         </section>
 
         <section class="section" id="infl-sec" hidden>
           <h2>Perth prices so far</h2>
-          <p class="note" id="infl-text"></p>
+          <p class="note explain" id="infl-text"></p>
           <div class="grid" id="infl-stats"></div>
           <div class="chart" id="infl" style="margin-top:1.4rem"></div>
           <div class="key">
@@ -155,14 +157,14 @@
 
         <section class="section">
           <h2>The indicators</h2>
-          <p class="note">Latest reading of each input, with its path since 2015.</p>
+          <p class="note explain">Latest reading of each input, with its path since 2015.</p>
           <div class="grid" id="indicators"></div>
         </section>
       </div>
 
       <section class="section method">
         <h2>How it works</h2>
-        <details open>
+        <details>
           <summary>What is being estimated</summary>
           <p>Growth in WA State Final Demand, the Australian Bureau of Statistics' quarterly measure of spending by households, businesses and government in the state, with price changes and seasonal patterns removed. Gross State Product is only published once a year, so this is the closest quarterly read on the WA economy. It leaves out exports, which matter a great deal in a state built on iron ore and gas, so the iron ore and oil prices are included as inputs instead.</p>
         </details>
@@ -237,6 +239,7 @@
       const stageText = { "2 months in": "two of the quarter's three months of jobs figures, so it will firm up as the rest come in",
         "3 months in": "all three months of jobs figures, with a few other monthly figures still to come",
         "all monthly data in": "every monthly figure for the quarter" }[n.stage];
+      $("nc-short").textContent = (n.point > lp.growth + 0.15 ? "Up from " : n.point < lp.growth - 0.15 ? "Down from " : "Much the same as ") + sign(lp.growth) + "% last quarter. Official figure due " + nextRelease(n.q) + ".";
       $("nc-context").textContent = "That would be " + dir + " the " + sign(lp.growth) + "% recorded in the " + full(lp.label) +
         " quarter, the latest official figure. The official number for " + full(n.label) + " is due in " + nextRelease(n.q) + "." +
         (stageText ? " This estimate uses " + stageText + "." : "") + " Growth here means the change in spending from one quarter to the next, after taking out price rises.";
@@ -326,6 +329,7 @@
         : "That is no better than assuming growth carries on at its recent average, which misses by " + a.naive_rmse.toFixed(2) + ", so treat the estimate with care. ";
       s += "It lands within half a point of the official figure in " + tenths + " of every 10 quarters.";
       $("acc-text").textContent = s;
+      $("acc-short").textContent = a.recent_rmse != null ? "Since 2017 its estimate has typically been within " + a.recent_rmse.toFixed(1) + " points of the official figure." : "Its typical miss is " + a.rmse.toFixed(1) + " points.";
       const host = $("models"); host.innerHTML = "";
       const rows = [...D.models].sort((p, q) => p.rmse - q.rmse);
       const W = Math.max(300, host.clientWidth), small = W < 560, rowH = 32, lab = small ? 150 : 290, H = rows.length * rowH + 30;
@@ -434,6 +438,7 @@
     render();
   })();
   </script>
+  <script src="js/explain.js"></script>
   <script src="js/more.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ambient.js"></script>

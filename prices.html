@@ -52,8 +52,8 @@
     <div class="container-xl bar">
       <a class="brand" href="index.html">Abdulla Shaheed</a>
       <nav class="site-nav" aria-label="Main">
-        <a href="index.html#projects">Projects</a>
-        <a href="index.html#education">Education</a>
+        <a href="index.html#tools">Tools</a>
+        <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
         <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
@@ -70,7 +70,7 @@
     <div class="hero-wrap">
       <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
       <h1 class="mb-2">When is electricity cheap?</h1>
-      <p class="lead mb-2">Wholesale prices across Australia's National Electricity Market, hour by hour, year by year and region by region.</p>
+      <p class="lead mb-2">Wholesale power prices by hour, season and region.</p>
       <span class="src" id="period"></span>
       <details class="terms"><summary>Key terms in plain English</summary><dl><dt>NEM</dt><dd>The National Electricity Market, the shared grid and market for Queensland, NSW, the ACT, Victoria, South Australia and Tasmania. Western Australia and the Northern Territory run their own.</dd><dt>$ per MWh</dt><dd>The wholesale price retailers pay generators. $100 per MWh is 10 cents per kilowatt hour, the unit on your power bill. Bills are much higher than wholesale prices because they also pay for the poles and wires, retail costs and green schemes.</dd><dt>MW and GW</dt><dd>Power, how much can be produced at one moment. A gigawatt (GW) is 1,000 megawatts (MW). One unit of a large coal power station is about 0.5 to 0.7 GW.</dd><dt>Negative prices</dt><dd>Times when some generators pay to keep running rather than switch off, usually when sunshine and wind are plentiful and demand is low.</dd></dl></details>
     </div>
@@ -121,9 +121,9 @@
         <section class="card mb-4 reveal">
           <div class="card-header">Midday and evening prices over time <span class="measure-label text-body-secondary"></span></div>
           <div class="card-body">
-            <p class="text-body-secondary mb-2">Monthly prices in the midday and evening windows, and the gap between them (the spread, which is the evening price minus the midday price). The spread is a rough indicator of the value of moving energy from midday to the evening, which is what batteries do. Numbered dotted lines mark major events in Australia (grey) and in global energy markets (purple), listed below the chart.</p>
+            <p class="text-body-secondary mb-2 explain">Monthly prices in the midday and evening windows, and the gap between them (the spread, which is the evening price minus the midday price). The spread is a rough indicator of the value of moving energy from midday to the evening, which is what batteries do. Numbered dotted lines mark major events in Australia (grey) and in global energy markets (purple), listed below the chart.</p>
             <div id="c-trend"></div>
-            <ol class="small text-body-secondary mt-2 mb-0" id="event-list"></ol>
+            <details class="mt-2"><summary class="small" style="cursor:pointer;color:var(--accent)">What the numbered lines mark</summary><ol class="small text-body-secondary mt-2 mb-0" id="event-list"></ol></details>
           </div>
         </section>
 
@@ -131,7 +131,7 @@
           <div class="card-header"><span class="measure-name">Average</span> price by hour of day, by year <span class="season-label text-body-secondary"></span></div>
           <div class="card-body">
             <div class="play"><button class="btn btn-outline-primary btn-sm" type="button" id="play" aria-pressed="false">▶ Play the years</button><span class="yr" id="play-yr" aria-live="polite"></span></div>
-            <p class="text-body-secondary mb-2">Each line is one year. Press play to watch the midday dip deepen as solar grows. The shaded bands mark the midday window (10am to 3pm) and the evening window (5pm to 9pm). Compare how the midday dip and the evening peak change from year to year. The daily pattern in winter is quite different from spring, so the Season menu lets you compare like with like.</p>
+            <p class="text-body-secondary mb-2 explain">Each line is one year. Press play to watch the midday dip deepen as solar grows. The shaded bands mark the midday window (10am to 3pm) and the evening window (5pm to 9pm). Compare how the midday dip and the evening peak change from year to year. The daily pattern in winter is quite different from spring, so the Season menu lets you compare like with like.</p>
             <div id="c-hourly" class="pchart"></div>
           </div>
         </section>
@@ -139,7 +139,7 @@
         <section class="card mb-4 reveal">
           <div class="card-header">Annual price</div>
           <div class="card-body">
-            <p class="text-body-secondary mb-2">This table always shows all three measures side by side, so you can compare them. The highlighted column matches the Measure menu. The simple average counts every 5 minute interval equally. The demand weighted average gives more weight to times when more electricity is used, so it is closer to what buyers pay on average. It is usually higher, because expensive periods tend to be busy ones.</p>
+            <p class="text-body-secondary mb-2 explain">This table always shows all three measures side by side, so you can compare them. The highlighted column matches the Measure menu. The simple average counts every 5 minute interval equally. The demand weighted average gives more weight to times when more electricity is used, so it is closer to what buyers pay on average. It is usually higher, because expensive periods tend to be busy ones.</p>
             <div class="table-responsive"><table class="table table-sm mb-0" id="annual-table"></table></div>
           </div>
         </section>
@@ -147,7 +147,7 @@
         <section class="card mb-4 reveal">
           <div class="card-header">How often prices go below zero, by hour of day <span class="season-label text-body-secondary"></span></div>
           <div class="card-body">
-            <p class="text-body-secondary mb-2">The share of 5 minute intervals with a negative price. A negative price means some generators would rather pay than switch off. It tends to happen when solar and wind output is high and demand is low.</p>
+            <p class="text-body-secondary mb-2 explain">The share of 5 minute intervals with a negative price. A negative price means some generators would rather pay than switch off. It tends to happen when solar and wind output is high and demand is low.</p>
             <div id="c-negative" class="pchart"></div>
           </div>
         </section>
@@ -156,7 +156,7 @@
         <section class="card mb-4 reveal">
           <div class="card-header">Price by hour and month</div>
           <div class="card-body">
-            <p class="text-body-secondary mb-2">Each column is a month and each row an hour of the day. Blue is cheap and red is expensive. The colours stop getting redder above the highest 5% of prices, so a few extreme months don't wash out the pattern.</p>
+            <p class="text-body-secondary mb-2 explain">Each column is a month and each row an hour of the day. Blue is cheap and red is expensive. The colours stop getting redder above the highest 5% of prices, so a few extreme months don't wash out the pattern.</p>
             <div id="c-heat"></div>
           </div>
         </section>
@@ -164,13 +164,13 @@
         <section class="card mb-4 reveal">
           <div class="card-header">How often prices are low or high in a year</div>
           <div class="card-body">
-            <p class="text-body-secondary mb-2">Every 5 minute price in the year, sorted from highest to lowest. The further right the line dips below zero, the more often prices were negative. The chart is cut at $600/MWh, and real spikes go much higher.</p>
+            <p class="text-body-secondary mb-2 explain">Every 5 minute price in the year, sorted from highest to lowest. The further right the line dips below zero, the more often prices were negative. The chart is cut at $600/MWh, and real spikes go much higher.</p>
             <div id="c-duration" class="pchart"></div>
           </div>
         </section>
 
         <section class="mb-4">
-          <h2 class="h5">Data and definitions</h2>
+          <details><summary class="h5" style="cursor:pointer">Data and definitions</summary>
           <ul class="text-body-secondary">
             <li>Prices are AEMO's dispatch prices (MMSDM <code>DISPATCHPRICE</code>), excluding intervention pricing runs.</li>
             <li>Times are eastern standard time all year (AEST, the market's clock, with no daylight saving). Each 5 minute interval is counted in the hour it starts.</li>
@@ -178,7 +178,7 @@
             <li>Seasons follow the Southern Hemisphere. Summer is December to February, autumn is March to May, winter is June to August and spring is September to November. Within each calendar year, summer means January, February and December of that year.</li>
             <li>Simple average is the plain average of the 5 minute prices. Demand weighted average weights each price by grid demand at that time (AEMO <code>TOTALDEMAND</code>, which excludes electricity people use from their own rooftop solar). Median is the middle value, which is not pulled up by price spikes.</li>
             <li>Prices are in dollars of the day, not adjusted for inflation.</li>
-          </ul>
+          </ul></details>
         </section>
       </div>
     </div>
@@ -271,10 +271,10 @@
         card("k-lo", "solar", "solar", "solar", "Cheapest hour", "") + card("k-hi", "moon", "wind", "wind", "Dearest hour", "") +
         card("k-gap", "gap", "battery", "battery", "Evening premium", "") + card("k-neg", "neg", "hydro", "hydro", "Prices below zero", "");
       const set = (id, val, fmt, sub) => { const el = document.getElementById(id); countUp(el, val, fmt); el.nextElementSibling.innerHTML = sub; };
-      set("k-lo", a[lo], (x) => hh(lo) + " · " + money(x), `The average wholesale price per MWh for the hour from ${hh(lo)} in ${when}, about ${cents(a[lo])} a kWh before network and retail costs. In ${Y0} the cheapest was <em>${money(a0[lo0])}</em> at ${hh(lo0)}.`);
-      set("k-hi", a[hi], (x) => hh(hi) + " · " + money(x), `The average wholesale price per MWh for the hour from ${hh(hi)} in ${when}, about ${cents(a[hi])} a kWh before network and retail costs. In ${Y0} the dearest was <em>${money(a0[hi0])}</em> at ${hh(hi0)}.`);
-      set("k-gap", gap, (x) => money(x), `How much more a MWh costs in the evening (5pm to 9pm) than at midday (10am to 3pm), in ${when}. In ${Y0} the gap was <em>${money(gap0)}</em>. A rough guide to what a battery can earn by charging at midday and selling in the evening.`);
-      set("k-neg", neg[n], (x) => x.toFixed(0) + "%", `of the time, prices were below zero in the hour from ${hh(n)} in ${when}. In ${Y0} the highest share was <em>${neg0.toFixed(0)}%</em>.`);
+      set("k-lo", a[lo], (x) => hh(lo) + " · " + money(x), `a MWh, about ${cents(a[lo])} a kWh, in ${when}. In ${Y0}, <em>${money(a0[lo0])}</em> at ${hh(lo0)}.`);
+      set("k-hi", a[hi], (x) => hh(hi) + " · " + money(x), `a MWh, about ${cents(a[hi])} a kWh, in ${when}. In ${Y0}, <em>${money(a0[hi0])}</em> at ${hh(hi0)}.`);
+      set("k-gap", gap, (x) => money(x), `more a MWh from 5pm to 9pm than from 10am to 3pm, in ${when}. In ${Y0}, <em>${money(gap0)}</em>.`);
+      set("k-neg", neg[n], (x) => x.toFixed(0) + "%", `of the time below zero in the hour from ${hh(n)}, in ${when}. In ${Y0}, <em>${neg0.toFixed(0)}%</em>.`);
     }
 
     // Play the years one by one on the hourly chart
@@ -392,6 +392,7 @@
     } else items.forEach((el) => el.classList.add("in"));
   })();
   </script>
+  <script src="js/explain.js"></script>
   <script src="js/more.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ambient.js"></script>

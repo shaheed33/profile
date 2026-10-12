@@ -14,59 +14,58 @@
   <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="css/theme.css">
   <style>
-    .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 3.5rem; align-items: start; padding: 4.5rem 0 4rem; }
-    .hero img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 2px; display: block; margin-top: .4rem; }
-    .hero h1 { font-size: clamp(2.2rem, 4.6vw, 3.5rem); line-height: 1.06; max-width: 18ch; margin: -.35rem 0 1.5rem; }
-    .hero p { font-size: 1.1rem; line-height: 1.7; color: var(--soft); max-width: 58ch; }
-    .hero p:last-child { margin-bottom: 0; }
-
-    .label { font-size: .95rem; font-weight: 500; color: var(--muted); margin-bottom: 1rem; }
-
-    .projects-note { color: var(--muted); max-width: 46rem; margin: -.4rem 0 1.4rem; }
-    .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--ink); list-style: none; padding: 0; margin: 0 0 3rem; }
-    .projects li { border-bottom: 1px solid var(--line); }
-    .projects li:nth-child(even) { border-left: 1px solid var(--line); }
-    .project { display: flex; flex-direction: column; height: 100%; padding: 1.6rem 2rem 1.8rem 0; color: inherit; text-decoration: none; }
-    .projects li:nth-child(even) .project { padding: 1.6rem 0 1.8rem 2rem; }
-    @media (min-width: 992px) { .projects li:nth-last-child(-n+2):nth-child(odd), .projects li:last-child { border-bottom: 0; } }
-    .project h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.6rem; line-height: 1.15; letter-spacing: -.01em; margin: 0 0 .7rem; }
-    .project p { color: var(--muted); margin: 0 0 1.1rem; flex: 1; }
-    .project .where { font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 .35rem; }
-    .pgroup { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem 1rem; margin: 2.2rem 0 .8rem; }
-    .pgroup h3 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.45rem; margin: 0; }
-    .pgroup p { color: var(--muted); margin: 0; }
-    .projects + .pgroup { margin-top: 0; }
-    @media (min-width: 992px) {
-      .projects.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .projects.three li, .projects.three li:nth-child(even) { border-left: 0; border-bottom: 0; }
-      .projects.three li + li { border-left: 1px solid var(--line); }
-      .projects.three .project, .projects.three li:nth-child(even) .project { padding: 1.6rem 1.6rem 1.8rem; }
-      .projects.three li:first-child .project { padding-left: 0; }
-      .projects.three li:last-child .project { padding-right: 0; }
-    }
-    .cta { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1.6rem 0 0; animation: rise .8s ease both; animation-delay: .25s; }
+    /* intro */
+    .intro { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2.2rem; align-items: center; padding: 3.6rem 0 2.6rem; }
+    .avatar { width: 132px; height: 132px; border-radius: 50%; object-fit: cover; object-position: 50% 42%; box-shadow: 0 10px 30px rgba(20, 35, 58, .18); }
+    .kicker { font-size: .8rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin: 0 0 .5rem; }
+    .intro h1 { font-size: clamp(2rem, 4.4vw, 3.2rem); line-height: 1.08; max-width: 22ch; margin: 0 0 .8rem; }
+    .intro .sub { font-size: 1.12rem; line-height: 1.6; color: var(--soft); max-width: 56ch; margin: 0; }
+    .cta { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1.4rem 0 0; }
     .cta a { display: inline-flex; align-items: center; gap: .4rem; font-weight: 500; text-decoration: none; border-radius: 999px; padding: .5rem 1.15rem; border: 1px solid var(--ink); color: var(--ink); }
     .cta a.main { background: var(--ink); color: var(--surface); }
     .cta a:hover { background: var(--accent-soft); color: var(--ink); }
-    .project .stat { display: inline-flex; align-items: center; gap: .5rem; font-size: .88rem; color: var(--ink); background: var(--accent-soft); border-radius: 999px; padding: .2rem .75rem; margin: -.3rem 0 1rem; width: fit-content; font-variant-numeric: tabular-nums; }
-    .project .stat i { width: 7px; height: 7px; border-radius: 50%; background: #1E8A5A; flex: none; }
-    [data-theme="dark"] .project .stat i { background: #5FD39B; }
-    .projects li { transition: background .2s; }
-    .projects li:hover { background: linear-gradient(to bottom, var(--accent-soft), transparent 85%); }
-    .project { transition: transform .25s ease; }
-    .project:hover { transform: translateY(-3px); }
-    .project .tags { display: flex; gap: .35rem; margin-bottom: .9rem; }
-    .project .tags span { width: 1.9rem; height: 1.9rem; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
-    .project .tags svg { width: 62%; height: 62%; }
-    .hero img { box-shadow: 0 18px 40px rgba(20, 35, 58, .16); }
-    .hero h1, .hero p { animation: rise .8s ease both; }
-    .hero p { animation-delay: .15s; }
-    @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-    @media (prefers-reduced-motion: reduce) { .hero h1, .hero p { animation: none; } .project, .projects li { transition: none; } }
-    .project:hover h2 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+    .intro h1, .intro .sub, .cta { animation: rise .7s ease both; }
+    .intro .sub { animation-delay: .1s; } .cta { animation-delay: .2s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
-    .edu { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; border-top: 1px solid var(--line); padding: 2.5rem 0 3rem; }
-    .edu h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.9rem; margin: 0; }
+    /* tools: tiles that look and behave like apps, not articles */
+    .tools-sec { scroll-margin-top: 80px; }
+    .filters { display: flex; flex-wrap: wrap; gap: .45rem; margin: 0 0 1.2rem; }
+    .filters button { font: inherit; font-size: .9rem; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: .3rem .9rem; cursor: pointer; }
+    .filters button.on { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+    .tools { list-style: none; padding: 0; margin: 0 0 4rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.1rem; }
+    .tools li[hidden] { display: none; }
+    .tool { display: flex; flex-direction: column; height: 100%; padding: 1rem 1rem 1.1rem; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: inherit; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+    .tool:hover { transform: translateY(-4px); border-color: var(--muted); box-shadow: 0 16px 36px rgba(20, 35, 58, .14); }
+    .tool-top { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-bottom: .7rem; }
+    .kind { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: .18rem .5rem; }
+    .fresh { display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; color: var(--muted); white-space: nowrap; }
+    .fresh i { width: 7px; height: 7px; border-radius: 50%; background: #1E8A5A; }
+    [data-theme="dark"] .fresh i { background: #5FD39B; }
+    .viz { height: 128px; border-radius: 12px; background: #F6F8FB; border: 1px solid var(--line); margin-bottom: .9rem; padding: .7rem .8rem; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+    [data-theme="dark"] .viz { background: #111A27; }
+    .viz svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .viz .big { font-family: "Newsreader", Georgia, serif !important; font-size: 2.1rem; line-height: 1; font-variant-numeric: tabular-nums; }
+    .viz .lab { font-size: .78rem; color: var(--muted); }
+    .tool h2 { font-family: inherit !important; font-size: 1.08rem; font-weight: 650; line-height: 1.3; margin: 0 0 .35rem; letter-spacing: 0; }
+    .tool p { font-size: .9rem; color: var(--muted); margin: 0 0 .9rem; flex: 1; }
+    .open { align-self: flex-start; font-size: .9rem; font-weight: 600; color: var(--surface); background: var(--ink); border-radius: 999px; padding: .38rem .95rem; }
+    .open b { display: inline-block; transition: transform .2s; }
+    .tool:hover .open b { transform: translateX(3px); }
+    .bar2 { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr) 2.6rem; gap: .5rem; align-items: center; font-size: .78rem; color: var(--muted); margin: .25rem 0; }
+    .bar2 span:nth-child(2) { height: 10px; border-radius: 999px; background: var(--line); position: relative; overflow: hidden; }
+    .bar2 i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; }
+    .bar2 b { color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+    .bar2.sm { margin: .12rem 0; font-size: .72rem; }
+    .bar2.sm span:nth-child(2) { height: 7px; }
+    .sq { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
+    .sq i { aspect-ratio: 1; border-radius: 4px; }
+
+    /* about, education, contact */
+    .about, .edu, .contact { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; border-top: 1px solid var(--line); padding: 2.5rem 0 3rem; scroll-margin-top: 80px; }
+    .about h2, .edu h2, .contact h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.9rem; margin: 0; }
+    .about img { width: 100%; max-width: 420px; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; display: block; margin: 0 0 1.2rem; }
+    .about p { color: var(--soft); max-width: 62ch; }
     .edu-list { list-style: none; padding: 0; margin: 0; }
     .edu-list li { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 1.5rem; padding: 0 0 1.6rem; }
     .edu-list li + li { border-top: 1px solid var(--line); padding-top: 1.4rem; }
@@ -74,26 +73,18 @@
     .edu-list h3 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.35rem; margin: 0 0 .15rem; }
     .edu-list .where { font-size: .95rem; font-weight: 500; color: var(--accent); margin: 0 0 .45rem; }
     .edu-list p { color: var(--soft); margin: 0; max-width: 62ch; }
-    .contact { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 3.5rem; border-top: 1px solid var(--line); padding: 2.5rem 0 4rem; }
-    .contact h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.9rem; margin: 0; }
     .contact p { font-size: 1.1rem; margin-bottom: 1.25rem; }
-    .contact .links { display: flex; flex-wrap: wrap; gap: .75rem; }
     .site-footer { border-top: 1px solid var(--line); padding: 1.5rem 0 2.5rem; font-size: .9rem; color: var(--muted); }
 
-    @media (max-width: 991.98px) {
-      .projects { grid-template-columns: 1fr; }
-      .projects li:nth-child(even) { border-left: 0; }
-      .project, .projects li:nth-child(even) .project { padding: 1.4rem 0; }
-      .projects li:last-child { border-bottom: 0; }
-      .projects { margin-bottom: 2.5rem; }
-    }
+    @media (max-width: 991.98px) { .tools { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 767.98px) {
-      .hero { grid-template-columns: 1fr; gap: 2rem; padding: 2.5rem 0 3rem; }
-      .hero img { margin-top: 0; }
-      .hero p { font-size: 1.05rem; }
-      .contact, .edu { grid-template-columns: 1fr; gap: 1rem; }
+      .intro { grid-template-columns: 1fr; gap: 1.2rem; padding: 2.2rem 0 1.8rem; }
+      .avatar { width: 88px; height: 88px; }
+      .tools { grid-template-columns: 1fr; }
+      .about, .edu, .contact { grid-template-columns: 1fr; gap: 1rem; }
       .edu-list li { grid-template-columns: 1fr; gap: .2rem; }
     }
+    @media (prefers-reduced-motion: reduce) { .intro h1, .intro .sub, .cta { animation: none; } .tool { transition: none; } }
   </style>
 </head>
 <body>
@@ -111,8 +102,8 @@
     <div class="container-xl bar">
       <a class="brand" href="index.html">Abdulla Shaheed</a>
       <nav class="site-nav" aria-label="Main">
-        <a href="#projects">Projects</a>
-        <a href="#education">Education</a>
+        <a href="#tools">Tools</a>
+        <a href="#about">About</a>
         <a href="#contact">Contact</a>
         <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
@@ -122,109 +113,92 @@
   <main class="container-xl">
     <div class="hero-wrap">
     <canvas class="ambient" data-mode="grid" aria-hidden="true"></canvas>
-    <section class="hero">
-      <img src="images/profile.jpg" alt="Abdulla Shaheed sitting on a railing at a forest lookout" width="1280" height="720">
+    <section class="intro">
+      <img class="avatar" src="images/profile.jpg" alt="Abdulla Shaheed" width="1280" height="720">
       <div>
-        <h1>Economies, public money and the energy transition.</h1>
-        <p>I'm Shaheed, from Maldives, and I'm completing a PhD in Economics at the University of York. The first chapter looks at debt sustainability, and the second at how climate change and climate related disasters affect sovereign bond yields. The third turns to the Australian economy, with a focus on regional development and the National Electricity Market.</p>
-        <p>I work with data every day, using Stata, Python, R and Excel, and I have foundational training in PLEXOS energy modelling. I have also used GAUSS and MATLAB on a few occasions. Outside my main work I build side projects that turn public data into something people can use, from energy trackers to a nowcast of the WA economy. They start from curiosity, and each one is a way to learn a new subject and keep developing my skills.</p>
-        <p>I've worked across economic development, statistics, tax and public finance in Maldives, in government ministries, state owned enterprises and a local authority company, from supporting small businesses and start-ups to managing public money.</p>
-        <p>My PhD continues part time, which leaves room for applied work. I'm most interested in analytics, policy and research roles in economic development and energy, and especially where the two meet, in regional growth, investment and the energy transition.</p>
-        <div class="cta"><a class="main" href="#projects">See the projects ↓</a><a href="#contact">Get in touch</a></div>
+        <p class="kicker">Abdulla Shaheed · Economist</p>
+        <h1>Live tools that turn public data into answers.</h1>
+        <p class="sub">Interactive trackers and explorers I build from official data. They update themselves, and you choose the area, council or scenario.</p>
+        <div class="cta"><a class="main" href="#tools">Open the tools ↓</a><a href="#about">About me</a><a href="#contact">Get in touch</a></div>
       </div>
     </section>
     </div>
 
-    <section id="projects">
-      <p class="label">Projects</p>
-      <p class="projects-note">Side projects I build in my own time, out of curiosity and as a way to learn the subjects behind them.</p>
-      <div class="pgroup">
-        <h3>Places, housing and councils</h3>
-        <p>How local economies are doing, and how well councils serve their residents.</p>
+    <section id="tools" class="tools-sec">
+      <div class="filters" role="group" aria-label="Show tools about">
+        <button type="button" class="on" data-f="all">All</button>
+        <button type="button" data-f="places">Places and councils</button>
+        <button type="button" data-f="energy">Energy</button>
+        <button type="button" data-f="economy">Economy and public money</button>
       </div>
-      <ul class="projects three">
-        <li>
-          <a class="project" href="vic-housing.html">
-            <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-home"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-growth"/></svg></span></div>
-            <span class="where">Victorian housing tracker</span>
-            <h2>Is Victoria building enough homes?</h2>
-            <p>The promise of 800,000 homes in ten years, checked every month against the homes actually being finished, with every council's progress towards its 2051 target on a map.</p>
-            <span class="stat" id="vic-stat" hidden><i></i><span></span></span>
-          </a>
-        </li>
-        <li>
-          <a class="project" href="local-economy.html">
-            <div class="tags" aria-hidden="true"><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-growth"/></svg></span><span style="background:var(--k-coal);color:var(--c-coal)"><svg><use href="#i-coal"/></svg></span></div>
-            <span class="where">Local economy explorer</span>
-            <h2>What makes your local economy tick?</h2>
-            <p>Every council area in Australia, what its residents do for a living, where its jobs growth comes from, and how resilient it is to a downturn or a change in a big industry, scored only against similar areas.</p>
-            <span class="stat" id="local-stat" hidden><i></i><span></span></span>
-          </a>
-        </li>
-        <li>
-          <a class="project" href="councils.html">
-            <div class="tags" aria-hidden="true"><span style="background:var(--k-hydro);color:var(--c-hydro)"><svg><use href="#i-home"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-growth"/></svg></span></div>
-            <span class="where">Council comparisons</span>
-            <h2>How does your council compare?</h2>
-            <p>Every council in Victoria and New South Wales, lined up fairly against councils like it on bins, planning, roads, libraries and money, using the official figures each state collects.</p>
-            <span class="stat" id="council-stat" hidden><i></i><span></span></span>
-          </a>
-        </li>
+      <ul class="tools">
+        <li data-f="places"><a class="tool" href="vic-housing.html">
+          <div class="tool-top"><span class="kind">Live tracker</span><span class="fresh"><i></i>Updated monthly</span></div>
+          <div class="viz" id="v-housing" aria-hidden="true"></div>
+          <h2>Is Victoria building enough homes?</h2>
+          <p>Homes finished against the 800,000 target, and every council on a map.</p>
+          <span class="open">Open tracker <b>→</b></span>
+        </a></li>
+        <li data-f="places"><a class="tool" href="local-economy.html">
+          <div class="tool-top"><span class="kind">Explorer</span><span class="fresh"><i></i>Every council area</span></div>
+          <div class="viz" id="v-local" aria-hidden="true"></div>
+          <h2>What makes your local economy tick?</h2>
+          <p>Pick any area in Australia to see its industries, growth and resilience score.</p>
+          <span class="open">Find your area <b>→</b></span>
+        </a></li>
+        <li data-f="places"><a class="tool" href="councils.html">
+          <div class="tool-top"><span class="kind">Comparison tool</span><span class="fresh"><i></i>Vic and NSW</span></div>
+          <div class="viz" id="v-councils" aria-hidden="true"></div>
+          <h2>How does your council compare?</h2>
+          <p>A report card for your council against similar councils, or compare two.</p>
+          <span class="open">Check your council <b>→</b></span>
+        </a></li>
+        <li data-f="energy"><a class="tool" href="roadmap.html">
+          <div class="tool-top"><span class="kind">Live tracker</span><span class="fresh"><i></i>Updated weekly</span></div>
+          <div class="viz" id="v-nsw" aria-hidden="true"></div>
+          <h2>Is NSW on track for 2030?</h2>
+          <p>Wind, solar and storage built so far, against the legal targets.</p>
+          <span class="open">Open tracker <b>→</b></span>
+        </a></li>
+        <li data-f="energy"><a class="tool" href="simulator.html">
+          <div class="tool-top"><span class="kind">Simulator</span><span class="fresh"><i></i>Real weather data</span></div>
+          <div class="viz" id="v-sim" aria-hidden="true"></div>
+          <h2>Could the grid run without coal?</h2>
+          <p>Build your own mix of wind, solar and storage and see if the lights stay on.</p>
+          <span class="open">Try the simulator <b>→</b></span>
+        </a></li>
+        <li data-f="energy"><a class="tool" href="prices.html">
+          <div class="tool-top"><span class="kind">Data explorer</span><span class="fresh"><i></i>Five regions</span></div>
+          <div class="viz" id="v-prices" aria-hidden="true"></div>
+          <h2>When is electricity cheap?</h2>
+          <p>Wholesale power prices by hour, season and region.</p>
+          <span class="open">Explore prices <b>→</b></span>
+        </a></li>
+        <li data-f="economy"><a class="tool" href="wa-economy.html">
+          <div class="tool-top"><span class="kind">Forecasting model</span><span class="fresh"><i></i>Updated monthly</span></div>
+          <div class="viz" id="v-wa" aria-hidden="true"></div>
+          <h2>How fast is WA growing right now?</h2>
+          <p>A machine learning estimate of this quarter's growth, before the official figure.</p>
+          <span class="open">See the estimate <b>→</b></span>
+        </a></li>
+        <li data-f="economy"><a class="tool" href="https://mvdebtclock.org" target="_blank" rel="noopener">
+          <div class="tool-top"><span class="kind">Live clock</span><span class="fresh"><i></i>Separate site</span></div>
+          <div class="viz" id="v-debt" aria-hidden="true"></div>
+          <h2>Maldives National Debt Clock</h2>
+          <p>What the government owes and what it pays in interest, ticking live.</p>
+          <span class="open">Visit mvdebtclock.org <b>↗</b></span>
+        </a></li>
       </ul>
-      <div class="pgroup">
-        <h3>Energy</h3>
-        <p>The shift from coal to wind, solar and storage, and what it means for prices.</p>
+    </section>
+
+    <section class="about" id="about">
+      <h2>About me</h2>
+      <div>
+        <img src="images/profile.jpg" alt="Abdulla Shaheed sitting on a railing at a forest lookout" width="1280" height="720" loading="lazy">
+        <p>I'm Shaheed, from Maldives, completing a PhD in Economics at the University of York on debt sustainability, climate risk and sovereign bond yields, and the Australian economy, with a focus on regional development and the National Electricity Market.</p>
+        <p>I work with Stata, Python, R and Excel, and have foundational training in PLEXOS energy modelling. I've worked across economic development, statistics, tax and public finance in Maldives, in government ministries, state owned enterprises and a local authority company.</p>
+        <p>I'm most interested in analytics, policy and research roles in economic development and energy, and especially where the two meet.</p>
       </div>
-      <ul class="projects three">
-        <li>
-          <a class="project" href="roadmap.html">
-            <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-wind"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-solar"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-battery"/></svg></span></div>
-            <span class="where">NSW Roadmap tracker</span>
-            <h2>Is NSW on track for 2030?</h2>
-            <p>New wind, solar and storage in NSW measured against the Electricity Infrastructure Roadmap targets, updated from AEMO's quarterly project register.</p>
-            <span class="stat" id="nsw-stat" hidden><i></i><span></span></span>
-          </a>
-        </li>
-        <li>
-          <a class="project" href="simulator.html">
-            <div class="tags" aria-hidden="true"><span style="background:var(--k-coal);color:var(--c-coal)"><svg><use href="#i-coal"/></svg></span><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-wind"/></svg></span><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-battery"/></svg></span></div>
-            <span class="where">Storage simulator</span>
-            <h2>Could the NEM run without coal?</h2>
-            <p>Change the mix of wind, solar and storage in Australia's National Electricity Market and see whether demand is still met.</p>
-          </a>
-        </li>
-        <li>
-          <a class="project" href="prices.html">
-            <div class="tags" aria-hidden="true"><span style="background:var(--k-battery);color:var(--c-battery)"><svg><use href="#i-price"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-solar"/></svg></span></div>
-            <span class="where">NEM price patterns</span>
-            <h2>When is electricity cheap?</h2>
-            <p>Wholesale prices across the NEM by hour of day, season, year and region.</p>
-          </a>
-        </li>
-      </ul>
-      <div class="pgroup">
-        <h3>The wider economy and public money</h3>
-        <p>Early reads on growth and inflation, and a plain-language look at public debt.</p>
-      </div>
-      <ul class="projects">
-        <li>
-          <a class="project" href="wa-economy.html">
-            <div class="tags" aria-hidden="true"><span style="background:var(--k-hydro);color:var(--c-hydro)"><svg><use href="#i-growth"/></svg></span><span style="background:var(--k-solar);color:var(--c-solar)"><svg><use href="#i-price"/></svg></span></div>
-            <span class="where">WA economy nowcast</span>
-            <h2>How fast is WA growing right now?</h2>
-            <p>A machine learning estimate of this quarter's growth in Western Australia's economy, read from jobs, wages, prices and the iron ore price before the official ABS figure is out.</p>
-            <span class="stat" id="wa-stat" hidden><i></i><span></span></span>
-          </a>
-        </li>
-        <li>
-          <a class="project" href="https://mvdebtclock.org">
-            <div class="tags" aria-hidden="true"><span style="background:var(--k-wind);color:var(--c-wind)"><svg><use href="#i-debt"/></svg></span></div>
-            <span class="where">mvdebtclock.org</span>
-            <h2>Maldives National Debt Clock</h2>
-            <p>A live tracker of what the government owes, what it pays in interest and where its revenue comes from, in plain language.</p>
-          </a>
-        </li>
-      </ul>
     </section>
 
     <section class="edu" id="education">
@@ -280,48 +254,71 @@
   <script src="data/councils_summary.js" defer></script>
   <script src="data/local_economy_summary.js" defer></script>
   <script>
+  // Small live previews on each tool tile, drawn from the same data as the tools
   window.addEventListener("DOMContentLoaded", function () {
-    var L = window.LOCAL_ECONOMY_SUMMARY, el = document.getElementById("local-stat");
-    if (!L || !el) return;
-    el.lastChild.textContent = L.councils + " council areas · " + L.scored + " scored";
-    el.hidden = false;
-  });
-  </script>
-  <script>
-  // Counts on the council card, from a small summary written with the comparison data
-  window.addEventListener("DOMContentLoaded", function () {
-    var C = window.COUNCILS_SUMMARY, el = document.getElementById("council-stat");
-    if (!C || !el) return;
-    el.lastChild.textContent = C.councils + " councils · " + C.measures + " official measures";
-    el.hidden = false;
-  });
-  </script>
-  <script>
-  // Live figures on the NSW card, from the same data as the tracker
-  window.addEventListener("DOMContentLoaded", function () {
-    var R = window.ROADMAP, el = document.getElementById("nsw-stat");
-    if (!R || !el) return;
-    var op = R.summary.Operating.Wind + R.summary.Operating.Solar;
-    var days = Math.max(0, Math.ceil((new Date("2030-01-01T00:00:00+11:00") - new Date()) / 864e5));
-    el.lastChild.textContent = Math.round(op / (R.targets.generation_min_gw * 10)) + "% of the 12 GW built · " + days.toLocaleString("en-AU") + " days to 2030";
-    el.hidden = false;
-  });
-  // Homes a day on the Victorian card, from the same data as the tracker
-  window.addEventListener("DOMContentLoaded", function () {
-    var V = window.VIC_HOUSING, el = document.getElementById("vic-stat");
-    if (!V || !el) return;
-    el.lastChild.textContent = Math.round(V.statement.per_day_built) + " homes a day finished, " + Math.round(V.statement.per_day_needed) + " needed";
-    el.hidden = false;
-  });
-  // Latest estimate on the WA card, from the same data as the nowcast page
-  window.addEventListener("DOMContentLoaded", function () {
-    var D = window.WA_ECONOMY, el = document.getElementById("wa-stat");
-    if (!D || !el) return;
-    var sign = function (v) { var t = Math.abs(v).toFixed(1); return (Number(t) === 0 ? "" : v > 0 ? "+" : "−") + t + "%"; };
-    var n = D.nowcast;
-    var M = { Jan: "January", Feb: "February", Mar: "March", Apr: "April", Jun: "June", Jul: "July", Aug: "August", Sep: "September", Oct: "October", Nov: "November", Dec: "December" };
-    el.lastChild.textContent = sign(n.point) + " growth estimated, " + n.label.replace(/\b(Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/g, function (m) { return M[m]; }) + " quarter";
-    el.hidden = false;
+    var $ = function (id) { return document.getElementById(id); };
+    var NS = "http://www.w3.org/2000/svg";
+    var svg = function (w, h, inner) { return '<svg viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none">' + inner + "</svg>"; };
+    var num = function (v) { return Math.round(v).toLocaleString("en-GB"); };
+    var bar = function (label, v, max, col, txt) { return '<div class="bar2"><span>' + label + '</span><span><i style="width:' + Math.min(100, v / max * 100) + "%;background:" + col + '"></i></span><b>' + txt + "</b></div>"; };
+
+    // Victorian housing: homes finished a day against the number needed
+    var V = window.VIC_HOUSING;
+    if (V) {
+      var built = V.statement.per_day_built, need = V.statement.per_day_needed;
+      $("v-housing").innerHTML = '<div class="lab">Homes a day</div>' + bar("Finished", built, need, "#1F6FB2", num(built)) + bar("Needed", need, need, "#C2410C", num(need));
+    }
+
+    // Local economy: a worked example of the resilience score
+    var L = window.LOCAL_ECONOMY_SUMMARY;
+    if (L && L.example) {
+      var e = L.example, short = { diversity: "Diversity", exposure: "Exposure", growth: "Jobs", business: "Business", income: "Income" };
+      $("v-local").innerHTML = '<div class="lab">' + e.name + ", resilience score <b style=\"color:var(--ink)\">" + e.overall + "</b> out of 100</div>" +
+        Object.keys(short).map(function (k) { return bar(short[k], e.score[k] || 0, 100, "#1F3D73", e.score[k] != null ? Math.round(e.score[k]) : "n/a"); }).join("").replace(/bar2/g, "bar2 sm");
+    } else if (L) $("v-local").innerHTML = '<div class="big">' + L.councils + '</div><div class="lab">council areas</div>';
+
+    // Councils: the report card squares
+    var C = window.COUNCILS_SUMMARY, cols = ["#1F6FB2", "#B9C2D0", "#B9C2D0", "#1F6FB2", "#B4502A", "#B9C2D0", "#1F6FB2", "#1F6FB2", "#B9C2D0", "#B4502A", "#B9C2D0", "#1F6FB2"];
+    var sq = ""; for (var i = 0; i < 24; i++) sq += '<i style="background:' + cols[(i * 7) % 12] + '"></i>';
+    $("v-councils").innerHTML = '<div class="sq">' + sq + '</div><div class="lab" style="margin-top:.55rem">' + (C ? C.councils + " councils, " + C.measures + " official measures" : "Report card against similar councils") + "</div>";
+
+    // NSW: share of the 12 GW minimum built, as a ring
+    var R = window.ROADMAP;
+    if (R) {
+      var op = R.summary.Operating.Wind + R.summary.Operating.Solar, pct = Math.min(100, op / (R.targets.generation_min_gw * 10));
+      var days = Math.max(0, Math.ceil((new Date("2030-01-01T00:00:00+11:00") - new Date()) / 864e5));
+      var c = 2 * Math.PI * 34;
+      $("v-nsw").innerHTML = '<div style="display:flex;align-items:center;gap:1rem"><svg viewBox="0 0 84 84" style="width:92px;height:92px;flex:none"><circle cx="42" cy="42" r="34" fill="none" stroke="var(--line)" stroke-width="9"/><circle cx="42" cy="42" r="34" fill="none" stroke="#1F6FB2" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + (pct / 100 * c) + " " + c + '" transform="rotate(-90 42 42)"/><text x="42" y="47" text-anchor="middle" font-size="17" fill="currentColor">' + Math.round(pct) + '%</text></svg><div><div class="lab">of the 12 GW of wind and solar built</div><div class="big" style="font-size:1.6rem;margin-top:.3rem">' + num(days) + '</div><div class="lab">days to 2030</div></div></div>';
+    }
+
+    // Simulator: three sliders
+    var sl = function (l, v, col) { return '<div class="bar2"><span>' + l + '</span><span><i style="width:' + v + "%;background:" + col + '"></i></span><b>●</b></div>'; };
+    $("v-sim").innerHTML = '<div class="lab">Your grid</div>' + sl("Wind", 62, "#1F6FB2") + sl("Solar", 48, "#E3A008") + sl("Storage", 35, "#D9467A");
+
+    // Prices: the daily shape, cheap at midday and dear in the evening
+    var pts = [70, 66, 63, 62, 64, 72, 88, 92, 70, 45, 30, 26, 27, 30, 42, 70, 140, 175, 160, 130, 110, 95, 85, 76];
+    var mx = 180, path = pts.map(function (v, i) { return (i ? "L" : "M") + (i / 23 * 300).toFixed(1) + "," + (90 - v / mx * 80).toFixed(1); }).join("");
+    $("v-prices").innerHTML = '<div class="lab">A typical day, cheapest at midday</div>' + svg(300, 92, '<rect x="' + (10 / 23 * 300) + '" y="0" width="' + (5 / 23 * 300) + '" height="92" fill="#FFF3C4" opacity=".7"/><rect x="' + (17 / 23 * 300) + '" y="0" width="' + (4 / 23 * 300) + '" height="92" fill="#FBD5D0" opacity=".6"/><path d="' + path + '" fill="none" stroke="#C8372D" stroke-width="2.5" vector-effect="non-scaling-stroke"/>');
+
+    // WA: the estimate and the last few quarters
+    var D = window.WA_ECONOMY;
+    if (D) {
+      var h = D.history.filter(function (q) { return q.actual != null; }).slice(-10), all = h.map(function (q) { return q.actual; }).concat([D.nowcast.point]);
+      var m = Math.max.apply(null, all.map(Math.abs)) || 1, bw = 300 / all.length, zero = 46;
+      var bars = all.map(function (v, i) { var hh = Math.abs(v) / m * 40, last = i === all.length - 1; return '<rect x="' + (i * bw + 3) + '" y="' + (v >= 0 ? zero - hh : zero) + '" width="' + (bw - 6) + '" height="' + Math.max(1, hh) + '" fill="' + (last ? "#C2410C" : "#56627A") + '" opacity="' + (last ? 1 : .75) + '"/>'; }).join("");
+      var sign = (D.nowcast.point > 0 ? "+" : D.nowcast.point < 0 ? "−" : "") + Math.abs(D.nowcast.point).toFixed(1) + "%";
+      $("v-wa").innerHTML = '<div style="display:flex;align-items:baseline;gap:.5rem"><span class="big" style="color:#C2410C">' + sign + '</span><span class="lab">estimated this quarter</span></div>' + svg(300, 70, '<line x1="0" x2="300" y1="46" y2="46" stroke="var(--line)"/>' + bars);
+    }
+
+    // Debt clock: lives on its own site, so no figures are copied here
+    $("v-debt").innerHTML = '<div style="display:flex;align-items:center;gap:1rem"><svg viewBox="0 0 48 48" style="width:64px;height:64px;flex:none"><circle cx="24" cy="24" r="20" fill="none" stroke="#1F3D73" stroke-width="3"/><path d="M24 12v13l8 5" fill="none" stroke="#C2410C" stroke-width="3" stroke-linecap="round"/></svg><div class="lab">Debt, interest and revenue, updating by the second on its own site</div></div>';
+
+    // Filters
+    var btns = document.querySelectorAll(".filters button");
+    btns.forEach(function (b) { b.addEventListener("click", function () {
+      btns.forEach(function (x) { x.classList.toggle("on", x === b); });
+      document.querySelectorAll(".tools li").forEach(function (li) { li.hidden = b.dataset.f !== "all" && li.dataset.f !== b.dataset.f; });
+    }); });
   });
   </script>
   <script src="js/theme.js"></script>

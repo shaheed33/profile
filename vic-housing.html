@@ -131,8 +131,8 @@
     <div class="container-xl bar">
       <a class="brand" href="index.html">Abdulla Shaheed</a>
       <nav class="site-nav" aria-label="Main">
-        <a href="index.html#projects">Projects</a>
-        <a href="index.html#education">Education</a>
+        <a href="index.html#tools">Tools</a>
+        <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
         <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
@@ -145,7 +145,8 @@
         <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
         <div class="live"><i></i>Housing tracker, updated monthly</div>
         <h1>Is Victoria building enough homes?</h1>
-        <p class="lead">In 2023 the Victorian Government set a goal of 800,000 new homes in the ten years from 2024. This page checks, every month, how many are actually being finished, and whether each council is approving enough to meet its share of the state's longer plan to 2051.</p>
+        <p class="lead">Homes finished every month, against the goal of 800,000 by 2033.</p>
+        <p class="explain">In 2023 the Victorian Government set a goal of 800,000 new homes in the ten years from 2024. This page checks, every month, how many are actually being finished, and whether each council is approving enough to meet its share of the state's longer plan to 2051.</p>
         <span class="src" id="asof">Data from the ABS and Plan for Victoria</span>
       </div>
 
@@ -178,7 +179,7 @@
 
         <section class="section">
           <h2>Has Victoria ever built this fast?</h2>
-          <p class="note" id="hist-note"></p>
+          <p class="note explain" id="hist-note"></p>
           <div class="chart" id="hist"></div>
           <div class="key">
             <span><i class="sw box" style="background:var(--have)"></i>Homes finished each year</span>
@@ -187,10 +188,10 @@
         </section>
 
         <section class="section">
-          <h2>From permit to front door</h2>
-          <p class="note" id="flow-note"></p>
+          <h2 id="flow-h">From permit to front door</h2>
+          <p class="note explain" id="flow-note"></p>
           <div class="flow" id="flow"></div>
-          <p class="aside" id="people"></p>
+          <p class="aside explain" id="people" data-for="flow-h"></p>
         </section>
 
         <section class="section">
@@ -198,7 +199,7 @@
             <h2 style="margin:0">How is your council going?</h2>
             <div class="seg" aria-label="Map view"><button type="button" data-view="melb" class="on">Melbourne</button><button type="button" data-view="vic">All of Victoria</button></div>
           </div>
-          <p class="note" id="council-note"></p>
+          <p class="note explain" id="council-note"></p>
           <div class="tools">
             <label for="pick" class="small text-body-secondary">Find a council</label>
             <select id="pick"></select>
@@ -228,7 +229,7 @@
 
       <section class="section method">
         <h2>How to read this</h2>
-        <details open>
+        <details>
           <summary>What counts as a home built</summary>
           <p>Homes finished are the dwellings the Australian Bureau of Statistics counts as completed each quarter in its Building Activity survey, covering houses, townhouses and apartments, built privately or by government. The ten years are counted from January 2024 to December 2033. The government reports its own progress in its own way, which may differ.</p>
         </details>
@@ -495,6 +496,7 @@
     render();
   })();
   </script>
+  <script src="js/explain.js"></script>
   <script src="js/more.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ambient.js"></script>
