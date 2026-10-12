@@ -359,7 +359,7 @@
 
     // ---- picker
     let state = "Vic", current = null, other = null;
-    const find = (st, name) => (byState[st] || []).find((c) => c.name === name || (c.link && c.link[1] === name));
+    const find = (st, name) => (byState[st] || []).find((c) => c.name === name || c.former === name || (c.link && c.link[1] === name));
     $("state").innerHTML = STATES.filter(([k]) => byState[k]).map(([k, n]) => `<option value="${k}">${k}</option>`).join("");
     function fill() {
       $("state").value = state;
@@ -387,7 +387,7 @@
       const G = D.groups[c.group];
       $("name").innerHTML = c2 ? `<span style="color:var(--a)">${esc(c.name)}</span> <span style="color:var(--muted);font-size:.6em">and</span> <span style="color:var(--cmp)">${esc(c2.name)}</span>` : esc(c.name);
       const G2 = c2 && D.groups[c2.group];
-      $("peer").innerHTML = `${esc(STATES.find((s) => s[0] === c.state)[1])}. Compared with ${G.scored} similar areas, <b>${esc(G.label.toLowerCase())}</b>.` +
+      $("peer").innerHTML = `${esc(STATES.find((s) => s[0] === c.state)[1])}${c.former ? `, formerly ${esc(c.former)}` : ""}. Compared with ${G.scored} similar areas, <b>${esc(G.label.toLowerCase())}</b>.` +
         (c2 ? (c2.group === c.group ? ` ${esc(c2.name)} is in the same group, so the two scores can be compared directly.` : ` ${esc(c2.name)} is in a different group, ${esc(G2.label.toLowerCase())}, so each score shows its position in its own group.`) : "");
       $("peer").appendChild(info(`<b>${esc(G.label)}</b>${esc(G.about)}. Areas are only scored against their own group, so a remote shire is never measured against a capital city suburb.`, "this group"));
       chips(c, c2);

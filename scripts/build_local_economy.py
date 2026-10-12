@@ -74,6 +74,9 @@ LEED_IND = [f"LEED_{i}" for i in range(5, 24)]
 CEN_IND = [f"EMP_IND_{i}" for i in range(2, 21)]
 EXPOSED = ["A", "B", "C", "D"]
 
+# Councils renamed since the 2021 boundaries the ABS figures use; shown by today's name
+RENAMED = {"Moreland": "Merri-bek"}
+
 # Where each coal-fired power station in the National Electricity Market is, by
 # council area (2021 boundaries). Closure years come from AEMO's file, not from here.
 # A coal station in AEMO's file that is missing from this list stops the build.
@@ -262,7 +265,7 @@ def main() -> None:
     out = []
     for c in codes:
         rec = {
-            "code": c, "name": name[c], "state": STATES.get(c[0], ""), "group": df.loc[c, "group"],
+            "code": c, "name": RENAMED.get(name[c], name[c]), "state": STATES.get(c[0], ""), "group": df.loc[c, "group"],
             "scored": bool(df.loc[c, "scored"]),
             "pop": _int(pop.get(c)), "km2": _int(land.get(c)),
             "jobs": _int(jobs.loc[c, Y]),
@@ -276,6 +279,8 @@ def main() -> None:
             "ra": {k: round(float(v) * 100) for k, v in ra.loc[c].items() if v >= 0.005} if c in ra.index else {},
         }
         # Census industry shares by year (residents' main job), for the ten-year view
+        if name[c] in RENAMED:
+            rec["former"] = name[c]
         rec["census"] = {y: [_r(census.loc[(c, y), k] * 100, 1) if (c, y) in census.index else None
                              for k, _, _ in INDUSTRIES]
                          for y in ("2011", "2016", "2021") if (c, y) in census.index}
