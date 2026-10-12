@@ -307,8 +307,20 @@ def main() -> None:
     }
     OUT.write_text("// Built by scripts/build_local_economy.py from ABS data\nwindow.LOCAL_ECONOMY = "
                    + json.dumps(data, separators=(",", ":"), allow_nan=False) + ";\n", encoding="utf-8")
+    # one well-known area as a worked example for the home page card, with its
+    # overall score worked out the same way as the page does at equal weights
+    example = None
+    ex = next((r for r in out if r["name"] == "Greater Geelong" and r["score"]), None)
+    if ex:
+        mean = lambda r: np.mean([v for v in r["score"].values() if v is not None])
+        peers_ = [mean(r) for r in out if r["group"] == ex["group"] and r["score"]]
+        me = mean(ex)
+        overall = (sum(v < me for v in peers_) + 0.5 * sum(v == me for v in peers_)) / len(peers_) * 100
+        example = {"name": ex["name"], "overall": round(overall), "score": ex["score"],
+                   "labels": {d: l for d, l, _ in DIMENSIONS}}
     SUMMARY.write_text("window.LOCAL_ECONOMY_SUMMARY = " + json.dumps(
-        {"councils": len(out), "scored": int(df["scored"].sum()), "generated": data["generated"]}) + ";\n", encoding="utf-8")
+        {"councils": len(out), "scored": int(df["scored"].sum()), "generated": data["generated"],
+         "example": example}) + ";\n", encoding="utf-8")
     print(f"Wrote {OUT.name}: {len(out)} council areas, {int(df['scored'].sum())} scored, "
           f"{OUT.stat().st_size / 1e3:.0f} kB")
 

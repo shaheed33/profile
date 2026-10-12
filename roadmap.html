@@ -188,6 +188,10 @@
       .track { height: 36px; } .chart { height: 300px; } .tmark span { font-size: .75rem; }
       .hide-sm { display: none; }
     }
+      .method-d summary { cursor: pointer; list-style: none; }
+    .method-d summary::-webkit-details-marker { display: none; }
+    .method-d summary::after { content: " +"; color: var(--muted); font-size: 1.3rem; }
+    .method-d[open] summary::after { content: " \2212"; }
   </style>
 </head>
 <body>
@@ -204,8 +208,8 @@
     <div class="container-xl bar">
       <a class="brand" href="index.html">Abdulla Shaheed</a>
       <nav class="site-nav" aria-label="Main">
-        <a href="index.html#projects">Projects</a>
-        <a href="index.html#education">Education</a>
+        <a href="index.html#tools">Tools</a>
+        <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
         <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
@@ -264,8 +268,8 @@
         <div class="track" id="gen-track"></div>
         <div class="keys" id="gen-keys"></div>
         <div class="pace" id="pace"></div>
-        <p class="aside" id="recon"></p>
-        <p class="aside">The Net Zero Commission put the gap to 12 GW at 7.9 GW in December 2025, counting projects the official way.</p>
+        <p class="aside explain" id="recon"></p>
+        <p class="aside explain">The Net Zero Commission put the gap to 12 GW at 7.9 GW in December 2025, counting projects the official way.</p>
       </section>
 
       <section class="gauge reveal" aria-labelledby="g-sto">
@@ -278,24 +282,24 @@
         <div class="track thin" id="gwh-track"></div>
         <div class="keys" id="gwh-keys"></div>
         <div class="callout" id="snowy"></div>
-        <p class="aside" id="sto-all"></p>
+        <p class="aside explain" id="sto-all"></p>
       </section>
 
       <section class="section">
         <h2>What has been switched on each year</h2>
-        <p>Hover over a bar to see the projects. <span id="partial"></span></p>
+        <p class="explain">Hover over a bar to see the projects. <span id="partial"></span></p>
         <div id="c-year" class="chart"></div>
       </section>
 
       <section class="section" id="history-wrap">
         <h2>How the picture has changed</h2>
-        <p>New wind and solar in each AEMO release since 2021, against the 12 GW minimum. The dashed lines run to 2030 at the pace needed and at the pace of the last two years.</p>
+        <p class="explain">New wind and solar in each AEMO release since 2021, against the 12 GW minimum. The dashed lines run to 2030 at the pace needed and at the pace of the last two years.</p>
         <div id="c-hist" class="chart"></div>
       </section>
 
       <section class="section">
         <div class="h-ic"><span class="ic coal"><svg><use href="#i-coal"/></svg></span><h2 class="serif">Coal still to close</h2></div>
-        <p class="mt-3">Coal produced 97% of NSW electricity sector emissions in 2022–23. Each bar runs from today to the closure year reported to AEMO. Hover over or tap a station for details.</p>
+        <p class="mt-3 explain">Coal produced 97% of NSW electricity sector emissions in 2022–23. Each bar runs from today to the closure year reported to AEMO. Hover over or tap a station for details.</p>
         <div class="coal-wrap reveal" id="coal-wrap">
           <div class="coal" id="coal"></div>
           <div class="tip" id="tip" role="status" aria-live="polite"></div>
@@ -314,7 +318,7 @@
 
       <section class="section">
         <h2>Every NSW project</h2>
-        <p>All new wind, solar, battery and pumped hydro projects in AEMO's latest release, grouped by site.</p>
+        <p class="explain">All new wind, solar, battery and pumped hydro projects in AEMO's latest release, grouped by site.</p>
         <div class="filters">
           <input id="f-q" class="form-control" type="search" placeholder="Search by name" aria-label="Search projects by name">
           <div class="ms" id="f-status" data-all="All statuses" data-one="statuses"></div>
@@ -332,7 +336,7 @@
       </section>
 
       <section class="section">
-        <h2>How the figures are worked out</h2>
+        <details class="method-d"><summary><h2 style="display:inline">How the figures are worked out</h2></summary>
         <ul class="notes">
           <li>New means a wind, solar, battery or pumped hydro unit that was not operating in AEMO's January 2021 release, the first after the Roadmap became law. Operating includes units being commissioned.</li>
           <li>Committed projects have finance and approvals. Anticipated ones are well advanced. Proposed ones are announced only, and many will not be built.</li>
@@ -344,6 +348,7 @@
           <li>The page checks AEMO every week and rebuilds itself when a new release appears.</li>
           <li>Sources <a href="https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information">AEMO Generation Information</a>, <a href="https://www.netzerocommission.nsw.gov.au/">NSW Net Zero Commission 2026 Annual Progress Report</a>, <a href="https://www.energy.nsw.gov.au/nsw-plans-and-progress/major-state-projects/electricity-infrastructure-roadmap">NSW Electricity Infrastructure Roadmap</a> and ASL's 2025 Infrastructure Investment Objectives Report.</li>
         </ul>
+        </details>
       </section>
     </div>
   </main>
@@ -683,6 +688,7 @@
     $("partial").textContent = +lastYr === upd.getFullYear() && upd.getMonth() > 0 ? lastYr + " covers the year to the end of " + new Date(upd.getFullYear(), upd.getMonth() - 1, 1).toLocaleDateString("en-GB", { month: "long" }) + "." : "";
   })();
   </script>
+  <script src="js/explain.js"></script>
   <script src="js/more.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ambient.js"></script>

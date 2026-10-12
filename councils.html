@@ -51,7 +51,8 @@
     .chips b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 
     /* report card: one row per theme, one square per measure */
-    .rcard { margin: 1.6rem 0 0; border-top: 1px solid var(--line); }
+    .cardtitle { font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 1.6rem 0 0; display: flex; align-items: center; }
+    .rcard { margin: .5rem 0 0; border-top: 1px solid var(--line); }
     .rcard .line { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: .8rem; align-items: center; padding: .45rem 0; border-bottom: 1px solid var(--line); }
     .rcard .tname { display: flex; align-items: center; gap: .55rem; font-size: .92rem; cursor: pointer; background: none; border: 0; padding: 0; color: var(--ink); text-align: left; }
     .rcard .tname:hover { text-decoration: underline; }
@@ -155,8 +156,8 @@
     <div class="container-xl bar">
       <a class="brand" href="index.html">Abdulla Shaheed</a>
       <nav class="site-nav" aria-label="Main">
-        <a href="index.html#projects">Projects</a>
-        <a href="index.html#education">Education</a>
+        <a href="index.html#tools">Tools</a>
+        <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
         <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
@@ -169,7 +170,8 @@
         <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
         <div class="live"><i></i>Official council figures</div>
         <h1>How does your council compare?</h1>
-        <p class="lead">Councils collect bins, decide planning permits, look after local roads and run libraries. Victoria and New South Wales make every council report the same figures each year. This page uses only the figures that hold up to testing, and lines your council up against councils like it, never against the whole state. Pick a second council to compare the two side by side.</p>
+        <p class="lead">A fair report card for every council in Victoria and NSW, against councils like it.</p>
+        <p class="explain">Councils collect bins, decide planning permits, look after local roads and run libraries. Victoria and New South Wales make every council report the same figures each year. This page uses only the figures that hold up to testing, and lines your council up against councils like it, never against the whole state. Pick a second council to compare the two side by side.</p>
       </div>
 
       <div class="pickbar" id="pickbar">
@@ -185,16 +187,17 @@
           <div class="chips" id="chips"></div>
           <a class="xlink" id="xlink"></a>
         </section>
+        <p class="cardtitle" id="card-h">Report card</p>
         <div class="rcard" id="card"></div>
         <div class="cardkey" id="cardkey"></div>
-        <p class="cardnote" id="cardnote"></p>
+        <p class="cardnote explain" id="cardnote" data-for="card-h"></p>
         <div class="summary" id="summary"></div>
         <div id="themes"></div>
       </div>
 
       <section class="section method">
         <h2>How this is kept fair</h2>
-        <details open>
+        <details>
           <summary>The rules this page follows</summary>
           <ol>
             <li><b>Like with like.</b> Every council is compared only with its official peer group, the groups each state government uses itself. Victoria and NSW are never compared with each other, because they measure different things in different ways.</li>
@@ -571,6 +574,7 @@
     setState(state);
   })();
   </script>
+  <script src="js/explain.js"></script>
   <script src="js/more.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ambient.js"></script>

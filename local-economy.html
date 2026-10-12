@@ -158,8 +158,8 @@
     <div class="container-xl bar">
       <a class="brand" href="index.html">Abdulla Shaheed</a>
       <nav class="site-nav" aria-label="Main">
-        <a href="index.html#projects">Projects</a>
-        <a href="index.html#education">Education</a>
+        <a href="index.html#tools">Tools</a>
+        <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
         <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
       </nav>
@@ -172,7 +172,8 @@
         <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
         <div class="live"><i></i>Every council area in Australia</div>
         <h1>What makes your local economy tick?</h1>
-        <p class="lead">Pick any council area to see what its residents do for a living, what it specialises in, where its jobs growth has come from, and how well placed it is to ride out a downturn or a change in a big industry. Every area is compared only with areas like it, using official ABS figures.</p>
+        <p class="lead">Pick any council area to see its industries, growth and resilience.</p>
+        <p class="explain">Pick any council area to see what its residents do for a living, what it specialises in, where its jobs growth has come from, and how well placed it is to ride out a downturn or a change in a big industry. Every area is compared only with areas like it, using official ABS figures.</p>
       </div>
 
       <div class="pickbar" id="pickbar">
@@ -196,7 +197,7 @@
 
       <section class="section method">
         <h2>How the score works, and its limits</h2>
-        <details open>
+        <details>
           <summary>The rules this page follows</summary>
           <ol>
             <li><b>Like with like.</b> Each area is scored only against similar areas, grouped by whether most residents live in a capital city, how remote they are, how densely settled the area is and its size. A farming shire is never scored against an inner city suburb.</li>
@@ -396,6 +397,7 @@
       scorebox(c, c2);
       findings(c);
       blocks(c, c2);
+      if (window.explainAll) window.explainAll();
     }
 
     function chips(c, c2) {
@@ -418,8 +420,8 @@
         const s = overall(c, W), s2 = c2 && c2.scored ? overall(c2, W) : null, [lo, hi] = sensitivity(c);
         big.innerHTML = `<span class="k">Resilience score</span><span class="n">${Math.round(s)}<small> out of 100</small>${s2 != null ? `<span class="vs">${Math.round(s2)}</span>` : ""}</span>
           <span class="band">${band(s)}</span>
-          <span class="range">More resilient than about ${Math.round(s)}% of similar areas. Across 300 other reasonable weightings it ranges from ${Math.round(lo)} to ${Math.round(hi)}${hi - lo > 30 ? ", so the result depends a lot on what you think matters most" : ""}.</span>`;
-        const k = big.querySelector(".k"); k.appendChild(info("<b>What the score means</b>The score is this area's position among similar areas, after combining the five parts with the weights below. 70 means it scores higher than about 70% of similar areas. It is not a grade out of 100." + (c2 ? (c2.group === c.group ? "" : " The second area is in a different group, so each score shows its position in its own group and the two are not directly comparable.") : ""), "the score"));
+          <span class="range">Between ${Math.round(lo)} and ${Math.round(hi)} with other reasonable weightings.</span>`;
+        const k = big.querySelector(".k"); k.appendChild(info("<b>What the score means</b>The score is this area's position among similar areas, after combining the five parts with the weights below. 70 means it scores higher than about 70% of similar areas. It is not a grade out of 100. The range below it shows how far the score moves across 300 other reasonable ways of weighting the parts." + (c2 ? (c2.group === c.group ? "" : " The second area is in a different group, so each score shows its position in its own group and the two are not directly comparable.") : ""), "the score"));
         box.appendChild(big);
       }
       const dims = document.createElement("div"); dims.className = "dims";
@@ -496,7 +498,7 @@
     // ---- sections
     function blocks(c, c2) {
       const host = $("blocks"); host.innerHTML = "";
-      const sec = (id, title, intro) => { const s = document.createElement("section"); s.className = "block"; s.innerHTML = `<h3>${icon(id)}${esc(title)}</h3>${intro ? `<p class="intro">${intro}</p>` : ""}`; host.appendChild(s); return s; };
+      const sec = (id, title, intro) => { const s = document.createElement("section"); s.className = "block"; s.innerHTML = `<h3>${icon(id)}${esc(title)}</h3>${intro ? `<p class="intro explain">${intro}</p>` : ""}`; host.appendChild(s); return s; };
 
       const s1 = sec("industry", "What residents do for a living", `Share of employee jobs held by residents in each industry, averaged over ${Y.structure[0]} to ${Y.structure[Y.structure.length - 1]}. The orange line marks Australia.`);
       industries(s1, c, c2);
@@ -645,7 +647,7 @@
       wrap.appendChild(one(c)); if (c2) wrap.appendChild(one(c2));
       host.appendChild(wrap);
       const p = document.createElement("p"); p.className = "intro"; p.style.fontSize = ".85rem"; p.style.marginTop = ".8rem";
-      p.textContent = "Changes are in percentage points of all employed residents. The Census counts everyone's main job, including owner-operators, so the shares differ a little from the jobs figures above.";
+      p.className = "intro explain"; p.textContent = "Changes are in percentage points of all employed residents. The Census counts everyone's main job, including owner-operators, so the shares differ a little from the jobs figures above.";
       host.appendChild(p);
     }
 
@@ -663,6 +665,7 @@
     window.onThemeChange = render;
   })();
   </script>
+  <script src="js/explain.js"></script>
   <script src="js/more.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ambient.js"></script>

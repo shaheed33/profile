@@ -1,4 +1,4 @@
-// "More projects" strip at the foot of each project page, so readers can move
+// "More tools" strip at the foot of each project page, so readers can move
 // between projects without going back to the home page.
 (function () {
   var P = [
@@ -15,9 +15,9 @@
   if (!foot) return;
   var box = document.createElement("nav");
   box.className = "more-projects container-xl";
-  box.setAttribute("aria-label", "More projects");
-  box.innerHTML = '<h2>More projects</h2><ul>' + P.filter(function (p) { return p[0] !== here && here.indexOf(p[0].replace(".html", "")) !== 0; })
+  box.setAttribute("aria-label", "More tools");
+  box.innerHTML = '<h2>More tools</h2><ul>' + P.filter(function (p) { return p[0] !== here && here.indexOf(p[0].replace(".html", "")) !== 0; })
     .map(function (p) { return '<li><a href="' + p[0] + '"><span>' + p[2] + '</span>' + p[1] + '</a></li>'; }).join("") +
-    '</ul><a class="home" href="index.html#projects">All projects and about me →</a>';
+    '</ul><a class="home" href="index.html#tools">All tools and about me →</a>';
   foot.parentNode.insertBefore(box, foot);
 })();
