@@ -22,12 +22,6 @@
 .figs b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(1.6rem, 3.6vw, 2.3rem); line-height: 1.05; }
 .figs span { font-size: .85rem; color: var(--muted); }
 
-/* Dhivehi summary, written by hand */
-.dv-box { margin: 1.6rem 0 0; padding: .9rem 1.1rem; border: 1px dashed var(--line); border-radius: 12px; max-width: 46rem; }
-.dv-box .tag { font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem; }
-body [lang="dv"], body [lang="dv"] * { font-family: "Noto Sans Thaana", "Faruma", "MV Faseyha", sans-serif !important; font-size: 1.08rem; line-height: 1.9; }
-body [lang="dv"] .placeholder { font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif !important; font-size: .92rem; color: var(--muted); font-style: italic; margin: 0; }
-
 /* sections */
 .section { margin: 3.2rem 0 0; scroll-margin-top: 80px; }
 .section > h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.75rem; margin: 0 0 .3rem; }

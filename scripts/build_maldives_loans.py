@@ -55,7 +55,7 @@ FX_TO_USD = {
     "INR": (ECB_PER_EUR["USD"] / ECB_PER_EUR["INR"], "ECB reference rates, EUR/USD over EUR/INR, 30 Jun 2026", True),
     "SAR": (1 / 3.75, "Fixed peg, 3.75 riyals per US dollar", True),
     "AED": (1 / 3.6725, "Fixed peg, 3.6725 dirhams per US dollar", True),
-    "KWD": (3.228, "Market rate near 30 Jun 2026", False),  # not yet checked against the Central Bank of Kuwait
+    "KWD": (3.228, "Market rate near 30 Jun 2026, as no official rate for that date was found", False),
 }
 # spellings seen in registers, mapped to ISO codes
 CURRENCY_ALIASES = {
