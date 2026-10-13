@@ -1,0 +1,16 @@
+pattern,creditor,category,note
+# Lenders in the sovereign guarantees register. Rows are tried from top to bottom and the first match wins. category is multilateral / bilateral / export_credit / commercial / domestic_bank / central_bank. Lines starting with # are ignored.,,,
+international islamic trade finance|\bITFC\b,ITFC (IsDB Group),multilateral,
+export.?import bank of india|exim bank of india,Exim Bank of India,export_credit,
+export.?import bank of china|exim bank of china,Exim Bank of China,export_credit,
+china machinery|\bCMEC\b,CMEC (supplier's credit),export_credit,Chinese contractor providing credit for its own works
+dongfang,Dongfang Electric (supplier's credit),export_credit,Chinese contractor providing credit for its own works
+china development bank,China Development Bank,bilateral,State-owned policy bank. Treated as official bilateral as in the register lookup
+industrial and commercial bank of china|\bICBC\b,ICBC,commercial,
+reserve bank of india,Reserve Bank of India,central_bank,Currency swap with the Maldives Monetary Authority
+state bank of india,State Bank of India (Malé),domestic_bank,Branch operating in Maldives
+habib bank,Habib Bank (Malé),domestic_bank,Branch operating in Maldives
+bank of maldives,Bank of Maldives,domestic_bank,
+maldives islamic bank,Maldives Islamic Bank,domestic_bank,
+\bCFSIT\b,CFSIT Inc.,commercial,
+oq trading,OQ Trading,commercial,

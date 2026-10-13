@@ -37,8 +37,11 @@ SRC = ROOT / "data" / "raw" / "active_external_loans_ministry_of_finance.xlsx"
 LOOKUPS = ROOT / "data" / "lookups"
 PROC = ROOT / "data" / "processed"
 OUT_JSON = ROOT / "data" / "maldives_loans.json"
-# Chinese loans the government guaranteed, which sit outside the register (AidData GCDF 3.0)
-CHINA = ROOT / "data" / "raw" / "aiddata_gcdf3_maldives.csv"
+# Ministry of Finance register of active sovereign guarantees, kept apart from the loans above
+GUARANTEES = ROOT / "data" / "raw" / "sovereign_guarantees_ministry_of_finance.xlsx"
+GUARANTEE_CATEGORIES = [("multilateral", "Multilateral"), ("bilateral", "Bilateral"), ("export_credit", "Export credit"),
+                        ("commercial", "Commercial"), ("domestic_bank", "Banks in Maldives"), ("central_bank", "Central bank swap")]
+COMPANY_FINANCE = re.compile(r"working capital|overdraft|credit facility|lease ?back|mura+bah?a|merchandise", re.I)
 AS_OF = "2026-06-30"
 HEADER_ROW = 3
 
@@ -57,6 +60,7 @@ FX_TO_USD = {
     "INR": (ECB_PER_EUR["USD"] / ECB_PER_EUR["INR"], "ECB reference rates, EUR/USD over EUR/INR, 30 Jun 2026", True),
     "SAR": (1 / 3.75, "Fixed peg, 3.75 riyals per US dollar", True),
     "AED": (1 / 3.6725, "Fixed peg, 3.6725 dirhams per US dollar", True),
+    "MVR": (1 / 15.42, "Maldives Monetary Authority reference rate, 15.42 rufiyaa per US dollar", True),
     "KWD": (3.228, "Market rate near 30 Jun 2026, as no official rate for that date was found", False),
 }
 # spellings seen in registers, mapped to ISO codes
@@ -291,16 +295,55 @@ def write_csv(path: Path, rows: list[dict], cols: list[str]) -> None:
         w.writerows(rows)
 
 
-def guaranteed_china() -> list[dict]:
-    """Chinese loans that AidData records as guaranteed by the government, outside the register."""
-    if not CHINA.exists():
-        return []
-    import pandas as pd
-    c = pd.read_csv(CHINA, dtype=str)
-    c = c[(c["Recommended For Aggregates"] == "Yes") & (c["Level of Public Liability"] == "Central government-guaranteed debt")]
-    c["usd"] = pd.to_numeric(c["Amount (Nominal USD)"], errors="coerce")
-    return [{"year": int(r["Commitment Year"]), "borrower": r["Direct Receiving Agencies"], "lender": r["Funding Agencies"],
-             "title": r["Title"], "usd": round(r["usd"])} for _, r in c.sort_values("usd", ascending=False).iterrows()]
+def read_guarantees() -> dict:
+    """Active sovereign guarantees, from both sheets of the Ministry of Finance register."""
+    if not GUARANTEES.exists():
+        return {}
+    wb = openpyxl.load_workbook(GUARANTEES, data_only=True, read_only=True)
+    lenders = read_lookup(LOOKUPS / "guarantee_creditors.csv")
+    valid = {c for c, _ in GUARANTEE_CATEGORIES}
+    bad = [r["pattern"] for r in lenders if r["category"] not in valid]
+    if bad:
+        fail("unknown category in guarantee_creditors.csv", bad)
+    compiled = [(re.compile(r["pattern"], re.I), r) for r in lenders]
+    rules = [(re.compile(r["pattern"], re.I), r) for r in read_lookup(LOOKUPS / "sdg_rules.csv")]
+    rows, unmatched = [], set()
+    for sheet, owner in (("SOEs", "state"), ("Private", "private")):
+        if sheet not in wb.sheetnames:
+            continue
+        data = list(wb[sheet].iter_rows(values_only=True))
+        head_i = next(i for i, r in enumerate(data) if r and str(r[0]).strip() == "#")
+        head = [re.sub(r"\s+", " ", str(h or "")).strip().lower() for h in data[head_i]]
+        col = {k: next(i for i, h in enumerate(head) if h.startswith(n)) for k, n in
+               (("date", "date"), ("creditor", "creditor"), ("beneficiary", "beneficiary"), ("purpose", "purpose"),
+                ("currency", "currency"), ("amount", "guaranteed amount"), ("status", "project implementation status" if owner == "state" else "implementation status"))}
+        for r in data[head_i + 1:]:
+            if not r or not isinstance(r[0], (int, float)):
+                continue
+            g = lambda k: r[col[k]]
+            cred = re.sub(r"\s+", " ", str(g("creditor"))).strip()
+            hit = next((x for p, x in compiled if p.search(cred)), None)
+            if hit is None:
+                unmatched.add(cred)
+                continue
+            cur, amt, purpose = norm_currency(g("currency")), parse_amount(g("amount")), re.sub(r"\s+", " ", str(g("purpose"))).strip()
+            if cur not in FX_TO_USD:
+                fail("no exchange rate for a guarantee currency. Add it to FX_TO_USD", [cur])
+            swap = "swap" in purpose.lower()
+            tag = rule_tags(purpose, rules)
+            goal = "Swap" if swap else "Company finance" if COMPANY_FINANCE.search(purpose) else tag["rule_primary"]
+            d = parse_date(g("date"))
+            rows.append({"date": d.isoformat(), "year": d.year, "creditor": hit["creditor"], "creditor_raw": cred,
+                         "category": hit["category"], "borrower": re.sub(r"\s+(Pvt\.? )?(Limited|Ltd\.?|PLC)$", "", re.sub(r"\s+", " ", str(g("beneficiary"))).strip()),
+                         "owner": owner, "purpose": purpose, "currency": cur, "amount": amt,
+                         "usd": round(amt * FX_TO_USD[cur][0], 2), "goal": goal, "swap": swap,
+                         "status": str(g("status") or "").strip()})
+    if unmatched:
+        fail("guarantee lenders not in data/lookups/guarantee_creditors.csv. Add a row for each", sorted(unmatched))
+    rows.sort(key=lambda x: x["date"])
+    loans = [x for x in rows if not x["swap"]]
+    print(f"Guarantees: {len(loans)} loans worth US$ {sum(x['usd'] for x in loans) / 1e6:,.1f} million, plus {len(rows) - len(loans)} currency swaps")
+    return {"categories": [{"id": c, "label": l} for c, l in GUARANTEE_CATEGORIES], "rows": rows}
 
 
 def main() -> None:
@@ -350,9 +393,9 @@ def main() -> None:
         "tag_source": l["tag_source"], "implementation_status": l["status"],
     } for l in loans], dl_cols)
 
-    guaranteed = guaranteed_china()
+    guarantees = read_guarantees()
     out = {
-        "guaranteed_china": guaranteed,
+        "guarantees": guarantees,
         "meta": {
             "title": "Who lends to Maldives, and for what?",
             "source": "Ministry of Finance, Maldives. Active External Borrowings",
