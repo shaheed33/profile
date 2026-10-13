@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Who lends to Maldives, and for what? | Abdulla Shaheed</title>
+  <meta name="description" content="Every active external loan to the government of Maldives, mapped by type of lender and by the Sustainable Development Goal its project mainly serves.">
+  <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="Who lends to Maldives, and for what?">
+  <meta property="og:description" content="Active external loans to the government of Maldives, by lender and Sustainable Development Goal.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shaheed.work/maldives-loans">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thaana:wght@400;500&display=swap">
+  <style>
+    :root {
+      --c-multilateral: #2F5FB0; --c-bilateral: #00917F; --c-export_credit: #C4572B; --c-commercial: #D9A43A;
+      --heat: #1F3D73; --live: #1E8A5A; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14);
+    }
+    [data-theme="dark"] {
+      --c-multilateral: #5585D6; --c-bilateral: #0E9E8A; --c-export_credit: #C2483C; --c-commercial: #B08A22;
+      --heat: #8FB3EE; --live: #5FD39B; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+    }
+    .page { max-width: 1000px; }
+    .lead { max-width: 60ch; margin-bottom: .6rem; }
+    .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
+    .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); }
+    .empty { padding: 1.2rem 1.3rem; border-left: 3px solid var(--c-export_credit); background: var(--track); border-radius: 0 10px 10px 0; max-width: 70ch; }
+
+    /* headline figures */
+    .figs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 2rem 0 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+    .figs div { padding: .9rem 1rem .9rem 0; }
+    .figs div + div { padding-left: 1rem; border-left: 1px solid var(--line); }
+    .figs b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(1.6rem, 3.6vw, 2.3rem); line-height: 1.05; }
+    .figs span { font-size: .85rem; color: var(--muted); }
+
+    /* Dhivehi summary, written by hand */
+    .dv-box { margin: 1.6rem 0 0; padding: .9rem 1.1rem; border: 1px dashed var(--line); border-radius: 12px; max-width: 46rem; }
+    .dv-box .tag { font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem; }
+    body [lang="dv"], body [lang="dv"] * { font-family: "Noto Sans Thaana", "Faruma", "MV Faseyha", sans-serif !important; font-size: 1.08rem; line-height: 1.9; }
+    body [lang="dv"] .placeholder { font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif !important; font-size: .92rem; color: var(--muted); font-style: italic; margin: 0; }
+
+    /* sections */
+    .section { margin: 3.2rem 0 0; scroll-margin-top: 80px; }
+    .section > h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.75rem; margin: 0 0 .3rem; }
+    .section .note { color: var(--soft); max-width: 68ch; margin: 0 0 .9rem; }
+    .finding { font-family: "Newsreader", Georgia, serif !important; font-size: 1.2rem; line-height: 1.45; color: var(--ink); max-width: 60ch; margin: .2rem 0 1rem; }
+
+    /* category key, doubles as a highlight control */
+    .key { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 1.1rem; }
+    .key button { display: inline-flex; align-items: center; gap: .45rem; font-size: .86rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: .25rem .8rem .25rem .6rem; cursor: pointer; transition: opacity .2s, border-color .2s; }
+    .key button i { width: 11px; height: 11px; border-radius: 3px; }
+    .key button[aria-pressed="true"] { border-color: var(--ink); }
+    .key.focus button[aria-pressed="false"] { opacity: .45; }
+    .ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin: 0 0 1rem; }
+    .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+    .seg button { font-size: .85rem; font-weight: 500; color: var(--muted); background: none; border: 0; padding: .25rem .85rem; border-radius: 999px; cursor: pointer; }
+    .seg button.on { background: var(--ink); color: var(--surface); }
+    .dim { opacity: .18; }
+    .seg-fill { transition: opacity .2s; }
+
+    /* chart a: goals as ruled rows */
+    .goals { border-top: 1px solid var(--line); }
+    .goal { display: grid; grid-template-columns: 17rem minmax(0, 1fr) 6.2rem; gap: .9rem; align-items: center; padding: .55rem 0; border-bottom: 1px solid var(--line); cursor: pointer; background: none; border-left: 0; border-right: 0; border-top: 0; width: 100%; text-align: left; color: inherit; font: inherit; }
+    .goal:hover { background: linear-gradient(90deg, var(--track), transparent); }
+    .goal .name { display: flex; align-items: baseline; gap: .6rem; min-width: 0; font-size: .92rem; line-height: 1.3; }
+    .goal .num { font-family: "Newsreader", Georgia, serif !important; font-size: 1.45rem; line-height: 1; min-width: 1.9rem; text-align: right; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .goal .num.word { font-size: .72rem; font-family: inherit !important; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-align: right; }
+    .goal .track { display: flex; gap: 2px; height: 14px; }
+    .goal .track span { height: 100%; min-width: 2px; }
+    .goal .track span:last-child { border-radius: 0 4px 4px 0; }
+    .goal .val { font-size: .88rem; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+    .goal .val small { display: block; color: var(--muted); font-size: .76rem; }
+
+    /* chart b: columns */
+    .cols svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .cols text { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .cols text.per { fill: var(--ink); font-weight: 500; }
+    .cols line { stroke: var(--chart-grid); }
+
+    /* chart c: heatmap */
+    .heatwrap { overflow-x: auto; border-top: 1px solid var(--line); -webkit-overflow-scrolling: touch; }
+    .heat { border-collapse: separate; border-spacing: 2px; font-size: .84rem; min-width: 100%; }
+    .heat th { font-weight: 500; color: var(--muted); }
+    .heat thead th { text-align: center; padding: .5rem 0 .3rem; vertical-align: bottom; }
+    .heat thead th b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.15rem; color: var(--accent); line-height: 1; }
+    .heat thead th small { font-size: .66rem; letter-spacing: .05em; text-transform: uppercase; }
+    .heat tbody th { position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left; font-weight: 400; color: var(--ink); padding: .2rem .8rem .2rem .55rem; white-space: nowrap; border-left: 4px solid var(--rowc, var(--line)); }
+    .heat tr.grp th { border-left: 0; padding: .9rem 0 .2rem; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .heat td { min-width: 2.7rem; height: 2rem; text-align: center; border-radius: 4px; font-variant-numeric: tabular-nums; font-size: .74rem; cursor: pointer; }
+    .heat td.z { background: none; box-shadow: inset 0 0 0 1px var(--chart-grid); cursor: default; }
+    .heat td.tot { background: none; color: var(--muted); text-align: right; padding: 0 0 0 .6rem; cursor: default; min-width: 4.5rem; }
+    .heat td:not(.z):not(.tot):hover { outline: 2px solid var(--ink); outline-offset: -1px; }
+    .swipe { display: none; font-size: .8rem; color: var(--muted); margin: .5rem 0 0; }
+    .ramp { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .5rem; font-size: .8rem; color: var(--muted); margin: .8rem 0 0; }
+    .ramp i { width: 120px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, var(--track), var(--heat)); }
+
+    /* table d */
+    .filters { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: .5rem; margin: 0 0 .7rem; }
+    .filters input, .filters select { font: inherit; font-size: .92rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .45rem .65rem; min-width: 0; width: 100%; }
+    .filters label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .tbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem; font-size: .88rem; color: var(--muted); margin: 0 0 .5rem; }
+    .dl { display: inline-flex; align-items: center; gap: .4rem; font-weight: 500; text-decoration: none; border-radius: 999px; padding: .35rem .95rem; border: 1px solid var(--ink); color: var(--ink); }
+    .dl:hover { background: var(--accent-soft); color: var(--ink); }
+    .tablewrap { max-height: 640px; overflow: auto; border-top: 1px solid var(--ink); }
+    .loans { width: 100%; border-collapse: collapse; font-size: .86rem; }
+    .loans th { position: sticky; top: 0; z-index: 1; background: var(--surface); text-align: left; font-weight: 600; font-size: .78rem; color: var(--muted); padding: .55rem .4rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    .loans th button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+    .loans th button::after { content: ""; display: inline-block; width: .9em; }
+    .loans th[aria-sort="ascending"] button::after { content: " \2191"; }
+    .loans th[aria-sort="descending"] button::after { content: " \2193"; }
+    .loans th[aria-sort] button, .loans th button:hover { color: var(--ink); }
+    .loans td { padding: .5rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .loans td.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .loans th.n { text-align: right; }
+    .loans .cat { display: inline-flex; align-items: center; gap: .35rem; white-space: nowrap; }
+    .loans .cat i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+    .loans .proj { min-width: 12rem; }
+    .loans .who { min-width: 8rem; }
+    .loans .st { display: block; color: var(--muted); font-size: .76rem; margin-top: .1rem; }
+    .more { display: block; margin: 1rem auto 0; font: inherit; font-size: .9rem; font-weight: 500; color: var(--ink); background: var(--surface); border: 1px solid var(--ink); border-radius: 999px; padding: .4rem 1.2rem; cursor: pointer; }
+    .more:hover { background: var(--accent-soft); }
+    .chip { display: inline-block; font-size: .74rem; border-radius: 999px; padding: .05rem .5rem; white-space: nowrap; background: var(--track); color: var(--soft); }
+    .chip.low, .chip.none { background: none; box-shadow: inset 0 0 0 1px var(--line); color: var(--muted); }
+    .chip.manual { background: var(--accent-soft); color: var(--accent); }
+    .sdgcell { white-space: nowrap; }
+    .sdgcell small { display: block; color: var(--muted); font-size: .76rem; }
+
+    /* methodology */
+    .method details { border-top: 1px solid var(--line); padding: .8rem 0; }
+    .method details:last-of-type { border-bottom: 1px solid var(--line); }
+    .method summary { cursor: pointer; font-weight: 600; list-style: none; }
+    .method summary::-webkit-details-marker { display: none; }
+    .method summary::before { content: "+"; display: inline-block; width: 1.3rem; color: var(--accent); font-weight: 400; }
+    .method details[open] summary::before { content: "\2212"; }
+    .method p, .method ul, .method ol { color: var(--soft); max-width: 74ch; margin: .6rem 0 0 1.3rem; }
+    .method li { margin: .35rem 0; }
+    .fx { margin: .7rem 0 0 1.3rem; border-collapse: collapse; font-size: .86rem; }
+    .fx th, .fx td { padding: .3rem .9rem .3rem 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .fx th { color: var(--muted); font-weight: 600; font-size: .78rem; }
+    .fx td.n { font-variant-numeric: tabular-nums; text-align: right; }
+
+    .tip { position: fixed; pointer-events: none; background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); font-size: .82rem; line-height: 1.45; padding: .5rem .7rem; border-radius: 8px; opacity: 0; transition: opacity .12s; max-width: 280px; z-index: 1100; }
+    .tip.on { opacity: 1; }
+    .tip b { display: block; font-weight: 600; }
+    .tip .r { display: flex; align-items: center; gap: .4rem; }
+    .tip .r i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+
+    @media (max-width: 767.98px) {
+      .figs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .figs div:nth-child(3) { padding-left: 0; border-left: 0; }
+      .figs div:nth-child(n+3) { border-top: 1px solid var(--line); }
+      .goal { grid-template-columns: minmax(0, 1fr) auto; gap: .35rem .8rem; }
+      .goal .name { grid-column: 1 / -1; }
+      .goal .track { grid-column: 1; }
+      .goal .val small { display: inline; margin-left: .3rem; }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .heat tbody th { white-space: normal; min-width: 8.5rem; max-width: 9.5rem; line-height: 1.25; font-size: .8rem; }
+      .heat td { min-width: 2.4rem; }
+      .swipe { display: block; }
+      .filters .q { grid-column: 1 / -1; }
+      .tablewrap { max-height: none; border-top: 0; }
+      .loans thead { display: none; }
+      .loans, .loans tbody, .loans tr, .loans td { display: block; width: 100%; }
+      .loans tr { border-top: 1px solid var(--line); padding: .7rem 0; }
+      .loans td { border: 0; padding: .1rem 0; display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: .6rem; text-align: left !important; white-space: normal !important; }
+      .loans td::before { content: attr(data-l); color: var(--muted); font-size: .78rem; }
+      .loans td.proj { font-weight: 500; }
+    }
+    @media (prefers-reduced-motion: reduce) { .seg-fill, .key button { transition: none; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container-xl bar">
+      <a class="brand" href="index.html">Abdulla Shaheed</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html#tools">Tools</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#contact">Contact</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container-xl py-4">
+    <div class="page">
+      <div class="hero-wrap">
+        <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
+        <div class="live"><i></i>Side project, Ministry of Finance data</div>
+        <h1>Who lends to Maldives, and for what?</h1>
+        <p class="lead">Every active external loan to the government of Maldives, mapped by the type of lender and the Sustainable Development Goal its project mainly serves.</p>
+        <p class="explain">I built this out of curiosity, and to learn how an SDG financing map is put together. It starts from the Ministry of Finance register of active external borrowings at 30 June 2026. Each lender is grouped as multilateral, bilateral, export credit or commercial, and each loan is matched to a goal from its project name. Amounts are what was committed when each loan was signed, converted to US dollars at 30 June 2026 rates. They are not what is owed today.</p>
+      </div>
+
+      <div id="content">
+        <div class="figs" id="figs" aria-live="polite"></div>
+
+        <!-- Remove "hidden" below once the Dhivehi summary is written. -->
+        <section class="dv-box" aria-label="Summary in Dhivehi" hidden>
+          <p class="tag">Dhivehi summary</p>
+          <!-- DHIVEHI SUMMARY START. Replace the placeholder paragraph below with the summary text. -->
+          <div lang="dv" dir="rtl">
+            <p class="placeholder" lang="en" dir="ltr">Placeholder. A short summary in Dhivehi will go here.</p>
+          </div>
+          <!-- DHIVEHI SUMMARY END -->
+        </section>
+
+        <section class="section" id="goals">
+          <h2>Which goals do the loans serve?</h2>
+          <p class="explain">Each loan is counted once, under the goal its project name points to most clearly. Many projects serve more than one goal, and the second goal is shown in the table below but not added here, so nothing is counted twice. Select a goal to list its loans.</p>
+          <p class="finding" id="find-a"></p>
+          <div class="key" id="key-a" role="group" aria-label="Highlight a type of lender"></div>
+          <div class="goals" id="chart-a"></div>
+        </section>
+
+        <section class="section" id="mix">
+          <h2>How has the mix of lenders changed?</h2>
+          <p class="explain">Each column holds the loans signed in that period which are still active. Loans that have been fully repaid are no longer in the register, so earlier periods show only the longest running loans, and their totals are smaller than what was borrowed at the time.</p>
+          <p class="finding" id="find-b"></p>
+          <div class="ctrl">
+            <div class="seg" id="seg-b-mode" aria-label="Show"><button type="button" data-v="share" class="on">Share</button><button type="button" data-v="usd">US$</button></div>
+            <div class="seg" id="seg-b-bin" aria-label="Group years by"><button type="button" data-v="5" class="on">Five years</button><button type="button" data-v="10">Decades</button></div>
+          </div>
+          <div class="key" id="key-b" role="group" aria-label="Highlight a type of lender"></div>
+          <div class="cols" id="chart-b"></div>
+        </section>
+
+        <section class="section" id="matrix">
+          <h2>Who funds which goals?</h2>
+          <p class="explain">Each row is a lender and each column a goal. The darker the square, the more that lender has committed to that goal, in millions of US dollars. Switch to share to see how each lender divides its own lending. Select a square to list those loans.</p>
+          <div class="ctrl">
+            <div class="seg" id="seg-c" aria-label="Show"><button type="button" data-v="usd" class="on">US$ million</button><button type="button" data-v="share">Share of each lender</button></div>
+          </div>
+          <div class="heatwrap"><table class="heat" id="chart-c"></table></div>
+          <p class="swipe">Scroll sideways to see every goal.</p>
+          <div class="ramp" id="ramp"></div>
+        </section>
+
+        <section class="section" id="table">
+          <h2>Every loan</h2>
+          <p class="explain">Search by lender or project, filter by type of lender or goal, and sort by any column. The tag column shows how sure the keyword rule was about the goal, high or medium, or says checked where the goal was set by hand.</p>
+          <div class="filters">
+            <div class="q"><label for="q">Search</label><input id="q" type="search" placeholder="Search lender or project" autocomplete="off"></div>
+            <div><label for="f-cat">Type of lender</label><select id="f-cat"></select></div>
+            <div><label for="f-sdg">Goal</label><select id="f-sdg"></select></div>
+            <div><label for="f-sort">Sort by</label><select id="f-sort"></select></div>
+          </div>
+          <div class="tbar"><span id="count"></span><a class="dl" href="data/processed/loans_tagged.csv" download="maldives_external_loans_tagged.csv">Download the tagged data (CSV)</a></div>
+          <div class="tablewrap"><table class="loans" id="loans"></table></div>
+          <button type="button" class="more" id="more" hidden></button>
+        </section>
+      </div>
+
+      <section class="section method" id="method">
+        <h2>How this was made</h2>
+        <details>
+          <summary>Source and date</summary>
+          <p id="m-source">The Ministry of Finance register of active external borrowings of the government of Maldives, as at 30 June 2026. It lists each loan's signing date, lender, project, currency, committed amount and implementation status.</p>
+        </details>
+        <details>
+          <summary>Converting currencies</summary>
+          <p>The register gives each amount in the currency the loan was signed in. Every amount is converted to US dollars at a single date, 30 June 2026, using the rates below. The same rate is used for a loan signed in 1985 as for one signed in 2025, so the figures show what the commitments are worth at today's rates, not their value when signed.</p>
+          <table class="fx" id="fx"></table>
+        </details>
+        <details>
+          <summary>How lenders were grouped</summary>
+          <ul>
+            <li><b>Multilateral.</b> Development banks and funds owned by several countries, such as the World Bank's IDA, the Asian Development Bank, AIIB, the Islamic Development Bank, the OPEC Fund, the European Investment Bank, IFAD and the Nordic Development Fund.</li>
+            <li><b>Bilateral.</b> Lending from one government or its development fund, such as the Saudi Fund for Development, the Kuwait Fund, the Abu Dhabi Fund for Development and the Government of India.</li>
+            <li><b>Export credit.</b> Export credit agencies and buyers' credit, such as the Export-Import Banks of India and China and Hungarian Exim. These loans are usually tied to goods or contractors from the lending country.</li>
+            <li><b>Commercial.</b> Banks and bondholders lending on market terms.</li>
+          </ul>
+          <p>The grouping is kept in an editable lookup file, so any lender can be moved and the page rebuilt.</p>
+        </details>
+        <details>
+          <summary>How goals were assigned</summary>
+          <p>Each project name is checked against a list of keywords. Water and sewerage point to SDG 6, hospitals to SDG 3, schools to SDG 4, power and renewables to SDG 7, airports, roads, harbours and ports to SDG 9, housing and urban development to SDG 11, coastal protection and climate adaptation to SDG 13 and fisheries to SDG 14. Budget support and balance of payments loans are grouped as general support rather than given a goal.</p>
+          <p>Each match is given a confidence level. A specific word such as sewerage is high, a broad word such as urban is medium, and a generic phrase such as infrastructure is low. Where a name points to two goals, the clearer one becomes the main goal and the other the second goal. Loans whose names match nothing are left unclassified rather than guessed. The low confidence and unclassified loans were then checked by hand, and those corrections take priority over the keyword rules every time the data is rebuilt. Loans that refinance an earlier loan are tagged to the goal of the project they refinance, with general support as the second goal.</p>
+          <p id="m-conf"></p>
+        </details>
+        <details>
+          <summary>What this does not show</summary>
+          <ul>
+            <li><b>Commitments, not money spent or owed.</b> The amounts are what was agreed when each loan was signed. They are not disbursements, and not the debt outstanding today, which is lower for older loans that are partly repaid.</li>
+            <li><b>Active loans only.</b> Loans that have been fully repaid are not in the register, so earlier periods are understated in the chart of lenders over time.</li>
+            <li><b>Project names can be vague.</b> A goal is only as good as the project name it was read from. Some names describe several projects, or a credit line used for many.</li>
+            <li><b>One loan, several goals.</b> A harbour can serve jobs, transport and climate resilience at once. The charts count only the main goal so totals add up.</li>
+            <li><b>No loan terms.</b> The register does not give interest rates, grace periods or maturities, so the page does not show how concessional each loan is.</li>
+            <li><b>Loans only, not grants.</b> The register lists borrowing, so grants are not included. Much of the support Maldives receives from UN agencies, Japan, the World Bank and others comes as grants or technical assistance, and none of it appears here.</li>
+            <li><b>Outside the register.</b> Debt guaranteed by the government for state owned enterprises, domestic borrowing and private investment are not included.</li>
+          </ul>
+        </details>
+        <details>
+          <summary>Files</summary>
+          <p>The tagged dataset is free to download as a <a href="data/processed/loans_tagged.csv" download="maldives_external_loans_tagged.csv">CSV file</a>, and the page reads from <a href="data/maldives_loans.json">this JSON file</a>. A Python script cleans the register, converts the currencies, groups the lenders and tags the goals, so the page can be rebuilt whenever a new register is published.</p>
+          <p id="generated" class="small text-body-secondary"></p>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Data from the Ministry of Finance, Maldives.</footer>
+  <div class="tip" id="tip" role="tooltip"></div>
+
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    $("year").textContent = new Date().getFullYear();
+    const tip = $("tip");
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const sum = (a, f) => a.reduce((s, x) => s + f(x), 0);
+    const pct = (v) => (v >= 0.995 ? Math.round(v * 100) : v < 0.01 && v > 0 ? "under 1" : Math.round(v * 100)) + "%";
+    const money = (v) => v >= 1e9 ? "US$ " + (v / 1e9).toFixed(v >= 1e10 ? 1 : 2) + " billion" : v >= 1e6 ? "US$ " + (v / 1e6).toLocaleString("en-GB", { maximumFractionDigits: v >= 1e8 ? 0 : 1 }) + " million" : "US$ " + Math.round(v / 1e3).toLocaleString("en-GB") + " thousand";
+    const mill = (v) => { const m = v / 1e6; return m >= 100 ? Math.round(m).toLocaleString("en-GB") : m >= 1 ? m.toFixed(1) : m.toFixed(2); };
+    const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const longDate = (iso) => { const [y, m, d] = iso.split("-").map(Number); return d + " " + MONTHS[m - 1] + " " + y; };
+    const showTip = (e, html) => {
+      tip.innerHTML = html; tip.classList.add("on");
+      const x = e.clientX ?? (e.touches && e.touches[0].clientX), y = e.clientY ?? (e.touches && e.touches[0].clientY);
+      tip.style.left = Math.max(8, Math.min(x + 14, innerWidth - tip.offsetWidth - 8)) + "px";
+      tip.style.top = Math.max(8, y - tip.offsetHeight - 14) + "px";
+    };
+    const hideTip = () => tip.classList.remove("on");
+    document.addEventListener("scroll", hideTip, { passive: true });
+    document.addEventListener("click", (e) => { if (!e.target.closest("[data-tip]")) hideTip(); });
+    window.onThemeChange = () => {};
+
+    fetch("data/maldives_loans.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(start).catch(() => {
+      $("content").innerHTML = '<p class="empty">The loan data could not be loaded. If you opened this file directly, run a local web server and open it from there.</p>';
+    });
+
+    function start(D) {
+      const L = D.loans, M = D.meta, total = sum(L, (l) => l.usd);
+      const CAT = D.categories, catLabel = Object.fromEntries(CAT.map((c) => [c.id, c.label]));
+      const SDG = Object.fromEntries(D.sdgs.map((s) => [s.id, s.label]));
+      const goalNum = (g) => g.startsWith("SDG ") ? g.slice(4) : "";
+      const goalName = (g) => g === "General" ? "General budget support" : g === "Unclassified" ? "Unclassified" : g + " " + SDG[g];
+      const col = (c) => "var(--c-" + c + ")";
+      let focus = null;
+
+      // headline figures
+      const lenders = new Set(L.map((l) => l.creditor)).size;
+      $("figs").innerHTML = [
+        [L.length.toLocaleString("en-GB"), "active loans"],
+        [money(total).replace(" billion", "bn").replace(" million", "m"), "committed, at 30 June 2026 rates"],
+        [lenders, "lenders"],
+        [M.first_year + " to " + M.last_year, "years the loans were signed"],
+      ].map(([v, l]) => "<div><b>" + esc(v) + "</b><span>" + esc(l) + "</span></div>").join("");
+
+      // category key shared by charts a and b
+      function key(el) {
+        el.innerHTML = CAT.map((c) => '<button type="button" data-c="' + c.id + '" aria-pressed="false"><i style="background:' + col(c.id) + '"></i>' + esc(c.label) + "</button>").join("");
+        el.addEventListener("click", (e) => {
+          const b = e.target.closest("button"); if (!b) return;
+          focus = focus === b.dataset.c ? null : b.dataset.c;
+          paintFocus();
+        });
+      }
+      function paintFocus() {
+        document.querySelectorAll(".key").forEach((k) => {
+          k.classList.toggle("focus", !!focus);
+          k.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.c === focus)));
+        });
+        document.querySelectorAll(".seg-fill").forEach((s) => s.classList.toggle("dim", !!focus && s.dataset.c !== focus));
+      }
+      key($("key-a")); key($("key-b"));
+
+      const tipRows = (byCat, base) => CAT.filter((c) => byCat[c.id]).map((c) =>
+        '<span class="r"><i style="background:' + col(c.id) + '"></i>' + esc(c.label) + " " + money(byCat[c.id]) + (base ? ", " + pct(byCat[c.id] / base) : "") + "</span>").join("");
+
+      // ---------- a. goals ----------
+      const goals = {};
+      L.forEach((l) => { const g = goals[l.sdg] ||= { id: l.sdg, usd: 0, n: 0, cat: {} }; g.usd += l.usd; g.n++; g.cat[l.category] = (g.cat[l.category] || 0) + l.usd; });
+      const order = Object.values(goals).sort((a, b) => (a.id === "Unclassified") - (b.id === "Unclassified") || b.usd - a.usd);
+      const maxG = Math.max(...order.map((g) => g.usd));
+      $("chart-a").innerHTML = order.map((g) => {
+        const num = goalNum(g.id);
+        const segs = CAT.filter((c) => g.cat[c.id]).map((c) => '<span class="seg-fill" data-c="' + c.id + '" style="flex:0 0 calc(' + (g.cat[c.id] / maxG * 100).toFixed(3) + '% - 2px);background:' + col(c.id) + '"></span>').join("");
+        return '<button type="button" class="goal" data-g="' + esc(g.id) + '" data-tip>' +
+          '<span class="name">' + (num ? '<span class="num">' + num + "</span>" : '<span class="num word">' + (g.id === "General" ? "Gen" : "None") + "</span>") +
+          "<span>" + esc(num ? SDG[g.id] : g.id === "General" ? "General budget and balance of payments support" : "Not enough detail to assign a goal") + "</span></span>" +
+          '<span class="track">' + segs + "</span>" +
+          '<span class="val">' + mill(g.usd) + "m<small>" + g.n + (g.n === 1 ? " loan" : " loans") + "</small></span></button>";
+      }).join("");
+      $("chart-a").querySelectorAll(".goal").forEach((row) => {
+        const g = goals[row.dataset.g];
+        const html = () => "<b>" + esc(goalName(g.id)) + "</b>" + money(g.usd) + ", " + pct(g.usd / total) + " of the total<br>" + tipRows(g.cat, g.usd);
+        row.addEventListener("mousemove", (e) => showTip(e, html()));
+        row.addEventListener("mouseleave", hideTip);
+        row.addEventListener("click", () => { setFilter({ sdg: g.id }); });
+      });
+      const top = order.find((g) => g.id !== "Unclassified");
+      $("find-a").textContent = "The largest share of committed financing, " + pct(top.usd / total) + ", is for " +
+        (top.id === "General" ? "general budget and balance of payments support." : "projects whose main goal is " + top.id + ", " + SDG[top.id].toLowerCase() + ".");
+
+      // ---------- b. lenders over time ----------
+      let bMode = "share", bBin = 5;
+      function periods() {
+        const P = {};
+        L.forEach((l) => {
+          const s = Math.floor(l.year / bBin) * bBin;
+          const p = P[s] ||= { s, usd: 0, n: 0, cat: {} };
+          p.usd += l.usd; p.n++; p.cat[l.category] = (p.cat[l.category] || 0) + l.usd;
+        });
+        const first = Math.min(...Object.keys(P).map(Number)), last = Math.max(...Object.keys(P).map(Number));
+        const out = [];
+        for (let s = first; s <= last; s += bBin) out.push(P[s] || { s, usd: 0, n: 0, cat: {} });
+        return out;
+      }
+      const perLabel = (s) => bBin === 10 ? s + "s" : s + "–" + String((s + 4) % 100).padStart(2, "0");
+      function drawB() {
+        const P = periods(), W = Math.max(320, $("chart-b").clientWidth), H = 300, padL = 44, padB = 44, padT = 10;
+        const narrow = W < 560, plotW = W - padL - 4, plotH = H - padB - padT, slot = plotW / P.length, bw = Math.min(28, slot * .62);
+        const maxU = Math.max(...P.map((p) => p.usd));
+        const niceMax = (() => { const m = maxU / 1e6, p10 = Math.pow(10, Math.floor(Math.log10(m))); for (const k of [1, 2, 2.5, 5, 10]) if (k * p10 >= m) return k * p10 * 1e6; })();
+        const yMax = bMode === "share" ? 1 : niceMax, y = (v) => padT + plotH - v / yMax * plotH;
+        const ticks = bMode === "share" ? [0, .25, .5, .75, 1] : [0, .25, .5, .75, 1].map((k) => k * niceMax);
+        let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Committed amounts by type of lender and period signed">';
+        ticks.forEach((t) => {
+          s += '<line x1="' + padL + '" x2="' + (W - 4) + '" y1="' + y(t) + '" y2="' + y(t) + '"/>';
+          s += '<text x="' + (padL - 8) + '" y="' + (y(t) + 4) + '" text-anchor="end">' + (bMode === "share" ? Math.round(t * 100) + "%" : (t / 1e6 >= 1000 ? (t / 1e9).toLocaleString("en-GB") + "bn" : Math.round(t / 1e6).toLocaleString("en-GB") + "m")) + "</text>";
+        });
+        P.forEach((p, i) => {
+          const cx = padL + slot * i + slot / 2, x = cx - bw / 2;
+          let acc = 0;
+          const present = CAT.filter((c) => p.cat[c.id]);
+          present.forEach((c, j) => {
+            const v = bMode === "share" ? p.cat[c.id] / p.usd : p.cat[c.id];
+            const y1 = y(acc), y0 = y(acc + v), h = Math.max(0, y1 - y0 - (j < present.length - 1 ? 2 : 0));
+            const isTop = j === present.length - 1;
+            const d = isTop && h > 4 ? "M" + x + "," + (y0 + h) + "V" + (y0 + 4) + "q0,-4 4,-4h" + (bw - 8) + "q4,0 4,4V" + (y0 + h) + "Z" : "M" + x + "," + (y0 + h) + "V" + y0 + "h" + bw + "V" + (y0 + h) + "Z";
+            s += '<path class="seg-fill" data-c="' + c.id + '" data-i="' + i + '" d="' + d + '" style="fill:' + col(c.id) + '"/>';
+            acc += v;
+          });
+          // generous invisible hit area for the whole column
+          s += '<rect data-i="' + i + '" data-tip x="' + (padL + slot * i) + '" y="' + padT + '" width="' + slot + '" height="' + plotH + '" fill="transparent"/>';
+          const show = !narrow || bBin === 10 || i % 2 === 0;
+          if (show) s += '<text class="per" x="' + cx + '" y="' + (H - padB + 18) + '" text-anchor="middle">' + (narrow && bBin === 5 ? String(p.s) : perLabel(p.s)) + "</text>";
+          if (show) s += '<text x="' + cx + '" y="' + (H - padB + 34) + '" text-anchor="middle">' + (p.n ? p.n + (narrow ? "" : p.n === 1 ? " loan" : " loans") : "") + "</text>";
+        });
+        s += "</svg>";
+        $("chart-b").innerHTML = s;
+        $("chart-b").querySelectorAll("rect[data-i]").forEach((r) => {
+          const p = P[+r.dataset.i];
+          const html = () => "<b>Signed " + (bBin === 10 ? "in the " + p.s + "s" : p.s + " to " + (p.s + 4)) + "</b>" + (p.n ? p.n + (p.n === 1 ? " loan, " : " loans, ") + money(p.usd) + "<br>" + tipRows(p.cat, p.usd) : "No active loans");
+          r.addEventListener("mousemove", (e) => showTip(e, html()));
+          r.addEventListener("click", (e) => showTip(e, html()));
+          r.addEventListener("mouseleave", hideTip);
+        });
+        paintFocus();
+      }
+      const segBtns = (id, fn) => $(id).addEventListener("click", (e) => {
+        const b = e.target.closest("button"); if (!b) return;
+        $(id).querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); fn(b.dataset.v);
+      });
+      segBtns("seg-b-mode", (v) => { bMode = v; drawB(); });
+      segBtns("seg-b-bin", (v) => { bBin = +v; drawB(); });
+      drawB();
+      let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(drawB, 120); });
+
+      // a plain sentence comparing older and newer loans
+      const share = (rows, c) => { const t = sum(rows, (l) => l.usd); return t ? sum(rows.filter((l) => l.category === c), (l) => l.usd) / t : 0; };
+      const early = L.filter((l) => l.year < 2005), recent = L.filter((l) => l.year >= 2015);
+      if (early.length && recent.length) {
+        const rs = CAT.map((c) => [c, share(recent, c.id)]).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+        $("find-b").textContent = "Of the active loans signed before 2005, " + pct(share(early, "multilateral")) + " by value came from multilateral lenders. For loans signed since 2015, the split is " +
+          rs.map(([c, v], i) => (i && i === rs.length - 1 ? "and " : "") + c.label.toLowerCase() + " " + pct(v)).join(", ") + ".";
+      }
+
+      // ---------- c. lender by goal ----------
+      let cMode = "usd";
+      const goalCols = order.map((g) => g.id);
+      const byLender = {};
+      L.forEach((l) => { const r = byLender[l.creditor] ||= { name: l.creditor, cat: l.category, usd: 0, g: {} }; r.usd += l.usd; r.g[l.sdg] = (r.g[l.sdg] || 0) + l.usd; });
+      function drawC() {
+        const rows = Object.values(byLender);
+        const maxCell = Math.max(...rows.flatMap((r) => Object.values(r.g).map((v) => cMode === "usd" ? v : v / r.usd)));
+        let h = "<thead><tr><th></th>" + goalCols.map((g) => '<th scope="col" title="' + esc(goalName(g)) + '">' + (goalNum(g) ? "<small>SDG</small><b>" + goalNum(g) + "</b>" : "<small>" + (g === "General" ? "Gen" : "None") + "</small><b>&nbsp;</b>") + "</th>").join("") + '<th scope="col" style="text-align:right"><small>Total</small><b>&nbsp;</b></th></tr></thead><tbody>';
+        CAT.forEach((c) => {
+          const rs = rows.filter((r) => r.cat === c.id).sort((a, b) => b.usd - a.usd);
+          if (!rs.length) return;
+          h += '<tr class="grp"><th colspan="' + (goalCols.length + 2) + '">' + esc(c.label) + "</th></tr>";
+          rs.forEach((r) => {
+            h += '<tr><th scope="row" style="--rowc:' + col(c.id) + '">' + esc(r.name) + "</th>";
+            goalCols.forEach((g) => {
+              const v = r.g[g] || 0;
+              if (!v) { h += '<td class="z"></td>'; return; }
+              const val = cMode === "usd" ? v : v / r.usd, t = Math.sqrt(val / maxCell), p = Math.round(14 + t * 86);
+              const label = cMode === "usd" ? (v >= 1e6 ? Math.round(v / 1e6).toLocaleString("en-GB") : "<1") : Math.round(val * 100) + "%";
+              const show = t > .32;
+              h += '<td data-tip data-l="' + esc(r.name) + '" data-g="' + esc(g) + '" style="background:color-mix(in srgb, var(--heat) ' + p + '%, var(--surface));color:' + (p > 55 ? "var(--surface)" : "var(--ink)") + '">' + (show ? label : "") + "</td>";
+            });
+            h += '<td class="tot">' + mill(r.usd) + "m</td></tr>";
+          });
+        });
+        $("chart-c").innerHTML = h + "</tbody>";
+        $("ramp").innerHTML = "<span>Less</span><i></i><span>More.</span><span>Outlined squares mean no lending.</span><span>" + (cMode === "usd" ? "Numbers in squares are US$ million" : "Numbers in squares are the share of that lender's commitments") + "</span>";
+        $("chart-c").querySelectorAll("td[data-g]").forEach((td) => {
+          const r = byLender[td.dataset.l], g = td.dataset.g, v = r.g[g], n = L.filter((l) => l.creditor === r.name && l.sdg === g).length;
+          const html = () => "<b>" + esc(r.name) + "</b>" + esc(goalName(g)) + "<br>" + money(v) + " in " + n + (n === 1 ? " loan" : " loans") + "<br>" + pct(v / r.usd) + " of this lender's commitments";
+          td.addEventListener("mousemove", (e) => showTip(e, html()));
+          td.addEventListener("mouseleave", hideTip);
+          td.addEventListener("click", () => setFilter({ q: r.name, sdg: g }));
+        });
+      }
+      segBtns("seg-c", (v) => { cMode = v; drawC(); });
+      drawC();
+
+      // ---------- d. table ----------
+      const COLS = [
+        ["date", "Signed", (l) => l.date, (l) => l.date.slice(0, 4)],
+        ["creditor", "Lender", (l) => l.creditor.toLowerCase(), (l) => '<span title="In the register as ' + esc(l.creditor_raw) + '">' + esc(l.creditor) + "</span>", "who"],
+        ["category", "Type", (l) => l.category, (l) => '<span class="cat"><i style="background:' + col(l.category) + '"></i>' + esc(catLabel[l.category]) + "</span>"],
+        ["project", "Project", (l) => l.project.toLowerCase(), (l) => "<span>" + esc(l.project) + (l.status ? '<small class="st">' + esc(l.status) + "</small>" : "") + "</span>", "proj"],
+        ["amount", "Committed", (l) => l.usd, (l) => esc(l.currency) + " " + Math.round(l.amount).toLocaleString("en-GB"), "n"],
+        ["usd", "US$ million", (l) => l.usd, (l) => mill(l.usd), "n"],
+        ["sdg", "Goal", (l) => (goalNum(l.sdg) ? +goalNum(l.sdg) : l.sdg === "General" ? 98 : 99), (l) => '<span class="sdgcell">' + esc(goalNum(l.sdg) ? l.sdg : l.sdg === "General" ? "General support" : "Unclassified") + (l.sdg2 ? "<small>also " + esc(goalNum(l.sdg2) ? l.sdg2 : "general support") + "</small>" : "") + "</span>"],
+        ["conf", "Tag", (l) => ({ manual: 0, high: 1, medium: 2, low: 3, none: 4 })[l.conf], (l) => '<span class="chip ' + l.conf + '">' + (l.conf === "manual" ? "Checked" : l.conf === "none" ? "No match" : l.conf[0].toUpperCase() + l.conf.slice(1)) + "</span>"],
+      ];
+      const F = { q: "", cat: "", sdg: "", sort: "date", dir: -1 }, PAGE = matchMedia("(max-width: 767.98px)").matches ? 10 : 25;
+      let shown = PAGE;
+      $("f-cat").innerHTML = '<option value="">All types of lender</option>' + CAT.map((c) => '<option value="' + c.id + '">' + esc(c.label) + "</option>").join("");
+      $("f-sdg").innerHTML = '<option value="">All goals</option>' + order.map((g) => '<option value="' + esc(g.id) + '">' + esc(goalName(g.id)) + "</option>").join("");
+      const SORTS = [["date|-1", "Newest first"], ["date|1", "Oldest first"], ["usd|-1", "Largest first"], ["usd|1", "Smallest first"], ["creditor|1", "Lender, A to Z"], ["sdg|1", "Goal number"], ["conf|-1", "Least certain tag first"]];
+      $("f-sort").innerHTML = SORTS.map(([v, l]) => '<option value="' + v + '">' + l + "</option>").join("");
+      function drawD() {
+        const q = F.q.trim().toLowerCase();
+        const rows = L.filter((l) => (!F.cat || l.category === F.cat) && (!F.sdg || l.sdg === F.sdg) &&
+          (!q || (l.creditor + " " + l.creditor_raw + " " + l.project + " " + l.status).toLowerCase().includes(q)));
+        const c = COLS.find((x) => x[0] === F.sort);
+        rows.sort((a, b) => { const x = c[2](a), y = c[2](b); return (x < y ? -1 : x > y ? 1 : 0) * F.dir || (b.date < a.date ? -1 : 1); });
+        $("loans").innerHTML = "<thead><tr>" + COLS.map(([k, lab, , , cls]) => '<th scope="col"' + (cls === "n" ? ' class="n"' : "") + (F.sort === k ? ' aria-sort="' + (F.dir > 0 ? "ascending" : "descending") + '"' : "") + '><button type="button" data-k="' + k + '">' + lab + "</button></th>").join("") + "</tr></thead><tbody>" +
+          rows.slice(0, shown).map((l) => "<tr>" + COLS.map(([, lab, , fmt, cls]) => '<td data-l="' + lab + '"' + (cls ? ' class="' + cls + '"' : "") + ">" + fmt(l) + "</td>").join("") + "</tr>").join("") + "</tbody>";
+        const t = sum(rows, (l) => l.usd);
+        $("count").textContent = (rows.length === L.length ? "All " + L.length + " loans" : rows.length + " of " + L.length + " loans") + ", " + money(t);
+        const left = rows.length - shown;
+        $("more").hidden = left <= 0;
+        $("more").textContent = "Show " + Math.min(PAGE, left) + " more" + (left > PAGE ? ", " + left + " left" : "");
+        const sv = F.sort + "|" + F.dir; $("f-sort").value = SORTS.some(([v]) => v === sv) ? sv : "";
+      }
+      $("more").addEventListener("click", () => { shown += PAGE; drawD(); });
+      const reset = () => { shown = PAGE; };
+      $("loans").addEventListener("click", (e) => {
+        const b = e.target.closest("th button"); if (!b) return;
+        const k = b.dataset.k; F.dir = F.sort === k ? -F.dir : (["date", "usd", "amount"].includes(k) ? -1 : 1); F.sort = k; reset(); drawD();
+      });
+      let qt; $("q").addEventListener("input", (e) => { clearTimeout(qt); qt = setTimeout(() => { F.q = e.target.value; reset(); drawD(); }, 120); });
+      $("f-cat").addEventListener("change", (e) => { F.cat = e.target.value; reset(); drawD(); });
+      $("f-sdg").addEventListener("change", (e) => { F.sdg = e.target.value; reset(); drawD(); });
+      $("f-sort").addEventListener("change", (e) => { if (!e.target.value) return; const [k, d] = e.target.value.split("|"); F.sort = k; F.dir = +d; reset(); drawD(); });
+      function setFilter(o) {
+        F.q = o.q || ""; F.sdg = o.sdg || ""; F.cat = "";
+        $("q").value = F.q; $("f-sdg").value = F.sdg; $("f-cat").value = "";
+        reset(); hideTip(); drawD(); $("table").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      }
+      drawD();
+
+      // ---------- methodology details from the data ----------
+      $("m-source").textContent = "The Ministry of Finance register of active external borrowings of the government of Maldives, as at " + longDate(M.as_of) +
+        ". It lists each loan's signing date, lender, project, currency, committed amount and implementation status. The version used here has " + L.length + " loans signed between " + M.first_year + " and " + M.last_year + ".";
+      $("fx").innerHTML = "<thead><tr><th>Currency</th><th>US$ per unit</th><th>Loans</th><th>Source</th></tr></thead><tbody>" +
+        M.fx.map((f) => "<tr><td>" + esc(f.currency) + '</td><td class="n">' + (f.usd_per_unit >= 0.1 ? f.usd_per_unit.toFixed(4) : f.usd_per_unit.toPrecision(4)) + '</td><td class="n">' + f.loans + "</td><td>" + esc(f.source) + "</td></tr>").join("") + "</tbody>";
+      const cf = M.confidence;
+      $("m-conf").textContent = "In this version, " + M.manual_tags + " tags were set by hand. Of the rest, " + cf.high + " came from high confidence rules, " + cf.medium + " from medium, " + cf.low + " from low, and " + cf.none + " matched no rule.";
+      $("generated").textContent = "Data rebuilt on " + longDate(M.generated) + ".";
+      if (window.explainAll) window.explainAll();
+    }
+  })();
+  </script>
+  <script src="js/explain.js"></script>
+  <script src="js/more.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/ambient.js"></script>
+</body>
+</html>

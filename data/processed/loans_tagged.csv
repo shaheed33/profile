@@ -1,0 +1,143 @@
+loan_date,creditor_as_registered,creditor,creditor_category,project,currency,amount_committed,usd_per_unit_30jun2026,amount_usd,primary_sdg,secondary_sdg,tag_confidence,tag_source,implementation_status
+1979-06-04,International Development Association,World Bank (IDA),Multilateral,First Fisheries Project,USD,2481158.54,1.0,2481158.54,SDG 14,,high,rule,Completed
+1983-02-11,International Fund for Agricultural Development,IFAD,Multilateral,Second Fisheries Project,XDR,1717746.67,1.3561,2329436.26,SDG 14,,high,rule,Completed
+1983-02-18,International Development Association,World Bank (IDA),Multilateral,Second Fisheries Project,XDR,4732051.3,1.3561,6417134.77,SDG 14,,high,rule,Completed
+1985-07-13,U.S. Agency for International Development,USAID,Bilateral,Balance of Payment/Food Imports,USD,1494462.61,1.0,1494462.61,General,,high,rule,Completed
+1986-08-25,U.S. Agency for International Development,USAID,Bilateral,Balance of Payment Support,USD,722827.3,1.0,722827.3,General,,high,rule,Completed
+1987-08-18,U.S. Agency for International Development,USAID,Bilateral,Balance of Payment Support,USD,497229.72,1.0,497229.72,General,,high,rule,Completed
+1989-03-23,International Development Association,World Bank (IDA),Multilateral,Education and Training Project,XDR,5799930.57,1.3561,7865285.85,SDG 4,,high,rule,Completed
+1990-01-25,International Fund for Agricultural Development,IFAD,Multilateral,Atolls Credit and Development Banking Project,XDR,2263083.51,1.3561,3068967.55,SDG 8,,medium,rule,Completed
+1990-07-11,International Development Association,World Bank (IDA),Multilateral,Airport Extension Project,XDR,5733782.2,1.3561,7775582.04,SDG 9,,high,rule,Completed
+1992-04-20,International Development Association,World Bank (IDA),Multilateral,Third Fisheries Project,XDR,6552141.92,1.3561,8885359.66,SDG 14,,high,rule,Completed
+1992-04-24,Nordic Development Fund,Nordic Development Fund,Multilateral,Third Fisheries Project,EUR,4111682.9,1.1394,4684851.5,SDG 14,,high,rule,Completed
+1994-05-25,Islamic Development Bank,Islamic Development Bank,Multilateral,Vilingili Water Supply Project,XDR,1458110.22,1.3561,1977343.27,SDG 6,,high,rule,Completed
+1995-05-01,International Development Association,World Bank (IDA),Multilateral,Second Education and Training Project,XDR,9300000.0,1.3561,12611730.0,SDG 4,,high,rule,Completed
+1995-05-02,Nordic Development Fund,Nordic Development Fund,Multilateral,Male' Water and Sewerage Project,EUR,2115090.0,1.1394,2409933.55,SDG 6,,high,rule,Completed
+1995-06-05,Islamic Development Bank,Islamic Development Bank,Multilateral,Regional Secondary School,XDR,1610768.82,1.3561,2184363.6,SDG 4,,high,rule,Completed
+1995-11-29,Islamic Development Bank,Islamic Development Bank,Multilateral,Four Regional Hospitals Project,XDR,2328715.96,1.3561,3157971.71,SDG 3,,high,rule,Completed
+1995-12-14,International Fund for Agricultural Development,IFAD,Multilateral,Southern Atolls Development Project,XDR,1712704.77,1.3561,2322598.94,SDG 2,,manual,manual,Completed
+1997-06-15,Islamic Development Bank,Islamic Development Bank,Multilateral,Malé Primary School,XDR,2990208.07,1.3561,4055021.16,SDG 4,,high,rule,Completed
+1998-03-24,Nordic Development Fund,Nordic Development Fund,Multilateral,Third Power Systems Project,EUR,4700200.01,1.1394,5355407.89,SDG 7,,high,rule,Completed
+1999-08-07,Islamic Development Bank,Islamic Development Bank,Multilateral,Construction of Institute of Health Sciences Project,XDR,2128221.25,1.3561,2886080.84,SDG 3,,high,rule,Completed
+1999-10-24,Kuwait Fund for Arab Economic Development,Kuwait Fund,Bilateral,Maldives Ports Development Project,KWD,4492460.14,3.228,14501661.33,SDG 9,,high,rule,Completed
+2000-04-25,International Development Association,World Bank (IDA),Multilateral,Third Education and Training Project,XDR,12047706.66,1.3561,16337895.0,SDG 4,,high,rule,Completed
+2000-12-18,Islamic Development Bank,Islamic Development Bank,Multilateral,Gan Hithadhoo Link Road Project,XDR,3025999.81,1.3561,4103558.34,SDG 9,,high,rule,Completed
+2000-12-18,Islamic Development Bank,Islamic Development Bank,Multilateral,Vilingili Harbor Project,XDR,3316604.75,1.3561,4497647.7,SDG 9,,high,rule,Completed
+2001-08-02,Government of Belgium,Government of Belgium,Bilateral,Hulhumalé Reclamation and Social Housing,EUR,3598583.99,1.1394,4100226.6,SDG 11,,high,rule,Completed
+2001-10-31,Islamic Development Bank,Islamic Development Bank,Multilateral,Health and Education Project Phase I and II,XDR,2262057.81,1.3561,3067576.6,SDG 3,SDG 4,medium,rule,Completed
+2002-10-23,Islamic Development Bank,Islamic Development Bank,Multilateral,Gan/Hithadhoo Link Road Phase II,XDR,1577000.0,1.3561,2138569.7,SDG 9,,high,rule,Completed
+2004-07-26,Islamic Development Bank,Islamic Development Bank,Multilateral,Atoll Social Infrastructure Development,XDR,221639.79,1.3561,300565.72,SDG 11,,manual,manual,Completed
+2004-10-04,International Development Association,World Bank (IDA),Multilateral,Integrated Human Development Project,XDR,6864570.33,1.3561,9309043.82,SDG 3,SDG 4,manual,manual,Completed
+2005-03-17,International Development Association,World Bank (IDA),Multilateral,Post Tsunami Recovery and Reconstruction Project,XDR,5599676.7,1.3561,7593721.57,SDG 11,SDG 13,medium,rule,Completed
+2005-09-14,Islamic Development Bank,Islamic Development Bank,Multilateral,The Micro Finance Project to the Bank of Maldives,XDR,1970992.73,1.3561,2672863.24,SDG 8,,medium,rule,Completed
+2005-09-25,International Fund for Agricultural Development,IFAD,Multilateral,Post Tsunami Agricultural and Fisheries Rehabilitation Programme,XDR,1398786.85,1.3561,1896894.85,SDG 2,SDG 14,medium,rule,Completed
+2005-11-08,Kuwait Fund for Arab Economic Development,Kuwait Fund,Bilateral,Rehabilitation of Tsunami Damaged Utilities,KWD,2455619.19,3.228,7926738.75,SDG 11,SDG 13,medium,rule,Completed
+2006-06-28,International Fund for Agricultural Development,IFAD,Multilateral,Post Tsunami Agricultural and Fisheries Rehabilitation Programme,XDR,1400644.02,1.3561,1899413.36,SDG 2,SDG 14,medium,rule,Completed
+2006-07-05,Japan International Cooperation Agency,Japan (JICA),Bilateral,Tsunami Reconstruction Project,JPY,2616198534.0,0.00615626,16105989.89,SDG 11,SDG 13,medium,rule,Completed
+2006-10-26,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Reconstruction and Development of GA. Atoll,SAR,45000000.0,0.26666667,12000000.0,SDG 11,SDG 13,medium,rule,Completed
+2007-08-29,Asian Development Bank,Asian Development Bank,Multilateral,Domestic Maritime Transport Project,XDR,3261587.84,1.3561,4423039.27,SDG 9,,high,rule,Completed
+2007-12-09,Islamic Development Bank,Islamic Development Bank,Multilateral,Reconstruction of Housing Units for the Tsunami Victims Project,XDR,4234268.94,1.3561,5742092.11,SDG 11,,high,rule,Completed
+2008-02-15,Asian Development Bank,Asian Development Bank,Multilateral,Male' Ports Project Phase 1,XDR,3988438.21,1.3561,5408721.06,SDG 9,,high,rule,Completed
+2008-02-18,Islamic Development Bank,Islamic Development Bank,Multilateral,Construction of Harbors for Tsunami Victims,USD,5325091.87,1.0,5325091.87,SDG 9,SDG 11,high,rule,Completed
+2008-03-01,Asian Development Bank,Asian Development Bank,Multilateral,Regional Development Project,XDR,4854708.51,1.3561,6583470.21,SDG 11,,medium,rule,Completed
+2008-03-01,Asian Development Bank,Asian Development Bank,Multilateral,Employment Skills Training Project,XDR,3002223.99,1.3561,4071315.95,SDG 4,SDG 8,high,rule,Completed
+2008-04-01,Asian Development Bank,Asian Development Bank,Multilateral,Multi-Project,XDR,1410633.06,1.3561,1912959.49,Unclassified,,manual,manual,Completed
+2008-04-01,Asian Development Bank,Asian Development Bank,Multilateral,Second Power Systems Development Project,XDR,5546710.81,1.3561,7521894.53,SDG 7,,high,rule,Completed
+2008-04-01,Asian Development Bank,Asian Development Bank,Multilateral,Male' Power Project,XDR,3665596.43,1.3561,4970915.32,SDG 7,,high,rule,Completed
+2008-04-01,Asian Development Bank,Asian Development Bank,Multilateral,Regional Development Project Phase II,XDR,3457081.29,1.3561,4688147.94,SDG 11,,medium,rule,Completed
+2008-04-02,International Fund for Agricultural Development,IFAD,Multilateral,Fisheries and Agriculture Diversification Programme,XDR,2299737.19,1.3561,3118673.6,SDG 14,SDG 2,medium,rule,Completed
+2008-04-12,The OPEC Fund for International Development,OPEC Fund,Multilateral,Construction of Harbors for Tsunami Victims,USD,5549260.03,1.0,5549260.03,SDG 9,SDG 11,high,rule,Completed
+2008-04-15,Asian Development Bank,Asian Development Bank,Multilateral,Second Male' Port Project,XDR,4857508.33,1.3561,6587267.05,SDG 9,,high,rule,Completed
+2008-06-09,Agence Française de Développement,France (AFD),Bilateral,Rehabilitation of Harbors and Creation of Sewerage Networks,EUR,3717175.22,1.1394,4235349.45,SDG 9,SDG 6,medium,rule,Completed
+2008-06-23,International Development Association,World Bank (IDA),Multilateral,Mobile Phone Banking Project,XDR,3766176.98,1.3561,5107312.6,SDG 8,,medium,rule,Completed
+2008-07-15,Asian Development Bank,Asian Development Bank,Multilateral,Tsunami Emergency Assistance Project,XDR,1188000.0,1.3561,1611046.8,SDG 11,SDG 13,medium,rule,Completed
+2008-08-01,Asian Development Bank,Asian Development Bank,Multilateral,Third Power Systems Development Project,XDR,4901776.84,1.3561,6647299.57,SDG 7,,high,rule,Completed
+2008-08-01,Asian Development Bank,Asian Development Bank,Multilateral,Post Secondary Education Development Project,XDR,4561270.65,1.3561,6185539.13,SDG 4,,high,rule,Completed
+2008-08-01,Asian Development Bank,Asian Development Bank,Multilateral,Information Technology Development,XDR,6914158.34,1.3561,9376290.12,SDG 9,,high,rule,Completed
+2008-08-01,Asian Development Bank,Asian Development Bank,Multilateral,Outer Islands Electrification,XDR,6286237.06,1.3561,8524766.08,SDG 7,,high,rule,Completed
+2008-09-04,International Development Association,World Bank (IDA),Multilateral,Maldives Environment Management Project,XDR,7999863.32,1.3561,10848614.65,SDG 11,SDG 13,manual,manual,Completed
+2009-01-13,Asian Development Bank,Asian Development Bank,Multilateral,Private Sector Development Project,XDR,4053751.37,1.3561,5497292.23,SDG 8,,medium,rule,Completed
+2009-08-12,International Development Association,World Bank (IDA),Multilateral,Pension and Social Protection Administration Project,XDR,2598959.34,1.3561,3524448.76,SDG 1,,high,rule,Completed
+2009-09-24,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Reconstruction of Fishing Harbors in Maldives,SAR,56250000.0,0.26666667,15000000.0,SDG 14,SDG 9,medium,rule,Completed
+2010-03-18,Asian Development Bank,Asian Development Bank,Multilateral,Economic Recovery Program,XDR,21912000.0,1.3561,29714863.2,General,,medium,rule,Completed
+2010-03-28,International Development Association,World Bank (IDA),Multilateral,Economic Stabilization and Recovery Credit,XDR,8500000.0,1.3561,11526850.0,General,,medium,rule,Completed
+2010-08-30,The Export Import Bank of China,Exim Bank of China,Export credit,Development of 1000 Housing Units in Hulhumalé',CNY,481000000.0,0.14737305,70886437.13,SDG 11,,high,rule,Completed
+2010-09-16,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Reconstruction and Development of G.A Atoll Project,SAR,30000000.0,0.26666667,8000000.0,SDG 11,SDG 13,medium,rule,Completed
+2011-11-21,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Seenu Hithadhoo regional hospital project,SAR,47000000.0,0.26666667,12533333.33,SDG 3,,high,rule,Completed
+2012-09-02,The Export Import Bank of China,Exim Bank of China,Export credit,Development of 1500 housing units in Maldives,CNY,982500000.0,0.14737305,144794021.78,SDG 11,,high,rule,Completed
+2012-09-20,Asian Development Bank,Asian Development Bank,Multilateral,"Micro, Small and Medium -sized Enterprise development project",XDR,1081561.9,1.3561,1466706.09,SDG 8,,medium,rule,Completed
+2012-10-17,The OPEC Fund for International Development,OPEC Fund,Multilateral,Seenu Hithadhoo regional hospital,USD,8400000.0,1.0,8400000.0,SDG 3,,high,rule,Completed
+2013-04-28,Islamic Development Bank,Islamic Development Bank,Multilateral,Micro enterprise development project,XDR,3176883.05,1.3561,4308171.1,SDG 8,,medium,rule,Completed
+2013-09-26,Islamic Development Bank,Islamic Development Bank,Multilateral,Sanitation project in Five Island (Loan Agreement),XDR,4600000.0,1.3561,6238060.0,SDG 6,,high,rule,Completed
+2013-09-26,Islamic Development Bank,Islamic Development Bank,Multilateral,Sanitation project in Five Island project (Isthisna Agreement ),XDR,5270000.0,1.3561,7146647.0,SDG 6,,high,rule,Completed
+2014-01-27,Islamic Development Bank,Islamic Development Bank,Multilateral,Reconstruction of Harbors project phase II (Loan Agreement),XDR,5300000.0,1.3561,7187330.0,SDG 9,SDG 11,high,rule,Completed
+2014-01-27,Islamic Development Bank,Islamic Development Bank,Multilateral,Reconstruction of Harbors project phase II (Isthisna Agreement),USD,11406000.0,1.0,11406000.0,SDG 9,SDG 11,high,rule,Completed
+2014-01-28,Kuwait Fund for Arab Economic Development,Kuwait Fund,Bilateral,Development of water supply and sewerage facilities project in Fuvahmulah island,KWD,3200000.0,3.228,10329600.0,SDG 6,,high,rule,Completed
+2014-02-28,The OPEC Fund for International Development,OPEC Fund,Multilateral,Outer islands water supply and sewerage facilities project,USD,19996681.53,1.0,19996681.53,SDG 6,,high,rule,Completed
+2015-06-22,Abu Dhabi Fund for Development,Abu Dhabi Fund for Development,Bilateral,Small Scale Waste to Energy Project,AED,22038000.0,0.27229408,6000816.88,SDG 11,SDG 12,medium,rule,Ongoing
+2015-07-02,The OPEC Fund for International Development,OPEC Fund,Multilateral,"Provision of Water Supply, Sanitation and Solid Waste Management Project",USD,50000000.0,1.0,50000000.0,SDG 6,SDG 11,medium,rule,Ongoing
+2015-09-14,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Development of Hulhumalé' Island,SAR,300000000.0,0.26666667,80000000.0,SDG 11,,manual,manual,Ongoing
+2015-12-28,The Export Import Bank of China,Exim Bank of China,Export credit,Expansion and Upgrading of Ibrahim Nasir International Airport in Hulhule',USD,373838500.0,1.0,373838500.0,SDG 9,,high,rule,Completed
+2016-03-08,European Investment Bank,European Investment Bank,Multilateral,Maldives Sustainable Energy Development Project,EUR,45000000.0,1.1394,51273000.0,SDG 7,,high,rule,Ongoing
+2016-07-14,The Export Import Bank of China,Exim Bank of China,Export credit,China Maldives Friendship Bridge project,CNY,455600000.0,0.14737305,67143161.65,SDG 9,,high,rule,Completed
+2016-08-09,Kuwait Fund for Arab Economic Development,Kuwait Fund,Bilateral,Expansion and Upgrading of Ibrahim Nasir International Airport,KWD,15000000.0,3.228,48420000.0,SDG 9,,high,rule,Completed
+2016-09-26,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Ibrahim Nasir Airport Upgrade Project,SAR,375000000.0,0.26666667,100000000.0,SDG 9,,high,rule,Completed
+2016-12-18,The OPEC Fund for International Development,OPEC Fund,Multilateral,Development of the Ibrahim Nasir International Airport Project,USD,50000000.0,1.0,50000000.0,SDG 9,,high,rule,Ongoing
+2017-07-13,Kuwait Fund for Arab Economic Development,Kuwait Fund,Bilateral,Fuvahmulah Eastern Coastal Protection Project,KWD,3600000.0,3.228,11620800.0,SDG 13,,high,rule,Ongoing
+2017-10-17,Abu Dhabi Fund for Development,Abu Dhabi Fund for Development,Bilateral,Velana International Airport Project,AED,183650000.0,0.27229408,50006807.35,SDG 9,,high,rule,Completed
+2018-04-24,Abu Dhabi Fund for Development,Abu Dhabi Fund for Development,Bilateral,Project Ishraq,USD,100000000.0,1.0,100000000.0,Unclassified,,manual,manual,Completed
+2018-07-31,International Development Association,World Bank (IDA),Multilateral,Additional Financing for Public Finance Management,XDR,3813333.0,1.3561,5171260.88,SDG 17,,medium,rule,Completed
+2019-03-18,The Export Import Bank of India,Exim Bank of India,Export credit,Dollar Credit Line Agreement,USD,450814716.13,1.0,450814716.13,SDG 9,,manual,manual,Ongoing
+2019-06-17,Asian Development Bank,Asian Development Bank,Multilateral,South Asia Sub regional Economic Corporation National Single Window Project,USD,5000000.0,1.0,5000000.0,SDG 17,,medium,rule,Ongoing
+2019-07-25,International Development Association,World Bank (IDA),Multilateral,Maldives Enhancing Employability and Resilience of Youth,XDR,7300000.0,1.3561,9899530.0,SDG 8,SDG 4,medium,rule,Ongoing
+2019-08-20,International Development Association,World Bank (IDA),Multilateral,Development Policy Financing with a Catastrophe Deferred Drawdown Option,XDR,3700000.0,1.3561,5017570.0,General,,high,rule,Completed
+2019-08-20,International Development Association,World Bank (IDA),Multilateral,First Fiscal Sustainability and Budget Credibility Development Policy Financing,XDR,7300000.0,1.3561,9899530.0,General,,medium,rule,Completed
+2020-01-16,The OPEC Fund for International Development,OPEC Fund,Multilateral,"Outer Islands Harbors, Water Supply and Sewerage Facilities Project",USD,50000000.0,1.0,50000000.0,SDG 9,SDG 6,medium,rule,Ongoing
+2020-04-03,International Development Association,World Bank (IDA),Multilateral,COVID-19 Emergency Response and Health Systems Preparedness Project,XDR,2700000.0,1.3561,3661470.0,SDG 3,,high,rule,Completed
+2020-04-29,International Development Association,World Bank (IDA),Multilateral,Maldives Urban Development and Resilience Project,XDR,6000000.0,1.3561,8136600.0,SDG 11,SDG 13,medium,rule,Ongoing
+2020-05-21,Islamic Development Bank,Islamic Development Bank,Multilateral,COVID-19 Amendment to Isthisna Agreement and its related Agency Agreement,USD,594000.0,1.0,594000.0,SDG 3,,medium,rule,Completed
+2020-06-04,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Fisheries Sector Development Project,SAR,93750000.0,0.26666667,25000000.0,SDG 14,,high,rule,Ongoing
+2020-06-04,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Affordable Housing Scheme Project,SAR,93750000.0,0.26666667,25000000.0,SDG 11,,high,rule,Ongoing
+2020-06-09,The OPEC Fund for International Development,OPEC Fund,Multilateral,Public Sector Investment Program Budgetary Support Loan,USD,20000000.0,1.0,20000000.0,General,,high,rule,Completed
+2020-06-13,International Development Association,World Bank (IDA),Multilateral,COVID-19 Emergency Income Support Project,XDR,4590156.29,1.3561,6224710.94,SDG 1,SDG 3,high,rule,Completed
+2020-06-15,European Investment Bank,European Investment Bank,Multilateral,COVID-19 Rapid Response to Maldives,EUR,20000000.0,1.1394,22788000.0,SDG 3,,medium,rule,Completed
+2020-06-28,Asian Development Bank,Asian Development Bank,Multilateral,COVID-19 Active Response and Expenditure Support Program,USD,25000000.0,1.0,25000000.0,General,SDG 3,high,rule,Completed
+2020-07-06,Islamic Development Bank,Islamic Development Bank,Multilateral,Emergency Response to COVID-19 Pandemic Phase II,USD,20000000.0,1.0,20000000.0,SDG 3,,medium,rule,Completed
+2020-07-08,Asian Infrastructure Investment Bank,AIIB,Multilateral,COVID-19 Emergency Response and Health Systems Preparedness Project,USD,7300000.0,1.0,7300000.0,SDG 3,,high,rule,Completed
+2020-08-20,International Fund for Agricultural Development,IFAD,Multilateral,Maldives Agribusiness Program,USD,3285000.0,1.0,3285000.0,SDG 2,SDG 8,high,rule,Ongoing
+2020-09-28,Asian Development Bank,Asian Development Bank,Multilateral,Greater Male' Waste to Energy Project,USD,38210000.0,1.0,38210000.0,SDG 11,SDG 12,medium,rule,Ongoing
+2020-09-29,Asian Infrastructure Investment Bank,AIIB,Multilateral,Greater Male' Waste to Energy Project,USD,40000000.0,1.0,40000000.0,SDG 11,SDG 12,medium,rule,Ongoing
+2020-09-30,Japan International Cooperation Agency,Japan (JICA),Bilateral,COVID-19 Crisis Response Emergency Support Loan,JPY,5000000000.0,0.00615626,30781283.77,General,SDG 3,high,rule,Completed
+2020-10-12,The Export Import Bank of India,Exim Bank of India,Export credit,Greater Male' Connectivity Project,USD,400000000.0,1.0,400000000.0,SDG 9,,medium,rule,Ongoing
+2020-11-16,Asian Development Bank,Asian Development Bank,Multilateral,Preparing Outer Island for Sustainable Energy Development Project - Additional Financing,XDR,5502000.0,1.3561,7461262.2,SDG 7,,high,rule,Ongoing
+2021-03-02,International Development Association / Clean Technology Fund,Clean Technology Fund,Multilateral,Accelerating Renewable Energy Integration and Sustainable Energy Project,USD,23000000.0,1.0,23000000.0,SDG 7,,high,rule,Ongoing
+2021-03-17,Asian Infrastructure Investment Bank,AIIB,Multilateral,Maldives Solar Development and Energy Storage Solutions Project,USD,20000000.0,1.0,20000000.0,SDG 7,,high,rule,Ongoing
+2021-04-30,Bond Holders,Bondholders and sukuk,Commercial,Sukuk Programme - 1st Issuance,USD,500000000.0,1.0,500000000.0,General,,medium,rule,Completed
+2021-07-12,Kuwait Fund for Arab Economic Development,Kuwait Fund,Bilateral,Second Loan for the Financing of Expansion and Upgrading of Velana International Airport Project,KWD,15000000.0,3.228,48420000.0,SDG 9,,high,rule,Completed
+2021-09-29,European Investment Bank,European Investment Bank,Multilateral,COVID-19 Rapid Response to Maldives - phase II,EUR,20000000.0,1.1394,22788000.0,SDG 3,,medium,rule,Completed
+2021-12-09,Abu Dhabi Fund for Development,Abu Dhabi Fund for Development,Bilateral,Converting Waste to Energy in Addu City Project,AED,51422000.0,0.27229408,14001906.06,SDG 11,SDG 12,medium,rule,Ongoing
+2022-01-26,Islamic Development Bank,Islamic Development Bank,Multilateral,The Greater Male' Waste Management Improvement and Waste to Energy Project,XDR,13850799.0,1.3561,18783068.52,SDG 11,SDG 12,medium,rule,Ongoing
+2022-06-04,Islamic Development Bank,Islamic Development Bank,Multilateral,Support People's Livelihood in the Fishery Sector in Maldives through Sustainable Energy,USD,8775000.0,1.0,8775000.0,SDG 14,SDG 7,medium,rule,Ongoing
+2022-06-16,"AKA Ausfuhrkedit-Gesellschaft mbH, ABN AMRO Bank N.V. and ING Bank N.V.",AKA with ABN AMRO and ING,Export credit,Gulhifalhu Reclamation and Revetment Works and the Gulhifalhu Port Development Project,EUR,101787500.0,1.1394,115976677.5,SDG 9,SDG 11,manual,manual,Completed
+2022-06-22,European Investment Bank,European Investment Bank,Multilateral,Maldives Covid-19 Health Facility,EUR,18400000.0,1.1394,20964960.0,SDG 3,,high,rule,Ongoing
+2022-11-09,International Development Association,World Bank (IDA),Multilateral,Maldives Atoll Education Development Project,XDR,3400000.0,1.3561,4610740.0,SDG 4,,high,rule,Ongoing
+2023-06-18,International Development Association,World Bank (IDA),Multilateral,Transforming Fisheries Sector Management in South-West Indian Ocean Region and Maldives Project,XDR,19700000.0,1.3561,26715170.0,SDG 14,,high,rule,Ongoing
+2023-06-18,International Development Association,World Bank (IDA),Multilateral,Maldives Competitiveness and Growth Project,XDR,5600000.0,1.3561,7594160.0,SDG 8,,medium,rule,Ongoing
+2023-07-18,Private Creditor,Private creditor,Commercial,Budget Support Loan,EUR,50000000.0,1.1394,56970000.0,General,,high,rule,Completed
+2023-12-12,Asian Development Bank / Clean Technology Fund,Clean Technology Fund,Multilateral,Accelerating Sustainable System Development and Using Renewable Energy Project,USD,18500000.0,1.0,18500000.0,SDG 7,,high,rule,Ongoing
+2024-05-16,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Health Sector Development Project,SAR,187500000.0,0.26666667,50000000.0,SDG 3,,high,rule,Ongoing
+2024-05-16,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Expansion of Velana International Airport Project (Additional Loan),SAR,375000000.0,0.26666667,100000000.0,SDG 9,,high,rule,Ongoing
+2024-06-05,Islamic Development Bank,Islamic Development Bank,Multilateral,Line of Finance to support the establishment of SME Imapct Fund in the Maldives (Loan),XDR,7600000.0,1.3561,10306360.0,SDG 8,,medium,rule,Ongoing
+2024-06-05,Islamic Development Bank,Islamic Development Bank,Multilateral,Line of Finance to Support the establishment of SME Impact Fund in the Maldives (Instalment Sale),USD,30000000.0,1.0,30000000.0,SDG 8,,medium,rule,Ongoing
+2024-07-21,The Export Import Bank of China,Exim Bank of China,Export credit,Preferential Buyer Credit Loan Agreement of Refinancing for Expansion and Upgrading of VIA Project,USD,74767699.98,1.0,74767699.98,SDG 9,General,manual,manual,Ongoing
+2024-09-11,Asian Infrastructure Investment Bank,AIIB,Multilateral,Strengthening Fiscal Management and Sustainability Program,USD,15000000.0,1.0,15000000.0,General,,medium,rule,Ongoing
+2024-12-09,Asian Development Bank,Asian Development Bank,Multilateral,Enhancing Climate Resilience and Food Security Project,USD,4000000.0,1.0,4000000.0,SDG 13,SDG 2,medium,rule,Ongoing
+2024-12-24,Abu Dhabi Fund for Development,Abu Dhabi Fund for Development,Bilateral,Second Loan for Velana International Airport Project,AED,146920000.0,0.27229408,40005445.88,SDG 9,,high,rule,Ongoing
+2025-02-27,Islamic Development Bank,Islamic Development Bank,Multilateral,Maldives Fish Sector Capacity Strengthening Project,XDR,3800000.0,1.3561,5153180.0,SDG 14,SDG 16,high,rule,Ongoing
+2025-02-27,Islamic Development Bank,Islamic Development Bank,Multilateral,Maldives Fish Sector Capacity Strengthening Project,USD,59250000.0,1.0,59250000.0,SDG 14,SDG 16,high,rule,Ongoing
+2025-04-14,Saudi Fund for Development,Saudi Fund for Development,Bilateral,Expansion of Velana International Airport Project (Second Additional Loan),SAR,63750000.0,0.26666667,17000000.0,SDG 9,,high,rule,Ongoing
+2025-07-31,The Export Import Bank of China,Exim Bank of China,Export credit,Concessional Loan Agreement for Refinancing the Development of 1000 Housing Units in Hulhumale,CNY,114299999.7,0.14737305,16844739.59,SDG 11,General,manual,manual,Ongoing
+2025-07-31,The Export Import Bank of China,Exim Bank of China,Export credit,Concessional Loan Agreement for Refinancing the Development of 1500 Housing Units in the Islands,CNY,340096153.5,0.14737305,50121007.49,SDG 11,General,manual,manual,Ongoing
+2025-07-31,The Export Import Bank of China,Exim Bank of China,Export credit,Concessional Loan Agreement for Refinancing for China-Maldives Friendship Bridge,CNY,136680001.47,0.14737305,20142948.71,SDG 9,General,manual,manual,Ongoing
+2026-04-14,The OPEC Fund for International Development,OPEC Fund,Multilateral,Multi Island Harbour Development Project,USD,40000000.0,1.0,40000000.0,SDG 9,,high,rule,Ongoing
+2026-05-10,International Development Association,World Bank (IDA),Multilateral,Maldives Emergency Support for Critical Services Project,USD,40000000.0,1.0,40000000.0,General,,manual,manual,Ongoing
