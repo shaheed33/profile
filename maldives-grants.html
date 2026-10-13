@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Who gives Maldives grants, and for what? | Abdulla Shaheed</title>
+  <meta name="description" content="Grants to Maldives from every donor that reports to the OECD, mapped by type of donor and Sustainable Development Goal, alongside the government's loans.">
+  <script>try{var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t)}catch(e){}</script>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="Who gives Maldives grants, and for what?">
+  <meta property="og:description" content="Grants to Maldives by donor and Sustainable Development Goal, alongside the government's loans.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shaheed.work/maldives-grants">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thaana:wght@400;500&display=swap">
+  <link rel="stylesheet" href="css/maldives.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container-xl bar">
+      <a class="brand" href="index.html">Abdulla Shaheed</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html#tools">Tools</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#contact">Contact</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container-xl py-4">
+    <div class="page">
+      <div class="hero-wrap">
+        <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
+        <div class="live"><i></i>Side project, OECD data</div>
+        <h1>Who gives Maldives grants, and for what?</h1>
+        <p class="lead">Grants to Maldives from every donor that reports to the OECD, mapped by the type of donor and the Sustainable Development Goal each grant mainly serves.</p>
+        <p class="explain">This is the companion to the map of loans. The Ministry of Finance register lists borrowing only, so the grants that many partners give are not in it. This page fills that gap from the OECD Creditor Reporting System, where donors report each year what they have committed and paid out, and sets the grants alongside the loans. Amounts are in US dollars at the prices of each year.</p>
+      </div>
+
+      <div id="content">
+        <div class="figs" id="figs" aria-live="polite"></div>
+        <p class="crosslink">For the loans, see <a href="maldives-loans.html">Who lends to Maldives, and for what?</a></p>
+
+        <!-- Remove "hidden" below once the Dhivehi summary is written. -->
+        <section class="dv-box" aria-label="Summary in Dhivehi" hidden>
+          <p class="tag">Dhivehi summary</p>
+          <!-- DHIVEHI SUMMARY START. Replace the placeholder paragraph below with the summary text. -->
+          <div lang="dv" dir="rtl">
+            <p class="placeholder" lang="en" dir="ltr">Placeholder. A short summary in Dhivehi will go here.</p>
+          </div>
+          <!-- DHIVEHI SUMMARY END -->
+        </section>
+
+        <section class="section" id="goals">
+          <h2>Which goals do the grants serve?</h2>
+          <p class="explain">Donors report the sector of every grant using an OECD purpose code, such as basic drinking water or solar energy. Each code is matched to the goal it serves most directly, and each grant is counted once. Select a goal to list the donors behind it.</p>
+          <p class="finding" id="find-a"></p>
+          <div class="key" id="key-a" role="group" aria-label="Highlight a type of donor"></div>
+          <div class="goals" id="chart-a"></div>
+        </section>
+
+        <section class="section" id="time">
+          <h2>Grants and loans over time</h2>
+          <p class="explain">Grants are what donors committed in each period. Loans are those signed in the same period and still in the Ministry of Finance register. Loans that have been fully repaid are not in the register, so loans in earlier periods are understated, and the two should be compared with that in mind.</p>
+          <p class="finding" id="find-b"></p>
+          <div class="pair-key"><span><i style="background:var(--c-grant)"></i>Grants committed</span><span><i style="background:var(--c-loan)"></i>Loans signed, still active</span></div>
+          <div class="cols" id="chart-b"></div>
+        </section>
+
+        <section class="section" id="split">
+          <h2>Grant or loan? How each lender gives</h2>
+          <p class="explain">For donors that both lend and give, this shows how their concessional finance to Maldives divided between grants and loans. It covers official development assistance only, which is finance on softer terms than the market, and lenders that do not report to the OECD are not included.</p>
+          <p class="finding" id="find-c"></p>
+          <div class="pair-key"><span><i style="background:var(--c-grant)"></i>Grants</span><span><i style="background:var(--c-loan)"></i>Loans</span></div>
+          <div class="shares" id="chart-c"></div>
+        </section>
+
+        <section class="section" id="matrix">
+          <h2>Who funds which goals?</h2>
+          <p class="explain">Each row is a donor and each column a goal. The darker the square, the more that donor has committed in grants to that goal, in millions of US dollars. Donors with less than US$ 2 million in total are grouped together at the foot of each type. Switch to share to see how each donor divides its own grants.</p>
+          <div class="ctrl">
+            <div class="seg" id="seg-d" aria-label="Show"><button type="button" data-v="usd" class="on">US$ million</button><button type="button" data-v="share">Share of each donor</button></div>
+          </div>
+          <div class="heatwrap"><table class="heat" id="chart-d"></table></div>
+          <p class="swipe">Scroll sideways to see every goal.</p>
+          <div class="ramp" id="ramp"></div>
+        </section>
+
+        <section class="section" id="table">
+          <h2>Every donor</h2>
+          <p class="explain">Search by donor, filter by type or goal, and sort by any column. Committed is what donors pledged and disbursed is what they paid out, which can fall in later years.</p>
+          <div class="filters">
+            <div class="q"><label for="q">Search</label><input id="q" type="search" placeholder="Search donor" autocomplete="off"></div>
+            <div><label for="f-grp">Type of donor</label><select id="f-grp"></select></div>
+            <div><label for="f-goal">Goal</label><select id="f-goal"></select></div>
+            <div><label for="f-sort">Sort by</label><select id="f-sort"></select></div>
+          </div>
+          <div class="tbar"><span id="count"></span><a class="dl" href="data/processed/grants_tagged.csv" download="maldives_grants_tagged.csv">Download the tagged data (CSV)</a></div>
+          <div class="tablewrap"><table class="loans" id="donors"></table></div>
+          <button type="button" class="more" id="more" hidden></button>
+        </section>
+      </div>
+
+      <section class="section method" id="method">
+        <h2>How this was made</h2>
+        <details>
+          <summary>Source and date</summary>
+          <p id="m-source">The OECD Creditor Reporting System, which records official development finance reported by donors for each recipient, retrieved through the OECD Data Explorer in October 2026.</p>
+        </details>
+        <details>
+          <summary>What counts as a grant</summary>
+          <p>The figures are grants within official development assistance, as reported by each donor. They are commitments, the amount pledged in a year, unless the table says disbursed. They are in US dollars at the prices of each year, so they are not adjusted for inflation.</p>
+          <p>Loans on this page come from the Ministry of Finance register used for the <a href="maldives-loans.html">map of loans</a>, not from the OECD. The register also covers lenders that do not report to the OECD, and using one source for each avoids counting a loan twice. The OECD's own loan figures are used only for the chart of how each lender divides grants and loans.</p>
+        </details>
+        <details>
+          <summary>How donors were grouped</summary>
+          <ul>
+            <li><b>Bilateral.</b> Governments and their aid agencies, such as Japan, the United Arab Emirates, Australia and Saudi Arabia.</li>
+            <li><b>Multilateral.</b> Development banks, EU institutions and funds owned by several countries, such as the World Bank's IDA, the Asian Development Bank, the Green Climate Fund and the Global Environment Facility.</li>
+            <li><b>UN agencies.</b> UN funds, programmes and specialised agencies, such as UNDP, UNICEF, WHO, UNFPA and IFAD. IFAD is listed with the UN here, as the OECD lists it, and with the multilateral lenders on the map of loans.</li>
+          </ul>
+          <p>The grouping is kept in an editable lookup file. Totals that the OECD reports for groups of donors are left out, so that each grant is counted once.</p>
+        </details>
+        <details>
+          <summary>How goals were assigned</summary>
+          <p>Each OECD purpose code is matched to the goal it serves most directly. Education codes point to SDG 4, health to SDG 3, water and sanitation to SDG 6, energy to SDG 7, transport and communications to SDG 9, fishing to SDG 14, and disaster risk reduction and environmental policy to SDG 13. Public finance management and statistics go to SDG 17, as on the map of loans. Budget and import support are grouped as general support, emergency relief as humanitarian, and grants that donors did not assign to a sector as unclassified.</p>
+          <p>Biodiversity grants are matched to SDG 14, life below water, because most biodiversity work in Maldives is marine. The full list is in an editable lookup file, and any code can be moved and the page rebuilt.</p>
+        </details>
+        <details>
+          <summary>What this does not show</summary>
+          <ul>
+            <li><b>Donors that do not report to the OECD.</b> China and India, among others, do not report to the Creditor Reporting System, so their grants are not included. Their loans are on the map of loans.</li>
+            <li><b>Commitments, not money spent.</b> A commitment can be paid out over several years, or not in full.</li>
+            <li><b>Not only to government.</b> The figures include grants channelled through NGOs, UN agencies and others, not only those paid to the government.</li>
+            <li><b>Sectors, not results.</b> A purpose code describes what a grant was for, not what it achieved.</li>
+            <li><b>Totals by donor and sector, not projects.</b> The data used here adds up projects within each donor, sector and year, so individual projects are not listed.</li>
+            <li id="m-late"><b>Recent years.</b> Donors report with a delay, so the latest year left out here holds only a few early reports.</li>
+          </ul>
+        </details>
+        <details>
+          <summary>Files</summary>
+          <p>The tagged data, by year, donor and purpose, is free to download as a <a href="data/processed/grants_tagged.csv" download="maldives_grants_tagged.csv">CSV file</a>, and the page reads from <a href="data/maldives_grants.json">this JSON file</a>. A Python script reads the OECD download, groups the donors and assigns the goals, so the page can be rebuilt when the OECD publishes a new year.</p>
+          <p id="generated" class="small text-body-secondary"></p>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <footer class="container-xl py-3 border-top small text-body-secondary">© <span id="year"></span> Abdulla Shaheed. Data from the OECD and the Ministry of Finance, Maldives.</footer>
+  <div class="tip" id="tip" role="tooltip"></div>
+
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    $("year").textContent = new Date().getFullYear();
+    const tip = $("tip");
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const sum = (a, f) => a.reduce((s, x) => s + f(x), 0);
+    const pct = (v) => (v > 0 && v < 0.01 ? "under 1" : Math.round(v * 100)) + "%";
+    const money = (v) => v >= 1e9 ? "US$ " + (v / 1e9).toFixed(2) + " billion" : v >= 1e6 ? "US$ " + (v / 1e6).toLocaleString("en-GB", { maximumFractionDigits: v >= 1e8 ? 0 : 1 }) + " million" : "US$ " + Math.round(v / 1e3).toLocaleString("en-GB") + " thousand";
+    const mill = (v) => { const m = v / 1e6; return m >= 100 ? Math.round(m).toLocaleString("en-GB") : m >= 1 ? m.toFixed(1) : m.toFixed(2); };
+    const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const longDate = (iso) => { const [y, m, d] = iso.split("-").map(Number); return d + " " + MONTHS[m - 1] + " " + y; };
+    const showTip = (e, html) => {
+      tip.innerHTML = html; tip.classList.add("on");
+      tip.style.left = Math.max(8, Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8)) + "px";
+      tip.style.top = Math.max(8, e.clientY - tip.offsetHeight - 14) + "px";
+    };
+    const hideTip = () => tip.classList.remove("on");
+    const hover = (el, html) => { el.addEventListener("mousemove", (e) => showTip(e, html())); el.addEventListener("mouseleave", hideTip); el.addEventListener("click", (e) => showTip(e, html())); };
+    document.addEventListener("scroll", hideTip, { passive: true });
+    document.addEventListener("click", (e) => { if (!e.target.closest("[data-tip]")) hideTip(); });
+    window.onThemeChange = () => {};
+
+    const getJSON = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+    Promise.all([getJSON("data/maldives_grants.json"), getJSON("data/maldives_loans.json").catch(() => null)]).then(([G, L]) => start(G, L)).catch(() => {
+      $("content").innerHTML = '<p class="empty">The grant data could not be loaded. If you opened this file directly, run a local web server and open it from there.</p>';
+    });
+
+    function start(G, LO) {
+      const R = G.rows.filter((r) => r.c > 0), M = G.meta, total = sum(R, (r) => r.c);
+      const GRP = G.groups, grpLabel = Object.fromEntries(GRP.map((g) => [g.id, g.label]));
+      const GOAL = Object.fromEntries(G.goals.map((g) => [g.id, g.label]));
+      const num = (g) => g.startsWith("SDG ") ? g.slice(4) : "";
+      const WORD = { General: "Gen", Humanitarian: "Hum", Multisector: "Multi", Unclassified: "None" };
+      const goalName = (g) => num(g) ? g + " " + GOAL[g] : GOAL[g];
+      const col = (g) => "var(--c-" + g + ")";
+      let focus = null;
+
+      // headline figures
+      const donorsAll = new Set(R.map((r) => r.donor));
+      const byDonor = {};
+      G.rows.forEach((r) => { const d = byDonor[r.donor] ||= { name: r.donor, group: r.group, c: 0, d: 0, first: 9999, last: 0, goals: {} }; d.c += r.c; d.d += r.d; if (r.c > 0 || r.d > 0) { d.first = Math.min(d.first, r.y); d.last = Math.max(d.last, r.y); } d.goals[r.goal] = (d.goals[r.goal] || 0) + r.c; });
+      const topDonor = Object.values(byDonor).sort((a, b) => b.c - a.c)[0];
+      $("figs").innerHTML = [
+        [money(total).replace(" billion", "bn").replace(" million", "m"), "in grants committed, " + M.first_year + " to " + M.last_year],
+        [money(M.grants_disbursed).replace(" billion", "bn").replace(" million", "m"), "paid out over the same years"],
+        [donorsAll.size, "donors that report to the OECD"],
+        [topDonor.name, "largest donor, " + pct(topDonor.c / total) + " of grants"],
+      ].map(([v, l]) => "<div><b>" + esc(v) + "</b><span>" + esc(l) + "</span></div>").join("");
+
+      function key(el) {
+        el.innerHTML = GRP.map((g) => '<button type="button" data-c="' + g.id + '" aria-pressed="false"><i style="background:' + col(g.id) + '"></i>' + esc(g.label) + "</button>").join("");
+        el.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; focus = focus === b.dataset.c ? null : b.dataset.c; paintFocus(); });
+      }
+      function paintFocus() {
+        document.querySelectorAll(".key").forEach((k) => { k.classList.toggle("focus", !!focus); k.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.c === focus))); });
+        document.querySelectorAll(".seg-fill").forEach((s) => s.classList.toggle("dim", !!focus && s.dataset.c !== focus));
+      }
+      key($("key-a"));
+      const tipRows = (by, base) => GRP.filter((g) => by[g.id]).map((g) => '<span class="r"><i style="background:' + col(g.id) + '"></i>' + esc(g.label) + " " + money(by[g.id]) + ", " + pct(by[g.id] / base) + "</span>").join("");
+
+      // ---------- a. goals ----------
+      const goals = {};
+      R.forEach((r) => { const g = goals[r.goal] ||= { id: r.goal, usd: 0, grp: {}, donors: new Set() }; g.usd += r.c; g.grp[r.group] = (g.grp[r.group] || 0) + r.c; g.donors.add(r.donor); });
+      const tail = ["General", "Humanitarian", "Multisector", "Unclassified"];
+      const order = Object.values(goals).filter((g) => g.usd >= 5e4).sort((a, b) => tail.includes(a.id) - tail.includes(b.id) || b.usd - a.usd);
+      const maxG = Math.max(...order.map((g) => g.usd));
+      $("chart-a").innerHTML = order.map((g) => {
+        const segs = GRP.filter((x) => g.grp[x.id]).map((x) => '<span class="seg-fill" data-c="' + x.id + '" style="flex:0 0 calc(' + (g.grp[x.id] / maxG * 100).toFixed(3) + '% - 2px);background:' + col(x.id) + '"></span>').join("");
+        return '<button type="button" class="goal" data-g="' + esc(g.id) + '" data-tip><span class="name">' +
+          (num(g.id) ? '<span class="num">' + num(g.id) + "</span>" : '<span class="num word">' + WORD[g.id] + "</span>") + "<span>" + esc(GOAL[g.id]) + "</span></span>" +
+          '<span class="track">' + segs + '</span><span class="val">' + mill(g.usd) + "m<small>" + g.donors.size + (g.donors.size === 1 ? " donor" : " donors") + "</small></span></button>";
+      }).join("");
+      $("chart-a").querySelectorAll(".goal").forEach((row) => {
+        const g = goals[row.dataset.g];
+        hover(row, () => "<b>" + esc(goalName(g.id)) + "</b>" + money(g.usd) + ", " + pct(g.usd / total) + " of grants<br>" + tipRows(g.grp, g.usd));
+        row.addEventListener("click", () => setFilter({ goal: g.id }));
+      });
+      const top3 = order.filter((g) => !tail.includes(g.id)).slice(0, 3);
+      $("find-a").textContent = "The three largest goals by grants committed are " + top3.map((g, i) => (i === 2 ? "and " : "") + g.id + ", " + GOAL[g.id].toLowerCase() + " (" + pct(g.usd / total) + ")").join(", ") + ".";
+
+      // ---------- b. grants and loans by period ----------
+      const loans = LO ? LO.loans : [];
+      function drawB() {
+        const P = [];
+        for (let s = Math.floor(M.first_year / 5) * 5; s <= M.last_year; s += 5) {
+          const gr = sum(R.filter((r) => r.y >= s && r.y < s + 5), (r) => r.c);
+          const lo = sum(loans.filter((l) => l.year >= s && l.year < s + 5), (l) => l.usd);
+          P.push({ s, gr, lo });
+        }
+        const W = Math.max(320, $("chart-b").clientWidth), H = 300, padL = 44, padB = 30, padT = 10, narrow = W < 560;
+        const plotW = W - padL - 4, plotH = H - padB - padT, slot = plotW / P.length, bw = Math.min(22, slot * .3);
+        const mx = Math.max(...P.flatMap((p) => [p.gr, p.lo])) / 1e6, p10 = Math.pow(10, Math.floor(Math.log10(mx)));
+        const yMax = [1, 2, 2.5, 5, 10].map((k) => k * p10).find((v) => v >= mx) * 1e6, y = (v) => padT + plotH - v / yMax * plotH;
+        const bar = (x, v, fill) => { const h = Math.max(0, plotH - (y(v) - padT)), y0 = y(v); return h > 4 ? '<path d="M' + x + "," + (y0 + h) + "V" + (y0 + 4) + "q0,-4 4,-4h" + (bw - 8) + "q4,0 4,4V" + (y0 + h) + 'Z" style="fill:' + fill + '"/>' : h > 0 ? '<rect x="' + x + '" y="' + y0 + '" width="' + bw + '" height="' + h + '" style="fill:' + fill + '"/>' : ""; };
+        let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Grants committed and loans signed, by five year period">';
+        [0, .25, .5, .75, 1].forEach((k) => { const t = k * yMax; s += '<line x1="' + padL + '" x2="' + (W - 4) + '" y1="' + y(t) + '" y2="' + y(t) + '"/><text x="' + (padL - 8) + '" y="' + (y(t) + 4) + '" text-anchor="end">' + (t >= 1e9 ? (t / 1e9).toLocaleString("en-GB") + "bn" : Math.round(t / 1e6).toLocaleString("en-GB") + "m") + "</text>"; });
+        P.forEach((p, i) => {
+          const cx = padL + slot * i + slot / 2;
+          s += bar(cx - bw - 1, p.gr, "var(--c-grant)") + bar(cx + 1, p.lo, "var(--c-loan)");
+          s += '<rect data-i="' + i + '" data-tip x="' + (padL + slot * i) + '" y="' + padT + '" width="' + slot + '" height="' + plotH + '" fill="transparent"/>';
+          s += '<text class="per" x="' + cx + '" y="' + (H - padB + 18) + '" text-anchor="middle">' + (narrow ? p.s : p.s + "–" + String((p.s + 4) % 100).padStart(2, "0")) + "</text>";
+        });
+        $("chart-b").innerHTML = s + "</svg>";
+        $("chart-b").querySelectorAll("rect[data-i]").forEach((r) => {
+          const p = P[+r.dataset.i];
+          hover(r, () => "<b>" + p.s + " to " + (p.s + 4) + '</b><span class="r"><i style="background:var(--c-grant)"></i>Grants committed ' + money(p.gr) + '</span><span class="r"><i style="background:var(--c-loan)"></i>Loans signed, still active ' + money(p.lo) + "</span>");
+        });
+        const last = P[P.length - 1];
+        $("find-b").textContent = "From " + last.s + " to " + (last.s + 4) + ", donors committed " + money(last.gr) + " in grants, and loans signed in the same years and still active come to " + money(last.lo) + ".";
+      }
+      drawB();
+      let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(drawB, 120); });
+
+      // ---------- c. grant share by lender ----------
+      const S = G.share.map((x) => ({ ...x, t: x.grants + x.loans, g: x.grants / (x.grants + x.loans) })).sort((a, b) => b.g - a.g || b.t - a.t);
+      $("chart-c").innerHTML = S.map((x, i) => '<div class="share" data-i="' + i + '" data-tip><span class="name">' + esc(x.donor) + "</span>" +
+        '<span class="bar">' + (x.grants ? '<span style="flex:0 0 calc(' + (x.g * 100).toFixed(2) + '% - 1px);background:var(--c-grant)"></span>' : "") + (x.loans ? '<span style="flex:1 1 0;background:var(--c-loan)"></span>' : "") + "</span>" +
+        '<span class="val">' + pct(x.g) + " grants<small>of " + money(x.t).replace(" million", "m") + "</small></span></div>").join("");
+      $("chart-c").querySelectorAll(".share").forEach((el) => {
+        const x = S[+el.dataset.i];
+        hover(el, () => "<b>" + esc(x.donor) + "</b>" + M.share_from + " to " + M.last_year + '<span class="r"><i style="background:var(--c-grant)"></i>Grants ' + money(x.grants) + '</span><span class="r"><i style="background:var(--c-loan)"></i>Loans ' + money(x.loans) + "</span>");
+      });
+      const ida = S.find((x) => /IDA/.test(x.donor));
+      $("find-c").textContent = "From " + M.share_from + " to " + M.last_year + ", " + (ida ? pct(ida.g) + " of the World Bank's IDA commitments to Maldives were grants. " : "") +
+        "Across these lenders, the share given as grants ranges from " + pct(S[S.length - 1].g) + " to " + pct(S[0].g) + ".";
+
+      // ---------- d. donor by goal ----------
+      let dMode = "usd";
+      const goalCols = order.map((g) => g.id);
+      function drawD() {
+        const rows = [];
+        GRP.forEach((gp) => {
+          const ds = Object.values(byDonor).filter((d) => d.group === gp.id && d.c > 0).sort((a, b) => b.c - a.c);
+          const big = ds.filter((d) => d.c >= 2e6), small = ds.filter((d) => d.c < 2e6);
+          rows.push({ head: gp.label });
+          big.forEach((d) => rows.push({ ...d }));
+          if (small.length) { const o = { name: "Other " + gp.label.toLowerCase() + (gp.id === "un" ? "" : " donors") + " (" + small.length + ")", group: gp.id, c: sum(small, (d) => d.c), goals: {}, other: small.map((d) => d.name) }; small.forEach((d) => Object.entries(d.goals).forEach(([k, v]) => o.goals[k] = (o.goals[k] || 0) + v)); rows.push(o); }
+        });
+        const data = rows.filter((r) => !r.head);
+        const maxCell = Math.max(...data.flatMap((r) => Object.values(r.goals).filter((v) => v > 0).map((v) => dMode === "usd" ? v : v / r.c)));
+        let h = "<thead><tr><th></th>" + goalCols.map((g) => '<th scope="col" title="' + esc(goalName(g)) + '">' + (num(g) ? "<small>SDG</small><b>" + num(g) + "</b>" : "<small>" + WORD[g] + "</small><b>&nbsp;</b>") + "</th>").join("") + '<th scope="col" style="text-align:right"><small>Total</small><b>&nbsp;</b></th></tr></thead><tbody>';
+        rows.forEach((r, i) => {
+          if (r.head) { h += '<tr class="grp"><th colspan="' + (goalCols.length + 2) + '">' + esc(r.head) + "</th></tr>"; return; }
+          h += '<tr><th scope="row" style="--rowc:' + col(r.group) + '">' + esc(r.name) + "</th>";
+          goalCols.forEach((g) => {
+            const v = r.goals[g] || 0;
+            if (v <= 0) { h += '<td class="z"></td>'; return; }
+            const val = dMode === "usd" ? v : v / r.c, t = Math.sqrt(val / maxCell), p = Math.round(14 + t * 86);
+            const label = dMode === "usd" ? (v >= 1e6 ? Math.round(v / 1e6).toLocaleString("en-GB") : "<1") : Math.round(val * 100) + "%";
+            h += '<td data-tip data-r="' + i + '" data-g="' + esc(g) + '" style="background:color-mix(in srgb, var(--heat) ' + p + '%, var(--surface));color:' + (p > 55 ? "var(--surface)" : "var(--ink)") + '">' + (t > .32 ? label : "") + "</td>";
+          });
+          h += '<td class="tot">' + mill(r.c) + "m</td></tr>";
+        });
+        $("chart-d").innerHTML = h + "</tbody>";
+        $("ramp").innerHTML = "<span>Less</span><i></i><span>More.</span><span>Outlined squares mean no grants.</span><span>" + (dMode === "usd" ? "Numbers in squares are US$ million" : "Numbers in squares are the share of that donor's grants") + "</span>";
+        $("chart-d").querySelectorAll("td[data-g]").forEach((td) => {
+          const r = rows[+td.dataset.r], g = td.dataset.g, v = r.goals[g];
+          hover(td, () => "<b>" + esc(r.name) + "</b>" + esc(goalName(g)) + "<br>" + money(v) + ", " + pct(v / r.c) + " of this donor's grants" + (r.other ? "<br><small>" + esc(r.other.join(", ")) + "</small>" : ""));
+          if (!r.other) td.addEventListener("click", () => setFilter({ q: r.name }));
+        });
+      }
+      $("seg-d").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; $("seg-d").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); dMode = b.dataset.v; drawD(); });
+      drawD();
+
+      // ---------- e. donor table ----------
+      const D = Object.values(byDonor).filter((d) => d.c > 0 || d.d > 0).map((d) => {
+        const tg = Object.entries(d.goals).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1])[0];
+        return { ...d, top: tg ? tg[0] : "" };
+      });
+      const COLS = [
+        ["name", "Donor", (d) => d.name.toLowerCase(), (d) => esc(d.name), "who"],
+        ["group", "Type", (d) => d.group, (d) => '<span class="cat"><i style="background:' + col(d.group) + '"></i>' + esc(grpLabel[d.group]) + "</span>"],
+        ["c", "Committed, US$ million", (d) => d.c, (d) => mill(d.c), "n"],
+        ["d", "Disbursed, US$ million", (d) => d.d, (d) => mill(d.d), "n"],
+        ["first", "Years", (d) => d.first, (d) => d.first === d.last ? String(d.first) : d.first + " to " + d.last],
+        ["top", "Largest goal", (d) => (num(d.top) ? +num(d.top) : 98), (d) => d.top ? esc(num(d.top) ? d.top + " " + GOAL[d.top] : GOAL[d.top]) : ""],
+      ];
+      const F = { q: "", grp: "", goal: "", sort: "c", dir: -1 }, PAGE = matchMedia("(max-width: 767.98px)").matches ? 10 : 25;
+      let shown = PAGE;
+      $("f-grp").innerHTML = '<option value="">All types of donor</option>' + GRP.map((g) => '<option value="' + g.id + '">' + esc(g.label) + "</option>").join("");
+      $("f-goal").innerHTML = '<option value="">All goals</option>' + order.map((g) => '<option value="' + esc(g.id) + '">' + esc(goalName(g.id)) + "</option>").join("");
+      const SORTS = [["c|-1", "Largest first"], ["c|1", "Smallest first"], ["d|-1", "Most disbursed first"], ["name|1", "Donor, A to Z"], ["first|1", "Earliest first"]];
+      $("f-sort").innerHTML = SORTS.map(([v, l]) => '<option value="' + v + '">' + l + "</option>").join("");
+      function drawE() {
+        const q = F.q.trim().toLowerCase();
+        const rows = D.filter((d) => (!F.grp || d.group === F.grp) && (!F.goal || (d.goals[F.goal] || 0) > 0) && (!q || d.name.toLowerCase().includes(q)));
+        const c = COLS.find((x) => x[0] === F.sort);
+        rows.sort((a, b) => { const x = c[2](a), y = c[2](b); return (x < y ? -1 : x > y ? 1 : 0) * F.dir || b.c - a.c; });
+        $("donors").innerHTML = "<thead><tr>" + COLS.map(([k, lab, , , cls]) => '<th scope="col"' + (cls === "n" ? ' class="n"' : "") + (F.sort === k ? ' aria-sort="' + (F.dir > 0 ? "ascending" : "descending") + '"' : "") + '><button type="button" data-k="' + k + '">' + lab + "</button></th>").join("") + "</tr></thead><tbody>" +
+          rows.slice(0, shown).map((d) => "<tr>" + COLS.map(([, lab, , fmt, cls]) => '<td data-l="' + lab + '"' + (cls ? ' class="' + cls + '"' : "") + ">" + fmt(d) + "</td>").join("") + "</tr>").join("") + "</tbody>";
+        const t = F.goal ? sum(rows, (d) => d.goals[F.goal] || 0) : sum(rows, (d) => d.c);
+        $("count").textContent = (rows.length === D.length ? "All " + D.length + " donors" : rows.length + " of " + D.length + " donors") + ", " + money(t) + " committed" + (F.goal ? " to " + (num(F.goal) ? F.goal : GOAL[F.goal].toLowerCase()) : "");
+        const left = rows.length - shown;
+        $("more").hidden = left <= 0; $("more").textContent = "Show " + Math.min(PAGE, left) + " more" + (left > PAGE ? ", " + left + " left" : "");
+        const sv = F.sort + "|" + F.dir; $("f-sort").value = SORTS.some(([v]) => v === sv) ? sv : "";
+      }
+      const reset = () => { shown = PAGE; };
+      $("more").addEventListener("click", () => { shown += PAGE; drawE(); });
+      $("donors").addEventListener("click", (e) => { const b = e.target.closest("th button"); if (!b) return; const k = b.dataset.k; F.dir = F.sort === k ? -F.dir : (["c", "d"].includes(k) ? -1 : 1); F.sort = k; reset(); drawE(); });
+      let qt; $("q").addEventListener("input", (e) => { clearTimeout(qt); qt = setTimeout(() => { F.q = e.target.value; reset(); drawE(); }, 120); });
+      $("f-grp").addEventListener("change", (e) => { F.grp = e.target.value; reset(); drawE(); });
+      $("f-goal").addEventListener("change", (e) => { F.goal = e.target.value; reset(); drawE(); });
+      $("f-sort").addEventListener("change", (e) => { if (!e.target.value) return; const [k, d] = e.target.value.split("|"); F.sort = k; F.dir = +d; reset(); drawE(); });
+      function setFilter(o) {
+        F.q = o.q || ""; F.goal = o.goal || ""; F.grp = "";
+        $("q").value = F.q; $("f-goal").value = F.goal; $("f-grp").value = "";
+        reset(); hideTip(); drawE(); $("table").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      }
+      drawE();
+
+      // ---------- methodology details from the data ----------
+      $("m-source").textContent = "The OECD Creditor Reporting System, which records official development finance reported by donors for each recipient, retrieved through the OECD Data Explorer on " + longDate(M.retrieved) + ". This page covers grants to Maldives committed from " + M.first_year + " to " + M.last_year + ".";
+      if (M.later_years_left_out.length) $("m-late").innerHTML = "<b>Recent years.</b> Donors report with a delay. " + M.later_years_left_out.join(" and ") + " is left out because it holds only a few early reports.";
+      $("generated").textContent = "Data rebuilt on " + longDate(M.generated) + ".";
+      if (window.explainAll) window.explainAll();
+    }
+  })();
+  </script>
+  <script src="js/explain.js"></script>
+  <script src="js/more.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/ambient.js"></script>
+</body>
+</html>

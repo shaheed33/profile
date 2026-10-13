@@ -14,163 +14,7 @@
   <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="css/theme.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thaana:wght@400;500&display=swap">
-  <style>
-    :root {
-      --c-multilateral: #2F5FB0; --c-bilateral: #00917F; --c-export_credit: #C4572B; --c-commercial: #D9A43A;
-      --heat: #1F3D73; --live: #1E8A5A; --tip-bg: #ffffff; --tip-shadow: 0 10px 30px rgba(20, 35, 58, .14);
-    }
-    [data-theme="dark"] {
-      --c-multilateral: #5585D6; --c-bilateral: #0E9E8A; --c-export_credit: #C2483C; --c-commercial: #B08A22;
-      --heat: #8FB3EE; --live: #5FD39B; --tip-bg: #151E2C; --tip-shadow: 0 10px 30px rgba(0, 0, 0, .5);
-    }
-    .page { max-width: 1000px; }
-    .lead { max-width: 60ch; margin-bottom: .6rem; }
-    .live { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--live); margin-bottom: .6rem; }
-    .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); }
-    .empty { padding: 1.2rem 1.3rem; border-left: 3px solid var(--c-export_credit); background: var(--track); border-radius: 0 10px 10px 0; max-width: 70ch; }
-
-    /* headline figures */
-    .figs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 2rem 0 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
-    .figs div { padding: .9rem 1rem .9rem 0; }
-    .figs div + div { padding-left: 1rem; border-left: 1px solid var(--line); }
-    .figs b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: clamp(1.6rem, 3.6vw, 2.3rem); line-height: 1.05; }
-    .figs span { font-size: .85rem; color: var(--muted); }
-
-    /* Dhivehi summary, written by hand */
-    .dv-box { margin: 1.6rem 0 0; padding: .9rem 1.1rem; border: 1px dashed var(--line); border-radius: 12px; max-width: 46rem; }
-    .dv-box .tag { font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem; }
-    body [lang="dv"], body [lang="dv"] * { font-family: "Noto Sans Thaana", "Faruma", "MV Faseyha", sans-serif !important; font-size: 1.08rem; line-height: 1.9; }
-    body [lang="dv"] .placeholder { font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif !important; font-size: .92rem; color: var(--muted); font-style: italic; margin: 0; }
-
-    /* sections */
-    .section { margin: 3.2rem 0 0; scroll-margin-top: 80px; }
-    .section > h2 { font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.75rem; margin: 0 0 .3rem; }
-    .section .note { color: var(--soft); max-width: 68ch; margin: 0 0 .9rem; }
-    .finding { font-family: "Newsreader", Georgia, serif !important; font-size: 1.2rem; line-height: 1.45; color: var(--ink); max-width: 60ch; margin: .2rem 0 1rem; }
-
-    /* category key, doubles as a highlight control */
-    .key { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 1.1rem; }
-    .key button { display: inline-flex; align-items: center; gap: .45rem; font-size: .86rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: .25rem .8rem .25rem .6rem; cursor: pointer; transition: opacity .2s, border-color .2s; }
-    .key button i { width: 11px; height: 11px; border-radius: 3px; }
-    .key button[aria-pressed="true"] { border-color: var(--ink); }
-    .key.focus button[aria-pressed="false"] { opacity: .45; }
-    .ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin: 0 0 1rem; }
-    .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
-    .seg button { font-size: .85rem; font-weight: 500; color: var(--muted); background: none; border: 0; padding: .25rem .85rem; border-radius: 999px; cursor: pointer; }
-    .seg button.on { background: var(--ink); color: var(--surface); }
-    .dim { opacity: .18; }
-    .seg-fill { transition: opacity .2s; }
-
-    /* chart a: goals as ruled rows */
-    .goals { border-top: 1px solid var(--line); }
-    .goal { display: grid; grid-template-columns: 17rem minmax(0, 1fr) 6.2rem; gap: .9rem; align-items: center; padding: .55rem 0; border-bottom: 1px solid var(--line); cursor: pointer; background: none; border-left: 0; border-right: 0; border-top: 0; width: 100%; text-align: left; color: inherit; font: inherit; }
-    .goal:hover { background: linear-gradient(90deg, var(--track), transparent); }
-    .goal .name { display: flex; align-items: baseline; gap: .6rem; min-width: 0; font-size: .92rem; line-height: 1.3; }
-    .goal .num { font-family: "Newsreader", Georgia, serif !important; font-size: 1.45rem; line-height: 1; min-width: 1.9rem; text-align: right; color: var(--accent); font-variant-numeric: tabular-nums; }
-    .goal .num.word { font-size: .72rem; font-family: inherit !important; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-align: right; }
-    .goal .track { display: flex; gap: 2px; height: 14px; }
-    .goal .track span { height: 100%; min-width: 2px; }
-    .goal .track span:last-child { border-radius: 0 4px 4px 0; }
-    .goal .val { font-size: .88rem; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
-    .goal .val small { display: block; color: var(--muted); font-size: .76rem; }
-
-    /* chart b: columns */
-    .cols svg { display: block; width: 100%; height: auto; overflow: visible; }
-    .cols text { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
-    .cols text.per { fill: var(--ink); font-weight: 500; }
-    .cols line { stroke: var(--chart-grid); }
-
-    /* chart c: heatmap */
-    .heatwrap { overflow-x: auto; border-top: 1px solid var(--line); -webkit-overflow-scrolling: touch; }
-    .heat { border-collapse: separate; border-spacing: 2px; font-size: .84rem; min-width: 100%; }
-    .heat th { font-weight: 500; color: var(--muted); }
-    .heat thead th { text-align: center; padding: .5rem 0 .3rem; vertical-align: bottom; }
-    .heat thead th b { display: block; font-family: "Newsreader", Georgia, serif !important; font-weight: 400; font-size: 1.15rem; color: var(--accent); line-height: 1; }
-    .heat thead th small { font-size: .66rem; letter-spacing: .05em; text-transform: uppercase; }
-    .heat tbody th { position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left; font-weight: 400; color: var(--ink); padding: .2rem .8rem .2rem .55rem; white-space: nowrap; border-left: 4px solid var(--rowc, var(--line)); }
-    .heat tr.grp th { border-left: 0; padding: .9rem 0 .2rem; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-    .heat td { min-width: 2.7rem; height: 2rem; text-align: center; border-radius: 4px; font-variant-numeric: tabular-nums; font-size: .74rem; cursor: pointer; }
-    .heat td.z { background: none; box-shadow: inset 0 0 0 1px var(--chart-grid); cursor: default; }
-    .heat td.tot { background: none; color: var(--muted); text-align: right; padding: 0 0 0 .6rem; cursor: default; min-width: 4.5rem; }
-    .heat td:not(.z):not(.tot):hover { outline: 2px solid var(--ink); outline-offset: -1px; }
-    .swipe { display: none; font-size: .8rem; color: var(--muted); margin: .5rem 0 0; }
-    .ramp { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .5rem; font-size: .8rem; color: var(--muted); margin: .8rem 0 0; }
-    .ramp i { width: 120px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, var(--track), var(--heat)); }
-
-    /* table d */
-    .filters { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: .5rem; margin: 0 0 .7rem; }
-    .filters input, .filters select { font: inherit; font-size: .92rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .45rem .65rem; min-width: 0; width: 100%; }
-    .filters label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-    .tbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem; font-size: .88rem; color: var(--muted); margin: 0 0 .5rem; }
-    .dl { display: inline-flex; align-items: center; gap: .4rem; font-weight: 500; text-decoration: none; border-radius: 999px; padding: .35rem .95rem; border: 1px solid var(--ink); color: var(--ink); }
-    .dl:hover { background: var(--accent-soft); color: var(--ink); }
-    .tablewrap { max-height: 640px; overflow: auto; border-top: 1px solid var(--ink); }
-    .loans { width: 100%; border-collapse: collapse; font-size: .86rem; }
-    .loans th { position: sticky; top: 0; z-index: 1; background: var(--surface); text-align: left; font-weight: 600; font-size: .78rem; color: var(--muted); padding: .55rem .4rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
-    .loans th button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-    .loans th button::after { content: ""; display: inline-block; width: .9em; }
-    .loans th[aria-sort="ascending"] button::after { content: " \2191"; }
-    .loans th[aria-sort="descending"] button::after { content: " \2193"; }
-    .loans th[aria-sort] button, .loans th button:hover { color: var(--ink); }
-    .loans td { padding: .5rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
-    .loans td.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .loans th.n { text-align: right; }
-    .loans .cat { display: inline-flex; align-items: center; gap: .35rem; white-space: nowrap; }
-    .loans .cat i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
-    .loans .proj { min-width: 12rem; }
-    .loans .who { min-width: 8rem; }
-    .loans .st { display: block; color: var(--muted); font-size: .76rem; margin-top: .1rem; }
-    .more { display: block; margin: 1rem auto 0; font: inherit; font-size: .9rem; font-weight: 500; color: var(--ink); background: var(--surface); border: 1px solid var(--ink); border-radius: 999px; padding: .4rem 1.2rem; cursor: pointer; }
-    .more:hover { background: var(--accent-soft); }
-    .chip { display: inline-block; font-size: .74rem; border-radius: 999px; padding: .05rem .5rem; white-space: nowrap; background: var(--track); color: var(--soft); }
-    .chip.low, .chip.none { background: none; box-shadow: inset 0 0 0 1px var(--line); color: var(--muted); }
-    .chip.manual { background: var(--accent-soft); color: var(--accent); }
-    .sdgcell { white-space: nowrap; }
-    .sdgcell small { display: block; color: var(--muted); font-size: .76rem; }
-
-    /* methodology */
-    .method details { border-top: 1px solid var(--line); padding: .8rem 0; }
-    .method details:last-of-type { border-bottom: 1px solid var(--line); }
-    .method summary { cursor: pointer; font-weight: 600; list-style: none; }
-    .method summary::-webkit-details-marker { display: none; }
-    .method summary::before { content: "+"; display: inline-block; width: 1.3rem; color: var(--accent); font-weight: 400; }
-    .method details[open] summary::before { content: "\2212"; }
-    .method p, .method ul, .method ol { color: var(--soft); max-width: 74ch; margin: .6rem 0 0 1.3rem; }
-    .method li { margin: .35rem 0; }
-    .fx { margin: .7rem 0 0 1.3rem; border-collapse: collapse; font-size: .86rem; }
-    .fx th, .fx td { padding: .3rem .9rem .3rem 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-    .fx th { color: var(--muted); font-weight: 600; font-size: .78rem; }
-    .fx td.n { font-variant-numeric: tabular-nums; text-align: right; }
-
-    .tip { position: fixed; pointer-events: none; background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--tip-shadow); font-size: .82rem; line-height: 1.45; padding: .5rem .7rem; border-radius: 8px; opacity: 0; transition: opacity .12s; max-width: 280px; z-index: 1100; }
-    .tip.on { opacity: 1; }
-    .tip b { display: block; font-weight: 600; }
-    .tip .r { display: flex; align-items: center; gap: .4rem; }
-    .tip .r i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
-
-    @media (max-width: 767.98px) {
-      .figs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .figs div:nth-child(3) { padding-left: 0; border-left: 0; }
-      .figs div:nth-child(n+3) { border-top: 1px solid var(--line); }
-      .goal { grid-template-columns: minmax(0, 1fr) auto; gap: .35rem .8rem; }
-      .goal .name { grid-column: 1 / -1; }
-      .goal .track { grid-column: 1; }
-      .goal .val small { display: inline; margin-left: .3rem; }
-      .filters { grid-template-columns: 1fr 1fr; }
-      .heat tbody th { white-space: normal; min-width: 8.5rem; max-width: 9.5rem; line-height: 1.25; font-size: .8rem; }
-      .heat td { min-width: 2.4rem; }
-      .swipe { display: block; }
-      .filters .q { grid-column: 1 / -1; }
-      .tablewrap { max-height: none; border-top: 0; }
-      .loans thead { display: none; }
-      .loans, .loans tbody, .loans tr, .loans td { display: block; width: 100%; }
-      .loans tr { border-top: 1px solid var(--line); padding: .7rem 0; }
-      .loans td { border: 0; padding: .1rem 0; display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: .6rem; text-align: left !important; white-space: normal !important; }
-      .loans td::before { content: attr(data-l); color: var(--muted); font-size: .78rem; }
-      .loans td.proj { font-weight: 500; }
-    }
-    @media (prefers-reduced-motion: reduce) { .seg-fill, .key button { transition: none; } }
-  </style>
+  <link rel="stylesheet" href="css/maldives.css">
 </head>
 <body>
   <header class="site-header">
@@ -197,6 +41,7 @@
 
       <div id="content">
         <div class="figs" id="figs" aria-live="polite"></div>
+        <p class="crosslink">For the grants, see <a href="maldives-grants.html">Who gives Maldives grants, and for what?</a></p>
 
         <!-- Remove "hidden" below once the Dhivehi summary is written. -->
         <section class="dv-box" aria-label="Summary in Dhivehi" hidden>
@@ -289,7 +134,7 @@
             <li><b>Project names can be vague.</b> A goal is only as good as the project name it was read from. Some names describe several projects, or a credit line used for many.</li>
             <li><b>One loan, several goals.</b> A harbour can serve jobs, transport and climate resilience at once. The charts count only the main goal so totals add up.</li>
             <li><b>No loan terms.</b> The register does not give interest rates, grace periods or maturities, so the page does not show how concessional each loan is.</li>
-            <li><b>Loans only, not grants.</b> The register lists borrowing, so grants are not included. Much of the support Maldives receives from UN agencies, Japan, the World Bank and others comes as grants or technical assistance, and none of it appears here.</li>
+            <li><b>Loans only, not grants.</b> The register lists borrowing, so grants are not included. Much of the support Maldives receives from UN agencies, Japan, the World Bank and others comes as grants or technical assistance, and none of it appears here. Grants are mapped on a <a href="maldives-grants.html">companion page</a>.</li>
             <li><b>Only the loan part of mixed financing.</b> Some projects are paid for partly by a loan and partly by a grant, and only the loan appears here. The World Bank's Enhancing Employability and Resilience of Youth project, for example, had US$ 20 million of IDA financing, half as a credit and half as a grant, and the register shows the credit alone. For lenders that mix the two, the totals here are lower than the full value of the projects they support.</li>
             <li><b>Outside the register.</b> Debt guaranteed by the government for state owned enterprises, domestic borrowing and private investment are not included.</li>
           </ul>

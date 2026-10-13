@@ -188,6 +188,13 @@
           <p>Every active external government loan, by lender and Sustainable Development Goal.</p>
           <span class="open">Explore the loans <b>→</b></span>
         </a></li>
+        <li data-f="economy"><a class="tool" href="maldives-grants.html">
+          <div class="tool-top"><span class="kind">SDG financing map</span><span class="fresh"><i></i>Side project</span></div>
+          <div class="viz" id="v-grants" aria-hidden="true"></div>
+          <h2>Who gives Maldives grants, and for what?</h2>
+          <p>Grants from every donor that reports to the OECD, by goal, set against the loans.</p>
+          <span class="open">Explore the grants <b>→</b></span>
+        </a></li>
         <li data-f="economy"><a class="tool" href="https://mvdebtclock.org" target="_blank" rel="noopener">
           <div class="tool-top"><span class="kind">Live clock</span><span class="fresh"><i></i>Separate site</span></div>
           <div class="viz" id="v-debt" aria-hidden="true"></div>
@@ -324,6 +331,14 @@
       $("v-loans").innerHTML = '<div class="lab">' + "Share of committed value, by type of lender</div>" +
         M.categories.filter(function (c) { return by[c.id]; }).map(function (c) { return bar(c.label.replace("Export credit", "Export cr."), by[c.id], tot, cols[c.id], Math.round(by[c.id] / tot * 100) + "%"); }).join("").replace(/bar2/g, "bar2 sm");
     }).catch(function () { $("v-loans").innerHTML = '<div class="lab">Loans by lender and goal</div>'; });
+
+    // Maldives grants: grant share for the main lenders
+    fetch("data/maldives_grants.json").then(function (r) { return r.json(); }).then(function (G) {
+      var S = G.share.map(function (x) { return { n: x.donor.replace("World Bank (IDA)", "IDA").replace("Asian Development Bank", "ADB").replace("United Arab Emirates", "UAE"), g: x.grants / (x.grants + x.loans), t: x.grants + x.loans }; })
+        .sort(function (a, b) { return b.t - a.t; }).slice(0, 4).sort(function (a, b) { return b.g - a.g; });
+      $("v-grants").innerHTML = '<div class="lab">Share given as grants, ' + G.meta.share_from + " to " + G.meta.last_year + "</div>" +
+        S.map(function (x) { return bar(x.n, x.g, 1, "#1F3D73", Math.round(x.g * 100) + "%"); }).join("").replace(/bar2/g, "bar2 sm");
+    }).catch(function () { $("v-grants").innerHTML = '<div class="lab">Grants by donor and goal</div>'; });
 
     // Debt clock: lives on its own site, so no figures are copied here
     $("v-debt").innerHTML = '<div style="display:flex;align-items:center;gap:1rem"><svg viewBox="0 0 48 48" style="width:64px;height:64px;flex:none"><circle cx="24" cy="24" r="20" fill="none" stroke="#1F3D73" stroke-width="3"/><path d="M24 12v13l8 5" fill="none" stroke="#C2410C" stroke-width="3" stroke-linecap="round"/></svg><div class="lab">Debt, interest and revenue, updating by the second on its own site</div></div>';
