@@ -37,6 +37,8 @@ SRC = ROOT / "data" / "raw" / "active_external_loans_ministry_of_finance.xlsx"
 LOOKUPS = ROOT / "data" / "lookups"
 PROC = ROOT / "data" / "processed"
 OUT_JSON = ROOT / "data" / "maldives_loans.json"
+# Chinese loans the government guaranteed, which sit outside the register (AidData GCDF 3.0)
+CHINA = ROOT / "data" / "raw" / "aiddata_gcdf3_maldives.csv"
 AS_OF = "2026-06-30"
 HEADER_ROW = 3
 
@@ -289,6 +291,18 @@ def write_csv(path: Path, rows: list[dict], cols: list[str]) -> None:
         w.writerows(rows)
 
 
+def guaranteed_china() -> list[dict]:
+    """Chinese loans that AidData records as guaranteed by the government, outside the register."""
+    if not CHINA.exists():
+        return []
+    import pandas as pd
+    c = pd.read_csv(CHINA, dtype=str)
+    c = c[(c["Recommended For Aggregates"] == "Yes") & (c["Level of Public Liability"] == "Central government-guaranteed debt")]
+    c["usd"] = pd.to_numeric(c["Amount (Nominal USD)"], errors="coerce")
+    return [{"year": int(r["Commitment Year"]), "borrower": r["Direct Receiving Agencies"], "lender": r["Funding Agencies"],
+             "title": r["Title"], "usd": round(r["usd"])} for _, r in c.sort_values("usd", ascending=False).iterrows()]
+
+
 def main() -> None:
     loans = read_register()
 
@@ -336,7 +350,9 @@ def main() -> None:
         "tag_source": l["tag_source"], "implementation_status": l["status"],
     } for l in loans], dl_cols)
 
+    guaranteed = guaranteed_china()
     out = {
+        "guaranteed_china": guaranteed,
         "meta": {
             "title": "Who lends to Maldives, and for what?",
             "source": "Ministry of Finance, Maldives. Active External Borrowings",

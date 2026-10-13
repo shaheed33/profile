@@ -166,6 +166,7 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2003,Canada,Bilateral,15110,Public sector policy and administrative management,SDG 16,,58567.0,15713.0,OECD CRS
 2003,Canada,Bilateral,15150,Democratic participation and civil society,SDG 16,,107135.0,133562.0,OECD CRS
 2003,Canada,Bilateral,43081,Multisector education/training,SDG 4,,71358.0,0.0,OECD CRS
+2003,China,Bilateral,AidData 600,Action relating to debt,General,,542704.0,0.0,AidData GCDF 3.0
 2003,Denmark,Bilateral,21040,Water transport,SDG 9,,0.0,8211.0,OECD CRS
 2003,Denmark,Bilateral,31320,Fishery development,SDG 14,,3383207.0,50026.0,OECD CRS
 2003,Finland,Bilateral,14010,Water sector policy and administrative management,SDG 6,,34022.0,0.0,OECD CRS
@@ -229,7 +230,7 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2004,Australia,Bilateral,99810,Sectors not specified,Unclassified,,0.0,1861.0,OECD CRS
 2004,Canada,Bilateral,15110,Public sector policy and administrative management,SDG 16,,0.0,46115.0,OECD CRS
 2004,Canada,Bilateral,15150,Democratic participation and civil society,SDG 16,,118361.0,108370.0,OECD CRS
-2004,China,Bilateral,AidData 720,Emergency response,Humanitarian,,250000.0,0.0,AidData GCDF 2.0
+2004,China,Bilateral,AidData 720,Emergency response,Humanitarian,,250000.0,0.0,AidData GCDF 3.0
 2004,Denmark,Bilateral,21040,Water transport,SDG 9,,649676.0,1484401.0,OECD CRS
 2004,Denmark,Bilateral,23210,"Energy generation, renewable sources - multiple technologies",SDG 7,,0.0,5177.0,OECD CRS
 2004,Denmark,Bilateral,31320,Fishery development,SDG 14,,0.0,39582.0,OECD CRS
@@ -302,11 +303,11 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2005,Belgium,Bilateral,73010,Immediate post-emergency reconstruction and rehabilitation,SDG 11,SDG 13,783174.0,410142.0,OECD CRS
 2005,Canada,Bilateral,15150,Democratic participation and civil society,SDG 16,,70149.0,145251.0,OECD CRS
 2005,Canada,Bilateral,72010,Material relief assistance and services,Humanitarian,,18982.0,18982.0,OECD CRS
-2005,China,Bilateral,AidData 120,Health,SDG 3,,561808.0,0.0,AidData GCDF 2.0
-2005,China,Bilateral,AidData 150,Government and civil society,SDG 16,,3234205.0,0.0,AidData GCDF 2.0
-2005,China,Bilateral,AidData 310,"Agriculture, forestry, fishing",SDG 2,,1375000.0,0.0,AidData GCDF 2.0
-2005,China,Bilateral,AidData 410,General environmental protection,SDG 13,,109952.0,0.0,AidData GCDF 2.0
-2005,China,Bilateral,AidData 720,Emergency response,Humanitarian,,1015341.0,0.0,AidData GCDF 2.0
+2005,China,Bilateral,AidData 120,Health,SDG 3,,561808.0,0.0,AidData GCDF 3.0
+2005,China,Bilateral,AidData 150,Government and civil society,SDG 16,,3234205.0,0.0,AidData GCDF 3.0
+2005,China,Bilateral,AidData 310,"Agriculture, forestry, fishing",SDG 2,,1375000.0,0.0,AidData GCDF 3.0
+2005,China,Bilateral,AidData 410,General environmental protection,SDG 13,,109952.0,0.0,AidData GCDF 3.0
+2005,China,Bilateral,AidData 720,Emergency response,Humanitarian,,1015341.0,0.0,AidData GCDF 3.0
 2005,Denmark,Bilateral,31320,Fishery development,SDG 14,,0.0,3336.0,OECD CRS
 2005,EU institutions,Multilateral,73010,Immediate post-emergency reconstruction and rehabilitation,SDG 11,SDG 13,19885657.0,1500124.0,OECD CRS
 2005,Finland,Bilateral,15150,Democratic participation and civil society,SDG 16,,12006.0,0.0,OECD CRS
@@ -390,7 +391,7 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2006,Canada,Bilateral,43081,Multisector education/training,SDG 4,,114438.0,0.0,OECD CRS
 2006,Canada,Bilateral,72010,Material relief assistance and services,Humanitarian,,70528.0,5290.0,OECD CRS
 2006,Canada,Bilateral,74020,Multi-hazard response preparedness,SDG 13,SDG 11,1057921.0,1057921.0,OECD CRS
-2006,China,Bilateral,AidData 110,Education,SDG 4,,201523.0,0.0,AidData GCDF 2.0
+2006,China,Bilateral,AidData 110,Education,SDG 4,,201523.0,0.0,AidData GCDF 3.0
 2006,EU institutions,Multilateral,72010,Material relief assistance and services,Humanitarian,,0.0,907439.0,OECD CRS
 2006,EU institutions,Multilateral,72040,Emergency food assistance,Humanitarian,,0.0,160136.0,OECD CRS
 2006,EU institutions,Multilateral,73010,Immediate post-emergency reconstruction and rehabilitation,SDG 11,SDG 13,0.0,8723484.0,OECD CRS
@@ -474,7 +475,7 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2007,Canada,Bilateral,14050,Waste management/disposal,SDG 11,SDG 12,0.0,2343852.0,OECD CRS
 2007,Canada,Bilateral,43081,Multisector education/training,SDG 4,,135536.0,0.0,OECD CRS
 2007,Canada,Bilateral,72010,Material relief assistance and services,Humanitarian,,74467.0,81914.0,OECD CRS
-2007,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,4812500.0,0.0,AidData GCDF 2.0
+2007,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,4812500.0,0.0,AidData GCDF 3.0
 2007,Denmark,Bilateral,23330,Oil-fired electric power plants,SDG 7,,330724.0,155257.0,OECD CRS
 2007,EU institutions,Multilateral,72040,Emergency food assistance,Humanitarian,,0.0,25995.0,OECD CRS
 2007,EU institutions,Multilateral,73010,Immediate post-emergency reconstruction and rehabilitation,SDG 11,SDG 13,0.0,7307868.0,OECD CRS
@@ -554,7 +555,7 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2008,Australia,Bilateral,73010,Immediate post-emergency reconstruction and rehabilitation,SDG 11,SDG 13,824470.0,823535.0,OECD CRS
 2008,Canada,Bilateral,14050,Waste management/disposal,SDG 11,SDG 12,0.0,457547.0,OECD CRS
 2008,Canada,Bilateral,72010,Material relief assistance and services,Humanitarian,,74398.0,104157.0,OECD CRS
-2008,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,5775149.0,0.0,AidData GCDF 2.0
+2008,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,5775149.0,0.0,AidData GCDF 3.0
 2008,EU institutions,Multilateral,15130,Legal and judicial development,SDG 16,,0.0,99873.0,OECD CRS
 2008,EU institutions,Multilateral,15151,Elections,SDG 16,,0.0,454272.0,OECD CRS
 2008,EU institutions,Multilateral,43010,Multisector aid,Multisector,,0.0,37950.0,OECD CRS
@@ -749,7 +750,7 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2010,Australia,Bilateral,73010,Immediate post-emergency reconstruction and rehabilitation,SDG 11,SDG 13,1.0,420240.0,OECD CRS
 2010,Canada,Bilateral,15110,Public sector policy and administrative management,SDG 16,,2427.0,16104.0,OECD CRS
 2010,Canada,Bilateral,72050,Relief co-ordination and support services,Humanitarian,,77655.0,69870.0,OECD CRS
-2010,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,7386517.0,0.0,AidData GCDF 2.0
+2010,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,7386517.0,0.0,AidData GCDF 3.0
 2010,Denmark,Bilateral,23330,Oil-fired electric power plants,SDG 7,,0.0,10510799.0,OECD CRS
 2010,Denmark,Bilateral,41010,Environmental policy and administrative management,SDG 13,,889395.0,889395.0,OECD CRS
 2010,EU institutions,Multilateral,16063,Narcotics control,SDG 3,,0.0,1033113.0,OECD CRS
@@ -1137,7 +1138,7 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2013,Australia,Bilateral,43010,Multisector aid,Multisector,,7732.0,7732.0,OECD CRS
 2013,Australia,Bilateral,43081,Multisector education/training,SDG 4,,5416638.0,5416638.0,OECD CRS
 2013,Canada,Bilateral,15110,Public sector policy and administrative management,SDG 16,,6204.0,15793.0,OECD CRS
-2013,China,Bilateral,AidData 230,Energy,SDG 7,,3903273.0,0.0,AidData GCDF 2.0
+2013,China,Bilateral,AidData 230,Energy,SDG 7,,3903273.0,0.0,AidData GCDF 3.0
 2013,Climate Investment Funds,Multilateral,23110,Energy policy and administrative management,SDG 7,,0.0,124641.0,OECD CRS
 2013,EU institutions,Multilateral,15151,Elections,SDG 16,,74349.0,0.0,OECD CRS
 2013,EU institutions,Multilateral,41010,Environmental policy and administrative management,SDG 13,,5310674.0,165016.0,OECD CRS
@@ -1259,11 +1260,11 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2014,Austria,Bilateral,33210,Tourism policy and administrative management,SDG 8,,0.0,17120.0,OECD CRS
 2014,Canada,Bilateral,15110,Public sector policy and administrative management,SDG 16,,0.0,5784.0,OECD CRS
 2014,Canada,Bilateral,43010,Multisector aid,Multisector,,125745.0,54884.0,OECD CRS
-2014,China,Bilateral,AidData 140,Water supply and sanitation,SDG 6,,32535.0,0.0,AidData GCDF 2.0
-2014,China,Bilateral,AidData 150,Government and civil society,SDG 16,,324596.0,0.0,AidData GCDF 2.0
-2014,China,Bilateral,AidData 210,Transport and storage,SDG 9,,27590650.0,0.0,AidData GCDF 2.0
-2014,China,Bilateral,AidData 310,"Agriculture, forestry, fishing",SDG 2,,162298.0,0.0,AidData GCDF 2.0
-2014,China,Bilateral,AidData 720,Emergency response,Humanitarian,,500000.0,0.0,AidData GCDF 2.0
+2014,China,Bilateral,AidData 140,Water supply and sanitation,SDG 6,,32535.0,0.0,AidData GCDF 3.0
+2014,China,Bilateral,AidData 150,Government and civil society,SDG 16,,324596.0,0.0,AidData GCDF 3.0
+2014,China,Bilateral,AidData 210,Transport and storage,SDG 9,,27590650.0,0.0,AidData GCDF 3.0
+2014,China,Bilateral,AidData 310,"Agriculture, forestry, fishing",SDG 2,,162298.0,0.0,AidData GCDF 3.0
+2014,China,Bilateral,AidData 720,Emergency response,Humanitarian,,500000.0,0.0,AidData GCDF 3.0
 2014,Climate Investment Funds,Multilateral,23110,Energy policy and administrative management,SDG 7,,0.0,242308.0,OECD CRS
 2014,Climate Investment Funds,Multilateral,23230,Solar energy for centralised grids,SDG 7,,25784000.0,0.0,OECD CRS
 2014,Climate Investment Funds,Multilateral,23310,"Energy generation, non-renewable sources, unspecified",SDG 7,,0.0,242308.0,OECD CRS
@@ -1392,9 +1393,8 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2015,Austria,Bilateral,23230,Solar energy for centralised grids,SDG 7,,0.0,44726.0,OECD CRS
 2015,Austria,Bilateral,33210,Tourism policy and administrative management,SDG 8,,0.0,17760.0,OECD CRS
 2015,Canada,Bilateral,43010,Multisector aid,Multisector,,56856.0,109630.0,OECD CRS
-2015,China,Bilateral,AidData 120,Health,SDG 3,,373234.0,0.0,AidData GCDF 2.0
-2015,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,1140000.0,0.0,AidData GCDF 2.0
-2015,China,Bilateral,AidData 210,Transport and storage,SDG 9,,126000000.0,0.0,AidData GCDF 2.0
+2015,China,Bilateral,AidData 120,Health,SDG 3,,373234.0,0.0,AidData GCDF 3.0
+2015,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,1140000.0,0.0,AidData GCDF 3.0
 2015,Climate Investment Funds,Multilateral,23110,Energy policy and administrative management,SDG 7,,0.0,41800.0,OECD CRS
 2015,Climate Investment Funds,Multilateral,23310,"Energy generation, non-renewable sources, unspecified",SDG 7,,0.0,41800.0,OECD CRS
 2015,Denmark,Bilateral,99810,Sectors not specified,Unclassified,,0.0,23493.0,OECD CRS
@@ -1543,9 +1543,10 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2016,Austria,Bilateral,23230,Solar energy for centralised grids,SDG 7,,0.0,113600.0,OECD CRS
 2016,Austria,Bilateral,33210,Tourism policy and administrative management,SDG 8,,0.0,14744.0,OECD CRS
 2016,Canada,Bilateral,43010,Multisector aid,Multisector,,81002.0,76566.0,OECD CRS
-2016,China,Bilateral,AidData 110,Education,SDG 4,,8100.0,0.0,AidData GCDF 2.0
-2016,China,Bilateral,AidData 120,Health,SDG 3,,80000.0,0.0,AidData GCDF 2.0
-2016,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,456016.0,0.0,AidData GCDF 2.0
+2016,China,Bilateral,AidData 110,Education,SDG 4,,8100.0,0.0,AidData GCDF 3.0
+2016,China,Bilateral,AidData 120,Health,SDG 3,,80000.0,0.0,AidData GCDF 3.0
+2016,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,456016.0,0.0,AidData GCDF 3.0
+2016,China,Bilateral,AidData 210,Transport and storage,SDG 9,,109028245.0,0.0,AidData GCDF 3.0
 2016,EU institutions,Multilateral,41010,Environmental policy and administrative management,SDG 13,,0.0,1064359.0,OECD CRS
 2016,France,Bilateral,11420,Higher education,SDG 4,,91028.0,91028.0,OECD CRS
 2016,Germany,Bilateral,11420,Higher education,SDG 4,,19471.0,19471.0,OECD CRS
@@ -1667,8 +1668,8 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2017,Austria,Bilateral,23230,Solar energy for centralised grids,SDG 7,,0.0,30503.0,OECD CRS
 2017,Austria,Bilateral,33210,Tourism policy and administrative management,SDG 8,,0.0,15030.0,OECD CRS
 2017,Canada,Bilateral,43010,Multisector aid,Multisector,,7259.0,12393.0,OECD CRS
-2017,China,Bilateral,AidData 120,Health,SDG 3,,227218.0,0.0,AidData GCDF 2.0
-2017,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,22700.0,0.0,AidData GCDF 2.0
+2017,China,Bilateral,AidData 120,Health,SDG 3,,227218.0,0.0,AidData GCDF 3.0
+2017,China,Bilateral,AidData 160,Other social infrastructure and services,SDG 11,,22700.0,0.0,AidData GCDF 3.0
 2017,Climate Investment Funds,Multilateral,23230,Solar energy for centralised grids,SDG 7,,0.0,1138183.0,OECD CRS
 2017,EU institutions,Multilateral,15112,Decentralisation and support to subnational government,SDG 16,,0.0,251843.0,OECD CRS
 2017,EU institutions,Multilateral,15151,Elections,SDG 16,,0.0,74118.0,OECD CRS
@@ -1803,6 +1804,7 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2018,Austria,Bilateral,23230,Solar energy for centralised grids,SDG 7,,0.0,27102.0,OECD CRS
 2018,Austria,Bilateral,33210,Tourism policy and administrative management,SDG 8,,59589.0,24926.0,OECD CRS
 2018,Canada,Bilateral,43010,Multisector aid,Multisector,,65408.0,0.0,OECD CRS
+2018,China,Bilateral,AidData 120,Health,SDG 3,,716724.0,0.0,AidData GCDF 3.0
 2018,Climate Investment Funds,Multilateral,23110,Energy policy and administrative management,SDG 7,,0.0,7000157.0,OECD CRS
 2018,Climate Investment Funds,Multilateral,23210,"Energy generation, renewable sources - multiple technologies",SDG 7,,0.0,1234634.0,OECD CRS
 2018,EU institutions,Multilateral,11420,Higher education,SDG 4,,0.0,425233.0,OECD CRS
@@ -2108,6 +2110,7 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2020,Canada,Bilateral,11110,Education policy and administrative management,SDG 4,,7598.0,1566.0,OECD CRS
 2020,Canada,Bilateral,12261,Health education,SDG 3,,20280.0,18252.0,OECD CRS
 2020,Canada,Bilateral,43010,Multisector aid,Multisector,,154339.0,131091.0,OECD CRS
+2020,China,Bilateral,AidData 120,Health,SDG 3,,391500.0,0.0,AidData GCDF 3.0
 2020,Climate Investment Funds,Multilateral,23210,"Energy generation, renewable sources - multiple technologies",SDG 7,,0.0,14591214.0,OECD CRS
 2020,EU institutions,Multilateral,15130,Legal and judicial development,SDG 16,,0.0,13675.0,OECD CRS
 2020,EU institutions,Multilateral,15151,Elections,SDG 16,,0.0,141721.0,OECD CRS
@@ -2293,6 +2296,8 @@ year,donor,donor_group,purpose_code,purpose,main_goal,second_goal,commitments_us
 2021,Canada,Bilateral,12261,Health education,SDG 3,,0.0,691.0,OECD CRS
 2021,Canada,Bilateral,12264,COVID-19 control,SDG 3,,1076984.0,1076984.0,OECD CRS
 2021,Canada,Bilateral,43010,Multisector aid,Multisector,,121659.0,116728.0,OECD CRS
+2021,China,Bilateral,AidData 120,Health,SDG 3,,3975875.0,0.0,AidData GCDF 3.0
+2021,China,Bilateral,AidData 320,"Industry, mining, construction",SDG 9,,1302083.0,0.0,AidData GCDF 3.0
 2021,Climate Investment Funds,Multilateral,23210,"Energy generation, renewable sources - multiple technologies",SDG 7,,0.0,441754.0,OECD CRS
 2021,Climate Investment Funds,Multilateral,23230,Solar energy for centralised grids,SDG 7,,0.0,196186.0,OECD CRS
 2021,EU institutions,Multilateral,15112,Decentralisation and support to subnational government,SDG 16,,0.0,53158.0,OECD CRS

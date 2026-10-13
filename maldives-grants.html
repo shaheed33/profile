@@ -120,7 +120,7 @@
         </details>
         <details>
           <summary>China's grants</summary>
-          <p>China does not report to the OECD. Its grants come from AidData's Global Chinese Development Finance Dataset, version 2.0, which records Chinese official finance from 2000 to 2017 using official and media sources. Only projects AidData recommends for totals are used, at their value when committed. AidData records commitments only, so the table shows no disbursements for China. Its sector groups are matched to goals in the same way as the OECD codes, in an editable lookup file.</p>
+          <p>China does not report to the OECD. Its grants come from AidData's Global Chinese Development Finance Dataset, version 3.0, which records Chinese official finance from 2000 to 2021 using official and media sources. Only projects AidData recommends for totals are used, at their value when committed. AidData records commitments only, so the table shows no disbursements for China. Its sector groups are matched to goals in the same way as the OECD codes, in an editable lookup file.</p>
         </details>
         <details>
           <summary>What counts as a grant</summary>
@@ -144,7 +144,7 @@
         <details>
           <summary>What this does not show</summary>
           <ul>
-            <li><b>Donors that do not report to the OECD.</b> China's grants are added from AidData up to 2017. India and some others are not included. See how complete this is, above.</li>
+            <li><b>Donors that do not report to the OECD.</b> China's grants are added from AidData up to 2021. India and some others are not included. See how complete this is, above.</li>
             <li><b>Commitments, not money spent.</b> A commitment can be paid out over several years, or not in full.</li>
             <li><b>Not only to government.</b> The figures include grants channelled through NGOs, UN agencies and others, not only those paid to the government.</li>
             <li><b>Sectors, not results.</b> A purpose code describes what a grant was for, not what it achieved.</li>
@@ -426,10 +426,10 @@
       const ch = M.china, oecd = total - ch.committed;
       $("cover").innerHTML = [
         ["Included", "Grants from " + (donorsAll.size - 1) + " donors that report to the OECD, " + M.first_year + " to " + M.last_year + ", worth " + money(oecd) + ". This covers Western and other OECD donors, the multilateral banks and funds, UN agencies, and the main Gulf donors."],
-        ["Included", "China's grants from AidData, " + ch.first_year + " to " + ch.last_year + ", worth " + money(ch.committed) + " across " + ch.grants + " grants, the largest being " + money(126e6) + " for the China-Maldives Friendship Bridge. A further " + ch.unpriced + " grants are recorded without an amount."],
+        ["Included", "China's grants from AidData, " + ch.first_year + " to " + ch.last_year + ", worth " + money(ch.committed) + " across " + ch.grants + " grants, the largest being " + money(ch.largest.usd) + " in " + ch.largest.year + " for the China-Maldives Friendship Bridge. A further " + ch.unpriced + " grants are recorded without an amount."],
         ["Partly included", "Activities from 2025 onwards appear only in the IATI list of current activities, without totals, because donors report to the OECD with a delay."],
         ["Not included", "India's grants, because they are not reported to the OECD or to a dataset that covers them all. Known examples include a US$ 100 million grant towards the Greater Malé Connectivity Project, agreed in 2020 alongside a US$ 400 million credit line, and community development projects reported at about US$ 23 million in 2024."],
-        ["Not included", "China's grants after 2017, and grants from other donors that do not report to the OECD, such as some Gulf and South Asian governments and private foundations. Some support given in kind, such as equipment or vaccines, may also be missing."],
+        ["Not included", "China's grants after " + ch.last_year + ", and grants from other donors that do not report to the OECD, such as some Gulf and South Asian governments and private foundations. Some support given in kind, such as equipment or vaccines, may also be missing."],
       ].map(([k, t]) => '<div class="cover-row"><span class="chip">' + k + "</span><p>" + esc(t) + "</p></div>").join("");
 
       // ---------- methodology details from the data ----------
