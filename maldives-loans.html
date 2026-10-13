@@ -86,6 +86,16 @@
           <div class="tablewrap"><table class="loans" id="loans"></table></div>
           <button type="button" class="more" id="more" hidden></button>
         </section>
+        <section class="section" id="guarantees">
+          <h2>Loans the government guarantees</h2>
+          <p class="explain">State-owned companies, and one private company, also borrow with a guarantee from the government, which promises to repay if the borrower cannot. These loans are listed in a separate Ministry of Finance register of active sovereign guarantees, so they are shown here on their own and not added to the totals above. Amounts are the sums guaranteed when each loan was signed, converted at 30 June 2026 rates, not what is still owed.</p>
+          <p class="finding" id="find-g"></p>
+          <div class="key" id="key-g" role="group" aria-label="Type of lender"></div>
+          <div class="goals" id="chart-g"></div>
+          <p class="note" id="swap-note" style="margin-top:.9rem"></p>
+          <div class="tablewrap"><table class="loans" id="gtable"></table></div>
+          <button type="button" class="more" id="more-g" hidden></button>
+        </section>
       </div>
 
       <section class="section" id="coverage">
@@ -122,6 +132,10 @@
           <p id="m-conf"></p>
         </details>
         <details>
+          <summary>Guaranteed loans</summary>
+          <p>The section on guaranteed loans comes from the Ministry of Finance register of active sovereign guarantees at 30 June 2026, which lists each guarantee to state-owned companies and private entities with its date, lender, borrower, purpose, currency and amount. Amounts are the sums guaranteed when signed, not what is still owed. Rufiyaa amounts are converted at the Maldives Monetary Authority reference rate of 15.42 per US dollar, and other currencies at the rates above. Lenders are grouped through an editable lookup, which adds banks operating in Maldives as their own group. Goals are assigned from the purpose using the same keyword rules as the main register, and working capital, overdraft and trade finance lines are labelled company finance rather than given a goal.</p>
+        </details>
+        <details>
           <summary>What this does not show</summary>
           <ul>
             <li><b>Commitments, not money spent or owed.</b> The amounts are what was agreed when each loan was signed. They are not disbursements, and not the debt outstanding today, which is lower for older loans that are partly repaid.</li>
@@ -131,7 +145,7 @@
             <li><b>No loan terms.</b> The register does not give interest rates, grace periods or maturities, so the page does not show how concessional each loan is.</li>
             <li><b>Loans only, not grants.</b> The register lists borrowing, so grants are not included. Much of the support Maldives receives from UN agencies, Japan, the World Bank and others comes as grants or technical assistance, and none of it appears here. Grants are mapped on a <a href="maldives-grants.html">companion page</a>.</li>
             <li><b>Only the loan part of mixed financing.</b> Some projects are paid for partly by a loan and partly by a grant, and only the loan appears here. The World Bank's Enhancing Employability and Resilience of Youth project, for example, had US$ 20 million of IDA financing, half as a credit and half as a grant, and the register shows the credit alone. For lenders that mix the two, the totals here are lower than the full value of the projects they support.</li>
-            <li><b>Outside the register.</b> Debt guaranteed by the government for state owned enterprises, domestic borrowing and private investment are not included.</li>
+            <li><b>Outside the register.</b> Debt guaranteed by the government for state owned enterprises is shown in its own section and not added to the totals. Domestic borrowing by the government and private investment are not included.</li>
           </ul>
         </details>
         <details>
@@ -402,19 +416,53 @@
       }
       drawD();
 
+      // ---------- guaranteed loans ----------
+      (function () {
+        const GU = D.guarantees; if (!GU || !GU.rows) { $("guarantees").hidden = true; return; }
+        const gcat = Object.fromEntries(GU.categories.map((c) => [c.id, c.label]));
+        const gcol = (c) => c === "domestic_bank" ? "var(--muted)" : col(c);
+        const rows = GU.rows.filter((r) => !r.swap), swaps = GU.rows.filter((r) => r.swap), gt = sum(rows, (r) => r.usd);
+        const byB = {};
+        rows.forEach((r) => { const b = byB[r.borrower] ||= { name: r.borrower, usd: 0, n: 0, cat: {}, owner: r.owner }; b.usd += r.usd; b.n++; b.cat[r.category] = (b.cat[r.category] || 0) + r.usd; });
+        const B = Object.values(byB).sort((a, b) => b.usd - a.usd), mx = B[0].usd;
+        const cats = GU.categories.filter((c) => rows.some((r) => r.category === c.id));
+        $("key-g").innerHTML = cats.map((c) => '<span class="pair-key" style="margin:0"><span><i style="background:' + gcol(c.id) + '"></i>' + esc(c.label) + "</span></span>").join("");
+        $("chart-g").innerHTML = B.map((b, i) => '<button type="button" class="goal" data-i="' + i + '" data-tip><span class="name"><span>' + esc(b.name) + (b.owner === "private" ? ' <small class="text-body-secondary">(private)</small>' : "") + "</span></span>" +
+          '<span class="track">' + cats.filter((c) => b.cat[c.id]).map((c) => '<span style="flex:0 0 calc(' + (b.cat[c.id] / mx * 100).toFixed(3) + '% - 2px);background:' + gcol(c.id) + '"></span>').join("") + "</span>" +
+          '<span class="val">' + mill(b.usd) + "m<small>" + b.n + (b.n === 1 ? " loan" : " loans") + "</small></span></button>").join("");
+        $("chart-g").querySelectorAll(".goal").forEach((el) => {
+          const b = B[+el.dataset.i];
+          el.addEventListener("mousemove", (e) => showTip(e, "<b>" + esc(b.name) + "</b>" + money(b.usd) + " guaranteed, " + pct(b.usd / gt) + " of the total<br>" + cats.filter((c) => b.cat[c.id]).map((c) => '<span class="r"><i style="background:' + gcol(c.id) + '"></i>' + esc(c.label) + " " + money(b.cat[c.id]) + "</span>").join("")));
+          el.addEventListener("mouseleave", hideTip);
+        });
+        const top = B[0], companies = B.length;
+        $("find-g").textContent = "The government guarantees " + rows.length + " loans to " + companies + " companies, worth " + money(gt) + " when signed. The largest borrower is the " + top.name + ", with " + money(top.usd) + " across " + top.n + " loans.";
+        if (swaps.length) $("swap-note").textContent = "Also guaranteed are " + swaps.length + " currency swaps between the Reserve Bank of India and the Maldives Monetary Authority, worth about " + money(sum(swaps, (r) => r.usd)) + " together. They are arrangements between central banks, not loans to companies, so they are listed below but left out of the figures above.";
+        const goalLabel = (g) => g === "Swap" ? "Currency swap" : g === "Company finance" ? "Company finance" : g === "General" ? "General support" : g === "Unclassified" ? "Unclassified" : g;
+        const GP = matchMedia("(max-width: 767.98px)").matches ? 10 : 40; let gshown = GP;
+        const all = GU.rows.slice().sort((a, b) => b.date < a.date ? -1 : 1);
+        function drawG() {
+          $("gtable").innerHTML = "<thead><tr><th>Signed</th><th>Lender</th><th>Borrower</th><th>Purpose</th><th class=\"n\">Guaranteed</th><th class=\"n\">US$ million</th><th>Goal</th></tr></thead><tbody>" +
+            all.slice(0, gshown).map((r) => "<tr>" +
+              '<td data-l="Signed">' + r.year + "</td>" +
+              '<td data-l="Lender" class="who"><span class="cat" title="' + esc(gcat[r.category]) + '"><i style="background:' + (r.swap ? "var(--line)" : gcol(r.category)) + '"></i>' + esc(r.creditor) + '</span><small class="st">' + esc(gcat[r.category]) + "</small></td>" +
+              '<td data-l="Borrower">' + esc(r.borrower) + "</td>" +
+              '<td data-l="Purpose" class="proj"><span>' + esc(r.purpose) + (r.status && r.status !== "NA" ? '<small class="st">' + esc(r.status) + "</small>" : "") + "</span></td>" +
+              '<td data-l="Guaranteed" class="n">' + esc(r.currency) + " " + Math.round(r.amount).toLocaleString("en-GB") + "</td>" +
+              '<td data-l="US$ million" class="n">' + mill(r.usd) + "</td>" +
+              '<td data-l="Goal"><span class="sdgcell">' + esc(goalLabel(r.goal)) + "</span></td></tr>").join("") + "</tbody>";
+          const left = all.length - gshown; $("more-g").hidden = left <= 0; $("more-g").textContent = "Show " + Math.min(GP, left) + " more";
+        }
+        $("more-g").addEventListener("click", () => { gshown += GP; drawG(); });
+        drawG();
+      })();
+
       // ---------- coverage ----------
-      function guaranteedLine() {
-        const G = D.guaranteed_china || [];
-        if (!G.length) return "";
-        const yrs = G.map((g) => g.year), hdc = G.filter((g) => /HDC/.test(g.borrower));
-        return "AidData records " + G.length + " loans from Chinese lenders between " + Math.min(...yrs) + " and " + Math.max(...yrs) + " that the government guaranteed, worth " + money(sum(G, (g) => g.usd)) +
-          (hdc.length ? ", of which " + money(sum(hdc, (g) => g.usd)) + " went to the Housing Development Corporation for Hulhumalé development" : "") + ".";
-      }
       $("cover").innerHTML = [
         ["Included", "All " + L.length + " active external loans of the central government in the Ministry of Finance register at " + longDate(M.as_of) + ", worth " + money(total) + " when converted at that date."],
-        ["Not included", "Loans guaranteed by the government for state owned enterprises and some private companies. Guaranteed debt was about MVR 21.1 billion, or 17.6 per cent of GDP, in mid 2025, according to the Ministry of Finance debt bulletin. " + guaranteedLine() + ""],
+        ["Shown separately", "Loans guaranteed by the government for state owned companies and one private company, listed in the section above from the Ministry of Finance register of active sovereign guarantees. The debt bulletin put guaranteed debt still owed at about MVR 21.1 billion, or 17.6 per cent of GDP, in mid 2025."],
         ["Not included", "Loans that have already been repaid, so the picture of earlier decades is partial."],
-        ["Not included", "Domestic borrowing, and arrangements made through the central bank, such as currency swaps."],
+        ["Not included", "Domestic borrowing by the government itself, and arrangements made through the central bank. Currency swaps the government guarantees are noted in the section above."],
         ["Elsewhere", "Grants, which are not debt, are mapped on the companion page."],
       ].map(([k, t]) => '<div class="cover-row"><span class="chip">' + k + "</span><p>" + esc(t) + (k === "Elsewhere" ? ' <a href="maldives-grants.html">Who gives Maldives grants, and for what?</a>' : "") + "</p></div>").join("");
 
