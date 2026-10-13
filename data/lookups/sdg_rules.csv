@@ -1,0 +1,39 @@
+tier,pattern,primary_sdg,secondary_sdg,confidence,rule
+# Every rule is tried against the Project column (case-insensitive regular expression). Lines starting with # are ignored.,,,,,
+# The matching rule with the lowest tier wins. Within a tier the keyword that appears first in the project name wins.,,,,,
+# If rules in the same tier point to different goals the tag is marked medium and the other goal becomes the secondary.,,,,,
+# Goals are written SDG 1 to SDG 17 or General (budget support and balance of payments).,,,,,
+1,budget(ary)? support|expenditure support|emergency support loan|balance of payments?|\bBoP\b|development policy|\bDPO\b|\bDPF\b|policy.based|programme loan|program loan,General,,high,budget or balance of payments support
+1,fiscal|macro.?economic|stabili[sz]ation|liquidity|economic recovery,General,,medium,fiscal or stabilisation wording
+1,refinanc|debt (service|swap|management)|bridging,General,,low,refinancing or debt management
+1,sukuk|bond issu,General,,medium,sukuk or bond issuance
+1,trade financ|murabaha|commodity|petroleum|oil import|fuel import|import of (oil|fuel|petroleum),General,,medium,trade or commodity import finance
+2,water|sewer|sewerage|sanitation|desalin|drainage,SDG 6,,high,water and sanitation
+2,hospital|health|medical|clinic|\bIGMH\b|nursing,SDG 3,,high,health facilities
+3,covid|pandemic|vaccin,SDG 3,,medium,pandemic response
+2,school|education|universit|college|\bTVET\b|vocational|skills|training institute,SDG 4,,high,education
+2,\bpower|electri|energy|solar|renewable|\bgrid\b|generator|generation|\bASPIRE\b|\bPOISED\b|\bARISE\b|\bBESS\b|battery,SDG 7,,high,energy
+2,airport|runway|terminal|aviation|seaplane|velana|aerodrome,SDG 9,,high,airports
+2,\broads?\b|bridge|causeway|highway|street,SDG 9,,high,roads and bridges
+2,harbou?r|\bports?\b|jetty|jetties|wharf|quay|ferry|ferries|transport,SDG 9,,high,harbours ports and transport
+2,telecom|communication|information technology|broadband|submarine cable|\bICT\b|digital|e.?government,SDG 9,,high,telecoms and digital
+2,housing|\bflats\b|apartments|dwelling|residential|urban development|city development,SDG 11,,high,housing and urban development
+2,solid waste|waste management|landfill|incinerat|waste.to.energy,SDG 11,SDG 12,high,solid waste
+2,coastal|shore protection|seawall|sea wall|erosion|revetment|breakwater,SDG 13,,high,coastal protection
+2,climate|adaptation|resilien|flood|disaster|early warning,SDG 13,,high,climate and disaster resilience
+2,fisher|fishing|\bfish\b|tuna|mariculture|cold storage|fish processing,SDG 14,,high,fisheries
+2,agri|farm|livestock|food security,SDG 2,,high,agriculture and food
+2,police|justice|court|prison|correctional,SDG 16,,high,justice and security
+2,social protection|pension|welfare|cash transfer|income support|disabilit,SDG 1,,high,social protection
+2,gender|women,SDG 5,,high,gender
+2,tourism|resort,SDG 8,,medium,tourism
+2,employab,SDG 8,SDG 4,high,employability and skills
+2,connectivity,SDG 9,,medium,connectivity
+3,urban|\bcity\b|township|reclamation|reclaimed|land development|regional development|island development,SDG 11,,medium,urban and land development
+3,tsunami|reconstruction|rehabilitation,SDG 11,SDG 13,medium,post-disaster reconstruction
+3,\bSMEs?\b|small and medium|enterprise|private sector|employment|\bjobs\b|business|competitiveness|micro ?finance|banking,SDG 8,,medium,enterprise finance and jobs
+3,public financ(e|ial) management|\bPFM\b|single window|trade facilitation|\btax\b|revenue|statistic|census|customs,SDG 17,,medium,public finance and statistics
+3,institutional|capacity|governance|technical assistance,SDG 16,,low,institutional strengthening
+3,infrastructure|utilit,SDG 9,,low,general infrastructure wording
+4,line of credit|credit line|dollar credit|\bLoC\b,SDG 9,,low,multi-project credit line
+4,mosque|stadium|sports|cultural|community cent,SDG 11,,low,community facilities

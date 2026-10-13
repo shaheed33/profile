@@ -1,0 +1,5 @@
+field,pattern,kind,note
+# Activities that are not development projects. field is reporting_org or title. pattern is a case-insensitive regular expression. kind is trade_finance or private_investment. Anything unmatched is a development project. Lines starting with # are ignored.,,,
+title,state trading organi[sz]ation,trade_finance,IsDB Group lines for fuel and food imports by the State Trading Organization
+reporting_org,^International Finance Corporation$,private_investment,IFC invests in private companies
+reporting_org,^InvestInternational$,private_investment,Dutch public bank financing private companies

@@ -1,0 +1,85 @@
+donor_code,name_in_crs,donor,group
+# group is bilateral / multilateral / un, or total and private for rows the build leaves out. Lines starting with # are ignored.,,,
+1UN0,United Nations,United Nations,total
+1UN003,Food and Agriculture Organisation [FAO],FAO,un
+1UN004,IFAD,IFAD,un
+1UN006,International Labour Organisation [ILO],ILO,un
+1UN007,Joint Sustainable Development Goals Fund [Joint SDG Fund],Joint SDG Fund,un
+1UN013,UNAIDS,UNAIDS,un
+1UN014,UNDP,UNDP,un
+1UN017,UNFPA,UNFPA,un
+1UN019,UNICEF,UNICEF,un
+1UN025,WHO-Strategic Preparedness and Response Plan [SPRP],WHO COVID-19 response plan,un
+1UN026,World Health Organisation [WHO],WHO,un
+1UN030,UN Development Coordination Office,UN Development Coordination Office,un
+4EU001,EU Institutions,EU institutions,multilateral
+5ASDB0,Asian Development Bank,Asian Development Bank,total
+5ASDB01,Asian Development Bank [AsDB],Asian Development Bank,multilateral
+5IMF0,International Monetary Fund,International Monetary Fund,total
+5IMF02,IMF Concessional Trust Funds,IMF concessional trust funds,multilateral
+5RDB0,Regional Development Banks,Regional Development Banks,total
+5RDB001,Asian Infrastructure Investment Bank [AIIB],AIIB,multilateral
+5RDB009,Islamic Development Bank [IsDB],Islamic Development Bank,multilateral
+5WB0,World Bank,World Bank,total
+5WB002,International Development Association [IDA],World Bank (IDA),multilateral
+5WBG0,World Bank Group,World Bank Group,total
+5WBG002,International Finance Corporation [IFC],International Finance Corporation,multilateral
+9OTH0,Other multilateral organisations,Other multilateral organisations,total
+9OTH001,Adaptation Fund,Adaptation Fund,multilateral
+9OTH006,Climate Investment Funds [CIF],Climate Investment Funds,multilateral
+9OTH011,Global Environment Facility [GEF],Global Environment Facility,multilateral
+9OTH012,Global Fund,Global Fund,multilateral
+9OTH015,Green Climate Fund [GCF],Green Climate Fund,multilateral
+9OTH020,OPEC Fund for International Development [OPEC Fund],OPEC Fund,multilateral
+9PRIV0,Private Donors,Private Donors,total
+9PRIV1601,Gates Foundation,Gates Foundation,private
+9PRIV1611,Oak Foundation,Oak Foundation,private
+9PRIV1618,David and Lucile Packard Foundation,David and Lucile Packard Foundation,private
+9PRIV1629,UBS Optimus Foundation,UBS Optimus Foundation,private
+9PRIV1637,Arcadia,Arcadia,private
+ALLD,Official donors,Official donors,total
+ALLM,Multilaterals organisations,Multilaterals organisations,total
+ARE,United Arab Emirates,United Arab Emirates,bilateral
+AUS,Australia,Australia,bilateral
+AUT,Austria,Austria,bilateral
+BEL,Belgium,Belgium,bilateral
+CAN,Canada,Canada,bilateral
+CHE,Switzerland,Switzerland,bilateral
+DAC,DAC countries,DAC countries,total
+DACEU,DAC EU countries,DAC EU countries,total
+DACEU_EC,DAC EU countries and EU Institutions,DAC EU countries and EU Institutions,total
+DAC_EC,DAC Members,DAC Members,total
+DEU,Germany,Germany,bilateral
+DNK,Denmark,Denmark,bilateral
+ESP,Spain,Spain,bilateral
+EU00,European Union (evolving composition),European Union (evolving composition),total
+FIN,Finland,Finland,bilateral
+FRA,France,France,bilateral
+G7,G7,G7,total
+GBR,United Kingdom,United Kingdom,bilateral
+GRC,Greece,Greece,bilateral
+HUN,Hungary,Hungary,bilateral
+IRL,Ireland,Ireland,bilateral
+ISR,Israel,Israel,bilateral
+ITA,Italy,Italy,bilateral
+JPN,Japan,Japan,bilateral
+KAZ,Kazakhstan,Kazakhstan,bilateral
+KOR,Korea,Korea,bilateral
+KWT,Kuwait,Kuwait,bilateral
+LTU,Lithuania,Lithuania,bilateral
+LUX,Luxembourg,Luxembourg,bilateral
+MLT,Malta,Malta,bilateral
+NLD,Netherlands,Netherlands,bilateral
+NOR,Norway,Norway,bilateral
+NZL,New Zealand,New Zealand,bilateral
+PRT,Portugal,Portugal,bilateral
+QAT,Qatar,Qatar,bilateral
+ROU,Romania,Romania,bilateral
+SAU,Saudi Arabia,Saudi Arabia,bilateral
+SVK,Slovak Republic,Slovak Republic,bilateral
+SVN,Slovenia,Slovenia,bilateral
+SWE,Sweden,Sweden,bilateral
+THA,Thailand,Thailand,bilateral
+TUR,Türkiye,Türkiye,bilateral
+USA,United States,United States,bilateral
+WXDAC,Non-DAC countries,Non-DAC countries,total

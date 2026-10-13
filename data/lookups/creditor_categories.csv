@@ -1,0 +1,46 @@
+pattern,creditor,category,note
+# Rows are tried from top to bottom and the first match wins. pattern is a case-insensitive regular expression matched against the Creditor column of the register.,,,
+# category is one of multilateral / bilateral / export_credit / commercial. Lines starting with # are ignored.,,,
+clean technology fund,Clean Technology Fund,multilateral,Climate Investment Funds resources lent through IDA or ADB
+international development association|\bIDA\b|world bank,World Bank (IDA),multilateral,
+\bIBRD\b|international bank for reconstruction,World Bank (IBRD),multilateral,
+asian infrastructure investment|\bAIIB\b,AIIB,multilateral,
+asian development bank|\bADB\b,Asian Development Bank,multilateral,
+international islamic trade finance|\bITFC\b,ITFC (IsDB Group),multilateral,Trade finance arm of the IsDB Group
+islamic development bank|\bIsDB\b,Islamic Development Bank,multilateral,
+opec fund|\bOFID\b|opec,OPEC Fund,multilateral,
+european investment bank|\bEIB\b,European Investment Bank,multilateral,
+international fund for agricultural|\bIFAD\b,IFAD,multilateral,
+nordic development fund|\bNDF\b,Nordic Development Fund,multilateral,
+arab fund|arab bank for economic,Arab Fund,multilateral,
+international monetary fund|\bIMF\b,IMF,multilateral,
+export.?import bank of india|exim bank of india|india exim|exim india,Exim Bank of India,export_credit,
+export.?import bank of china|exim bank of china|china exim|chexim,Exim Bank of China,export_credit,
+hungar,Hungarian Exim,export_credit,
+ausfuhrk|\bAKA\b,AKA with ABN AMRO and ING,export_credit,German export finance bank lending with two commercial banks. Treated as export credit
+
+korea exim|export.?import bank of korea|kexim,Korea Exim,export_credit,
+export credit|export finance|exim|ECA\b,Other export credit agency,export_credit,Check the creditor name
+saudi fund|saudi development|\bSFD\b,Saudi Fund for Development,bilateral,
+kuwait fund|kuwait,Kuwait Fund,bilateral,
+abu dhabi fund|\bADFD\b,Abu Dhabi Fund for Development,bilateral,
+china development bank,China Development Bank,bilateral,State-owned policy bank. Treated as official bilateral
+state bank of india,State Bank of India,commercial,Listed here so it is not read as the Government of India
+government of india|india,Government of India,bilateral,
+japan bank for international|\bJBIC\b,JBIC,export_credit,
+\bJICA\b|japan,Japan (JICA),bilateral,
+\bEDCF\b|economic development cooperation fund,Korea EDCF,bilateral,
+\bAFD\b|agence fran,France (AFD),bilateral,
+\bKfW\b,Germany (KfW),bilateral,
+agency for international development|\bUSAID\b,USAID,bilateral,
+belgi,Government of Belgium,bilateral,
+danida|danish|denmark,Denmark (Danida),bilateral,
+government of|kingdom of|republic of|ministry of finance,Other government,bilateral,Check the creditor name
+bondholder|bond|sukuk|eurobond,Bondholders and sukuk,commercial,
+private creditor,Private creditor,commercial,Named only as a private creditor in the register
+bank of ceylon,Bank of Ceylon,commercial,
+standard chartered,Standard Chartered,commercial,
+hsbc,HSBC,commercial,
+commerzbank,Commerzbank,commercial,
+credit suisse|\bUBS\b,Credit Suisse / UBS,commercial,
+\bbank\b|\bplc\b|\bltd\b|limited,Other commercial bank,commercial,Check the creditor name

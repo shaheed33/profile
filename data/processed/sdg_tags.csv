@@ -1,0 +1,143 @@
+loan_key,no,loan_date,creditor,project,usd,rule_primary,rule_secondary,rule_used,confidence,manual_primary,manual_secondary,manual_note,final_primary,final_secondary,tag_source
+17c357af12,1,1979-06-04,World Bank (IDA),First Fisheries Project,2481158.54,SDG 14,,fisheries,high,,,,SDG 14,,rule
+697d9b0a19,2,1983-02-11,IFAD,Second Fisheries Project,2329436.26,SDG 14,,fisheries,high,,,,SDG 14,,rule
+fe28ea2786,3,1983-02-18,World Bank (IDA),Second Fisheries Project,6417134.77,SDG 14,,fisheries,high,,,,SDG 14,,rule
+95cea52486,4,1985-07-13,USAID,Balance of Payment/Food Imports,1494462.61,General,,budget or balance of payments support,high,,,,General,,rule
+e7505c6fb5,5,1986-08-25,USAID,Balance of Payment Support,722827.3,General,,budget or balance of payments support,high,,,,General,,rule
+7b20864823,6,1987-08-18,USAID,Balance of Payment Support,497229.72,General,,budget or balance of payments support,high,,,,General,,rule
+d2e26602a9,7,1989-03-23,World Bank (IDA),Education and Training Project,7865285.85,SDG 4,,education,high,,,,SDG 4,,rule
+43d6a8eb78,8,1990-01-25,IFAD,Atolls Credit and Development Banking Project,3068967.55,SDG 8,,enterprise finance and jobs,medium,,,,SDG 8,,rule
+bdf77bf41e,9,1990-07-11,World Bank (IDA),Airport Extension Project,7775582.04,SDG 9,,airports,high,,,,SDG 9,,rule
+98e56aec94,10,1992-04-20,World Bank (IDA),Third Fisheries Project,8885359.66,SDG 14,,fisheries,high,,,,SDG 14,,rule
+f17c70b98a,11,1992-04-24,Nordic Development Fund,Third Fisheries Project,4684851.5,SDG 14,,fisheries,high,,,,SDG 14,,rule
+a33840f0bc,12,1994-05-25,Islamic Development Bank,Vilingili Water Supply Project,1977343.27,SDG 6,,water and sanitation,high,,,,SDG 6,,rule
+e24d68e8b8,13,1995-05-01,World Bank (IDA),Second Education and Training Project,12611730.0,SDG 4,,education,high,,,,SDG 4,,rule
+cd970e3117,14,1995-05-02,Nordic Development Fund,Male' Water and Sewerage Project,2409933.55,SDG 6,,water and sanitation,high,,,,SDG 6,,rule
+19d85b90b4,15,1995-06-05,Islamic Development Bank,Regional Secondary School,2184363.6,SDG 4,,education,high,,,,SDG 4,,rule
+091e1c9942,16,1995-11-29,Islamic Development Bank,Four Regional Hospitals Project,3157971.71,SDG 3,,health facilities,high,,,,SDG 3,,rule
+b1843bc0ed,17,1995-12-14,IFAD,Southern Atolls Development Project,2322598.94,Unclassified,,no keyword matched,none,SDG 2,none,IFAD agricultural development,SDG 2,,manual
+d4060f6617,18,1997-06-15,Islamic Development Bank,Malé Primary School,4055021.16,SDG 4,,education,high,,,,SDG 4,,rule
+b5d3e2a12f,19,1998-03-24,Nordic Development Fund,Third Power Systems Project,5355407.89,SDG 7,,energy,high,,,,SDG 7,,rule
+fec7bfd842,20,1999-08-07,Islamic Development Bank,Construction of Institute of Health Sciences Project,2886080.84,SDG 3,,health facilities,high,,,,SDG 3,,rule
+0d3ff7d420,21,1999-10-24,Kuwait Fund,Maldives Ports Development Project,14501661.33,SDG 9,,harbours ports and transport,high,,,,SDG 9,,rule
+6cbed256cd,22,2000-04-25,World Bank (IDA),Third Education and Training Project,16337895.0,SDG 4,,education,high,,,,SDG 4,,rule
+19015cba9d,23,2000-12-18,Islamic Development Bank,Gan Hithadhoo Link Road Project,4103558.34,SDG 9,,roads and bridges,high,,,,SDG 9,,rule
+342519fc61,24,2000-12-18,Islamic Development Bank,Vilingili Harbor Project,4497647.7,SDG 9,,harbours ports and transport,high,,,,SDG 9,,rule
+f435e35a0d,25,2001-08-02,Government of Belgium,Hulhumalé Reclamation and Social Housing,4100226.6,SDG 11,,housing and urban development,high,,,,SDG 11,,rule
+493203e8be,26,2001-10-31,Islamic Development Bank,Health and Education Project Phase I and II,3067576.6,SDG 3,SDG 4,health facilities; also education,medium,,,,SDG 3,SDG 4,rule
+767ccffafc,27,2002-10-23,Islamic Development Bank,Gan/Hithadhoo Link Road Phase II,2138569.7,SDG 9,,roads and bridges,high,,,,SDG 9,,rule
+653993b8fd,28,2004-07-26,Islamic Development Bank,Atoll Social Infrastructure Development,300565.72,SDG 9,,general infrastructure wording,low,SDG 11,none,Social infrastructure on atolls,SDG 11,,manual
+e21d949b40,29,2004-10-04,World Bank (IDA),Integrated Human Development Project,9309043.82,Unclassified,,no keyword matched,none,SDG 3,SDG 4,Health and education,SDG 3,SDG 4,manual
+eaa147717b,30,2005-03-17,World Bank (IDA),Post Tsunami Recovery and Reconstruction Project,7593721.57,SDG 11,SDG 13,post-disaster reconstruction,medium,,,,SDG 11,SDG 13,rule
+a986b353bd,31,2005-09-14,Islamic Development Bank,The Micro Finance Project to the Bank of Maldives,2672863.24,SDG 8,,enterprise finance and jobs,medium,,,,SDG 8,,rule
+4f011cec60,32,2005-09-25,IFAD,Post Tsunami Agricultural and Fisheries Rehabilitation Programme,1896894.85,SDG 2,SDG 14,agriculture and food; also fisheries,medium,,,,SDG 2,SDG 14,rule
+4f7234247f,33,2005-11-08,Kuwait Fund,Rehabilitation of Tsunami Damaged Utilities,7926738.75,SDG 11,SDG 13,post-disaster reconstruction; also general infrastructure wording,medium,,,,SDG 11,SDG 13,rule
+8853bed947,34,2006-06-28,IFAD,Post Tsunami Agricultural and Fisheries Rehabilitation Programme,1899413.36,SDG 2,SDG 14,agriculture and food; also fisheries,medium,,,,SDG 2,SDG 14,rule
+53a6f4bdab,35,2006-07-05,Japan (JICA),Tsunami Reconstruction Project,16105989.89,SDG 11,SDG 13,post-disaster reconstruction,medium,,,,SDG 11,SDG 13,rule
+07b58424ee,36,2006-10-26,Saudi Fund for Development,Reconstruction and Development of GA. Atoll,12000000.0,SDG 11,SDG 13,post-disaster reconstruction,medium,,,,SDG 11,SDG 13,rule
+81bec5290a,37,2007-08-29,Asian Development Bank,Domestic Maritime Transport Project,4423039.27,SDG 9,,harbours ports and transport,high,,,,SDG 9,,rule
+66670c7905,38,2007-12-09,Islamic Development Bank,Reconstruction of Housing Units for the Tsunami Victims Project,5742092.11,SDG 11,,housing and urban development,high,,,,SDG 11,,rule
+57c46a3d42,39,2008-02-15,Asian Development Bank,Male' Ports Project Phase 1,5408721.06,SDG 9,,harbours ports and transport,high,,,,SDG 9,,rule
+c3685d1215,40,2008-02-18,Islamic Development Bank,Construction of Harbors for Tsunami Victims,5325091.87,SDG 9,SDG 11,harbours ports and transport; also post-disaster reconstruction,high,,,,SDG 9,SDG 11,rule
+451ef7cc6c,41,2008-03-01,Asian Development Bank,Regional Development Project,6583470.21,SDG 11,,urban and land development,medium,,,,SDG 11,,rule
+571590958e,42,2008-03-01,Asian Development Bank,Employment Skills Training Project,4071315.95,SDG 4,SDG 8,education; also enterprise finance and jobs,high,,,,SDG 4,SDG 8,rule
+a95959b554,43,2008-04-01,Asian Development Bank,Multi-Project,1912959.49,Unclassified,,no keyword matched,none,Unclassified,none,Name gives no project detail,Unclassified,,manual
+95007a6c32,44,2008-04-01,Asian Development Bank,Second Power Systems Development Project,7521894.53,SDG 7,,energy,high,,,,SDG 7,,rule
+7ba93db138,45,2008-04-01,Asian Development Bank,Male' Power Project,4970915.32,SDG 7,,energy,high,,,,SDG 7,,rule
+c91c193c23,46,2008-04-01,Asian Development Bank,Regional Development Project Phase II,4688147.94,SDG 11,,urban and land development,medium,,,,SDG 11,,rule
+cc865830bc,47,2008-04-02,IFAD,Fisheries and Agriculture Diversification Programme,3118673.6,SDG 14,SDG 2,fisheries; also agriculture and food,medium,,,,SDG 14,SDG 2,rule
+b43525ea46,48,2008-04-12,OPEC Fund,Construction of Harbors for Tsunami Victims,5549260.03,SDG 9,SDG 11,harbours ports and transport; also post-disaster reconstruction,high,,,,SDG 9,SDG 11,rule
+aec2128a3a,49,2008-04-15,Asian Development Bank,Second Male' Port Project,6587267.05,SDG 9,,harbours ports and transport,high,,,,SDG 9,,rule
+68fe54fb30,50,2008-06-09,France (AFD),Rehabilitation of Harbors and Creation of Sewerage Networks,4235349.45,SDG 9,SDG 6,harbours ports and transport; also water and sanitation,medium,,,,SDG 9,SDG 6,rule
+02c4e6b25a,51,2008-06-23,World Bank (IDA),Mobile Phone Banking Project,5107312.6,SDG 8,,enterprise finance and jobs,medium,,,,SDG 8,,rule
+7ee93831c9,52,2008-07-15,Asian Development Bank,Tsunami Emergency Assistance Project,1611046.8,SDG 11,SDG 13,post-disaster reconstruction,medium,,,,SDG 11,SDG 13,rule
+e95f1099a1,53,2008-08-01,Asian Development Bank,Third Power Systems Development Project,6647299.57,SDG 7,,energy,high,,,,SDG 7,,rule
+1df3e1d338,54,2008-08-01,Asian Development Bank,Post Secondary Education Development Project,6185539.13,SDG 4,,education,high,,,,SDG 4,,rule
+de5b37cf25,55,2008-08-01,Asian Development Bank,Information Technology Development,9376290.12,SDG 9,,telecoms and digital,high,,,,SDG 9,,rule
+c1cec96135,56,2008-08-01,Asian Development Bank,Outer Islands Electrification,8524766.08,SDG 7,,energy,high,,,,SDG 7,,rule
+47c6b249c4,57,2008-09-04,World Bank (IDA),Maldives Environment Management Project,10848614.65,Unclassified,,no keyword matched,none,SDG 11,SDG 13,"Environment management, mainly solid waste",SDG 11,SDG 13,manual
+0d13da58f4,58,2009-01-13,Asian Development Bank,Private Sector Development Project,5497292.23,SDG 8,,enterprise finance and jobs,medium,,,,SDG 8,,rule
+ac808f8b24,59,2009-08-12,World Bank (IDA),Pension and Social Protection Administration Project,3524448.76,SDG 1,,social protection,high,,,,SDG 1,,rule
+112dcaf9de,60,2009-09-24,Saudi Fund for Development,Reconstruction of Fishing Harbors in Maldives,15000000.0,SDG 14,SDG 9,fisheries; also harbours ports and transport,medium,,,,SDG 14,SDG 9,rule
+d1938c65b8,61,2010-03-18,Asian Development Bank,Economic Recovery Program,29714863.2,General,,fiscal or stabilisation wording,medium,,,,General,,rule
+d07bfa39f0,62,2010-03-28,World Bank (IDA),Economic Stabilization and Recovery Credit,11526850.0,General,,fiscal or stabilisation wording,medium,,,,General,,rule
+d614032615,63,2010-08-30,Exim Bank of China,Development of 1000 Housing Units in Hulhumalé',70886437.13,SDG 11,,housing and urban development,high,,,,SDG 11,,rule
+ff5fb9516d,64,2010-09-16,Saudi Fund for Development,Reconstruction and Development of G.A Atoll Project,8000000.0,SDG 11,SDG 13,post-disaster reconstruction,medium,,,,SDG 11,SDG 13,rule
+a113d5778d,65,2011-11-21,Saudi Fund for Development,Seenu Hithadhoo regional hospital project,12533333.33,SDG 3,,health facilities,high,,,,SDG 3,,rule
+40354f8d9f,66,2012-09-02,Exim Bank of China,Development of 1500 housing units in Maldives,144794021.78,SDG 11,,housing and urban development,high,,,,SDG 11,,rule
+a5d1e814a0,67,2012-09-20,Asian Development Bank,"Micro, Small and Medium -sized Enterprise development project",1466706.09,SDG 8,,enterprise finance and jobs,medium,,,,SDG 8,,rule
+52eb2aef7d,68,2012-10-17,OPEC Fund,Seenu Hithadhoo regional hospital,8400000.0,SDG 3,,health facilities,high,,,,SDG 3,,rule
+1dfe35e59c,69,2013-04-28,Islamic Development Bank,Micro enterprise development project,4308171.1,SDG 8,,enterprise finance and jobs,medium,,,,SDG 8,,rule
+d8b20533c5,70,2013-09-26,Islamic Development Bank,Sanitation project in Five Island (Loan Agreement),6238060.0,SDG 6,,water and sanitation,high,,,,SDG 6,,rule
+0bbf0ad70c,71,2013-09-26,Islamic Development Bank,Sanitation project in Five Island project (Isthisna Agreement ),7146647.0,SDG 6,,water and sanitation,high,,,,SDG 6,,rule
+50e1a1a7fb,72,2014-01-27,Islamic Development Bank,Reconstruction of Harbors project phase II (Loan Agreement),7187330.0,SDG 9,SDG 11,harbours ports and transport; also post-disaster reconstruction,high,,,,SDG 9,SDG 11,rule
+6c2d5b2162,73,2014-01-27,Islamic Development Bank,Reconstruction of Harbors project phase II (Isthisna Agreement),11406000.0,SDG 9,SDG 11,harbours ports and transport; also post-disaster reconstruction,high,,,,SDG 9,SDG 11,rule
+ca332a593b,74,2014-01-28,Kuwait Fund,Development of water supply and sewerage facilities project in Fuvahmulah island,10329600.0,SDG 6,,water and sanitation,high,,,,SDG 6,,rule
+a98bfbba3f,75,2014-02-28,OPEC Fund,Outer islands water supply and sewerage facilities project,19996681.53,SDG 6,,water and sanitation,high,,,,SDG 6,,rule
+94c4f5281b,76,2015-06-22,Abu Dhabi Fund for Development,Small Scale Waste to Energy Project,6000816.88,SDG 11,SDG 12,solid waste; also energy,medium,,,,SDG 11,SDG 12,rule
+c5e34e22d2,77,2015-07-02,OPEC Fund,"Provision of Water Supply, Sanitation and Solid Waste Management Project",50000000.0,SDG 6,SDG 11,water and sanitation; also solid waste,medium,,,,SDG 6,SDG 11,rule
+0c9f8f66f7,78,2015-09-14,Saudi Fund for Development,Development of Hulhumalé' Island,80000000.0,Unclassified,,no keyword matched,none,SDG 11,none,Island development,SDG 11,,manual
+0ee9985f59,79,2015-12-28,Exim Bank of China,Expansion and Upgrading of Ibrahim Nasir International Airport in Hulhule',373838500.0,SDG 9,,airports,high,,,,SDG 9,,rule
+be902340b2,80,2016-03-08,European Investment Bank,Maldives Sustainable Energy Development Project,51273000.0,SDG 7,,energy,high,,,,SDG 7,,rule
+6ea2d1e6aa,81,2016-07-14,Exim Bank of China,China Maldives Friendship Bridge project,67143161.65,SDG 9,,roads and bridges,high,,,,SDG 9,,rule
+8bc1e92d28,82,2016-08-09,Kuwait Fund,Expansion and Upgrading of Ibrahim Nasir International Airport,48420000.0,SDG 9,,airports,high,,,,SDG 9,,rule
+eb3bb82aa7,83,2016-09-26,Saudi Fund for Development,Ibrahim Nasir Airport Upgrade Project,100000000.0,SDG 9,,airports,high,,,,SDG 9,,rule
+7682ac0fd8,84,2016-12-18,OPEC Fund,Development of the Ibrahim Nasir International Airport Project,50000000.0,SDG 9,,airports,high,,,,SDG 9,,rule
+78cd1fcbdf,85,2017-07-13,Kuwait Fund,Fuvahmulah Eastern Coastal Protection Project,11620800.0,SDG 13,,coastal protection,high,,,,SDG 13,,rule
+fb7573b0cf,86,2017-10-17,Abu Dhabi Fund for Development,Velana International Airport Project,50006807.35,SDG 9,,airports,high,,,,SDG 9,,rule
+cf0e9b1f20,87,2018-04-24,Abu Dhabi Fund for Development,Project Ishraq,100000000.0,Unclassified,,no keyword matched,none,Unclassified,none,Purpose not stated in the register or in public sources found,Unclassified,,manual
+23f350375a,88,2018-07-31,World Bank (IDA),Additional Financing for Public Finance Management,5171260.88,SDG 17,,public finance and statistics,medium,,,,SDG 17,,rule
+cd1e6d5043,89,2019-03-18,Exim Bank of India,Dollar Credit Line Agreement,450814716.13,SDG 9,,multi-project credit line,low,SDG 9,none,Multi-project credit line. Kept as infrastructure,SDG 9,,manual
+56e8cd2c4d,90,2019-06-17,Asian Development Bank,South Asia Sub regional Economic Corporation National Single Window Project,5000000.0,SDG 17,,public finance and statistics,medium,,,,SDG 17,,rule
+337d494e4f,91,2019-07-25,World Bank (IDA),Maldives Enhancing Employability and Resilience of Youth,9899530.0,SDG 8,SDG 4,employability and skills; also climate and disaster resilience,medium,,,,SDG 8,SDG 4,rule
+e2d5701f1e,92,2019-08-20,World Bank (IDA),Development Policy Financing with a Catastrophe Deferred Drawdown Option,5017570.0,General,,budget or balance of payments support,high,,,,General,,rule
+94c1ddc99c,93,2019-08-20,World Bank (IDA),First Fiscal Sustainability and Budget Credibility Development Policy Financing,9899530.0,General,,fiscal or stabilisation wording,medium,,,,General,,rule
+c6843ed9a4,94,2020-01-16,OPEC Fund,"Outer Islands Harbors, Water Supply and Sewerage Facilities Project",50000000.0,SDG 9,SDG 6,harbours ports and transport; also water and sanitation,medium,,,,SDG 9,SDG 6,rule
+eb29047734,95,2020-04-03,World Bank (IDA),COVID-19 Emergency Response and Health Systems Preparedness Project,3661470.0,SDG 3,,health facilities,high,,,,SDG 3,,rule
+382fb1e9f6,96,2020-04-29,World Bank (IDA),Maldives Urban Development and Resilience Project,8136600.0,SDG 11,SDG 13,housing and urban development; also climate and disaster resilience,medium,,,,SDG 11,SDG 13,rule
+1c8ac2fb9c,97,2020-05-21,Islamic Development Bank,COVID-19 Amendment to Isthisna Agreement and its related Agency Agreement,594000.0,SDG 3,,pandemic response,medium,,,,SDG 3,,rule
+3050f801c3,102,2020-06-04,Saudi Fund for Development,Fisheries Sector Development Project,25000000.0,SDG 14,,fisheries,high,,,,SDG 14,,rule
+e959d8e1da,103,2020-06-04,Saudi Fund for Development,Affordable Housing Scheme Project,25000000.0,SDG 11,,housing and urban development,high,,,,SDG 11,,rule
+8072f9064d,98,2020-06-09,OPEC Fund,Public Sector Investment Program Budgetary Support Loan,20000000.0,General,,budget or balance of payments support,high,,,,General,,rule
+354b3cd959,99,2020-06-13,World Bank (IDA),COVID-19 Emergency Income Support Project,6224710.94,SDG 1,SDG 3,social protection; also pandemic response,high,,,,SDG 1,SDG 3,rule
+cbc29614e3,100,2020-06-15,European Investment Bank,COVID-19 Rapid Response to Maldives,22788000.0,SDG 3,,pandemic response,medium,,,,SDG 3,,rule
+ddb7e4b7bb,101,2020-06-28,Asian Development Bank,COVID-19 Active Response and Expenditure Support Program,25000000.0,General,SDG 3,budget or balance of payments support; also pandemic response,high,,,,General,SDG 3,rule
+52a120eca1,104,2020-07-06,Islamic Development Bank,Emergency Response to COVID-19 Pandemic Phase II,20000000.0,SDG 3,,pandemic response,medium,,,,SDG 3,,rule
+44d5fb22ed,105,2020-07-08,AIIB,COVID-19 Emergency Response and Health Systems Preparedness Project,7300000.0,SDG 3,,health facilities,high,,,,SDG 3,,rule
+b81e8774b0,106,2020-08-20,IFAD,Maldives Agribusiness Program,3285000.0,SDG 2,SDG 8,agriculture and food; also enterprise finance and jobs,high,,,,SDG 2,SDG 8,rule
+677f1b645c,108,2020-09-28,Asian Development Bank,Greater Male' Waste to Energy Project,38210000.0,SDG 11,SDG 12,solid waste; also energy,medium,,,,SDG 11,SDG 12,rule
+73255cbd89,109,2020-09-29,AIIB,Greater Male' Waste to Energy Project,40000000.0,SDG 11,SDG 12,solid waste; also energy,medium,,,,SDG 11,SDG 12,rule
+f35eb03ce3,107,2020-09-30,Japan (JICA),COVID-19 Crisis Response Emergency Support Loan,30781283.77,General,SDG 3,budget or balance of payments support; also pandemic response,high,,,,General,SDG 3,rule
+67e11014c0,110,2020-10-12,Exim Bank of India,Greater Male' Connectivity Project,400000000.0,SDG 9,,connectivity,medium,,,,SDG 9,,rule
+bb2d0d901d,111,2020-11-16,Asian Development Bank,Preparing Outer Island for Sustainable Energy Development Project - Additional Financing,7461262.2,SDG 7,,energy,high,,,,SDG 7,,rule
+709e13d5eb,112,2021-03-02,Clean Technology Fund,Accelerating Renewable Energy Integration and Sustainable Energy Project,23000000.0,SDG 7,,energy,high,,,,SDG 7,,rule
+5a45e835c7,113,2021-03-17,AIIB,Maldives Solar Development and Energy Storage Solutions Project,20000000.0,SDG 7,,energy,high,,,,SDG 7,,rule
+1d1ad3a8f9,114,2021-04-30,Bondholders and sukuk,Sukuk Programme - 1st Issuance,500000000.0,General,,sukuk or bond issuance,medium,,,,General,,rule
+975a279c09,115,2021-07-12,Kuwait Fund,Second Loan for the Financing of Expansion and Upgrading of Velana International Airport Project,48420000.0,SDG 9,,airports,high,,,,SDG 9,,rule
+cccce4d94c,116,2021-09-29,European Investment Bank,COVID-19 Rapid Response to Maldives - phase II,22788000.0,SDG 3,,pandemic response,medium,,,,SDG 3,,rule
+8e0de9af9e,117,2021-12-09,Abu Dhabi Fund for Development,Converting Waste to Energy in Addu City Project,14001906.06,SDG 11,SDG 12,solid waste; also energy,medium,,,,SDG 11,SDG 12,rule
+653366a239,118,2022-01-26,Islamic Development Bank,The Greater Male' Waste Management Improvement and Waste to Energy Project,18783068.52,SDG 11,SDG 12,solid waste; also energy,medium,,,,SDG 11,SDG 12,rule
+7f1de527d8,119,2022-06-04,Islamic Development Bank,Support People's Livelihood in the Fishery Sector in Maldives through Sustainable Energy,8775000.0,SDG 14,SDG 7,fisheries; also energy,medium,,,,SDG 14,SDG 7,rule
+cf533a00b0,120,2022-06-16,AKA with ABN AMRO and ING,Gulhifalhu Reclamation and Revetment Works and the Gulhifalhu Port Development Project,115976677.5,SDG 13,SDG 9,coastal protection; also harbours ports and transport,medium,SDG 9,SDG 11,Port development and land reclamation,SDG 9,SDG 11,manual
+cfce650c73,121,2022-06-22,European Investment Bank,Maldives Covid-19 Health Facility,20964960.0,SDG 3,,health facilities,high,,,,SDG 3,,rule
+bd39af2e4f,122,2022-11-09,World Bank (IDA),Maldives Atoll Education Development Project,4610740.0,SDG 4,,education,high,,,,SDG 4,,rule
+ffe9737937,123,2023-06-18,World Bank (IDA),Transforming Fisheries Sector Management in South-West Indian Ocean Region and Maldives Project,26715170.0,SDG 14,,fisheries,high,,,,SDG 14,,rule
+e2fcb7a747,124,2023-06-18,World Bank (IDA),Maldives Competitiveness and Growth Project,7594160.0,SDG 8,,enterprise finance and jobs,medium,,,,SDG 8,,rule
+9c25dbcbfe,125,2023-07-18,Private creditor,Budget Support Loan,56970000.0,General,,budget or balance of payments support,high,,,,General,,rule
+69b6ccfac3,126,2023-12-12,Clean Technology Fund,Accelerating Sustainable System Development and Using Renewable Energy Project,18500000.0,SDG 7,,energy,high,,,,SDG 7,,rule
+c83745c20f,127,2024-05-16,Saudi Fund for Development,Health Sector Development Project,50000000.0,SDG 3,,health facilities,high,,,,SDG 3,,rule
+e65e03fcdd,128,2024-05-16,Saudi Fund for Development,Expansion of Velana International Airport Project (Additional Loan),100000000.0,SDG 9,,airports,high,,,,SDG 9,,rule
+0232471b10,129,2024-06-05,Islamic Development Bank,Line of Finance to support the establishment of SME Imapct Fund in the Maldives (Loan),10306360.0,SDG 8,,enterprise finance and jobs,medium,,,,SDG 8,,rule
+ae4d04ed63,130,2024-06-05,Islamic Development Bank,Line of Finance to Support the establishment of SME Impact Fund in the Maldives (Instalment Sale),30000000.0,SDG 8,,enterprise finance and jobs,medium,,,,SDG 8,,rule
+aaf0fff966,131,2024-07-21,Exim Bank of China,Preferential Buyer Credit Loan Agreement of Refinancing for Expansion and Upgrading of VIA Project,74767699.98,General,,refinancing or debt management,low,SDG 9,General,Refinancing. Tagged to the project refinanced (airport),SDG 9,General,manual
+ba2c860185,132,2024-09-11,AIIB,Strengthening Fiscal Management and Sustainability Program,15000000.0,General,,fiscal or stabilisation wording,medium,,,,General,,rule
+eae953522a,133,2024-12-09,Asian Development Bank,Enhancing Climate Resilience and Food Security Project,4000000.0,SDG 13,SDG 2,climate and disaster resilience; also agriculture and food,medium,,,,SDG 13,SDG 2,rule
+9539fb309f,134,2024-12-24,Abu Dhabi Fund for Development,Second Loan for Velana International Airport Project,40005445.88,SDG 9,,airports,high,,,,SDG 9,,rule
+da5509a75a,135,2025-02-27,Islamic Development Bank,Maldives Fish Sector Capacity Strengthening Project,5153180.0,SDG 14,SDG 16,fisheries; also institutional strengthening,high,,,,SDG 14,SDG 16,rule
+824e932d1d,136,2025-02-27,Islamic Development Bank,Maldives Fish Sector Capacity Strengthening Project,59250000.0,SDG 14,SDG 16,fisheries; also institutional strengthening,high,,,,SDG 14,SDG 16,rule
+f8b24b46a5,137,2025-04-14,Saudi Fund for Development,Expansion of Velana International Airport Project (Second Additional Loan),17000000.0,SDG 9,,airports,high,,,,SDG 9,,rule
+7a1cfd715a,138,2025-07-31,Exim Bank of China,Concessional Loan Agreement for Refinancing the Development of 1000 Housing Units in Hulhumale,16844739.59,General,SDG 11,refinancing or debt management; also housing and urban development,low,SDG 11,General,Refinancing. Tagged to the project refinanced (housing),SDG 11,General,manual
+9060de5b60,139,2025-07-31,Exim Bank of China,Concessional Loan Agreement for Refinancing the Development of 1500 Housing Units in the Islands,50121007.49,General,SDG 11,refinancing or debt management; also housing and urban development,low,SDG 11,General,Refinancing. Tagged to the project refinanced (housing),SDG 11,General,manual
+52a92aed66,140,2025-07-31,Exim Bank of China,Concessional Loan Agreement for Refinancing for China-Maldives Friendship Bridge,20142948.71,General,SDG 9,refinancing or debt management; also roads and bridges,low,SDG 9,General,Refinancing. Tagged to the project refinanced (bridge),SDG 9,General,manual
+ec02c6593f,141,2026-04-14,OPEC Fund,Multi Island Harbour Development Project,40000000.0,SDG 9,,harbours ports and transport,high,,,,SDG 9,,rule
+13c8662811,142,2026-05-10,World Bank (IDA),Maldives Emergency Support for Critical Services Project,40000000.0,Unclassified,,no keyword matched,none,General,none,Emergency support for public services,General,,manual

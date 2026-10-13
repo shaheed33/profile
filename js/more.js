@@ -8,7 +8,9 @@
     ["roadmap.html", "Is NSW on track for 2030?", "Energy"],
     ["simulator.html", "Could the NEM run without coal?", "Energy"],
     ["prices.html", "When is electricity cheap?", "Energy"],
-    ["wa-economy.html", "How fast is WA growing right now?", "Economy"]
+    ["wa-economy.html", "How fast is WA growing right now?", "Economy"],
+    ["maldives-loans.html", "Who lends to Maldives, and for what?", "Public money"],
+    ["maldives-grants.html", "Who gives Maldives grants, and for what?", "Public money"]
   ];
   var here = location.pathname.split("/").pop() || "index.html";
   var foot = document.querySelector("footer");
