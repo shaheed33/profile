@@ -95,7 +95,7 @@
           <p class="explain">The OECD figures above run a year or two behind. This list adds activities that organisations report as current to the International Aid Transparency Initiative (IATI). IATI mixes grants and loans, and some lines are trade finance or investment in private companies, so they are labelled and shown separately. Amounts here are not added to the totals above, because many of the same projects are already counted there. Each title links to the activity on d-portal.</p>
           <p class="finding" id="find-f"></p>
           <div class="filters">
-            <div class="q"><label for="q2">Search</label><input id="q2" type="search" placeholder="Search organisation or activity" autocomplete="off"></div>
+            <div class="q"><label for="q2">Search</label><input id="q2" type="search" placeholder="Search organisation, activity or acronym" autocomplete="off"></div>
             <div><label for="f2-kind">Kind of activity</label><select id="f2-kind"></select></div>
             <div><label for="f2-grp">Type of organisation</label><select id="f2-grp"></select></div>
             <div><label for="f2-sort">Sort by</label><select id="f2-sort"></select></div>
@@ -177,6 +177,9 @@
     document.addEventListener("scroll", hideTip, { passive: true });
     document.addEventListener("click", (e) => { if (!e.target.closest("[data-tip]")) hideTip(); });
     window.onThemeChange = () => {};
+    // initials of a project title, so a search for an acronym such as MEERY finds it
+    const STOP = /^(and|of|the|for|in|to|on|with|through|a|an|project|programme|program|phase)$/i;
+    const initials = (t) => String(t).replace(/[^A-Za-z\s-]/g, " ").split(/[\s-]+/).filter((w) => w && !STOP.test(w)).map((w) => w[0]).join("");
 
     const getJSON = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
     Promise.all([getJSON("data/maldives_grants.json"), getJSON("data/maldives_loans.json").catch(() => null)]).then(([G, L]) => start(G, L)).catch(() => {
@@ -388,7 +391,7 @@
         $("f2-sort").innerHTML = S2.map(([v, l]) => '<option value="' + v + '">' + l + "</option>").join("");
         function drawF() {
           const q = F2.q.trim().toLowerCase();
-          const rows = A.filter((a) => (!F2.kind || a.kind === F2.kind) && (!F2.grp || a.group === F2.grp) && (!q || (a.org + " " + a.title).toLowerCase().includes(q)));
+          const rows = A.filter((a) => (!F2.kind || a.kind === F2.kind) && (!F2.grp || a.group === F2.grp) && (!q || (a.org + " " + a.title + " " + initials(a.title)).toLowerCase().includes(q)));
           const c = C2.find((x) => x[0] === F2.sort);
           rows.sort((a, b) => { const x = c[2](a), y = c[2](b); return (x < y ? -1 : x > y ? 1 : 0) * F2.dir || b.c - a.c; });
           $("acts").innerHTML = "<thead><tr>" + C2.map(([k, lab, , , cls]) => '<th scope="col"' + (cls === "n" ? ' class="n"' : "") + (F2.sort === k ? ' aria-sort="' + (F2.dir > 0 ? "ascending" : "descending") + '"' : "") + '><button type="button" data-k="' + k + '">' + lab + "</button></th>").join("") + "</tr></thead><tbody>" +
