@@ -7,7 +7,7 @@ with every donor, every sector, all channels and modalities as totals, current
 and constant prices, commitments and disbursements, 1995 onwards).
 
 China does not report to the OECD, so its grants come from AidData's Global
-Chinese Development Finance Dataset 2.0 (commitments from 2000 to 2017, rows
+Chinese Development Finance Dataset 3.0 (commitments from 2000 to 2021, rows
 AidData recommends for aggregates, nominal US dollars), mapped to goals through
 data/lookups/aiddata_sector_sdg.csv. AidData records commitments only.
 
@@ -35,7 +35,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "data" / "raw" / "oecd_crs_maldives.csv.gz"
-CHINA = ROOT / "data" / "raw" / "aiddata_gcdf2_maldives.csv"   # AidData Global Chinese Development Finance Dataset 2.0, Maldives rows
+CHINA = ROOT / "data" / "raw" / "aiddata_gcdf3_maldives.csv"   # AidData Global Chinese Development Finance Dataset 3.0, Maldives rows
 LOOKUPS = ROOT / "data" / "lookups"
 OUT_CSV = ROOT / "data" / "processed" / "grants_tagged.csv"
 OUT_JSON = ROOT / "data" / "maldives_grants.json"
@@ -78,26 +78,29 @@ def read_lookup(path: Path) -> pd.DataFrame:
 def read_china() -> tuple[pd.DataFrame, int]:
     """China's grants from AidData, shaped like the OECD rows."""
     c = pd.read_csv(CHINA, dtype=str)
-    c = c[(c["Recommended For Aggregates"] == "Yes") & (c["Flow Type"] == "Grant")]
-    c["usd"] = pd.to_numeric(c["Amount (Nominal)"], errors="coerce")
+    c = c[(c["Recommended For Aggregates"] == "Yes") & (c["Flow Type Simplified"] == "Grant")]
+    c["usd"] = pd.to_numeric(c["Amount (Nominal USD)"], errors="coerce")
     unpriced = int(c["usd"].isna().sum())
     c = c[c["usd"] > 0]
     sectors = read_lookup(LOOKUPS / "aiddata_sector_sdg.csv")
     bad = sectors[~sectors["primary_sdg"].isin(GOALS)]
     if len(bad):
         fail("invalid goal in aiddata_sector_sdg.csv", bad["aiddata_sector_code"])
-    missing = sorted(set(c["AidData Sector Code"]) - set(sectors["aiddata_sector_code"]))
+    missing = sorted(set(c["Sector Code"]) - set(sectors["aiddata_sector_code"]))
     if missing:
         fail("AidData sector codes not in data/lookups/aiddata_sector_sdg.csv", missing)
-    c = c.merge(sectors, left_on="AidData Sector Code", right_on="aiddata_sector_code")
+    c = c.merge(sectors, left_on="Sector Code", right_on="aiddata_sector_code")
     out = pd.DataFrame({
         "year": c["Commitment Year"].astype(int), "donor": "China", "group": "bilateral",
-        "purpose_code": "AidData " + c["AidData Sector Code"], "purpose": c["aiddata_sector"],
+        "purpose_code": "AidData " + c["Sector Code"], "purpose": c["aiddata_sector"],
         "primary_sdg": c["primary_sdg"], "secondary_sdg": "", "commitments_usd": c["usd"].round(0),
-        "disbursements_usd": 0.0, "source": "AidData GCDF 2.0",
+        "disbursements_usd": 0.0, "source": "AidData GCDF 3.0",
     })
     out = out.groupby(["year", "donor", "group", "purpose_code", "purpose", "primary_sdg", "secondary_sdg", "source"], as_index=False)[["commitments_usd", "disbursements_usd"]].sum()
+    out.attrs = {}
     out.attrs["grants"] = len(c)
+    top = c.sort_values("usd", ascending=False).iloc[0]
+    out.attrs["largest"] = {"title": top["Title"], "usd": round(top["usd"]), "year": int(top["Commitment Year"])}
     return out, unpriced
 
 
@@ -177,7 +180,8 @@ def main() -> None:
             "grants_committed": round(full["commitments_usd"].sum()),
             "grants_disbursed": round(full.loc[full["source"] == "OECD CRS", "disbursements_usd"].sum()),
             "china": {"committed": round(china["commitments_usd"].sum()), "grants": int(china.attrs["grants"]),
-                      "unpriced": china_unpriced, "first_year": int(china["year"].min()), "last_year": int(china["year"].max())},
+                      "unpriced": china_unpriced, "first_year": int(china["year"].min()), "last_year": int(china["year"].max()),
+                      "largest": china.attrs["largest"]},
             "donors": int(full.loc[full["commitments_usd"] > 0, "donor"].nunique()),
             "later_years_left_out": sorted(int(y) for y in rows.loc[rows["year"] > LAST_FULL_YEAR, "year"].unique()),
         },

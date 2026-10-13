@@ -403,9 +403,16 @@
       drawD();
 
       // ---------- coverage ----------
+      function guaranteedLine() {
+        const G = D.guaranteed_china || [];
+        if (!G.length) return "";
+        const yrs = G.map((g) => g.year), hdc = G.filter((g) => /HDC/.test(g.borrower));
+        return "AidData records " + G.length + " loans from Chinese lenders between " + Math.min(...yrs) + " and " + Math.max(...yrs) + " that the government guaranteed, worth " + money(sum(G, (g) => g.usd)) +
+          (hdc.length ? ", of which " + money(sum(hdc, (g) => g.usd)) + " went to the Housing Development Corporation for Hulhumalé development" : "") + ".";
+      }
       $("cover").innerHTML = [
         ["Included", "All " + L.length + " active external loans of the central government in the Ministry of Finance register at " + longDate(M.as_of) + ", worth " + money(total) + " when converted at that date."],
-        ["Not included", "Loans guaranteed by the government for state owned enterprises and some private companies. Guaranteed debt was about MVR 21.1 billion, or 17.6 per cent of GDP, in mid 2025, according to the Ministry of Finance debt bulletin. AidData records examples such as a US$ 369 million loan from ICBC in 2017 for Hulhumalé housing by HDC, and a US$ 75 million loan in 2016 for a STELCO power project."],
+        ["Not included", "Loans guaranteed by the government for state owned enterprises and some private companies. Guaranteed debt was about MVR 21.1 billion, or 17.6 per cent of GDP, in mid 2025, according to the Ministry of Finance debt bulletin. " + guaranteedLine() + ""],
         ["Not included", "Loans that have already been repaid, so the picture of earlier decades is partial."],
         ["Not included", "Domestic borrowing, and arrangements made through the central bank, such as currency swaps."],
         ["Elsewhere", "Grants, which are not debt, are mapped on the companion page."],
