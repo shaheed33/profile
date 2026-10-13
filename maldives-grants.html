@@ -34,8 +34,8 @@
         <canvas class="ambient" data-mode="wave" aria-hidden="true"></canvas>
         <div class="live"><i></i>Side project, OECD data</div>
         <h1>Who gives Maldives grants, and for what?</h1>
-        <p class="lead">Grants to Maldives from every donor that reports to the OECD, mapped by the type of donor and the Sustainable Development Goal each grant mainly serves.</p>
-        <p class="explain">This is the companion to the map of loans. The Ministry of Finance register lists borrowing only, so the grants that many partners give are not in it. This page fills that gap from the OECD Creditor Reporting System, where donors report each year what they have committed and paid out, and sets the grants alongside the loans. Amounts are in US dollars at the prices of each year.</p>
+        <p class="lead">Grants to Maldives from every donor that reports to the OECD, and from China, mapped by the type of donor and the Sustainable Development Goal each grant mainly serves.</p>
+        <p class="explain">This is the companion to the map of loans. The Ministry of Finance register lists borrowing only, so the grants that many partners give are not in it. This page fills that gap from the OECD Creditor Reporting System, where donors report each year what they have committed and paid out, adds China's grants from AidData, and sets the grants alongside the loans. Amounts are in US dollars at the prices of each year.</p>
       </div>
 
       <div id="content">
@@ -106,11 +106,21 @@
         </section>
       </div>
 
+      <section class="section" id="coverage">
+        <h2>How complete is this?</h2>
+        <p class="note">This page brings together the main published sources, but some grants are not recorded in any of them.</p>
+        <div class="cover" id="cover"></div>
+      </section>
+
       <section class="section method" id="method">
         <h2>How this was made</h2>
         <details>
           <summary>Source and date</summary>
           <p id="m-source">The OECD Creditor Reporting System, which records official development finance reported by donors for each recipient, retrieved through the OECD Data Explorer in October 2026.</p>
+        </details>
+        <details>
+          <summary>China's grants</summary>
+          <p>China does not report to the OECD. Its grants come from AidData's Global Chinese Development Finance Dataset, version 2.0, which records Chinese official finance from 2000 to 2017 using official and media sources. Only projects AidData recommends for totals are used, at their value when committed. AidData records commitments only, so the table shows no disbursements for China. Its sector groups are matched to goals in the same way as the OECD codes, in an editable lookup file.</p>
         </details>
         <details>
           <summary>What counts as a grant</summary>
@@ -134,7 +144,7 @@
         <details>
           <summary>What this does not show</summary>
           <ul>
-            <li><b>Donors that do not report to the OECD.</b> China and India, among others, do not report to the Creditor Reporting System, so their grants are not included. Their loans are on the map of loans.</li>
+            <li><b>Donors that do not report to the OECD.</b> China's grants are added from AidData up to 2017. India and some others are not included. See how complete this is, above.</li>
             <li><b>Commitments, not money spent.</b> A commitment can be paid out over several years, or not in full.</li>
             <li><b>Not only to government.</b> The figures include grants channelled through NGOs, UN agencies and others, not only those paid to the government.</li>
             <li><b>Sectors, not results.</b> A purpose code describes what a grant was for, not what it achieved.</li>
@@ -199,12 +209,12 @@
       // headline figures
       const donorsAll = new Set(R.map((r) => r.donor));
       const byDonor = {};
-      G.rows.forEach((r) => { const d = byDonor[r.donor] ||= { name: r.donor, group: r.group, c: 0, d: 0, first: 9999, last: 0, goals: {} }; d.c += r.c; d.d += r.d; if (r.c > 0 || r.d > 0) { d.first = Math.min(d.first, r.y); d.last = Math.max(d.last, r.y); } d.goals[r.goal] = (d.goals[r.goal] || 0) + r.c; });
+      G.rows.forEach((r) => { const d = byDonor[r.donor] ||= { name: r.donor, group: r.group, c: 0, d: 0, first: 9999, last: 0, goals: {}, src: r.src }; d.c += r.c; d.d += r.d; if (r.c > 0 || r.d > 0) { d.first = Math.min(d.first, r.y); d.last = Math.max(d.last, r.y); } d.goals[r.goal] = (d.goals[r.goal] || 0) + r.c; });
       const topDonor = Object.values(byDonor).sort((a, b) => b.c - a.c)[0];
       $("figs").innerHTML = [
         [money(total).replace(" billion", "bn").replace(" million", "m"), "in grants committed, " + M.first_year + " to " + M.last_year],
-        [money(M.grants_disbursed).replace(" billion", "bn").replace(" million", "m"), "paid out over the same years"],
-        [donorsAll.size, "donors that report to the OECD"],
+        [money(M.grants_disbursed).replace(" billion", "bn").replace(" million", "m"), "paid out by donors that report to the OECD"],
+        [donorsAll.size, "donors, including China from AidData"],
         [topDonor.name, "largest donor, " + pct(topDonor.c / total) + " of grants"],
       ].map(([v, l]) => "<div><b>" + esc(v) + "</b><span>" + esc(l) + "</span></div>").join("");
 
@@ -332,7 +342,7 @@
         ["name", "Donor", (d) => d.name.toLowerCase(), (d) => esc(d.name), "who"],
         ["group", "Type", (d) => d.group, (d) => '<span class="cat"><i style="background:' + col(d.group) + '"></i>' + esc(grpLabel[d.group]) + "</span>"],
         ["c", "Committed, US$ million", (d) => d.c, (d) => mill(d.c), "n"],
-        ["d", "Disbursed, US$ million", (d) => d.d, (d) => mill(d.d), "n"],
+        ["d", "Disbursed, US$ million", (d) => d.d, (d) => d.src === "aiddata" ? '<small class="text-body-secondary">Not reported</small>' : mill(d.d), "n"],
         ["first", "Years", (d) => d.first, (d) => d.first === d.last ? String(d.first) : d.first + " to " + d.last],
         ["top", "Largest goal", (d) => (num(d.top) ? +num(d.top) : 98), (d) => d.top ? esc(num(d.top) ? d.top + " " + GOAL[d.top] : GOAL[d.top]) : ""],
       ];
@@ -411,6 +421,16 @@
         drawF();
         if (window.explainAll) window.explainAll();
       }).catch(() => { $("now").hidden = true; });
+
+      // ---------- coverage ----------
+      const ch = M.china, oecd = total - ch.committed;
+      $("cover").innerHTML = [
+        ["Included", "Grants from " + (donorsAll.size - 1) + " donors that report to the OECD, " + M.first_year + " to " + M.last_year + ", worth " + money(oecd) + ". This covers Western and other OECD donors, the multilateral banks and funds, UN agencies, and the main Gulf donors."],
+        ["Included", "China's grants from AidData, " + ch.first_year + " to " + ch.last_year + ", worth " + money(ch.committed) + " across " + ch.grants + " grants, the largest being " + money(126e6) + " for the China-Maldives Friendship Bridge. A further " + ch.unpriced + " grants are recorded without an amount."],
+        ["Partly included", "Activities from 2025 onwards appear only in the IATI list of current activities, without totals, because donors report to the OECD with a delay."],
+        ["Not included", "India's grants, because they are not reported to the OECD or to a dataset that covers them all. Known examples include a US$ 100 million grant towards the Greater Malé Connectivity Project, agreed in 2020 alongside a US$ 400 million credit line, and community development projects reported at about US$ 23 million in 2024."],
+        ["Not included", "China's grants after 2017, and grants from other donors that do not report to the OECD, such as some Gulf and South Asian governments and private foundations. Some support given in kind, such as equipment or vaccines, may also be missing."],
+      ].map(([k, t]) => '<div class="cover-row"><span class="chip">' + k + "</span><p>" + esc(t) + "</p></div>").join("");
 
       // ---------- methodology details from the data ----------
       $("m-source").textContent = "The OECD Creditor Reporting System, which records official development finance reported by donors for each recipient, retrieved through the OECD Data Explorer on " + longDate(M.retrieved) + ". This page covers grants to Maldives committed from " + M.first_year + " to " + M.last_year + ".";

@@ -1,0 +1,27 @@
+aiddata_sector_code,aiddata_sector,primary_sdg,note
+# AidData uses three-digit OECD sector groups. Each is mapped to one main goal, matching the five-digit OECD codes where possible. Lines starting with # are ignored.,,,
+110,Education,SDG 4,
+120,Health,SDG 3,
+130,Population policies and reproductive health,SDG 3,
+140,Water supply and sanitation,SDG 6,
+150,Government and civil society,SDG 16,
+160,Other social infrastructure and services,SDG 11,"In Maldives mostly housing, culture and Malé redevelopment"
+210,Transport and storage,SDG 9,Includes the Sinamalé Bridge grant
+220,Communications,SDG 9,
+230,Energy,SDG 7,
+240,Banking and financial services,SDG 8,
+250,Business and other services,SDG 8,
+310,"Agriculture, forestry, fishing",SDG 2,"Mostly post-tsunami farming and fishery recovery, with FAO"
+320,"Industry, mining, construction",SDG 9,
+330,Trade policies and tourism,SDG 17,
+410,General environmental protection,SDG 13,
+430,Other multisector,Multisector,
+510,General budget support,General,
+520,Developmental food aid,SDG 2,
+530,Other commodity assistance,General,
+600,Action relating to debt,General,
+700,Humanitarian aid,Humanitarian,
+720,Emergency response,Humanitarian,
+730,Reconstruction relief and rehabilitation,SDG 11,As for the OECD data
+740,Disaster prevention and preparedness,SDG 13,
+998,Unallocated or unspecified,Unclassified,

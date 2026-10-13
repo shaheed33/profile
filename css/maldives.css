@@ -170,3 +170,10 @@
   .share { grid-template-columns: minmax(0, 1fr) 7rem; gap: .35rem .8rem; }
   .share .name { grid-column: 1 / -1; }
 }
+
+/* "How complete is this?" */
+.cover { border-top: 1px solid var(--line); }
+.cover-row { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 1rem; padding: .75rem 0; border-bottom: 1px solid var(--line); align-items: start; }
+.cover-row .chip { justify-self: start; margin-top: .15rem; }
+.cover-row p { margin: 0; color: var(--soft); max-width: 70ch; }
+@media (max-width: 575.98px) { .cover-row { grid-template-columns: 1fr; gap: .35rem; } }
