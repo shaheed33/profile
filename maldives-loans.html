@@ -88,6 +88,12 @@
         </section>
       </div>
 
+      <section class="section" id="coverage">
+        <h2>How complete is this?</h2>
+        <p class="note">The register is the official list of the government's own external loans. Some public borrowing sits outside it.</p>
+        <div class="cover" id="cover"></div>
+      </section>
+
       <section class="section method" id="method">
         <h2>How this was made</h2>
         <details>
@@ -395,6 +401,15 @@
         reset(); hideTip(); drawD(); $("table").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       }
       drawD();
+
+      // ---------- coverage ----------
+      $("cover").innerHTML = [
+        ["Included", "All " + L.length + " active external loans of the central government in the Ministry of Finance register at " + longDate(M.as_of) + ", worth " + money(total) + " when converted at that date."],
+        ["Not included", "Loans guaranteed by the government for state owned enterprises and some private companies. Guaranteed debt was about MVR 21.1 billion, or 17.6 per cent of GDP, in mid 2025, according to the Ministry of Finance debt bulletin. AidData records examples such as a US$ 369 million loan from ICBC in 2017 for Hulhumalé housing by HDC, and a US$ 75 million loan in 2016 for a STELCO power project."],
+        ["Not included", "Loans that have already been repaid, so the picture of earlier decades is partial."],
+        ["Not included", "Domestic borrowing, and arrangements made through the central bank, such as currency swaps."],
+        ["Elsewhere", "Grants, which are not debt, are mapped on the companion page."],
+      ].map(([k, t]) => '<div class="cover-row"><span class="chip">' + k + "</span><p>" + esc(t) + (k === "Elsewhere" ? ' <a href="maldives-grants.html">Who gives Maldives grants, and for what?</a>' : "") + "</p></div>").join("");
 
       // ---------- methodology details from the data ----------
       $("m-source").textContent = "The Ministry of Finance register of active external borrowings of the government of Maldives, as at " + longDate(M.as_of) +

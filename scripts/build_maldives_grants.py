@@ -6,7 +6,12 @@ Reads the OECD Creditor Reporting System (CRS) for Maldives
 with every donor, every sector, all channels and modalities as totals, current
 and constant prices, commitments and disbursements, 1995 onwards).
 
-Grants come from the CRS. Loans are left to the Ministry of Finance register
+China does not report to the OECD, so its grants come from AidData's Global
+Chinese Development Finance Dataset 2.0 (commitments from 2000 to 2017, rows
+AidData recommends for aggregates, nominal US dollars), mapped to goals through
+data/lookups/aiddata_sector_sdg.csv. AidData records commitments only.
+
+Grants come from the CRS and AidData. Loans are left to the Ministry of Finance register
 (scripts/build_maldives_loans.py), which also covers lenders that do not report
 to the OECD, such as China and India, so nothing is counted twice.
 
@@ -30,6 +35,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "data" / "raw" / "oecd_crs_maldives.csv.gz"
+CHINA = ROOT / "data" / "raw" / "aiddata_gcdf2_maldives.csv"   # AidData Global Chinese Development Finance Dataset 2.0, Maldives rows
 LOOKUPS = ROOT / "data" / "lookups"
 OUT_CSV = ROOT / "data" / "processed" / "grants_tagged.csv"
 OUT_JSON = ROOT / "data" / "maldives_grants.json"
@@ -67,6 +73,32 @@ def read_lookup(path: Path) -> pd.DataFrame:
     with path.open(newline="", encoding="utf-8") as f:
         rows = [r for r in csv.DictReader(f) if not (r[next(iter(r))] or "").lstrip().startswith("#")]
     return pd.DataFrame(rows).fillna("")
+
+
+def read_china() -> tuple[pd.DataFrame, int]:
+    """China's grants from AidData, shaped like the OECD rows."""
+    c = pd.read_csv(CHINA, dtype=str)
+    c = c[(c["Recommended For Aggregates"] == "Yes") & (c["Flow Type"] == "Grant")]
+    c["usd"] = pd.to_numeric(c["Amount (Nominal)"], errors="coerce")
+    unpriced = int(c["usd"].isna().sum())
+    c = c[c["usd"] > 0]
+    sectors = read_lookup(LOOKUPS / "aiddata_sector_sdg.csv")
+    bad = sectors[~sectors["primary_sdg"].isin(GOALS)]
+    if len(bad):
+        fail("invalid goal in aiddata_sector_sdg.csv", bad["aiddata_sector_code"])
+    missing = sorted(set(c["AidData Sector Code"]) - set(sectors["aiddata_sector_code"]))
+    if missing:
+        fail("AidData sector codes not in data/lookups/aiddata_sector_sdg.csv", missing)
+    c = c.merge(sectors, left_on="AidData Sector Code", right_on="aiddata_sector_code")
+    out = pd.DataFrame({
+        "year": c["Commitment Year"].astype(int), "donor": "China", "group": "bilateral",
+        "purpose_code": "AidData " + c["AidData Sector Code"], "purpose": c["aiddata_sector"],
+        "primary_sdg": c["primary_sdg"], "secondary_sdg": "", "commitments_usd": c["usd"].round(0),
+        "disbursements_usd": 0.0, "source": "AidData GCDF 2.0",
+    })
+    out = out.groupby(["year", "donor", "group", "purpose_code", "purpose", "primary_sdg", "secondary_sdg", "source"], as_index=False)[["commitments_usd", "disbursements_usd"]].sum()
+    out.attrs["grants"] = len(c)
+    return out, unpriced
 
 
 def main() -> None:
@@ -111,15 +143,18 @@ def main() -> None:
         if c not in tidy:
             tidy[c] = 0.0
         tidy[c] = tidy[c].round(0)
+    tidy["source"] = "OECD CRS"
+    china, china_unpriced = read_china()
+    tidy = pd.concat([tidy, china], ignore_index=True)
     tidy = tidy[(tidy["commitments_usd"] != 0) | (tidy["disbursements_usd"] != 0)].sort_values(["year", "donor", "purpose_code"])
     grp_label = dict(GROUPS)
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     tidy.assign(donor_group=tidy["group"].map(grp_label)).rename(columns={"primary_sdg": "main_goal", "secondary_sdg": "second_goal"})[
-        ["year", "donor", "donor_group", "purpose_code", "purpose", "main_goal", "second_goal", "commitments_usd", "disbursements_usd"]
+        ["year", "donor", "donor_group", "purpose_code", "purpose", "main_goal", "second_goal", "commitments_usd", "disbursements_usd", "source"]
     ].to_csv(OUT_CSV, index=False)
 
     # compact rows for the page: one per year, donor and main goal
-    rows = tidy.groupby(["year", "donor", "group", "primary_sdg"], as_index=False)[["commitments_usd", "disbursements_usd"]].sum()
+    rows = tidy.groupby(["year", "donor", "group", "primary_sdg", "source"], as_index=False)[["commitments_usd", "disbursements_usd"]].sum()
     full = rows[rows["year"] <= LAST_FULL_YEAR]
 
     # how each lender splits its concessional finance between grants and loans
@@ -140,20 +175,24 @@ def main() -> None:
             "generated": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
             "first_year": int(full["year"].min()), "last_year": LAST_FULL_YEAR, "share_from": SHARE_FROM,
             "grants_committed": round(full["commitments_usd"].sum()),
-            "grants_disbursed": round(full["disbursements_usd"].sum()),
+            "grants_disbursed": round(full.loc[full["source"] == "OECD CRS", "disbursements_usd"].sum()),
+            "china": {"committed": round(china["commitments_usd"].sum()), "grants": int(china.attrs["grants"]),
+                      "unpriced": china_unpriced, "first_year": int(china["year"].min()), "last_year": int(china["year"].max())},
             "donors": int(full.loc[full["commitments_usd"] > 0, "donor"].nunique()),
             "later_years_left_out": sorted(int(y) for y in rows.loc[rows["year"] > LAST_FULL_YEAR, "year"].unique()),
         },
         "groups": [{"id": k, "label": v} for k, v in GROUPS],
         "goals": [{"id": k, "label": SDG_NAMES[k]} for k in GOALS],
         "rows": [{"y": int(r["year"]), "donor": r["donor"], "group": r["group"], "goal": r["primary_sdg"],
-                  "c": round(r["commitments_usd"]), "d": round(r["disbursements_usd"])} for _, r in full.iterrows()],
+                  "c": round(r["commitments_usd"]), "d": round(r["disbursements_usd"]), "src": "aiddata" if r["source"] != "OECD CRS" else "crs"} for _, r in full.iterrows()],
         "share": share,
         "oda_by_year": [{"y": int(y), "grants": round(r.get(GRANTS, 0)), "loans": round(r.get(LOANS, 0))} for y, r in yearly.iterrows()],
     }
     OUT_JSON.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     m = out["meta"]
+    print(f"China (AidData): {m['china']['grants']} grants with amounts, US$ {m['china']['committed'] / 1e6:,.1f} million, "
+          f"{m['china']['first_year']} to {m['china']['last_year']}, plus {m['china']['unpriced']} without an amount")
     print(f"Grants committed {m['first_year']} to {m['last_year']}: US$ {m['grants_committed'] / 1e6:,.1f} million "
           f"(disbursed US$ {m['grants_disbursed'] / 1e6:,.1f} million) from {m['donors']} donors")
     if m["later_years_left_out"]:
