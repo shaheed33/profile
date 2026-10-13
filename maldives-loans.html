@@ -77,7 +77,7 @@
           <h2>Every loan</h2>
           <p class="explain">Search by lender or project, filter by type of lender or goal, and sort by any column. The tag column shows how sure the keyword rule was about the goal, high or medium, or says checked where the goal was set by hand.</p>
           <div class="filters">
-            <div class="q"><label for="q">Search</label><input id="q" type="search" placeholder="Search lender or project" autocomplete="off"></div>
+            <div class="q"><label for="q">Search</label><input id="q" type="search" placeholder="Search lender, project or acronym" autocomplete="off"></div>
             <div><label for="f-cat">Type of lender</label><select id="f-cat"></select></div>
             <div><label for="f-sdg">Goal</label><select id="f-sdg"></select></div>
             <div><label for="f-sort">Sort by</label><select id="f-sort"></select></div>
@@ -162,6 +162,9 @@
     document.addEventListener("scroll", hideTip, { passive: true });
     document.addEventListener("click", (e) => { if (!e.target.closest("[data-tip]")) hideTip(); });
     window.onThemeChange = () => {};
+    // initials of a project title, so a search for an acronym such as MEERY finds it
+    const STOP = /^(and|of|the|for|in|to|on|with|through|a|an|project|programme|program|phase)$/i;
+    const initials = (t) => String(t).replace(/[^A-Za-z\s-]/g, " ").split(/[\s-]+/).filter((w) => w && !STOP.test(w)).map((w) => w[0]).join("");
 
     fetch("data/maldives_loans.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(start).catch(() => {
       $("content").innerHTML = '<p class="empty">The loan data could not be loaded. If you opened this file directly, run a local web server and open it from there.</p>';
@@ -364,7 +367,7 @@
       function drawD() {
         const q = F.q.trim().toLowerCase();
         const rows = L.filter((l) => (!F.cat || l.category === F.cat) && (!F.sdg || l.sdg === F.sdg) &&
-          (!q || (l.creditor + " " + l.creditor_raw + " " + l.project + " " + l.status).toLowerCase().includes(q)));
+          (!q || (l.creditor + " " + l.creditor_raw + " " + l.project + " " + l.status + " " + initials(l.project)).toLowerCase().includes(q)));
         const c = COLS.find((x) => x[0] === F.sort);
         rows.sort((a, b) => { const x = c[2](a), y = c[2](b); return (x < y ? -1 : x > y ? 1 : 0) * F.dir || (b.date < a.date ? -1 : 1); });
         $("loans").innerHTML = "<thead><tr>" + COLS.map(([k, lab, , , cls]) => '<th scope="col"' + (cls === "n" ? ' class="n"' : "") + (F.sort === k ? ' aria-sort="' + (F.dir > 0 ? "ascending" : "descending") + '"' : "") + '><button type="button" data-k="' + k + '">' + lab + "</button></th>").join("") + "</tr></thead><tbody>" +
