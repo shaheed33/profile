@@ -1,0 +1,29 @@
+reporting_org,organisation,group
+# group is bilateral / multilateral / un / other. Lines starting with # are ignored.,,
+AidData,AidData (tracks Chinese finance),other
+Asian Development Bank,Asian Development Bank,multilateral
+Australia - Department of  Foreign Affairs and Trade,Australia (DFAT),bilateral
+"Centre for Environment, Fisheries and Aquaculture Science (Cefas)",United Kingdom (Cefas),bilateral
+Climate Investment Funds,Climate Investment Funds,multilateral
+European Commission - International Partnerships,European Commission,multilateral
+European Investment Bank,European Investment Bank,multilateral
+Food and Agriculture Organization of the United Nations (FAO),FAO,un
+GEF Secretariat,Global Environment Facility,multilateral
+Green Climate Fund,Green Climate Fund,multilateral
+International Finance Corporation,IFC (World Bank Group),multilateral
+International Fund for Agricultural Development (IFAD),IFAD,un
+International Labour Organization (ILO),ILO,un
+InvestInternational,Invest International (Netherlands),bilateral
+Islamic Development Bank,Islamic Development Bank,multilateral
+Japan International Cooperation Agency (JICA),Japan (JICA),bilateral
+Ministry of Foreign Affairs - United Arab Emirates (UAE),United Arab Emirates,bilateral
+Netherlands - Ministry of Foreign Affairs,Netherlands,bilateral
+The World Bank,World Bank,multilateral
+UN Pooled Funds,UN pooled funds,un
+United Nations Children's Fund (UNICEF),UNICEF,un
+United Nations Development Programme (UNDP),UNDP,un
+"United Nations Educational, Scientific and Cultural Organization (UNESCO)",UNESCO,un
+United States Agency for International Development (USAID),USAID,bilateral
+United States Trade and Development Agency,US Trade and Development Agency,bilateral
+World Bank Trust Funds,World Bank trust funds,multilateral
+World Health Organization (WHO),WHO,un

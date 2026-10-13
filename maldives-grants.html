@@ -90,6 +90,20 @@
           <div class="tablewrap"><table class="loans" id="donors"></table></div>
           <button type="button" class="more" id="more" hidden></button>
         </section>
+        <section class="section" id="now">
+          <h2>What is under way now</h2>
+          <p class="explain">The OECD figures above run a year or two behind. This list adds activities that organisations report as current to the International Aid Transparency Initiative (IATI). IATI mixes grants and loans, and some lines are trade finance or investment in private companies, so they are labelled and shown separately. Amounts here are not added to the totals above, because many of the same projects are already counted there. Each title links to the activity on d-portal.</p>
+          <p class="finding" id="find-f"></p>
+          <div class="filters">
+            <div class="q"><label for="q2">Search</label><input id="q2" type="search" placeholder="Search organisation or activity" autocomplete="off"></div>
+            <div><label for="f2-kind">Kind of activity</label><select id="f2-kind"></select></div>
+            <div><label for="f2-grp">Type of organisation</label><select id="f2-grp"></select></div>
+            <div><label for="f2-sort">Sort by</label><select id="f2-sort"></select></div>
+          </div>
+          <div class="tbar"><span id="count2"></span></div>
+          <div class="tablewrap"><table class="loans" id="acts"></table></div>
+          <button type="button" class="more" id="more2" hidden></button>
+        </section>
       </div>
 
       <section class="section method" id="method">
@@ -124,14 +138,14 @@
             <li><b>Commitments, not money spent.</b> A commitment can be paid out over several years, or not in full.</li>
             <li><b>Not only to government.</b> The figures include grants channelled through NGOs, UN agencies and others, not only those paid to the government.</li>
             <li><b>Sectors, not results.</b> A purpose code describes what a grant was for, not what it achieved.</li>
-            <li><b>Other sources.</b> The International Aid Transparency Initiative publishes more recent, project level data through d-portal. Its totals mix grants, loans, trade finance and private investment, and overlap with the figures here, so they are not added.</li>
+            <li><b>Other sources.</b> The International Aid Transparency Initiative publishes more recent, project level data through d-portal. Its totals mix grants, loans, trade finance and private investment, and overlap with the figures here, so it is used only for the list of current activities and never added to the totals.</li>
             <li><b>Totals by donor and sector, not projects.</b> The data used here adds up projects within each donor, sector and year, so individual projects are not listed.</li>
             <li id="m-late"><b>Recent years.</b> Donors report with a delay, so the latest year left out here holds only a few early reports.</li>
           </ul>
         </details>
         <details>
           <summary>Files</summary>
-          <p>The tagged data, by year, donor and purpose, is free to download as a <a href="data/processed/grants_tagged.csv" download="maldives_grants_tagged.csv">CSV file</a>, and the page reads from <a href="data/maldives_grants.json">this JSON file</a>. A Python script reads the OECD download, groups the donors and assigns the goals, so the page can be rebuilt when the OECD publishes a new year.</p>
+          <p>The tagged data, by year, donor and purpose, is free to download as a <a href="data/processed/grants_tagged.csv" download="maldives_grants_tagged.csv">CSV file</a>, and the page reads from <a href="data/maldives_grants.json">this JSON file</a>. A Python script reads the OECD download, groups the donors and assigns the goals, so the page can be rebuilt when the OECD publishes a new year. The list of current activities comes from a d-portal export, read by a second script into <a href="data/maldives_iati.json">its own JSON file</a>.</p>
           <p id="generated" class="small text-body-secondary"></p>
         </details>
       </section>
@@ -351,6 +365,49 @@
         reset(); hideTip(); drawE(); $("table").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       }
       drawE();
+
+      // ---------- f. current activities from IATI ----------
+      getJSON("data/maldives_iati.json").then((I) => {
+        const A = I.activities, KIND = { project: "Development project", trade_finance: "Trade finance", private_investment: "Private investment" };
+        const GL = { bilateral: "Bilateral", multilateral: "Multilateral", un: "UN agencies", other: "Other" };
+        const gcol = (g) => g === "other" ? "var(--muted)" : col(g);
+        const proj = A.filter((a) => a.kind === "project"), orgs = new Set(A.map((a) => a.org));
+        const un = proj.filter((a) => a.group === "un").length, tf = A.filter((a) => a.kind === "trade_finance").length, pi = A.filter((a) => a.kind === "private_investment").length;
+        $("find-f").textContent = A.length + " activities are listed as current by " + orgs.size + " organisations. Of the " + proj.length + " development projects, " + un + " are run by UN agencies. A further " + tf + " are trade finance lines and " + pi + " are private investments.";
+        const C2 = [
+          ["org", "Organisation", (a) => a.org.toLowerCase(), (a) => '<span class="cat"><i style="background:' + gcol(a.group) + '"></i>' + esc(a.org) + "</span>", "who"],
+          ["title", "Activity", (a) => a.title.toLowerCase(), (a) => '<span><a href="' + esc(a.link) + '" target="_blank" rel="noopener">' + esc(a.title) + "</a>" + (a.status ? '<small class="st">' + esc(a.status) + (a.kind !== "project" ? ", " + KIND[a.kind].toLowerCase() : "") + "</small>" : "") + "</span>", "proj"],
+          ["c", "Committed, US$ million", (a) => a.c, (a) => a.c ? mill(a.c) : '<small class="text-body-secondary">Not given</small>', "n"],
+          ["s", "Spent, US$ million", (a) => a.s, (a) => a.s ? mill(a.s) : '<small class="text-body-secondary">None yet</small>', "n"],
+        ];
+        const F2 = { q: "", kind: "project", grp: "", sort: "c", dir: -1 };
+        let shown2 = PAGE;
+        $("f2-kind").innerHTML = '<option value="">All kinds</option>' + Object.entries({ project: "Projects", trade_finance: "Trade finance", private_investment: "Private investment" }).map(([k, v]) => '<option value="' + k + '"' + (k === "project" ? " selected" : "") + ">" + v + "</option>").join("");
+        $("f2-grp").innerHTML = '<option value="">All organisations</option>' + Object.entries(GL).map(([k, v]) => '<option value="' + k + '">' + v + "</option>").join("");
+        const S2 = [["c|-1", "Largest first"], ["s|-1", "Most spent first"], ["org|1", "Organisation, A to Z"], ["title|1", "Activity, A to Z"]];
+        $("f2-sort").innerHTML = S2.map(([v, l]) => '<option value="' + v + '">' + l + "</option>").join("");
+        function drawF() {
+          const q = F2.q.trim().toLowerCase();
+          const rows = A.filter((a) => (!F2.kind || a.kind === F2.kind) && (!F2.grp || a.group === F2.grp) && (!q || (a.org + " " + a.title).toLowerCase().includes(q)));
+          const c = C2.find((x) => x[0] === F2.sort);
+          rows.sort((a, b) => { const x = c[2](a), y = c[2](b); return (x < y ? -1 : x > y ? 1 : 0) * F2.dir || b.c - a.c; });
+          $("acts").innerHTML = "<thead><tr>" + C2.map(([k, lab, , , cls]) => '<th scope="col"' + (cls === "n" ? ' class="n"' : "") + (F2.sort === k ? ' aria-sort="' + (F2.dir > 0 ? "ascending" : "descending") + '"' : "") + '><button type="button" data-k="' + k + '">' + lab + "</button></th>").join("") + "</tr></thead><tbody>" +
+            rows.slice(0, shown2).map((a) => "<tr>" + C2.map(([, lab, , fmt, cls]) => '<td data-l="' + lab + '"' + (cls ? ' class="' + cls + '"' : "") + ">" + fmt(a) + "</td>").join("") + "</tr>").join("") + "</tbody>";
+          $("count2").textContent = rows.length + (rows.length === 1 ? " activity" : " activities") + ". Amounts are as reported and are not added up, because grants, loans and other finance are mixed.";
+          const left = rows.length - shown2;
+          $("more2").hidden = left <= 0; $("more2").textContent = "Show " + Math.min(PAGE, left) + " more" + (left > PAGE ? ", " + left + " left" : "");
+          const sv = F2.sort + "|" + F2.dir; $("f2-sort").value = S2.some(([v]) => v === sv) ? sv : "";
+        }
+        const reset2 = () => { shown2 = PAGE; };
+        $("more2").addEventListener("click", () => { shown2 += PAGE; drawF(); });
+        $("acts").addEventListener("click", (e) => { const b = e.target.closest("th button"); if (!b) return; const k = b.dataset.k; F2.dir = F2.sort === k ? -F2.dir : (["c", "s"].includes(k) ? -1 : 1); F2.sort = k; reset2(); drawF(); });
+        let qt2; $("q2").addEventListener("input", (e) => { clearTimeout(qt2); qt2 = setTimeout(() => { F2.q = e.target.value; reset2(); drawF(); }, 120); });
+        $("f2-kind").addEventListener("change", (e) => { F2.kind = e.target.value; reset2(); drawF(); });
+        $("f2-grp").addEventListener("change", (e) => { F2.grp = e.target.value; reset2(); drawF(); });
+        $("f2-sort").addEventListener("change", (e) => { if (!e.target.value) return; const [k, d] = e.target.value.split("|"); F2.sort = k; F2.dir = +d; reset2(); drawF(); });
+        drawF();
+        if (window.explainAll) window.explainAll();
+      }).catch(() => { $("now").hidden = true; });
 
       // ---------- methodology details from the data ----------
       $("m-source").textContent = "The OECD Creditor Reporting System, which records official development finance reported by donors for each recipient, retrieved through the OECD Data Explorer on " + longDate(M.retrieved) + ". This page covers grants to Maldives committed from " + M.first_year + " to " + M.last_year + ".";
