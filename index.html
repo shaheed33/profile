@@ -50,6 +50,9 @@
     .viz svg { display: block; width: 100%; height: 100%; overflow: visible; }
     .viz .big { font-family: "Newsreader", Georgia, serif !important; font-size: 2.1rem; line-height: 1; font-variant-numeric: tabular-nums; }
     .viz .lab { font-size: .78rem; color: var(--muted); }
+    .place { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; color: var(--muted); margin: 0 0 .3rem; }
+    .flag { height: 11px; flex: none; border-radius: 2px; box-shadow: 0 0 0 1px var(--line); }
+    .flag-au { width: 22px; } .flag-mv { width: 16.5px; }
     .tool h2 { font-family: inherit !important; font-size: 1.08rem; font-weight: 650; line-height: 1.3; margin: 0 0 .35rem; letter-spacing: 0; }
     .tool p { font-size: .9rem; color: var(--muted); margin: 0 0 .9rem; flex: 1; }
     .open { align-self: flex-start; font-size: .9rem; font-weight: 600; color: var(--surface); background: var(--ink); border-radius: 999px; padding: .38rem .95rem; }
@@ -99,6 +102,8 @@
     <symbol id="i-price" viewBox="0 0 24 24"><path d="M3 15c3 0 4-6 7-6s3 8 6 8 3-10 5-12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-growth" viewBox="0 0 24 24"><path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="5" y="12" width="3.4" height="6" rx=".8" fill="currentColor"/><rect x="10.3" y="8" width="3.4" height="10" rx=".8" fill="currentColor"/><rect x="15.6" y="4" width="3.4" height="14" rx=".8" fill="currentColor"/></symbol>
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 11.2 12 4l8.5 7.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9.5h4.5v-5h3v5H18V10" fill="currentColor"/></symbol>
+    <symbol id="flag-au" viewBox="0 0 120 60"><clipPath id="flag-au-c"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><rect width="120" height="60" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#flag-au-c)" stroke="#E4002B" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#E4002B" stroke-width="6"/><polygon points="30.0,36.0 31.8,41.2 37.0,39.4 34.1,44.1 38.8,47.0 33.3,47.6 33.9,53.1 30.0,49.2 26.1,53.1 26.7,47.6 21.2,47.0 25.9,44.1 23.0,39.4 28.2,41.2" fill="#fff"/><polygon points="90.0,46.4 90.9,49.1 93.6,48.1 92.0,50.5 94.5,52.0 91.6,52.3 92.0,55.1 90.0,53.1 88.0,55.1 88.4,52.3 85.5,52.0 88.0,50.5 86.4,48.1 89.1,49.1" fill="#fff"/><polygon points="75.0,22.9 75.9,25.6 78.6,24.6 77.0,27.0 79.5,28.5 76.6,28.8 77.0,31.6 75.0,29.6 73.0,31.6 73.4,28.8 70.5,28.5 73.0,27.0 71.4,24.6 74.1,25.6" fill="#fff"/><polygon points="90.0,4.4 90.9,7.1 93.6,6.1 92.0,8.5 94.5,10.0 91.6,10.3 92.0,13.1 90.0,11.1 88.0,13.1 88.4,10.3 85.5,10.0 88.0,8.5 86.4,6.1 89.1,7.1" fill="#fff"/><polygon points="102.5,18.9 103.4,21.6 106.1,20.6 104.5,23.0 107.0,24.5 104.1,24.8 104.5,27.6 102.5,25.6 100.5,27.6 100.9,24.8 98.0,24.5 100.5,23.0 98.9,20.6 101.6,21.6" fill="#fff"/><polygon points="95.5,29.4 96.1,31.1 98.0,31.2 96.5,32.3 97.0,34.1 95.5,33.1 94.0,34.1 94.5,32.3 93.0,31.2 94.9,31.1" fill="#fff"/></symbol>
+    <symbol id="flag-mv" viewBox="0 0 72 48"><rect width="72" height="48" fill="#D21034"/><rect x="12" y="12" width="48" height="24" fill="#007E3A"/><circle cx="38" cy="24" r="8" fill="#fff"/><circle cx="41" cy="24" r="6.8" fill="#007E3A"/></symbol>
     <symbol id="i-debt" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="2.6" fill="currentColor"/><path d="M5 6v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6V6M5 10v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-4M5 14v4c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-4" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
   </svg>
   <header class="site-header">
@@ -138,6 +143,7 @@
         <li data-f="economy"><a class="tool" href="maldives-loans.html">
           <div class="tool-top"><span class="kind">SDG financing map</span><span class="wip">Work in progress</span></div>
           <div class="viz" id="v-loans" aria-hidden="true"></div>
+          <span class="place"><svg class="flag flag-mv" aria-hidden="true"><use href="#flag-mv"/></svg>Maldives</span>
           <h2>Who lends to Maldives, and for what?</h2>
           <p>Every active external government loan, by lender and Sustainable Development Goal.</p>
           <span class="open">Explore the loans <b>→</b></span>
@@ -145,6 +151,7 @@
         <li data-f="economy"><a class="tool" href="maldives-grants.html">
           <div class="tool-top"><span class="kind">SDG financing map</span><span class="wip">Work in progress</span></div>
           <div class="viz" id="v-grants" aria-hidden="true"></div>
+          <span class="place"><svg class="flag flag-mv" aria-hidden="true"><use href="#flag-mv"/></svg>Maldives</span>
           <h2>Who gives Maldives grants, and for what?</h2>
           <p>Grants from every donor that reports to the OECD, by goal, set against the loans.</p>
           <span class="open">Explore the grants <b>→</b></span>
@@ -152,6 +159,7 @@
         <li data-f="places"><a class="tool" href="vic-housing.html">
           <div class="tool-top"><span class="kind">Live tracker</span><span class="fresh"><i></i>Updated monthly</span></div>
           <div class="viz" id="v-housing" aria-hidden="true"></div>
+          <span class="place"><svg class="flag flag-au" aria-hidden="true"><use href="#flag-au"/></svg>Victoria, Australia</span>
           <h2>Is Victoria building enough homes?</h2>
           <p>Homes finished against the 800,000 target, and every council on a map.</p>
           <span class="open">Open tracker <b>→</b></span>
@@ -159,6 +167,7 @@
         <li data-f="places"><a class="tool" href="local-economy.html">
           <div class="tool-top"><span class="kind">Explorer</span><span class="fresh"><i></i>Every council area</span></div>
           <div class="viz" id="v-local" aria-hidden="true"></div>
+          <span class="place"><svg class="flag flag-au" aria-hidden="true"><use href="#flag-au"/></svg>Australia</span>
           <h2>What makes your local economy tick?</h2>
           <p>Pick any area in Australia to see its industries, growth and resilience score.</p>
           <span class="open">Find your area <b>→</b></span>
@@ -166,6 +175,7 @@
         <li data-f="places"><a class="tool" href="councils.html">
           <div class="tool-top"><span class="kind">Comparison tool</span><span class="fresh"><i></i>Vic and NSW</span></div>
           <div class="viz" id="v-councils" aria-hidden="true"></div>
+          <span class="place"><svg class="flag flag-au" aria-hidden="true"><use href="#flag-au"/></svg>Victoria and NSW, Australia</span>
           <h2>How does your council compare?</h2>
           <p>A report card for your council against similar councils, or compare two.</p>
           <span class="open">Check your council <b>→</b></span>
@@ -173,6 +183,7 @@
         <li data-f="energy"><a class="tool" href="roadmap.html">
           <div class="tool-top"><span class="kind">Live tracker</span><span class="fresh"><i></i>Updated weekly</span></div>
           <div class="viz" id="v-nsw" aria-hidden="true"></div>
+          <span class="place"><svg class="flag flag-au" aria-hidden="true"><use href="#flag-au"/></svg>New South Wales, Australia</span>
           <h2>Is NSW on track for 2030?</h2>
           <p>Wind, solar and storage built so far, against the legal targets.</p>
           <span class="open">Open tracker <b>→</b></span>
@@ -180,6 +191,7 @@
         <li data-f="energy"><a class="tool" href="simulator.html">
           <div class="tool-top"><span class="kind">Simulator</span><span class="fresh"><i></i>Real weather data</span></div>
           <div class="viz" id="v-sim" aria-hidden="true"></div>
+          <span class="place"><svg class="flag flag-au" aria-hidden="true"><use href="#flag-au"/></svg>Australia</span>
           <h2>Could the grid run without coal?</h2>
           <p>Build your own mix of wind, solar and storage and see if the lights stay on.</p>
           <span class="open">Try the simulator <b>→</b></span>
@@ -187,6 +199,7 @@
         <li data-f="energy"><a class="tool" href="prices.html">
           <div class="tool-top"><span class="kind">Data explorer</span><span class="fresh"><i></i>Five regions</span></div>
           <div class="viz" id="v-prices" aria-hidden="true"></div>
+          <span class="place"><svg class="flag flag-au" aria-hidden="true"><use href="#flag-au"/></svg>Australia</span>
           <h2>When is electricity cheap?</h2>
           <p>Wholesale power prices by hour, season and region.</p>
           <span class="open">Explore prices <b>→</b></span>
@@ -194,6 +207,7 @@
         <li data-f="economy"><a class="tool" href="wa-economy.html">
           <div class="tool-top"><span class="kind">Forecasting model</span><span class="fresh"><i></i>Updated monthly</span></div>
           <div class="viz" id="v-wa" aria-hidden="true"></div>
+          <span class="place"><svg class="flag flag-au" aria-hidden="true"><use href="#flag-au"/></svg>Western Australia</span>
           <h2>How fast is WA growing right now?</h2>
           <p>A machine learning estimate of this quarter's growth, before the official figure.</p>
           <span class="open">See the estimate <b>→</b></span>
@@ -201,6 +215,7 @@
         <li data-f="economy"><a class="tool" href="https://mvdebtclock.org" target="_blank" rel="noopener">
           <div class="tool-top"><span class="kind">Live clock</span><span class="fresh"><i></i>Separate site</span></div>
           <div class="viz" id="v-debt" aria-hidden="true"></div>
+          <span class="place"><svg class="flag flag-mv" aria-hidden="true"><use href="#flag-mv"/></svg>Maldives</span>
           <h2>Maldives National Debt Clock</h2>
           <p>What the government owes and what it pays in interest, ticking live.</p>
           <span class="open">Visit mvdebtclock.org <b>↗</b></span>
