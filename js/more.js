@@ -9,8 +9,8 @@
     ["simulator.html", "Could the NEM run without coal?", "Energy"],
     ["prices.html", "When is electricity cheap?", "Energy"],
     ["wa-economy.html", "How fast is WA growing right now?", "Economy"],
-    ["maldives-loans.html", "Who lends to Maldives, and for what?", "Public money"],
-    ["maldives-grants.html", "Who gives Maldives grants, and for what?", "Public money"]
+    ["maldives-loans.html", "Who lends to Maldives, and for what?", "Public money, work in progress"],
+    ["maldives-grants.html", "Who gives Maldives grants, and for what?", "Public money, work in progress"]
   ];
   var here = location.pathname.split("/").pop() || "index.html";
   var foot = document.querySelector("footer");
