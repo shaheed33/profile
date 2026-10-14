@@ -178,3 +178,13 @@
 .cover-row .chip { justify-self: start; margin-top: .15rem; }
 .cover-row p { margin: 0; color: var(--soft); max-width: 70ch; }
 @media (max-width: 575.98px) { .cover-row { grid-template-columns: 1fr; gap: .35rem; } }
+
+/* "Work in progress" bar, pinned under the site header while scrolling */
+.wip-bar { position: sticky; top: var(--hdr-h); z-index: 990; background: #FFF4D6; border-bottom: 1px solid #E8B54A; color: #5C3D00; font-size: .9rem; line-height: 1.45; }
+.wip-bar .container-xl { padding-top: .45rem; padding-bottom: .45rem; }
+.wip-bar b { font-weight: 700; }
+.wip-bar a { color: inherit; font-weight: 600; white-space: nowrap; }
+.wip-bar .wip-short { display: none; }
+[data-theme="dark"] .wip-bar { background: #2E2510; border-bottom-color: #7A5A12; color: #F2C66B; }
+html { scroll-padding-top: calc(var(--hdr-h) + 3.2rem); }
+@media (max-width: 767.98px) { .wip-bar { font-size: .84rem; } .wip-bar .wip-long { display: none; } .wip-bar .wip-short { display: inline; } }
