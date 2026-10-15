@@ -2,6 +2,7 @@
 // between projects without going back to the home page.
 (function () {
   var P = [
+    ["council-stress.html", "Stress-test your council", "Council finance · scenario lab"],
     ["vic-housing.html", "Is Victoria building enough homes?", "Housing"],
     ["local-economy.html", "What makes your local economy tick?", "Local economies"],
     ["councils.html", "How does your council compare?", "Councils"],

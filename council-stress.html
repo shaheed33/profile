@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stress-test your council · NSW fiscal resilience · Shaheed</title>
+  <meta name="description" content="Explore how grant reductions, wage growth and extra asset renewal could affect NSW council finances. Transparent assumptions, published data and a research plan for early warning.">
+  <meta property="og:title" content="Stress-test your council">
+  <meta property="og:description" content="A NSW council scenario lab, with open data and transparent assumptions.">
+  <meta property="og:url" content="https://shaheed.work/council-stress">
+  <script>try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-bs-theme',t)}catch(e){}</script>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/council-stress.css">
+  <script src="data/council_stress.js" defer></script>
+  <script src="js/council-stress-math.js" defer></script>
+  <script src="js/council-stress.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the scenario tool</a>
+  <header class="site-header"><div class="stress-wrap bar">
+    <a class="brand" href="index.html">Abdulla Shaheed</a>
+    <nav class="site-nav" aria-label="Main"><a href="index.html#tools">Tools</a><a href="index.html#about">About</a><button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20.7 13A9 9 0 0 1 11 3.3 9 9 0 1 0 20.7 13Z"/></svg></button></nav>
+  </div></header>
+  <main id="main" class="stress-wrap">
+    <section class="stress-hero">
+      <div class="eyebrow"><span class="status-dot"></span> Public finance / New South Wales</div>
+      <h1>Stress-test<br>your council.</h1>
+      <p class="hero-deck">Less grant funding. Higher wages. More assets to renew.<br>Explore how a tighter budget could change the financial picture.</p>
+      <div class="hero-meta"><span>128 councils</span><span>2022–23 to 2024–25</span><a href="#method">Data &amp; assumptions ↗</a></div>
+    </section>
+
+    <aside class="research-note" aria-label="Research status">
+      <span class="note-label">Scenario lab</span>
+      <p>This is a conditional stress test. A validated early-warning forecast is <strong>not yet available</strong>: the current files contain only two years of operating-performance ratios. <a href="#research">See the research status</a>.</p>
+    </aside>
+    <noscript><p class="error">This tool needs JavaScript. You can still download the <a href="data/council_stress_panel.csv">council-year data</a> and read the methodology below.</p></noscript>
+    <p id="load-error" class="error" role="alert" hidden></p>
+
+    <section class="selection" aria-labelledby="choose-title">
+      <div><span class="section-number">01 / Select</span><h2 id="choose-title">Start with a council</h2></div>
+      <div class="select-box"><label for="council">NSW council</label><select id="council" disabled><option>Loading council data…</option></select></div>
+    </section>
+    <div id="tool" hidden>
+      <div class="council-heading"><h3 id="council-name"></h3><p id="council-context"></p></div>
+      <div class="baseline-grid" aria-label="Reported base-year finances">
+        <div><span>Total reported revenue</span><strong id="base-revenue">—</strong><small class="base-year"></small></div>
+        <div><span>Total reported expenses</span><strong id="base-expenses">—</strong><small class="base-year"></small></div>
+        <div><span>Grants &amp; contributions</span><strong id="base-grants">—</strong><small>Share of total revenue, including capital</small></div>
+      </div>
+      <p id="missing-data" class="error" hidden>No complete base-year revenue, expense and grant-share data are available for this council. Scenarios are withheld; available history is shown below.</p>
+
+      <section class="scenario-layout" aria-labelledby="scenario-title">
+        <form id="scenario-form" class="controls" onsubmit="return false">
+          <span class="section-number">02 / Explore</span><h2 id="scenario-title">Change the assumptions</h2>
+          <p class="small-note">A starter scenario, not an estimate of what will happen.</p>
+          <fieldset id="scenario-inputs" disabled>
+            <legend class="sr-only">Scenario assumptions</legend>
+            <div class="control"><label for="grant-cut">Grant reduction <output id="grant-value" for="grant-cut">10%</output></label>
+              <input type="range" id="grant-cut" min="0" max="50" step="1" value="10" aria-describedby="grant-help">
+              <p id="grant-help">A one-off cut to the base-year grant and contribution amount, maintained each year.</p></div>
+            <div class="control"><label for="wage-growth">Annual wage growth <output id="wage-value" for="wage-growth">3%</output></label>
+              <input type="range" id="wage-growth" min="0" max="15" step="0.5" value="3" aria-describedby="wage-help">
+              <p id="wage-help">Compounds on the assumed wage bill. Staffing stays constant.</p></div>
+            <div class="control"><label for="renewal-share">Extra asset renewal <output id="renewal-value" for="renewal-share">2%</output></label>
+              <input type="range" id="renewal-share" min="0" max="20" step="0.5" value="2" aria-describedby="renewal-help">
+              <p id="renewal-help">Additional annual capital spending, as a share of base revenue. Adds to funding pressure, not operating expenses.</p></div>
+            <div class="assumption-box"><label for="payroll-share">Assumed wages / total expenses <output id="payroll-value" for="payroll-share">35%</output></label>
+              <input type="range" id="payroll-share" min="0" max="100" step="1" value="35" aria-describedby="payroll-help">
+              <p id="payroll-help">Payroll is absent from these files. <strong>35% is an editable assumption</strong>, not council data.</p></div>
+            <div class="horizon"><label for="horizon">Scenario length</label><select id="horizon"><option value="2">2 years</option><option value="3" selected>3 years</option></select></div>
+            <button type="button" id="reset" class="quiet-button">Reset all shocks to zero ↺</button>
+          </fieldset>
+        </form>
+
+        <div class="results" id="results">
+          <div class="result-heading"><div><span class="section-number">03 / Read the result</span><h2>How the pressure builds</h2></div><span class="scenario-tag">Conditional scenario</span></div>
+          <p class="small-note">All other revenue and expenses stay flat in nominal dollars. The base year is repeated, with only your selected shocks added.</p>
+          <div class="result-grid" aria-live="polite" aria-atomic="true">
+            <div><span id="balance-label">Final-year revenue less expenses</span><strong id="scenario-balance">—</strong><small id="balance-change"></small></div>
+            <div><span>Additional funding pressure</span><strong id="funding-pressure">—</strong><small id="pressure-period"></small></div>
+          </div>
+          <div class="chart-key"><span><i class="base-key"></i>Unchanged base</span><span><i class="stress-key"></i>Your scenario</span></div>
+          <svg id="scenario-chart" viewBox="0 0 640 245" role="img" aria-labelledby="chart-title chart-desc"><title id="chart-title">Revenue less expenses under your scenario</title><desc id="chart-desc">Annual values are also provided in the table below.</desc></svg>
+          <p class="chart-note">Revenue less expenses includes capital grants. It is <strong>not the OLG operating performance ratio</strong> or a cash balance.</p>
+          <div class="drivers"><h3>What adds to final-year funding pressure?</h3><div id="drivers"></div></div>
+          <p class="small-note">Funding pressure = grant loss + additional wage cost + extra capital renewal. It measures the change from a flat base, not a forecast cash shortfall. Financing, reserves, depreciation changes and council responses are excluded.</p>
+          <details class="table-details"><summary>Annual scenario figures</summary><div class="table-scroll"><table><caption>Conditional amounts in AUD millions</caption><thead><tr><th scope="col">Year</th><th scope="col">Base balance</th><th scope="col">Scenario balance</th><th scope="col">Extra renewal</th><th scope="col">Added funding pressure</th></tr></thead><tbody id="scenario-rows"></tbody></table></div></details>
+          <button type="button" id="download" class="quiet-button">Download this scenario ↓</button>
+        </div>
+      </section>
+
+      <section class="history-section" aria-labelledby="history-title">
+        <div class="section-top"><div><span class="section-number">04 / Put it in context</span><h2 id="history-title">What the reported indicators say</h2></div><a href="councils.html">Compare council services ↗</a></div>
+        <p>Historical observations, not projected ratios. A missing observation stays missing. The 2024–25 workbook did not collect the three financial ratios below.</p>
+        <div class="table-scroll"><table><caption class="sr-only">Council financial history</caption><thead><tr><th scope="col">Financial year</th><th scope="col">Operating performance</th><th scope="col">Unrestricted current ratio</th><th scope="col">Cash expense cover</th><th scope="col">Asset renewal / depreciation</th></tr></thead><tbody id="history-rows"></tbody></table></div>
+        <p class="small-note">Reference benchmarks: operating performance ≥ 0%; unrestricted current ratio ≥ 1.5; cash expense cover ≥ 3 months; asset renewal ≥ 100%. A breach alone does not establish financial distress. These ratios can cover different accounting scopes.</p>
+        <p id="liquidity-note" class="liquidity-note"></p>
+      </section>
+    </div>
+
+    <section id="research" class="research-section" aria-labelledby="research-title">
+      <span class="section-number">Research / Early warning</span><h2 id="research-title">Can deterioration be spotted earlier?</h2>
+      <p class="research-deck">The question is whether grant dependence, liquidity, renewal spending, population change and past performance predict a weaker operating result two or three years later.</p>
+      <div class="research-grid"><div><h3>What is built</h3><p>A council-year panel with explicit unit conversions and missing values. A retrospective pipeline compares a council fixed-effects regression and gradient boosting with a simple “no change” baseline.</p><p>Training uses only outcomes dated before each test origin. Each fold fits its own missing-value treatment and scaling. Two- and three-year targets use exact year matches.</p></div>
+      <div><h3>What is still needed</h3><p>A longer, consistent financial history; checked publication dates and council boundaries; and an untouched final test period. ABS population context is already included through the OLG files. A richer demographic and socioeconomic panel remains to be assembled.</p><p>Until those checks pass, no council receives a predicted risk score, forecast interval or model-based ranking.</p></div></div>
+      <div class="coverage-strip" id="coverage"></div>
+      <div class="table-scroll"><table><caption>Chronological model evaluation</caption><thead><tr><th scope="col">Horizon</th><th scope="col">Observed target pairs</th><th scope="col">Eligible test years</th><th scope="col">Status</th></tr></thead><tbody id="model-rows"></tbody></table></div>
+      <p class="small-note">The target is the change in the published operating performance ratio, not insolvency. At least three training origin years and 100 observations are required per fold. Historical publication dates are not yet verified, so the pipeline applies a conservative reporting-year embargo; this is not yet a real-time backtest.</p>
+    </section>
+
+    <section id="method" class="method-section" aria-labelledby="method-title">
+      <span class="section-number">Open methods</span><h2 id="method-title">Follow the numbers</h2>
+      <details open><summary>Source data and missing years</summary><p>Source: <a href="https://www.yourcouncil.nsw.gov.au/data/" target="_blank" rel="noopener">NSW Office of Local Government, Your Council time series</a>, using the 2022–23, 2023–24 and 2024–25 workbooks. Population and five-year population change are ABS figures reproduced by OLG; their reference periods can differ from the financial year.</p><p>The annual files change units: 2022–23 financial totals are in thousands of dollars; later totals are dollars. Ratios also switch between percentages and fractions. The build uses reviewed, file-specific conversions. “Not collected” cells are never filled with another year’s value. Some councils have no reported financial data.</p></details>
+      <details><summary>Exactly how the scenario works</summary><p>Let R be base revenue, E expenses, g the share of grants and contributions, c the grant cut, p the assumed payroll share, w annual wage growth, and a extra renewal as a share of base revenue. At year t:</p><ul><li>Revenue = R − R × g × c.</li><li>Expenses = E + E × p × [(1 + w)<sup>t</sup> − 1].</li><li>Additional capital renewal = R × a each year.</li><li>Additional funding pressure = grant loss + extra wage cost + extra renewal.</li></ul><p>Other income and costs stay flat. Grants include capital and contributions, so the calculation does not isolate recurrent income. Capital renewal does not immediately reduce the revenue-less-expenses balance; later depreciation, interest, financing, timing and asset benefits are not modelled. Do not interpret the result as a statutory budget forecast.</p></details>
+      <details><summary>Liquidity, uncertainty and interpretation</summary><p>Historical cash-cover and current ratios provide context only. Current unrestricted cash, liabilities, payroll and a detailed capital programme are unavailable here, so the tool cannot forecast liquidity or borrowing needs. Its scenarios have no statistical confidence bands: changing assumptions explores exposure, not probability. A forecast model would need independent time-based validation before intervals or risk probabilities could be justified.</p></details>
+      <div class="downloads"><a href="data/council_stress_panel.csv" download>Council-year panel · CSV ↓</a><a href="data/council_stress.json" download>Data, source checksums &amp; model status · JSON ↓</a><a href="docs/council-stress-methodology.md">Research specification ↗</a></div>
+    </section>
+  </main>
+  <footer class="stress-wrap stress-footer">© <span id="year"></span> Abdulla Shaheed · Council fiscal resilience research</footer>
+  <script src="js/theme.js"></script>
+  <script src="js/more.js"></script>
+</body>
+</html>

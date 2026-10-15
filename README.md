@@ -16,6 +16,29 @@ Personal site of Shaheed, served at https://shaheed.work through Cloudflare
 - `maldives-grants.html` Who gives Maldives grants, and for what? The companion to the loans map, from the OECD Creditor Reporting System. `scripts/build_maldives_grants.py` reads `data/raw/oecd_crs_maldives.csv.gz` (downloaded from the OECD Data Explorer API for recipient Maldives, every donor and sector, channels and modalities as totals), groups donors with `data/lookups/crs_donor_groups.csv`, maps OECD purpose codes to goals with `data/lookups/crs_purpose_sdg.csv`, and writes `data/processed/grants_tagged.csv` and `data/maldives_grants.json`. China's grants, which are not reported to the OECD, come from AidData's Global Chinese Development Finance Dataset 3.0, 2000 to 2021 (`data/raw/aiddata_gcdf3_maldives.csv`, the Maldives rows of AidData's v3.0 spreadsheet, ODC-By licence) with `data/lookups/aiddata_sector_sdg.csv`. Grants come from the OECD and AidData and loans from the Ministry register, so nothing is counted twice. The loans build also reads the Ministry of Finance register of active sovereign guarantees (`data/raw/sovereign_guarantees_ministry_of_finance.xlsx`, lenders grouped with `data/lookups/guarantee_creditors.csv`) for a separate section on loans the government guarantees, which are not added to the register totals. Both pages have a "How complete is this?" section. The "What is under way now" list comes from IATI: `scripts/build_maldives_iati.py` reads the d-portal export of current activities in `data/raw/iati_dportal_current_activities.csv`, using `data/lookups/iati_orgs.csv` and `data/lookups/iati_activity_kinds.csv`, and writes `data/maldives_iati.json`. Both Maldives pages share `css/maldives.css`
 - `roadmap.html` NSW Roadmap tracker. `scripts/download_aemo.py` fetches the AEMO files into `raw/` and `scripts/build_roadmap.py` turns them into `data/roadmap.js`
 
+## Council fiscal stress research
+
+`council-stress.html` is the NSW council scenario lab. It uses reported revenue,
+expenses and grant shares to explore grant cuts, wage growth and extra capital
+renewal. It is linked from the home page and the shared tools navigation.
+
+The accompanying panel and retrospective fixed-effects/gradient-boosting
+pipeline **does not yet issue forecasts**. The checked-in data has only two
+years of operating performance ratios; 2024–25 explicitly omits them. Older
+OLG workbooks, publication-vintage checks and temporal validation are required.
+See [the research specification](docs/council-stress-methodology.md) for the
+data audit, formulae, model design, limitations and extension process.
+
+```sh
+python -m pip install -r requirements-council-stress.txt
+python scripts/build_council_stress.py
+python -m unittest discover -s tests -p 'test_council_stress.py'
+node --test tests/council-stress.test.cjs
+```
+
+The builder exports the CSV panel and browser payload into `data/`. Use
+`--output-dir /tmp/council-stress` for a build that preserves published data.
+
 ## Other files
 
 - `css/theme.css` site theme (Bootswatch Litera and Public Sans)
