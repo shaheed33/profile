@@ -30,14 +30,19 @@ jobs:
                   print("title:", await page.title())
                   for name, url in URLS.items():
                       try:
-                          r = await ctx.request.get(url, timeout=120000)
-                          body = await r.body()
-                          print(name, r.status, len(body), body[:5])
+                          async with page.expect_download(timeout=120000) as dl:
+                              await page.evaluate("u => { const a=document.createElement('a'); a.href=u; a.download=''; document.body.appendChild(a); a.click(); }", url)
+                          d = await dl.value
+                          path = out/name
+                          await d.save_as(str(path))
+                          body = path.read_bytes()
+                          print(name, len(body), body[:5])
                           if body[:4] in (b"%PDF", b"PK\x03\x04"):
-                              (out/name).write_bytes(body)
                               with open(out/"manifest3.txt","a") as f: f.write(f"{name} {len(body)} {hashlib.sha256(body).hexdigest()} {url}\n")
+                          else:
+                              path.unlink()
                       except Exception as e:
-                          print(name, "ERR", e)
+                          print(name, "ERR", repr(e)[:300])
                   await b.close()
           asyncio.run(main())
           PY
