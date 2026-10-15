@@ -1,8 +1,0 @@
-{
-  "description": "Reviewed units for the checked-in OLG annual workbooks. Years are financial-year ending years. Percent fields are converted to fractions; dollars to AUD. Add older files only after reviewing their headers, units, boundaries and publication dates.",
-  "sources": [
-    {"file": "raw/councils/nsw_2022_23.xlsx", "year": 2023, "url": "https://www.yourcouncil.nsw.gov.au/data/", "publication_date": null, "money_scale": 1000, "percent_scale": 0.01, "renewal_scale": 0.01},
-    {"file": "raw/councils/nsw_2023_24.xlsx", "year": 2024, "url": "https://www.yourcouncil.nsw.gov.au/data/", "publication_date": null, "money_scale": 1, "percent_scale": 1, "renewal_scale": 1},
-    {"file": "raw/councils/nsw_2024_25.xlsx", "year": 2025, "url": "https://www.yourcouncil.nsw.gov.au/data/", "publication_date": null, "money_scale": 1, "percent_scale": 1, "renewal_scale": 0.01}
-  ]
-}

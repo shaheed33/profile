@@ -1,0 +1,1583 @@
+{
+ "years": [
+  "2025-26",
+  "2026-27",
+  "2027-28",
+  "2028-29",
+  "2029-30"
+ ],
+ "currency": "AUD",
+ "unit": "$ million, nominal",
+ "sector": "General government",
+ "budget_round": "2026-27 budgets (released May to June 2026)",
+ "jurisdictions": [
+  {
+   "id": "nsw",
+   "name": "New South Wales",
+   "short": "NSW",
+   "kind": "state",
+   "document": {
+    "title": "NSW Budget 2026-27, Budget Paper No. 1: Budget Statement",
+    "url": "https://www.nsw.gov.au/sites/default/files/noindex/2026-06/bp1-budget-statement-nsw-budget-2026-27.pdf",
+    "sha256": "cb9ecdf041747f271acba0ad2c425c5f3ae901383430d40811c6ad6ca594432b",
+    "released": "2026-06-23"
+   },
+   "first_year_label": "Revised",
+   "items": {
+    "revenue": {
+     "values": [
+      126719,
+      130687,
+      135609,
+      141225,
+      146122
+     ],
+     "table": "Table A.1 General government sector operating statement",
+     "pdf_page": 94
+    },
+    "taxation": {
+     "values": [
+      51776,
+      52149,
+      55592,
+      58619,
+      60700
+     ],
+     "table": "Table A.1",
+     "pdf_page": 94
+    },
+    "grants": {
+     "values": [
+      52156,
+      52822,
+      53325,
+      55909,
+      58303
+     ],
+     "table": "Table A.1",
+     "pdf_page": 94
+    },
+    "gst": {
+     "values": [
+      28522,
+      28723,
+      29932,
+      31783,
+      33902
+     ],
+     "table": "Table 4.5 Grant revenue (GST revenue including 'no worse off' payments)",
+     "pdf_page": 54
+    },
+    "payroll_tax": {
+     "values": [
+      14184,
+      14945,
+      15782,
+      16623,
+      17470
+     ],
+     "table": "Table 4.4 Summary of taxation revenue (payroll tax)",
+     "pdf_page": 51
+    },
+    "transfer_duty": {
+     "values": [
+      14263,
+      12598,
+      13604,
+      14802,
+      15164
+     ],
+     "table": "Table 4.4 (transfer duty)",
+     "pdf_page": 51
+    },
+    "royalties": {
+     "values": [
+      3234,
+      3432,
+      3212,
+      3183,
+      3052
+     ],
+     "table": "Table 4.1 Summary of revenue (royalties)",
+     "pdf_page": 48
+    },
+    "expenses": {
+     "values": [
+      129769,
+      133032,
+      134498,
+      139465,
+      144243
+     ],
+     "table": "Table A.1",
+     "pdf_page": 94
+    },
+    "employee_parts": {
+     "Employee": {
+      "values": [
+       50940,
+       53352,
+       53929,
+       57014,
+       59375
+      ],
+      "table": "Table A.1",
+      "pdf_page": 94
+     },
+     "Superannuation interest cost": {
+      "values": [
+       1549,
+       1566,
+       1503,
+       1430,
+       1376
+      ],
+      "table": "Table A.1",
+      "pdf_page": 94
+     },
+     "Other superannuation": {
+      "values": [
+       5449,
+       5621,
+       5646,
+       5906,
+       6079
+      ],
+      "table": "Table A.1",
+      "pdf_page": 94
+     }
+    },
+    "interest": {
+     "values": [
+      7678,
+      8950,
+      9606,
+      10164,
+      11027
+     ],
+     "table": "Table A.1 (interest)",
+     "pdf_page": 94
+    },
+    "nob": {
+     "values": [
+      -3049,
+      -2345,
+      1110,
+      1760,
+      1879
+     ],
+     "table": "Table A.1 (net operating balance)",
+     "pdf_page": 94
+    },
+    "capex": {
+     "values": [
+      22049,
+      21104,
+      20541,
+      20358,
+      19903
+     ],
+     "table": "Table A.1 (purchases of non-financial assets)",
+     "pdf_page": 95
+    },
+    "net_debt": {
+     "values": [
+      117446,
+      129348,
+      135653,
+      139453,
+      144806
+     ],
+     "table": "Table A.2 General government sector balance sheet (net debt, 30 June)",
+     "pdf_page": 96
+    }
+   }
+  },
+  {
+   "id": "vic",
+   "name": "Victoria",
+   "short": "Vic",
+   "kind": "state",
+   "document": {
+    "title": "Victorian Budget 2026-27, Budget Paper No. 2: Strategy and Outlook; Budget Paper No. 5: Statement of Finances",
+    "url": "https://www.budget.vic.gov.au/budget-papers",
+    "sha256": "12e3cb27ecf187975eb54002d8b51005af543e33ea817fb08ef090bc17c3d99c (BP2); e2f3245a52d6ff11cf6d4f5db31a6637af6e4858e7dec626498d837fd22afbbc (BP5)"
+   },
+   "first_year_label": "Revised",
+   "items": {
+    "revenue": {
+     "values": [
+      111914,
+      115564,
+      117059,
+      121022,
+      125358
+     ],
+     "table": "BP2 Table 4.2 Summary operating statement",
+     "pdf_page": 54,
+     "file": "vic_bp2.txt"
+    },
+    "taxation": {
+     "values": [
+      41518,
+      43179,
+      46345,
+      47960,
+      50175
+     ],
+     "table": "BP2 Table 4.2",
+     "pdf_page": 54,
+     "file": "vic_bp2.txt"
+    },
+    "grants": {
+     "values": [
+      55230,
+      56366,
+      55679,
+      57030,
+      58946
+     ],
+     "table": "BP2 Table 4.2",
+     "pdf_page": 54,
+     "file": "vic_bp2.txt"
+    },
+    "gst": {
+     "values": [
+      28157,
+      29175,
+      28854,
+      28549,
+      29592
+     ],
+     "table": "BP5 Table 4.5 Grant revenue (general purpose grants)",
+     "pdf_page": 186,
+     "file": "vic_bp5.txt"
+    },
+    "payroll_tax": {
+     "values": [
+      11920,
+      12539,
+      13167,
+      13825,
+      14515
+     ],
+     "table": "BP5 Table 4.2 Taxation estimates (total taxes on employers' payroll and labour force)",
+     "pdf_page": 176,
+     "note": "Includes the Mental Health and Wellbeing Levy and the COVID Debt Levy on payrolls, matching the UPF payroll category used for other jurisdictions.",
+     "file": "vic_bp5.txt"
+    },
+    "transfer_duty": {
+     "values": [
+      10601,
+      10009,
+      11002,
+      11743,
+      12404
+     ],
+     "table": "BP5 Table 4.2 (land transfer duty)",
+     "pdf_page": 176,
+     "file": "vic_bp5.txt"
+    },
+    "royalties": {
+     "values": [
+      151,
+      152,
+      156,
+      122,
+      124
+     ],
+     "table": "BP5 Table 4.15 Other revenue and income (royalties)",
+     "pdf_page": 197,
+     "file": "vic_bp5.txt"
+    },
+    "expenses": {
+     "values": [
+      111186,
+      114516,
+      115194,
+      119085,
+      123386
+     ],
+     "table": "BP2 Table 4.2",
+     "pdf_page": 54,
+     "file": "vic_bp2.txt"
+    },
+    "employee_parts": {
+     "Employee expenses": {
+      "values": [
+       40225,
+       41134,
+       42874,
+       44402,
+       45504
+      ],
+      "table": "BP2 Table 4.2",
+      "pdf_page": 54,
+      "file": "vic_bp2.txt"
+     },
+     "Superannuation": {
+      "values": [
+       5503,
+       5463,
+       5646,
+       5736,
+       5810
+      ],
+      "table": "BP2 Table 4.2 (superannuation interest and other superannuation)",
+      "pdf_page": 54,
+      "file": "vic_bp2.txt"
+     }
+    },
+    "interest": {
+     "values": [
+      7853,
+      8904,
+      9672,
+      10660,
+      11820
+     ],
+     "table": "BP2 Table 4.2 (interest expense)",
+     "pdf_page": 54,
+     "file": "vic_bp2.txt"
+    },
+    "nob": {
+     "values": [
+      727,
+      1048,
+      1864,
+      1936,
+      1972
+     ],
+     "table": "BP2 Table 4.2 (net result from transactions)",
+     "pdf_page": 54,
+     "file": "vic_bp2.txt"
+    },
+    "capex": {
+     "values": [
+      null,
+      14952,
+      14368,
+      14955,
+      15738
+     ],
+     "table": "BP5 cash flow statement (purchases of non-financial assets)",
+     "pdf_page": 17,
+     "note": "BP5 does not show a 2025-26 revised figure in this statement.",
+     "file": "vic_bp5.txt"
+    },
+    "net_debt": {
+     "values": [
+      165345,
+      175560,
+      183170,
+      191126,
+      199306
+     ],
+     "table": "BP5 balance sheet (net debt, 30 June)",
+     "pdf_page": 16,
+     "file": "vic_bp5.txt"
+    }
+   }
+  },
+  {
+   "id": "qld",
+   "name": "Queensland",
+   "short": "Qld",
+   "kind": "state",
+   "document": {
+    "title": "Queensland Budget 2026-27, Budget Paper No. 2: Budget Strategy and Outlook",
+    "url": "https://budget.qld.gov.au/files/2026-27-budget-bp2-budget-strategy-outlook.pdf",
+    "sha256": "b9a9b13dc6d7e707603a0b4da7182521ed3ac934bec5ac0d4ff02d9d78049426",
+    "released": "2026-06-23"
+   },
+   "first_year_label": "Estimated actual",
+   "items": {
+    "revenue": {
+     "values": [
+      92018,
+      99671,
+      104354,
+      107835,
+      112311
+     ],
+     "table": "Table 8.1 General Government Sector Operating Statement",
+     "pdf_page": 107
+    },
+    "taxation": {
+     "values": [
+      28474,
+      29676,
+      31775,
+      33924,
+      35966
+     ],
+     "table": "Table 8.1",
+     "pdf_page": 107
+    },
+    "grants": {
+     "values": [
+      41864,
+      45747,
+      49081,
+      51162,
+      53607
+     ],
+     "table": "Table 8.1",
+     "pdf_page": 107
+    },
+    "gst": {
+     "values": [
+      16932,
+      19577,
+      22567,
+      24567,
+      25744
+     ],
+     "table": "Table 3.3 Grants revenue (GST revenue grants)",
+     "pdf_page": 58
+    },
+    "payroll_tax": {
+     "values": [
+      8026,
+      8593,
+      9080,
+      9574,
+      10097
+     ],
+     "table": "Table 3.2 State taxation revenue (total payroll tax, including the mental health levy)",
+     "pdf_page": 55
+    },
+    "transfer_duty": {
+     "values": [
+      8671,
+      8346,
+      8946,
+      9553,
+      10152
+     ],
+     "table": "Table 3.2 (transfer duty)",
+     "pdf_page": 55
+    },
+    "royalties": {
+     "values": [
+      6579,
+      9486,
+      8135,
+      7534,
+      7097
+     ],
+     "table": "Table 3.4 Royalty revenue (total royalties, excluding land rents)",
+     "pdf_page": 63
+    },
+    "expenses": {
+     "values": [
+      100863,
+      105847,
+      107645,
+      109831,
+      111692
+     ],
+     "table": "Table 8.1",
+     "pdf_page": 107
+    },
+    "employee_parts": {
+     "Employee expenses": {
+      "values": [
+       38433,
+       40510,
+       41673,
+       42983,
+       44216
+      ],
+      "table": "Table 8.1",
+      "pdf_page": 107
+     },
+     "Superannuation interest cost": {
+      "values": [
+       699,
+       767,
+       717,
+       643,
+       569
+      ],
+      "table": "Table 8.1",
+      "pdf_page": 107
+     },
+     "Other superannuation expenses": {
+      "values": [
+       4645,
+       4827,
+       4936,
+       5008,
+       5023
+      ],
+      "table": "Table 8.1",
+      "pdf_page": 107
+     }
+    },
+    "interest": {
+     "values": [
+      3357,
+      4464,
+      5623,
+      6758,
+      7705
+     ],
+     "table": "Table 8.1 (other interest expenses)",
+     "pdf_page": 107
+    },
+    "nob": {
+     "values": [
+      -8845,
+      -6176,
+      -3291,
+      -1996,
+      619
+     ],
+     "table": "Table 8.1 (net operating balance)",
+     "pdf_page": 107
+    },
+    "capex": {
+     "values": [
+      12450,
+      15479,
+      19121,
+      20296,
+      20014
+     ],
+     "table": "Table 8.1 (purchases of non-financial assets)",
+     "pdf_page": 107
+    },
+    "net_debt": {
+     "values": [
+      33440,
+      51329,
+      69024,
+      85980,
+      98057
+     ],
+     "table": "Table 8.4 General Government Sector balance sheet (net debt)",
+     "pdf_page": 110
+    }
+   }
+  },
+  {
+   "id": "wa",
+   "name": "Western Australia",
+   "short": "WA",
+   "kind": "state",
+   "document": {
+    "title": "WA State Budget 2026-27, Budget Paper No. 3: Economic and Fiscal Outlook",
+    "url": "https://www.ourstatebudget.wa.gov.au/2026-27/budget-papers/bp3/2026-27-wa-state-budget-bp3.pdf",
+    "sha256": "2998ca2a7879a843d3253a57910f24e7f5a58ea83f34ad0ad1bbd95b04126a73"
+   },
+   "first_year_label": "Estimated actual",
+   "items": {
+    "revenue": {
+     "values": [
+      52646,
+      54980,
+      52378,
+      53653,
+      54786
+     ],
+     "table": "Appendix 1 Table 1.1 General Government Operating Statement",
+     "pdf_page": 257
+    },
+    "taxation": {
+     "values": [
+      17024,
+      16920,
+      17506,
+      18424,
+      19402
+     ],
+     "table": "Table 1.1",
+     "pdf_page": 257
+    },
+    "grants_parts": {
+     "Current grants and subsidies": {
+      "values": [
+       15260,
+       16707,
+       17306,
+       18071,
+       19240
+      ],
+      "table": "Table 1.1",
+      "pdf_page": 257
+     },
+     "Capital grants": {
+      "values": [
+       2148,
+       2791,
+       1634,
+       832,
+       498
+      ],
+      "table": "Table 1.1",
+      "pdf_page": 257
+     }
+    },
+    "gst": {
+     "values": [
+      8094,
+      9342,
+      9889,
+      10410,
+      11214
+     ],
+     "table": "Appendix 2 Table 2.1 Operating Revenue (GST grants)",
+     "pdf_page": 283
+    },
+    "payroll_tax": {
+     "values": [
+      6227,
+      6546,
+      6878,
+      7212,
+      7575
+     ],
+     "table": "Table 2.1 (payroll tax)",
+     "pdf_page": 282
+    },
+    "transfer_duty": {
+     "values": [
+      4302,
+      3637,
+      3691,
+      3954,
+      4220
+     ],
+     "table": "Table 2.1 (transfer duty)",
+     "pdf_page": 282
+    },
+    "royalties": {
+     "values": [
+      10822,
+      9443,
+      8087,
+      7785,
+      7438
+     ],
+     "table": "Table 1.1 (royalty income)",
+     "pdf_page": 257
+    },
+    "expenses": {
+     "values": [
+      49140,
+      52539,
+      50626,
+      50152,
+      50663
+     ],
+     "table": "Table 1.1",
+     "pdf_page": 257
+    },
+    "employee_parts": {
+     "Salaries": {
+      "values": [
+       19782,
+       21424,
+       21611,
+       21993,
+       22338
+      ],
+      "table": "Table 1.1",
+      "pdf_page": 257
+     },
+     "Superannuation concurrent costs": {
+      "values": [
+       2376,
+       2574,
+       2597,
+       2644,
+       2686
+      ],
+      "table": "Table 1.1",
+      "pdf_page": 257
+     },
+     "Superannuation interest cost": {
+      "values": [
+       232,
+       220,
+       201,
+       189,
+       175
+      ],
+      "table": "Table 1.1",
+      "pdf_page": 257
+     },
+     "Other employee costs": {
+      "values": [
+       485,
+       485,
+       457,
+       453,
+       455
+      ],
+      "table": "Table 1.1",
+      "pdf_page": 257
+     }
+    },
+    "interest_parts": {
+     "Interest on leases": {
+      "values": [
+       159,
+       162,
+       152,
+       147,
+       149
+      ],
+      "table": "Table 1.1",
+      "pdf_page": 257
+     },
+     "Other interest": {
+      "values": [
+       1104,
+       1344,
+       1439,
+       1551,
+       1624
+      ],
+      "table": "Table 1.1",
+      "pdf_page": 257
+     }
+    },
+    "nob": {
+     "values": [
+      3507,
+      2441,
+      1752,
+      3501,
+      4123
+     ],
+     "table": "Table 1.1 (net operating balance)",
+     "pdf_page": 257
+    },
+    "capex": {
+     "values": [
+      4213,
+      5522,
+      4371,
+      4888,
+      3530
+     ],
+     "table": "Table 1.1 (purchase of non-financial assets)",
+     "pdf_page": 257
+    },
+    "net_debt": {
+     "values": [
+      26244,
+      30161,
+      32828,
+      33202,
+      31208
+     ],
+     "table": "Table 1.2 General Government Balance Sheet (net debt, 30 June)",
+     "pdf_page": 258
+    }
+   }
+  },
+  {
+   "id": "sa",
+   "name": "South Australia",
+   "short": "SA",
+   "kind": "state",
+   "document": {
+    "title": "South Australian State Budget 2026-27, Budget Paper 3: Budget Statement",
+    "url": "https://www.treasury.sa.gov.au/__data/assets/pdf_file/0006/1419036/2026-27-Budget-Statement.pdf",
+    "sha256": "c3f010ea6020186380fd2f28e224345928e9f54dcd5fec617bf01499a2e9de05"
+   },
+   "first_year_label": "Estimated result",
+   "items": {
+    "revenue": {
+     "values": [
+      32668,
+      33853,
+      34375,
+      35417,
+      36651
+     ],
+     "table": "Table A.1 General government sector operating statement",
+     "pdf_page": 127
+    },
+    "taxation": {
+     "values": [
+      7583,
+      7916,
+      8193,
+      8476,
+      8771
+     ],
+     "table": "Table A.1",
+     "pdf_page": 127
+    },
+    "grants": {
+     "values": [
+      18531,
+      18998,
+      19141,
+      19721,
+      20493
+     ],
+     "table": "Table A.1",
+     "pdf_page": 127
+    },
+    "gst": {
+     "values": [
+      9778.7,
+      10186.1,
+      9958.1,
+      10297.8,
+      10676.1
+     ],
+     "table": "Table 3.14 Grant revenue (GST revenue grants)",
+     "pdf_page": 46
+    },
+    "payroll_tax": {
+     "values": [
+      2108,
+      2224,
+      2344,
+      2469,
+      2600
+     ],
+     "table": "Table 3.3 Taxation (payroll tax)",
+     "pdf_page": 38
+    },
+    "transfer_duty": {
+     "values": [
+      1784,
+      1834,
+      1876,
+      1930,
+      1987
+     ],
+     "table": "Table 3.3 (conveyance duty)",
+     "pdf_page": 38
+    },
+    "royalties": {
+     "values": [
+      493.9,
+      509.2,
+      468.4,
+      493.1,
+      499.8
+     ],
+     "table": "Table 3.20 Other revenue (royalties)",
+     "pdf_page": 55
+    },
+    "expenses": {
+     "values": [
+      32479,
+      33630,
+      34091,
+      35070,
+      36324
+     ],
+     "table": "Table A.1",
+     "pdf_page": 127
+    },
+    "employee_parts": {
+     "Employee expenses": {
+      "values": [
+       11930,
+       12363,
+       12837,
+       13218,
+       13577
+      ],
+      "table": "Table A.1",
+      "pdf_page": 127
+     },
+     "Superannuation interest cost": {
+      "values": [
+       271,
+       241,
+       217,
+       192,
+       164
+      ],
+      "table": "Table A.1",
+      "pdf_page": 127
+     },
+     "Other superannuation expenses": {
+      "values": [
+       1397,
+       1481,
+       1536,
+       1582,
+       1625
+      ],
+      "table": "Table A.1",
+      "pdf_page": 127
+     }
+    },
+    "interest": {
+     "values": [
+      1504,
+      1979,
+      2297,
+      2632,
+      2928
+     ],
+     "table": "Table A.1 (interest expenses)",
+     "pdf_page": 127
+    },
+    "nob": {
+     "values": [
+      189,
+      223,
+      285,
+      348,
+      327
+     ],
+     "table": "Table A.1 (net operating balance)",
+     "pdf_page": 127
+    },
+    "capex": {
+     "values": [
+      4221,
+      5812,
+      6252,
+      5483,
+      5168
+     ],
+     "table": "Table A.1 (purchases of non-financial assets)",
+     "pdf_page": 127
+    },
+    "net_debt": {
+     "values": [
+      24226,
+      28842,
+      33417,
+      37274,
+      40853
+     ],
+     "table": "Table A.4 General government sector balance sheet (net debt)",
+     "pdf_page": 130
+    }
+   }
+  },
+  {
+   "id": "tas",
+   "name": "Tasmania",
+   "short": "Tas",
+   "kind": "state",
+   "document": {
+    "title": "Tasmanian Budget 2026-27, Budget Paper No. 1: Budget Strategy and Estimates",
+    "url": "https://www.treasury.tas.gov.au/Documents/2026-27%20Budget%20Paper%20No.%201,%20Budget%20Strategy%20and%20Estimates.PDF",
+    "sha256": "f9e4b1bc1d4f337623ba8cda84f2a6a1b94de66070ecddc27065cfd4c163a488"
+   },
+   "first_year_label": "Estimated outcome",
+   "items": {
+    "revenue": {
+     "values": [
+      9715.2,
+      10191.3,
+      10586.9,
+      10900.8,
+      11602.7
+     ],
+     "table": "Table 5.1 General Government Income Statement",
+     "pdf_page": 118
+    },
+    "taxation": {
+     "values": [
+      1987.1,
+      2132.9,
+      2257.9,
+      2364.4,
+      2472.6
+     ],
+     "table": "Table 5.1",
+     "pdf_page": 118
+    },
+    "grants": {
+     "values": [
+      6430.8,
+      6756.3,
+      6959.4,
+      7153.5,
+      7566.9
+     ],
+     "table": "Table 5.1",
+     "pdf_page": 118
+    },
+    "gst": {
+     "values": [
+      3867.1,
+      4108.1,
+      4168.5,
+      4348.5,
+      4589.0
+     ],
+     "table": "Table 6.3 Tasmanian GST Revenue Estimates",
+     "pdf_page": 146
+    },
+    "payroll_tax": {
+     "values": [
+      610.5,
+      650.2,
+      692.4,
+      737.4,
+      785.4
+     ],
+     "table": "Table 6.5 State Taxation (payroll tax)",
+     "pdf_page": 158
+    },
+    "transfer_duty": {
+     "values": [
+      437.2,
+      518.5,
+      562.2,
+      583.8,
+      606.2
+     ],
+     "table": "Table 6.5 (conveyance duty)",
+     "pdf_page": 158
+    },
+    "royalties": {
+     "values": [
+      85.9,
+      68.0,
+      66.0,
+      63.5,
+      59.5
+     ],
+     "table": "Table 6.10 Other Revenue (mineral royalties)",
+     "pdf_page": 165
+    },
+    "expenses": {
+     "values": [
+      10638.5,
+      10788.1,
+      10394.1,
+      10464.8,
+      10980.7
+     ],
+     "table": "Table 5.1",
+     "pdf_page": 118
+    },
+    "employee_parts": {
+     "Employee expenses": {
+      "values": [
+       4441.6,
+       4465.4,
+       4423.4,
+       4485.6,
+       4615.6
+      ],
+      "table": "Table 5.1",
+      "pdf_page": 118
+     },
+     "Superannuation": {
+      "values": [
+       551.6,
+       533.3,
+       520.1,
+       520.8,
+       531.2
+      ],
+      "table": "Table 5.1",
+      "pdf_page": 118
+     },
+     "Nominal superannuation interest expense": {
+      "values": [
+       307.4,
+       314.6,
+       312.5,
+       309.9,
+       306.9
+      ],
+      "table": "Table 5.1",
+      "pdf_page": 118
+     }
+    },
+    "interest": {
+     "values": [
+      351.8,
+      441.9,
+      533.5,
+      597.2,
+      627.6
+     ],
+     "table": "Table 5.1 (borrowing costs)",
+     "pdf_page": 118
+    },
+    "nob": {
+     "values": [
+      -923.3,
+      -596.7,
+      192.8,
+      436.0,
+      622.0
+     ],
+     "table": "Table 5.1 (net operating balance)",
+     "pdf_page": 118
+    },
+    "capex": {
+     "values": [
+      698.6,
+      978.2,
+      1018.8,
+      790.7,
+      651.1
+     ],
+     "table": "Table 5.1 (purchases of non-financial assets)",
+     "pdf_page": 119
+    },
+    "net_debt": {
+     "values": [
+      6822.0,
+      8440.3,
+      9377.5,
+      9983.0,
+      9466.5
+     ],
+     "table": "Table 8.2 Composition of Net Debt (net debt, including leases and service concession liabilities)",
+     "pdf_page": 195,
+     "note": "Tasmania's headline measure is GFS net debt, which excludes lease and service concession liabilities. The figure used here includes them, to match the definition used for the other jurisdictions."
+    }
+   }
+  },
+  {
+   "id": "act",
+   "name": "Australian Capital Territory",
+   "short": "ACT",
+   "kind": "territory",
+   "document": {
+    "title": "ACT Budget 2026-27, Budget Outlook (budget tables workbook)",
+    "url": "https://www.treasury.act.gov.au/__data/assets/excel_doc/0009/3081492/ACT-Government-2026-27-Budget-tables.xlsx",
+    "sha256": "77525315e39f4e16a6cb5350e67743c60f47d9d782073278eb282395b13f34cb"
+   },
+   "first_year_label": "Estimated outcome",
+   "items": {
+    "revenue": {
+     "values": [
+      8846.123,
+      9595.737,
+      10090.103,
+      10734.494,
+      10921.137
+     ],
+     "table": "Table 4.1.1 General Government Sector Operating Statement"
+    },
+    "taxation": {
+     "values": [
+      2978.524,
+      3280.415,
+      3485.969,
+      3709.941,
+      3939.73
+     ],
+     "table": "Table 4.1.1"
+    },
+    "grants": {
+     "values": [
+      3937.813,
+      4082.209,
+      4160.65,
+      4325.634,
+      4443.959
+     ],
+     "table": "Table 4.1.1 (Commonwealth grants revenue)"
+    },
+    "gst": {
+     "values": [
+      2167.493,
+      2249.939,
+      2364.7,
+      2517.859,
+      2660.632
+     ],
+     "table": "Table 3.5.8 Commonwealth Government grants (GST revenue grant)"
+    },
+    "payroll_tax": {
+     "values": [
+      885.324,
+      1036.421,
+      1123.552,
+      1215.509,
+      1313.016
+     ],
+     "table": "Table 3.5.2 Own-source taxation revenue (payroll tax)"
+    },
+    "transfer_duty_parts": {
+     "Commercial conveyances": {
+      "values": [
+       67.56,
+       73.859,
+       75.933,
+       77.573,
+       79.888
+      ],
+      "table": "Table 3.5.2"
+     },
+     "Residential conveyances": {
+      "values": [
+       291.791,
+       299.179,
+       299.686,
+       306.955,
+       314.419
+      ],
+      "table": "Table 3.5.2"
+     }
+    },
+    "royalties": {
+     "values": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "table": "The ACT does not collect mining royalties"
+    },
+    "expenses": {
+     "values": [
+      9653.216,
+      10207.636,
+      10421.586,
+      10824.553,
+      10925.149
+     ],
+     "table": "Table 4.1.1"
+    },
+    "employee_parts": {
+     "Employee expenses": {
+      "values": [
+       3672.455,
+       3895.915,
+       3810.436,
+       3882.799,
+       3997.697
+      ],
+      "table": "Table 4.1.1"
+     },
+     "Superannuation interest cost": {
+      "values": [
+       501.989,
+       525.152,
+       535.858,
+       545.092,
+       552.88
+      ],
+      "table": "Table 4.1.1"
+     },
+     "Other superannuation expenses": {
+      "values": [
+       540.556,
+       582.649,
+       559.223,
+       556.959,
+       557.719
+      ],
+      "table": "Table 4.1.1"
+     }
+    },
+    "interest": {
+     "values": [
+      636.019,
+      811.025,
+      970.942,
+      1089.488,
+      1217.512
+     ],
+     "table": "Table 4.1.1 (interest expenses)"
+    },
+    "nob": {
+     "values": [
+      -807.093,
+      -611.899,
+      -331.483,
+      -90.059,
+      -4.012
+     ],
+     "table": "Table 4.1.1 (UPF net operating balance)"
+    },
+    "capex": {
+     "values": [
+      1101.294,
+      745.744,
+      746.06,
+      849.15,
+      740.379
+     ],
+     "table": "Table 4.2.7 Purchases of non-financial assets by function"
+    },
+    "net_debt_parts": {
+     "plus Advances received": {
+      "values": [
+       31.296,
+       64.725,
+       177.658,
+       199.177,
+       160.857
+      ],
+      "table": "Table 4.1.2 Balance Sheet"
+     },
+     "plus Lease liabilities": {
+      "values": [
+       1007.636,
+       965.388,
+       931.805,
+       886.161,
+       837.556
+      ],
+      "table": "Table 4.1.2"
+     },
+     "plus Other borrowings": {
+      "values": [
+       15827.735,
+       19523.087,
+       20451.85,
+       22229.89,
+       22271.539
+      ],
+      "table": "Table 4.1.2"
+     },
+     "less Cash and deposits": {
+      "values": [
+       2561.843,
+       4330.995,
+       4548.483,
+       5071.709,
+       4727.58
+      ],
+      "table": "Table 4.1.2"
+     },
+     "less Advances paid": {
+      "values": [
+       2290.219,
+       2731.113,
+       2766.266,
+       3201.089,
+       3168.974
+      ],
+      "table": "Table 4.1.2"
+     },
+     "less Investments": {
+      "values": [
+       8214.877,
+       8845.624,
+       9530.644,
+       10263.732,
+       11049.457
+      ],
+      "table": "Table 4.1.2"
+     }
+    },
+    "own_net_debt": {
+     "values": [
+      11089.46,
+      12483.375,
+      13143.659,
+      13841.097,
+      14069.242
+     ],
+     "table": "Table 4.1.2 (net debt excluding superannuation-related investments)",
+     "note": "The ACT's headline net debt excludes investments held to meet superannuation. The tool uses the standard definition (all investments deducted), calculated from the balance sheet, so it compares with other jurisdictions."
+    }
+   }
+  },
+  {
+   "id": "nt",
+   "name": "Northern Territory",
+   "short": "NT",
+   "kind": "territory",
+   "document": {
+    "title": "Northern Territory Budget 2026-27, Budget Paper No. 2: Budget Strategy and Outlook",
+    "url": "https://budget.nt.gov.au/__data/assets/pdf_file/0004/1609744/2026-27-budget-bp2.pdf",
+    "sha256": "62c432dc53367888eab0ab904c5caff194f44a4023eb818ea7eae6207e9525ea"
+   },
+   "first_year_label": "Revised",
+   "items": {
+    "revenue": {
+     "values": [
+      9597.457,
+      9787.245,
+      9807.547,
+      10064.887,
+      10302.02
+     ],
+     "table": "General government sector comprehensive operating statement",
+     "pdf_page": 92
+    },
+    "taxation": {
+     "values": [
+      911.875,
+      842.207,
+      872.23,
+      904.698,
+      939.627
+     ],
+     "table": "GG operating statement",
+     "pdf_page": 92
+    },
+    "grants_parts": {
+     "Current grants": {
+      "values": [
+       6981.569,
+       7204.764,
+       7088.533,
+       7327.694,
+       7566.101
+      ],
+      "table": "GG operating statement",
+      "pdf_page": 92
+     },
+     "Capital grants": {
+      "values": [
+       489.105,
+       519.618,
+       599.981,
+       522.787,
+       516.547
+      ],
+      "table": "GG operating statement",
+      "pdf_page": 92
+     }
+    },
+    "gst": {
+     "values": [
+      4967,
+      5102,
+      5198,
+      5409,
+      5683
+     ],
+     "table": "Table 5.4 Territory GST revenue (2026-27 Budget)",
+     "pdf_page": 49
+    },
+    "payroll_tax": {
+     "values": [
+      323,
+      342,
+      351,
+      369,
+      388
+     ],
+     "table": "Table 6.1 Territory taxes and royalties (taxes on employers)",
+     "pdf_page": 62,
+     "note": "Non-financial public sector basis, rounded to $1 million."
+    },
+    "transfer_duty": {
+     "values": [
+      245,
+      144,
+      147,
+      149,
+      151
+     ],
+     "table": "Table 6.1 (taxes on property)",
+     "pdf_page": 62,
+     "note": "In the Territory, taxes on property are conveyance (stamp) duty; there is no land tax. Non-financial public sector basis, rounded to $1 million."
+    },
+    "royalties": {
+     "values": [
+      388,
+      445,
+      403,
+      424,
+      437
+     ],
+     "table": "Table 6.1 (mining and petroleum royalties)",
+     "pdf_page": 62
+    },
+    "expenses": {
+     "values": [
+      9502.222,
+      9829.382,
+      9608.526,
+      9791.967,
+      9929.609
+     ],
+     "table": "GG operating statement",
+     "pdf_page": 92
+    },
+    "employee_parts": {
+     "Employee benefits expense": {
+      "values": [
+       3504.457,
+       3577.75,
+       3614.962,
+       3716.438,
+       3840.021
+      ],
+      "table": "GG operating statement",
+      "pdf_page": 92
+     },
+     "Superannuation interest cost": {
+      "values": [
+       125.8,
+       122.592,
+       118.932,
+       114.913,
+       110.745
+      ],
+      "table": "GG operating statement",
+      "pdf_page": 92
+     },
+     "Other superannuation expenses": {
+      "values": [
+       397.539,
+       405.266,
+       410.825,
+       422.624,
+       436.591
+      ],
+      "table": "GG operating statement",
+      "pdf_page": 92
+     }
+    },
+    "interest": {
+     "values": [
+      544.521,
+      611.725,
+      676.211,
+      720.952,
+      764.493
+     ],
+     "table": "GG operating statement (interest expenses)",
+     "pdf_page": 92
+    },
+    "nob": {
+     "values": [
+      95.235,
+      -42.137,
+      199.021,
+      272.92,
+      372.411
+     ],
+     "table": "GG operating statement (net operating balance)",
+     "pdf_page": 92
+    },
+    "capex": {
+     "values": [
+      1283.862,
+      1579.231,
+      1304.248,
+      1134.241,
+      1116.559
+     ],
+     "table": "GG operating statement (purchases of non financial assets)",
+     "pdf_page": 92
+    },
+    "net_debt": {
+     "values": [
+      8998.321,
+      9944.641,
+      10342.301,
+      10409.332,
+      10316.466
+     ],
+     "table": "General government sector balance sheet (net debt)",
+     "pdf_page": 93
+    }
+   }
+  }
+ ]
+}

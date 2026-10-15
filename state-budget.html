@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stress-test a state budget · State Budget Resilience Monitor · Shaheed</title>
+  <meta name="description" content="How exposed is each Australian state and territory budget to a property slump, a commodity price fall, a GST shortfall, a wage breakout or higher interest rates? Built on the 2026-27 budget papers, with every figure traced to its source.">
+  <meta property="og:title" content="Stress-test a state budget">
+  <meta property="og:description" content="The six states and two territories, their published 2026-27 budgets, and what happens to them under the shocks you choose.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shaheed.work/state-budget">
+  <meta name="twitter:card" content="summary">
+  <script>try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-bs-theme',t)}catch(e){}</script>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/state-budget.css">
+  <script src="data/state_budget.js" defer></script>
+  <script src="js/state-budget-math.js" defer></script>
+  <script src="js/state-budget.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#tool-start">Skip to the scenario tool</a>
+  <header class="site-header"><div class="sb-wrap bar">
+    <a class="brand" href="index.html">Abdulla Shaheed</a>
+    <nav class="site-nav" aria-label="Main"><a href="index.html#tools">Tools</a><a href="index.html#about">About</a><button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20.7 13A9 9 0 0 1 11 3.3 9 9 0 1 0 20.7 13Z"/></svg></button></nav>
+  </div></header>
+
+  <main id="main" class="sb-wrap">
+    <section class="sb-hero">
+      <div class="eyebrow"><span class="status-dot"></span> Public finance / Australian states and territories</div>
+      <h1>Stress-test<br>a state budget.</h1>
+      <p class="hero-deck">A property slump. A commodity price fall. Less GST. Pay rises above plan. Dearer borrowing.<br>See how each government's published budget would hold up.</p>
+      <div class="hero-meta"><span>6 states, 2 territories</span><span>2026-27 budgets to 2029-30</span><a href="#sources">Every figure sourced ↗</a></div>
+    </section>
+
+    <aside class="how-to" aria-label="How to use this tool">
+      <ol>
+        <li><strong>Pick a government.</strong> You start from its own <button type="button" class="term" data-term="budget">2026-27 budget</button> and <button type="button" class="term" data-term="forward-estimates">forward estimates</button>.</li>
+        <li><strong>Choose shocks.</strong> Use a ready-made scenario or move the sliders.</li>
+        <li><strong>Read the result.</strong> The tool shows what changes against the published budget and compares all eight.</li>
+      </ol>
+      <p class="how-note">Words with a dotted underline explain themselves. Tap or hover over them.</p>
+    </aside>
+
+    <noscript><p class="error">This tool needs JavaScript. You can still download the <a href="data/state_budget.csv">budget figures as a CSV</a> and read the method and sources below.</p></noscript>
+    <p id="load-error" class="error" role="alert" hidden></p>
+
+    <section class="pick" aria-labelledby="pick-title" id="tool-start">
+      <div class="pick-head">
+        <span class="section-number">01 / Choose</span>
+        <h2 id="pick-title">Pick a state or territory</h2>
+      </div>
+      <div class="pick-controls">
+        <div class="chips" id="chips" role="radiogroup" aria-label="State or territory"></div>
+        <label class="sr-only" for="jurisdiction">State or territory</label>
+        <select id="jurisdiction" class="jur-select" disabled><option>Loading budget data…</option></select>
+      </div>
+    </section>
+
+    <div id="tool" hidden>
+      <section class="baseline" aria-labelledby="baseline-title">
+        <div class="baseline-head">
+          <h3 id="baseline-title"><span id="j-name"></span>: the budget as published</h3>
+          <p class="small-note"><button type="button" class="term" data-term="general-government">General government sector</button>, $ nominal. <span id="j-source-line"></span></p>
+        </div>
+        <div class="stat-grid">
+          <div class="stat"><span>Total revenue, 2026-27</span><strong id="b-revenue">—</strong><small id="b-revenue-note"></small></div>
+          <div class="stat"><span><button type="button" class="term" data-term="nob">Operating balance</button>, 2026-27</span><strong id="b-nob">—</strong><small id="b-nob-note"></small></div>
+          <div class="stat"><span><button type="button" class="term" data-term="net-debt">Net debt</button>, June 2027</span><strong id="b-debt">—</strong><small id="b-debt-note"></small></div>
+          <div class="stat"><span><button type="button" class="term" data-term="interest-to-revenue">Interest cost</button>, 2026-27</span><strong id="b-interest">—</strong><small id="b-interest-note"></small></div>
+        </div>
+        <p id="j-note" class="j-note" hidden></p>
+
+        <div class="mix">
+          <div class="mix-head">
+            <h3>Where the money comes from, 2026-27</h3>
+            <p class="small-note">The bigger a slice, the more a shock to it matters. Each slice is a share of total revenue.</p>
+          </div>
+          <div class="mix-bar" id="mix-bar" role="img" aria-label="Revenue mix"></div>
+          <ul class="mix-legend" id="mix-legend"></ul>
+        </div>
+      </section>
+
+      <section class="scenario-layout" aria-labelledby="scenario-title">
+        <form id="scenario-form" class="controls" onsubmit="return false" novalidate>
+          <span class="section-number">02 / Shock it</span>
+          <h2 id="scenario-title">Choose what goes wrong</h2>
+          <p class="small-note">Shocks start in 2026-27 and last to 2029-30. They are changes from the budget's own figures, not from today.</p>
+
+          <fieldset class="presets">
+            <legend>Ready-made <button type="button" class="term" data-term="scenario">scenarios</button></legend>
+            <div class="preset-list" id="presets"></div>
+            <p class="preset-desc" id="preset-desc" aria-live="polite"></p>
+          </fieldset>
+
+          <fieldset class="group">
+            <legend>Revenue</legend>
+            <div class="control" data-key="gst">
+              <label for="s-gst"><span><button type="button" class="term" data-term="gst">GST revenue</button></span><output id="o-gst" for="s-gst">0%</output></label>
+              <input type="range" id="s-gst" min="-20" max="10" step="1" value="0" aria-describedby="h-gst">
+              <p id="h-gst">Change in GST received each year, for example from weaker spending or a smaller share.</p>
+            </div>
+            <div class="control" data-key="otherGrants">
+              <label for="s-otherGrants"><span><button type="button" class="term" data-term="other-grants">Other Commonwealth grants</button></span><output id="o-otherGrants" for="s-otherGrants">0%</output></label>
+              <input type="range" id="s-otherGrants" min="-20" max="10" step="1" value="0" aria-describedby="h-otherGrants">
+              <p id="h-otherGrants">Grants for hospitals, schools, roads and other set purposes.</p>
+            </div>
+            <div class="control" data-key="payroll">
+              <label for="s-payroll"><span><button type="button" class="term" data-term="payroll-tax">Payroll tax</button></span><output id="o-payroll" for="s-payroll">0%</output></label>
+              <input type="range" id="s-payroll" min="-20" max="10" step="1" value="0" aria-describedby="h-payroll">
+              <p id="h-payroll">Follows jobs and wages. Falls in a downturn.</p>
+            </div>
+            <div class="control" data-key="duty">
+              <label for="s-duty"><span><button type="button" class="term" data-term="transfer-duty">Property stamp duty</button></span><output id="o-duty" for="s-duty">0%</output></label>
+              <input type="range" id="s-duty" min="-50" max="20" step="1" value="0" aria-describedby="h-duty">
+              <p id="h-duty">Moves with house prices and the number of sales. Can swing by a quarter or more.</p>
+            </div>
+            <div class="control" data-key="royalties">
+              <label for="s-royalties"><span><button type="button" class="term" data-term="royalties">Mining royalties</button></span><output id="o-royalties" for="s-royalties">0%</output></label>
+              <input type="range" id="s-royalties" min="-60" max="30" step="1" value="0" aria-describedby="h-royalties">
+              <p id="h-royalties">Follow coal, iron ore, gas and other commodity prices.</p>
+            </div>
+          </fieldset>
+
+          <fieldset class="group">
+            <legend>Spending</legend>
+            <div class="control" data-key="wages">
+              <label for="s-wages"><span>Extra <button type="button" class="term" data-term="employee">wage</button> growth a year</span><output id="o-wages" for="s-wages">0.0 pts</output></label>
+              <input type="range" id="s-wages" min="-1" max="3" step="0.25" value="0" aria-describedby="h-wages">
+              <p id="h-wages"><button type="button" class="term" data-term="percentage-point">Percentage points</button> above the pay growth already in the budget. It compounds each year.</p>
+            </div>
+            <div class="control" data-key="otherSpending">
+              <label for="s-otherSpending"><span><button type="button" class="term" data-term="other-spending">Other running costs</button></span><output id="o-otherSpending" for="s-otherSpending">0%</output></label>
+              <input type="range" id="s-otherSpending" min="-5" max="10" step="0.5" value="0" aria-describedby="h-otherSpending">
+              <p id="h-otherSpending">Higher prices for services, contracts and grants, or new spending.</p>
+            </div>
+            <div class="control" data-key="capex">
+              <label for="s-capex"><span><button type="button" class="term" data-term="capex">Infrastructure spending</button></span><output id="o-capex" for="s-capex">0%</output></label>
+              <input type="range" id="s-capex" min="-30" max="30" step="1" value="0" aria-describedby="h-capex">
+              <p id="h-capex">Cost overruns or a bigger programme. Adds to debt, not to running costs.</p>
+            </div>
+          </fieldset>
+
+          <fieldset class="group">
+            <legend>Borrowing</legend>
+            <div class="control" data-key="rateShock">
+              <label for="s-rateShock"><span>Higher interest rates</span><output id="o-rateShock" for="s-rateShock">0.00 pts</output></label>
+              <input type="range" id="s-rateShock" min="-1" max="3" step="0.25" value="0" aria-describedby="h-rateShock">
+              <p id="h-rateShock">Added to the rate on new and refinanced debt.</p>
+            </div>
+            <details class="advanced">
+              <summary>Borrowing assumptions</summary>
+              <div class="control" data-key="borrowingRate">
+                <label for="s-borrowingRate"><span><button type="button" class="term" data-term="borrowing-rate">Cost of extra borrowing</button></span><output id="o-borrowingRate" for="s-borrowingRate">5.0%</output></label>
+                <input type="range" id="s-borrowingRate" min="2" max="9" step="0.25" value="5" aria-describedby="h-borrowingRate">
+                <p id="h-borrowingRate">Interest paid on any extra debt the scenario creates, before the rate shock.</p>
+              </div>
+              <div class="control" data-key="repricing">
+                <label for="s-repricing"><span><button type="button" class="term" data-term="repricing">Debt refinanced each year</button></span><output id="o-repricing" for="s-repricing">20%</output></label>
+                <input type="range" id="s-repricing" min="0" max="50" step="5" value="20" aria-describedby="h-repricing">
+                <p id="h-repricing">How quickly a rate shock reaches the debt already in the budget.</p>
+              </div>
+            </details>
+          </fieldset>
+          <div class="form-actions">
+            <button type="button" id="reset" class="quiet-button">Reset to the published budget ↺</button>
+            <button type="button" id="share" class="quiet-button">Copy a link to this scenario</button>
+          </div>
+          <p class="share-status" id="share-status" role="status"></p>
+        </form>
+
+        <div class="results" id="results">
+          <div class="result-heading">
+            <div><span class="section-number">03 / Read the result</span><h2 id="result-title">What changes</h2></div>
+            <span class="scenario-tag"><button type="button" class="term term-plain" data-term="scenario">Scenario, not a forecast</button></span>
+          </div>
+          <p class="verdict" id="verdict" aria-live="polite"></p>
+          <div class="result-grid" aria-live="polite" aria-atomic="true">
+            <div><span><button type="button" class="term" data-term="nob">Operating balance</button>, 2029-30</span><strong id="r-nob">—</strong><small id="r-nob-change"></small></div>
+            <div><span><button type="button" class="term" data-term="net-debt">Net debt</button>, June 2030</span><strong id="r-debt">—</strong><small id="r-debt-change"></small></div>
+            <div><span><button type="button" class="term" data-term="debt-to-revenue">Net debt to revenue</button>, 2029-30</span><strong id="r-ratio">—</strong><small id="r-ratio-change"></small></div>
+            <div><span><button type="button" class="term" data-term="interest-to-revenue">Interest to revenue</button>, 2029-30</span><strong id="r-int">—</strong><small id="r-int-change"></small></div>
+          </div>
+
+          <div class="chart-block">
+            <div class="chart-title-row"><h3>Operating balance each year</h3><div class="chart-key"><span><i class="k-pub"></i>Published budget</span><span><i class="k-scn"></i>Your scenario</span></div></div>
+            <svg id="nob-chart" class="chart" viewBox="0 0 640 250" role="img" aria-labelledby="nob-chart-title nob-chart-desc"><title id="nob-chart-title">Operating balance, published and scenario</title><desc id="nob-chart-desc"></desc></svg>
+          </div>
+          <div class="chart-block">
+            <div class="chart-title-row"><h3>Net debt at 30 June</h3><div class="chart-key"><span><i class="k-pub line"></i>Published budget</span><span><i class="k-scn line"></i>Your scenario</span></div></div>
+            <svg id="debt-chart" class="chart" viewBox="0 0 640 250" role="img" aria-labelledby="debt-chart-title debt-chart-desc"><title id="debt-chart-title">Net debt, published and scenario</title><desc id="debt-chart-desc"></desc></svg>
+          </div>
+
+          <div class="drivers">
+            <h3>What moves the 2029-30 operating balance</h3>
+            <p class="small-note">Change from the published budget. Bars to the left make the result worse.</p>
+            <div id="drivers"></div>
+          </div>
+
+          <details class="table-details">
+            <summary>Year-by-year figures</summary>
+            <div class="table-scroll"><table>
+              <caption>$ million. Published figures from the budget papers; scenario figures calculated.</caption>
+              <thead><tr><th scope="col">Year</th><th scope="col">Revenue change</th><th scope="col">Extra wages and costs</th><th scope="col">Extra interest</th><th scope="col">Operating balance, published</th><th scope="col">Operating balance, scenario</th><th scope="col">Net debt, published</th><th scope="col">Net debt, scenario</th></tr></thead>
+              <tbody id="year-rows"></tbody>
+            </table></div>
+          </details>
+          <button type="button" id="download" class="quiet-button">Download this scenario as a CSV ↓</button>
+        </div>
+      </section>
+
+      <section class="compare" aria-labelledby="compare-title">
+        <div class="section-top">
+          <div><span class="section-number">04 / Compare</span><h2 id="compare-title">The same shocks, all eight governments</h2></div>
+        </div>
+        <p class="section-deck">Each government's budget is hit by the scenario on the left. Change in the 2029-30 operating balance as a share of that government's revenue, so large and small budgets can be compared. Select a row to switch to it.</p>
+        <div id="compare-chart" class="compare-chart"></div>
+        <div class="table-scroll"><table class="compare-table">
+          <caption>Under your scenario, 2029-30. Sorted by the size of the hit.</caption>
+          <thead><tr><th scope="col">Government</th><th scope="col">Change in operating balance</th><th scope="col">As share of revenue</th><th scope="col">Operating balance, scenario</th><th scope="col">Net debt to revenue, scenario</th><th scope="col">Interest to revenue, scenario</th></tr></thead>
+          <tbody id="compare-rows"></tbody>
+        </table></div>
+        <p class="small-note">A zero change means the scenario's shocks do not touch that government's revenue or costs, not that it is immune to every risk. The ACT has no mining royalties, for example.</p>
+      </section>
+    </div>
+
+    <section id="method" class="method-section" aria-labelledby="method-title">
+      <span class="section-number">Open method</span>
+      <h2 id="method-title">How the numbers work</h2>
+      <details open>
+        <summary>What the starting point is</summary>
+        <p>Each government's own 2026-27 budget, for the <button type="button" class="term" data-term="general-government">general government sector</button>, as published between May and June 2026. The figures come from the tables every Australian government publishes under the <button type="button" class="term" data-term="upf">Uniform Presentation Framework</button>, so they use the same definitions. The tool repeats the published path for 2026-27 to 2029-30 exactly when every shock is zero; a test checks this.</p>
+        <p>2025-26 figures are the <button type="button" class="term" data-term="revised">revised estimate</button> from the same papers, used for net debt at the start of the scenario.</p>
+      </details>
+      <details>
+        <summary>Exactly how a shock is calculated</summary>
+        <p>For each year from 2026-27 (year 1) to 2029-30 (year 4), with every amount taken from that year's published budget:</p>
+        <ul>
+          <li><strong>Revenue shocks</strong> change that year's published GST, other grants, payroll tax, stamp duty or royalties by the percentage chosen. It is a lasting change in level, not repeated growth.</li>
+          <li><strong>Wages</strong>: extra cost = published employee and superannuation expenses × [(1 + extra growth)<sup>year</sup> − 1].</li>
+          <li><strong>Other running costs</strong>: extra cost = (total expenses − employee costs − interest) × the percentage chosen.</li>
+          <li><strong>Infrastructure</strong>: extra spending = published purchases of non-financial assets × the percentage chosen. It is paid for with debt and does not reduce the operating balance directly.</li>
+          <li><strong>Interest</strong>: any extra debt the scenario creates costs the borrowing rate plus the rate shock, with half a year's interest in the year it is raised. The rate shock also reaches debt already in the budget as it is refinanced: the share refinanced each year × the year number, up to 100%, × net debt at the start of the year.</li>
+          <li><strong>Operating balance</strong> = published balance + revenue change − extra wages − extra running costs − extra interest.</li>
+          <li><strong>Net debt</strong> = published net debt + the running total of (fall in the operating balance + extra infrastructure spending).</li>
+        </ul>
+        <p>Depreciation, asset sales, the timing difference between accounting and cash, and any response by the government (raising taxes, cutting spending) are left out. Governments would respond; the point is to show the size of the gap they would need to close.</p>
+      </details>
+      <details>
+        <summary>What this tool cannot tell you</summary>
+        <p>It is not a forecast. It attaches no probability to any scenario and draws no confidence bands. It does not model how shocks feed into each other (a recession that cuts payroll tax also usually cuts stamp duty and GST; the "mild downturn" scenario combines them for that reason). Commonwealth decisions, such as GST top-up payments to Western Australia, are as published in the budgets.</p>
+        <p>Accounting rules still differ a little between governments, for example in how superannuation investments and lease liabilities are treated. Where a government's headline figure uses a different definition, the tool uses the common definition and says so in the notes for that government.</p>
+      </details>
+      <details>
+        <summary>Research next: can trouble be spotted earlier?</summary>
+        <p>The research question behind this tool: which governments are most exposed to plausible shocks, and which indicators help explain later budget deterioration? Eight governments are too few for machine learning. The next step is a transparent backtest: take each budget from the last two decades, apply what actually happened to the economy, and compare the result with the final outcome. That needs historical budget papers checked by publication date, which are not yet assembled. Until then, the tool gives no risk scores or rankings beyond the arithmetic above.</p>
+      </details>
+    </section>
+
+    <section id="sources" class="sources-section" aria-labelledby="sources-title">
+      <span class="section-number">Sources</span>
+      <h2 id="sources-title">Where every figure comes from</h2>
+      <p class="section-deck">Each figure was copied from the budget paper below and checked by machine against the page (or, for the ACT, the spreadsheet cell) it came from. The build refuses to publish if revenue less expenses does not equal the reported operating balance, or if any part is larger than its total.</p>
+      <div id="source-list" class="source-list"></div>
+      <div class="downloads">
+        <a href="data/state_budget.csv" download>All figures with sources · CSV ↓</a>
+        <a href="data/state_budget.json" download>Full dataset · JSON ↓</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sb-wrap sb-footer">© <span id="year"></span> Abdulla Shaheed · Figures from the 2026-27 budget papers of each state and territory government.</footer>
+
+  <div class="term-pop" id="term-pop" role="tooltip" hidden></div>
+  <a class="mini-result" id="mini-result" href="#results" aria-hidden="true" tabindex="-1"></a>
+  <script src="js/theme.js"></script>
+  <script src="js/more.js"></script>
+</body>
+</html>
