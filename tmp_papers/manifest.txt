@@ -1,0 +1,11 @@
+nsw_bp1.pdf 5181566 cb9ecdf041747f271acba0ad2c425c5f3ae901383430d40811c6ad6ca594432b https://www.nsw.gov.au/sites/default/files/noindex/2026-06/bp1-budget-statement-nsw-budget-2026-27.pdf
+nsw_bp1.docx 2090444 2350e5d61f8665a93f2f59e15bc55bc2cefbd24bd9ee76a42d2c82974b3d8122 https://www.nsw.gov.au/sites/default/files/noindex/2026-07/2026-27-budget-paper-no.01-budget-statement.docx
+vic_bp5.pdf 6422387 e2f3245a52d6ff11cf6d4f5db31a6637af6e4858e7dec626498d837fd22afbbc https://s3.ap-southeast-2.amazonaws.com/vicbudgetfiles2026.27vicbudget/2026-27+State+Budget+-+Statement+of+Finances.pdf
+vic_bp2.pdf 1680176 12e3cb27ecf187975eb54002d8b51005af543e33ea817fb08ef090bc17c3d99c https://s3.ap-southeast-2.amazonaws.com/vicbudgetfiles2026.27vicbudget/2026-27+State+Budget+-+Strategy+and+Outlook.pdf
+qld_bp2.pdf 3889404 b9a9b13dc6d7e707603a0b4da7182521ed3ac934bec5ac0d4ff02d9d78049426 https://budget.qld.gov.au/files/2026-27-budget-bp2-budget-strategy-outlook.pdf
+wa_bp3.pdf 4256019 2998ca2a7879a843d3253a57910f24e7f5a58ea83f34ad0ad1bbd95b04126a73 https://www.ourstatebudget.wa.gov.au/2026-27/budget-papers/bp3/2026-27-wa-state-budget-bp3.pdf
+sa_bs.pdf 4215497 c3f010ea6020186380fd2f28e224345928e9f54dcd5fec617bf01499a2e9de05 https://www.treasury.sa.gov.au/__data/assets/pdf_file/0006/1419036/2026-27-Budget-Statement.pdf
+tas_bp1.pdf 1678498 f9e4b1bc1d4f337623ba8cda84f2a6a1b94de66070ecddc27065cfd4c163a488 https://www.treasury.tas.gov.au/Documents/2026-27%20Budget%20Paper%20No.%201,%20Budget%20Strategy%20and%20Estimates.PDF
+act_outlook.docx 5869 7d24346e0de245a584de4a1e9d9a87e9d55a56c7b0e5a004f40612e5a32e0edf https://www.treasury.act.gov.au/__data/assets/word_doc/0005/3080660/2026-27-Budget-Outlook.docx
+nt_bp2.pdf 5826 65081b96bb9706dc5d0ca87965aea2162fa35fff9b37d8d923e79ae87134146d https://budget.nt.gov.au/__data/assets/pdf_file/0004/1609744/2026-27-budget-bp2.pdf
+FAIL pbo_nfo.pdf https://www.pbo.gov.au/sites/default/files/2026-08/PBO%202026-27%20National%20Fiscal%20Outlook.pdf
