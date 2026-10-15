@@ -1,0 +1,9 @@
+gfs1415_003.xls 112128 https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&55120do003_201415.xls&5512.0&Data%20Cubes&57481B1D83CD907CCA257F9D001CF03E&0&2014-15&26.04.2016&Latest
+gfs1415_004.xls 120320 https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&55120do004_201415.xls&5512.0&Data%20Cubes&F809F567392ABC99CA257F9D001CF06E&0&2014-15&26.04.2016&Latest
+gfs1415_005.xls 117760 https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&55120do005_201415.xls&5512.0&Data%20Cubes&189B81C861194F27CA257F9D001CF0A0&0&2014-15&26.04.2016&Latest
+gfs1415_006.xls 108032 https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&55120do006_201415.xls&5512.0&Data%20Cubes&7A9CC3879059D390CA257F9D001CF0D1&0&2014-15&26.04.2016&Latest
+gfs1415_007.xls 122880 https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&55120do007_201415.xls&5512.0&Data%20Cubes&7AB5AEA3F6DE2031CA257F9D001CF10F&0&2014-15&26.04.2016&Latest
+gfs1415_008.xls 137728 https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&55120do008_201415.xls&5512.0&Data%20Cubes&4F100BE3C87727F6CA257F9D001CF141&0&2014-15&26.04.2016&Latest
+gfs1415_009.xls 107520 https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&55120do009_201415.xls&5512.0&Data%20Cubes&CCBC9A0C5C087C79CA257F9D001CF17B&0&2014-15&26.04.2016&Latest
+gfs1415_010.xls 138752 https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&55120do010_201415.xls&5512.0&Data%20Cubes&1DAB6A9ED19F457BCA257F9D001CF1B2&0&2014-15&26.04.2016&Latest
+tax1415.xls 871936 https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&55060do001_201415.xls&5506.0&Data%20Cubes&1EEE90779611B68DCA257F9D001CDB74&0&2014-15&26.04.2016&Latest
