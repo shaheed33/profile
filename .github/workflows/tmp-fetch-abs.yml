@@ -1,0 +1,21 @@
+name: tmp-fetch-abs
+on: push
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download ABS files
+        run: |
+          mkdir -p tmp_abs && cd tmp_abs
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36"
+          g() { curl -sSL -A "$UA" --retry 3 -m 300 -o "$1" "$2"; echo "$1 $(stat -c%s "$1" 2>/dev/null) $2" >> manifest.txt; }
+          g tax_2425.zip "https://www.abs.gov.au/statistics/economy/government/taxation-revenue-australia/2024-25/Download-all.zip"
+          g dataflows.xml "https://data.api.abs.gov.au/rest/dataflow/ABS?detail=allstubs"
+          cat manifest.txt
+      - name: Commit
+        run: |
+          git config user.name "github-actions" && git config user.email "actions@github.com"
+          git add -A tmp_abs && git commit -m "Temporary: ABS files [skip ci]" && git push
