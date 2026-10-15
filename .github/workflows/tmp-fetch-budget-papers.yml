@@ -11,7 +11,7 @@ jobs:
         with: {python-version: '3.12'}
       - name: Fetch ACT papers through a real browser
         run: |
-          pip install -q playwright && python -m playwright install --with-deps chromium >/dev/null
+          mkdir -p tmp_papers && pip install -q playwright && python -m playwright install --with-deps chromium >/dev/null
           cat > fetch.py <<'PY'
           import asyncio, hashlib, pathlib
           from playwright.async_api import async_playwright
@@ -41,7 +41,7 @@ jobs:
                   await b.close()
           asyncio.run(main())
           PY
-          xvfb-run -a python fetch.py
+          xvfb-run -a python fetch.py 2>&1 | tee tmp_papers/act_log.txt; true
           ls -la tmp_papers
       - name: Commit
         run: |
