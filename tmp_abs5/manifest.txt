@@ -1,0 +1,4 @@
+wpi.csv 10672486 https://data.api.abs.gov.au/rest/data/ABS,WPI/all?format=csvfilewithlabels&startPeriod=2000
+rba_f2_1.csv 72210 https://www.rba.gov.au/statistics/tables/csv/f2.1-data.csv
+rba_f2.csv 201240 https://www.rba.gov.au/statistics/tables/csv/f2-data.csv
+rba_f2_hist.xls 18107 https://www.rba.gov.au/statistics/tables/xls-hist/f02hist.xls
