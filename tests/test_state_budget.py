@@ -70,5 +70,40 @@ class StateBudgetBuild(unittest.TestCase):
         self.assertEqual(len(lines) - 1, 8 * 13 * 5)
 
 
+class ShockHistory(unittest.TestCase):
+    """The ready-made shock sizes come from official history; check the build and its results."""
+
+    @classmethod
+    def setUpClass(cls):
+        r = subprocess.run([sys.executable, str(ROOT / "scripts" / "build_shock_history.py")], capture_output=True, text=True)
+        assert r.returncode == 0, r.stderr
+        cls.h = json.loads((ROOT / "data" / "shock_history.json").read_text(encoding="utf-8"))
+
+    def test_every_state_has_payroll_duty_and_wage_history(self):
+        for sid in ["nsw", "vic", "qld", "wa", "sa", "tas", "act", "nt"]:
+            for k in ("payroll", "duty", "wages"):
+                self.assertIn(k, self.h["states"][sid], f"{sid} {k}")
+
+    def test_revenue_shocks_are_falls_and_worst_is_at_least_as_bad_as_a_bad_year(self):
+        for sid, s in self.h["states"].items():
+            for k in ("payroll", "duty", "royalties"):
+                if k in s:
+                    self.assertLessEqual(s[k]["worst"], s[k]["bad_year"], f"{sid} {k}")
+                    self.assertLess(s[k]["worst"], 0, f"{sid} {k}")
+
+    def test_known_history_is_reproduced(self):
+        # The global financial crisis hit property transactions everywhere in 2008-09.
+        for sid in ("nsw", "vic", "qld", "sa", "wa", "tas"):
+            self.assertEqual(self.h["states"][sid]["duty"]["worst_year"], "2008-09", sid)
+        self.assertEqual(self.h["national"]["gst"]["worst_year"], "2008-09")
+        self.assertEqual(self.h["national"]["rates"]["worst_year"], "2022-23")
+
+    def test_act_has_no_royalty_shock(self):
+        self.assertNotIn("royalties", self.h["states"]["act"])
+
+    def test_sensitivity_cross_check_is_included(self):
+        self.assertEqual(len(self.h["sensitivities"]["rows"]), 6)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -20,7 +20,7 @@
   var DEFAULTS = {
     gst: 0, otherGrants: 0, payroll: 0, duty: 0, royalties: 0,
     wages: 0, otherSpending: 0, capex: 0,
-    rateShock: 0, repricing: 0.2, borrowingRate: 0.05
+    rateShock: 0, repricing: 0.1, borrowingRate: 0.05
   };
 
   var REQUIRED = ['revenue', 'expenses', 'nob', 'grants', 'gst', 'payroll_tax', 'transfer_duty', 'royalties',

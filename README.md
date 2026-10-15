@@ -36,11 +36,21 @@ a forecast.
 - `js/state-budget-math.js` is the scenario arithmetic, written out in the
   page's method section. `js/state-budget.js` runs the page and its glossary pop-ups.
 
+- Shock sizes come from history, not guesses. `scripts/build_shock_history.py` reads
+  the official files in `data/raw/history/` (ABS Taxation Revenue 5506.0, ABS
+  Government Finance Statistics 5512.0, the public sector Wage Price Index and RBA
+  table F2.1) and works out, for each government, how far each revenue line has
+  fallen short of its normal growth: a "bad year" (one year in five) and the worst
+  year on record. It also carries the NSW and Victorian budget sensitivity tables
+  (`data/raw/budget_sensitivities.json`) that the page uses as a cross-check.
+  It writes `data/shock_history.json` and `data/shock_history.js`.
+
 Refresh once a year after the budgets (May to June): update the raw file from the
-new papers, then run
+new papers, add the latest ABS and RBA files to `data/raw/history/`, then run
 
 ```sh
 python scripts/build_state_budget.py
+python scripts/build_shock_history.py
 python -m unittest discover -s tests -p 'test_state_budget.py'
 node --test tests/state-budget.test.cjs
 ```

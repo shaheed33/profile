@@ -1,0 +1,955 @@
+region,quarter,index
+Western Australia,2000-Q1,70.6
+Western Australia,2000-Q2,70.8
+Western Australia,2000-Q3,71.2
+Western Australia,2000-Q4,71.8
+Western Australia,2001-Q1,72.9
+Western Australia,2001-Q2,73.2
+Western Australia,2001-Q3,73.8
+Western Australia,2001-Q4,74.4
+Western Australia,2002-Q1,75.1
+Western Australia,2002-Q2,75.4
+Western Australia,2002-Q3,76.5
+Western Australia,2002-Q4,76.9
+Western Australia,2003-Q1,78.1
+Western Australia,2003-Q2,78.4
+Western Australia,2003-Q3,79.4
+Western Australia,2003-Q4,80
+Western Australia,2004-Q1,80.4
+Western Australia,2004-Q2,80.8
+Western Australia,2004-Q3,82.1
+Western Australia,2004-Q4,83
+Western Australia,2005-Q1,83.7
+Western Australia,2005-Q2,85.1
+Western Australia,2005-Q3,85.8
+Western Australia,2005-Q4,86.2
+Western Australia,2006-Q1,86.9
+Western Australia,2006-Q2,87.8
+Western Australia,2006-Q3,88.6
+Western Australia,2006-Q4,90.4
+Western Australia,2007-Q1,90.9
+Western Australia,2007-Q2,92.6
+Western Australia,2007-Q3,93.2
+Western Australia,2007-Q4,94.3
+Western Australia,2008-Q1,95.1
+Western Australia,2008-Q2,95.9
+Western Australia,2008-Q3,97
+Western Australia,2008-Q4,100
+Western Australia,2009-Q1,101
+Western Australia,2009-Q2,102.1
+Western Australia,2009-Q3,103
+Western Australia,2009-Q4,104.7
+Western Australia,2010-Q1,105.3
+Western Australia,2010-Q2,106.3
+Western Australia,2010-Q3,107.4
+Western Australia,2010-Q4,108.5
+Western Australia,2011-Q1,109.1
+Western Australia,2011-Q2,109.7
+Western Australia,2011-Q3,111.3
+Western Australia,2011-Q4,112.3
+Western Australia,2012-Q1,113.5
+Western Australia,2012-Q2,114.7
+Western Australia,2012-Q3,116.2
+Western Australia,2012-Q4,117.2
+Western Australia,2013-Q1,118
+Western Australia,2013-Q2,119.5
+Western Australia,2013-Q3,121
+Western Australia,2013-Q4,121.5
+Western Australia,2014-Q1,122.8
+Western Australia,2014-Q2,123.1
+Western Australia,2014-Q3,123.9
+Western Australia,2014-Q4,125.8
+Western Australia,2015-Q1,126.2
+Western Australia,2015-Q2,126.9
+Western Australia,2015-Q3,128.8
+Western Australia,2015-Q4,129.8
+Western Australia,2016-Q1,130.4
+Western Australia,2016-Q2,130.7
+Western Australia,2016-Q3,131.7
+Western Australia,2016-Q4,132.2
+Western Australia,2017-Q1,133.2
+Western Australia,2017-Q2,133.4
+Western Australia,2017-Q3,133.8
+Western Australia,2017-Q4,134.3
+Western Australia,2018-Q1,134.9
+Western Australia,2018-Q2,135.1
+Western Australia,2018-Q3,135.8
+Western Australia,2018-Q4,136.2
+Western Australia,2019-Q1,136.6
+Western Australia,2019-Q2,136.9
+Western Australia,2019-Q3,137.3
+Western Australia,2019-Q4,137.9
+Western Australia,2020-Q1,138.2
+Western Australia,2020-Q2,138.4
+Western Australia,2020-Q3,139
+Western Australia,2020-Q4,139.1
+Western Australia,2021-Q1,139.5
+Western Australia,2021-Q2,139.7
+Western Australia,2021-Q3,140.4
+Western Australia,2021-Q4,141
+Western Australia,2022-Q1,141.2
+Western Australia,2022-Q2,141.3
+Western Australia,2022-Q3,141.7
+Western Australia,2022-Q4,142.6
+Western Australia,2023-Q1,145.6
+Western Australia,2023-Q2,146.3
+Western Australia,2023-Q3,148.5
+Western Australia,2023-Q4,150
+Western Australia,2024-Q1,150.5
+Western Australia,2024-Q2,150.9
+Western Australia,2024-Q3,151.7
+Western Australia,2024-Q4,153.1
+Western Australia,2025-Q1,157.2
+Western Australia,2025-Q2,159
+Western Australia,2025-Q3,162
+Western Australia,2025-Q4,163.8
+Western Australia,2026-Q1,165
+Western Australia,2026-Q2,165.3
+Queensland,2000-Q1,70.2
+Queensland,2000-Q2,70.5
+Queensland,2000-Q3,71.2
+Queensland,2000-Q4,71.9
+Queensland,2001-Q1,72.8
+Queensland,2001-Q2,73.7
+Queensland,2001-Q3,74.6
+Queensland,2001-Q4,74.8
+Queensland,2002-Q1,75.2
+Queensland,2002-Q2,75.8
+Queensland,2002-Q3,76.6
+Queensland,2002-Q4,76.8
+Queensland,2003-Q1,78
+Queensland,2003-Q2,78.1
+Queensland,2003-Q3,79.3
+Queensland,2003-Q4,80.1
+Queensland,2004-Q1,81.3
+Queensland,2004-Q2,81.5
+Queensland,2004-Q3,83.3
+Queensland,2004-Q4,83.8
+Queensland,2005-Q1,84.4
+Queensland,2005-Q2,84.7
+Queensland,2005-Q3,86.3
+Queensland,2005-Q4,86.7
+Queensland,2006-Q1,88
+Queensland,2006-Q2,88.9
+Queensland,2006-Q3,90.1
+Queensland,2006-Q4,91.1
+Queensland,2007-Q1,92.1
+Queensland,2007-Q2,92.8
+Queensland,2007-Q3,94.9
+Queensland,2007-Q4,95.7
+Queensland,2008-Q1,96.3
+Queensland,2008-Q2,96.7
+Queensland,2008-Q3,98.8
+Queensland,2008-Q4,99.5
+Queensland,2009-Q1,100.8
+Queensland,2009-Q2,101
+Queensland,2009-Q3,102.4
+Queensland,2009-Q4,103.7
+Queensland,2010-Q1,105.3
+Queensland,2010-Q2,106
+Queensland,2010-Q3,107.9
+Queensland,2010-Q4,108.9
+Queensland,2011-Q1,109.5
+Queensland,2011-Q2,110.3
+Queensland,2011-Q3,112.1
+Queensland,2011-Q4,112.5
+Queensland,2012-Q1,113.1
+Queensland,2012-Q2,113.6
+Queensland,2012-Q3,114.4
+Queensland,2012-Q4,115.4
+Queensland,2013-Q1,116.3
+Queensland,2013-Q2,116.7
+Queensland,2013-Q3,117.2
+Queensland,2013-Q4,118.3
+Queensland,2014-Q1,119.4
+Queensland,2014-Q2,119.9
+Queensland,2014-Q3,120.2
+Queensland,2014-Q4,121.4
+Queensland,2015-Q1,122.1
+Queensland,2015-Q2,122.4
+Queensland,2015-Q3,123.1
+Queensland,2015-Q4,123.9
+Queensland,2016-Q1,125.2
+Queensland,2016-Q2,125.6
+Queensland,2016-Q3,125.9
+Queensland,2016-Q4,127.5
+Queensland,2017-Q1,127.9
+Queensland,2017-Q2,128.6
+Queensland,2017-Q3,129.4
+Queensland,2017-Q4,131.1
+Queensland,2018-Q1,131.3
+Queensland,2018-Q2,131.7
+Queensland,2018-Q3,132.6
+Queensland,2018-Q4,134.3
+Queensland,2019-Q1,134.5
+Queensland,2019-Q2,135.2
+Queensland,2019-Q3,135.6
+Queensland,2019-Q4,135.9
+Queensland,2020-Q1,137.5
+Queensland,2020-Q2,138.1
+Queensland,2020-Q3,138.9
+Queensland,2020-Q4,139.5
+Queensland,2021-Q1,139.7
+Queensland,2021-Q2,139.9
+Queensland,2021-Q3,140.9
+Queensland,2021-Q4,142.8
+Queensland,2022-Q1,143.8
+Queensland,2022-Q2,145.5
+Queensland,2022-Q3,145.9
+Queensland,2022-Q4,146.9
+Queensland,2023-Q1,149.1
+Queensland,2023-Q2,150.4
+Queensland,2023-Q3,153
+Queensland,2023-Q4,154.9
+Queensland,2024-Q1,156.1
+Queensland,2024-Q2,157.4
+Queensland,2024-Q3,159.9
+Queensland,2024-Q4,161.5
+Queensland,2025-Q1,162.2
+Queensland,2025-Q2,163.1
+Queensland,2025-Q3,163.7
+Queensland,2025-Q4,164.9
+Queensland,2026-Q1,166.7
+Queensland,2026-Q2,168
+South Australia,2000-Q1,69.6
+South Australia,2000-Q2,70.3
+South Australia,2000-Q3,70.9
+South Australia,2000-Q4,71.5
+South Australia,2001-Q1,72.7
+South Australia,2001-Q2,72.9
+South Australia,2001-Q3,73.4
+South Australia,2001-Q4,74.9
+South Australia,2002-Q1,75.3
+South Australia,2002-Q2,75.4
+South Australia,2002-Q3,76.4
+South Australia,2002-Q4,77.6
+South Australia,2003-Q1,77.9
+South Australia,2003-Q2,78.2
+South Australia,2003-Q3,79.5
+South Australia,2003-Q4,80.8
+South Australia,2004-Q1,81.2
+South Australia,2004-Q2,81.4
+South Australia,2004-Q3,82
+South Australia,2004-Q4,84.1
+South Australia,2005-Q1,85.1
+South Australia,2005-Q2,85.1
+South Australia,2005-Q3,85.8
+South Australia,2005-Q4,88.1
+South Australia,2006-Q1,88.6
+South Australia,2006-Q2,89.2
+South Australia,2006-Q3,90.1
+South Australia,2006-Q4,91.3
+South Australia,2007-Q1,92.7
+South Australia,2007-Q2,93
+South Australia,2007-Q3,93.8
+South Australia,2007-Q4,95.8
+South Australia,2008-Q1,96.9
+South Australia,2008-Q2,97.1
+South Australia,2008-Q3,98
+South Australia,2008-Q4,99.7
+South Australia,2009-Q1,100.9
+South Australia,2009-Q2,101.5
+South Australia,2009-Q3,102.1
+South Australia,2009-Q4,102.6
+South Australia,2010-Q1,103.9
+South Australia,2010-Q2,104.8
+South Australia,2010-Q3,105.3
+South Australia,2010-Q4,107.1
+South Australia,2011-Q1,107.7
+South Australia,2011-Q2,107.8
+South Australia,2011-Q3,108.6
+South Australia,2011-Q4,110.4
+South Australia,2012-Q1,111.2
+South Australia,2012-Q2,111.7
+South Australia,2012-Q3,112.5
+South Australia,2012-Q4,113.2
+South Australia,2013-Q1,114.8
+South Australia,2013-Q2,114.9
+South Australia,2013-Q3,115.9
+South Australia,2013-Q4,117.5
+South Australia,2014-Q1,118.5
+South Australia,2014-Q2,118.8
+South Australia,2014-Q3,119.3
+South Australia,2014-Q4,120.2
+South Australia,2015-Q1,121.3
+South Australia,2015-Q2,121.5
+South Australia,2015-Q3,121.9
+South Australia,2015-Q4,123.9
+South Australia,2016-Q1,124.2
+South Australia,2016-Q2,124.5
+South Australia,2016-Q3,125.3
+South Australia,2016-Q4,126.8
+South Australia,2017-Q1,127.2
+South Australia,2017-Q2,127.4
+South Australia,2017-Q3,128.1
+South Australia,2017-Q4,129.1
+South Australia,2018-Q1,130.3
+South Australia,2018-Q2,130.6
+South Australia,2018-Q3,131
+South Australia,2018-Q4,132.3
+South Australia,2019-Q1,132.6
+South Australia,2019-Q2,132.9
+South Australia,2019-Q3,133.2
+South Australia,2019-Q4,134.5
+South Australia,2020-Q1,134.6
+South Australia,2020-Q2,135.8
+South Australia,2020-Q3,136.5
+South Australia,2020-Q4,136.5
+South Australia,2021-Q1,136.9
+South Australia,2021-Q2,137.8
+South Australia,2021-Q3,138.1
+South Australia,2021-Q4,138.4
+South Australia,2022-Q1,139.7
+South Australia,2022-Q2,140.2
+South Australia,2022-Q3,141.8
+South Australia,2022-Q4,142.4
+South Australia,2023-Q1,142.9
+South Australia,2023-Q2,143.8
+South Australia,2023-Q3,144.4
+South Australia,2023-Q4,145.5
+South Australia,2024-Q1,146.4
+South Australia,2024-Q2,148.9
+South Australia,2024-Q3,149.5
+South Australia,2024-Q4,150.2
+South Australia,2025-Q1,151.2
+South Australia,2025-Q2,152.8
+South Australia,2025-Q3,153.6
+South Australia,2025-Q4,154.2
+South Australia,2026-Q1,154.6
+South Australia,2026-Q2,159
+Tasmania,2000-Q1,70.3
+Tasmania,2000-Q2,70.6
+Tasmania,2000-Q3,71.7
+Tasmania,2000-Q4,72.1
+Tasmania,2001-Q1,72.4
+Tasmania,2001-Q2,73.4
+Tasmania,2001-Q3,74.2
+Tasmania,2001-Q4,74.5
+Tasmania,2002-Q1,75.6
+Tasmania,2002-Q2,76
+Tasmania,2002-Q3,76.8
+Tasmania,2002-Q4,77.6
+Tasmania,2003-Q1,77.7
+Tasmania,2003-Q2,78.3
+Tasmania,2003-Q3,79.6
+Tasmania,2003-Q4,80
+Tasmania,2004-Q1,80.3
+Tasmania,2004-Q2,80.9
+Tasmania,2004-Q3,82.8
+Tasmania,2004-Q4,83.1
+Tasmania,2005-Q1,84.7
+Tasmania,2005-Q2,85.5
+Tasmania,2005-Q3,86.5
+Tasmania,2005-Q4,86.9
+Tasmania,2006-Q1,88.7
+Tasmania,2006-Q2,89.6
+Tasmania,2006-Q3,90.6
+Tasmania,2006-Q4,91
+Tasmania,2007-Q1,92.7
+Tasmania,2007-Q2,93.5
+Tasmania,2007-Q3,94.6
+Tasmania,2007-Q4,94.9
+Tasmania,2008-Q1,96.5
+Tasmania,2008-Q2,97.1
+Tasmania,2008-Q3,98.6
+Tasmania,2008-Q4,98.8
+Tasmania,2009-Q1,100.7
+Tasmania,2009-Q2,101.9
+Tasmania,2009-Q3,102.7
+Tasmania,2009-Q4,103
+Tasmania,2010-Q1,104.8
+Tasmania,2010-Q2,105.5
+Tasmania,2010-Q3,105.8
+Tasmania,2010-Q4,106.4
+Tasmania,2011-Q1,108.6
+Tasmania,2011-Q2,109.7
+Tasmania,2011-Q3,110.5
+Tasmania,2011-Q4,110.8
+Tasmania,2012-Q1,111.9
+Tasmania,2012-Q2,112.7
+Tasmania,2012-Q3,113.7
+Tasmania,2012-Q4,114.2
+Tasmania,2013-Q1,115.6
+Tasmania,2013-Q2,115.9
+Tasmania,2013-Q3,116.5
+Tasmania,2013-Q4,116.9
+Tasmania,2014-Q1,118.2
+Tasmania,2014-Q2,118.6
+Tasmania,2014-Q3,119.4
+Tasmania,2014-Q4,119.6
+Tasmania,2015-Q1,120.6
+Tasmania,2015-Q2,121.3
+Tasmania,2015-Q3,121.6
+Tasmania,2015-Q4,121.7
+Tasmania,2016-Q1,122.9
+Tasmania,2016-Q2,123.2
+Tasmania,2016-Q3,124
+Tasmania,2016-Q4,124.4
+Tasmania,2017-Q1,125.4
+Tasmania,2017-Q2,125.6
+Tasmania,2017-Q3,126.9
+Tasmania,2017-Q4,127.2
+Tasmania,2018-Q1,128.6
+Tasmania,2018-Q2,128.9
+Tasmania,2018-Q3,129.5
+Tasmania,2018-Q4,129.7
+Tasmania,2019-Q1,130
+Tasmania,2019-Q2,130.1
+Tasmania,2019-Q3,131.3
+Tasmania,2019-Q4,132.5
+Tasmania,2020-Q1,132.6
+Tasmania,2020-Q2,134.2
+Tasmania,2020-Q3,134.9
+Tasmania,2020-Q4,135
+Tasmania,2021-Q1,136.6
+Tasmania,2021-Q2,137.1
+Tasmania,2021-Q3,137.7
+Tasmania,2021-Q4,138.5
+Tasmania,2022-Q1,140.1
+Tasmania,2022-Q2,140.6
+Tasmania,2022-Q3,141.8
+Tasmania,2022-Q4,142.2
+Tasmania,2023-Q1,145.2
+Tasmania,2023-Q2,146
+Tasmania,2023-Q3,147.5
+Tasmania,2023-Q4,147.9
+Tasmania,2024-Q1,152.5
+Tasmania,2024-Q2,153.6
+Tasmania,2024-Q3,154.2
+Tasmania,2024-Q4,154.8
+Tasmania,2025-Q1,157.6
+Tasmania,2025-Q2,158.9
+Tasmania,2025-Q3,159.9
+Tasmania,2025-Q4,160.5
+Tasmania,2026-Q1,161.6
+Tasmania,2026-Q2,162.8
+New South Wales,2000-Q1,69.3
+New South Wales,2000-Q2,69.8
+New South Wales,2000-Q3,70.6
+New South Wales,2000-Q4,71
+New South Wales,2001-Q1,71.9
+New South Wales,2001-Q2,72.2
+New South Wales,2001-Q3,72.9
+New South Wales,2001-Q4,73.2
+New South Wales,2002-Q1,74.3
+New South Wales,2002-Q2,74.4
+New South Wales,2002-Q3,75.1
+New South Wales,2002-Q4,75.7
+New South Wales,2003-Q1,78
+New South Wales,2003-Q2,78.3
+New South Wales,2003-Q3,80.1
+New South Wales,2003-Q4,80.5
+New South Wales,2004-Q1,81.9
+New South Wales,2004-Q2,82.1
+New South Wales,2004-Q3,83.2
+New South Wales,2004-Q4,83.7
+New South Wales,2005-Q1,85.8
+New South Wales,2005-Q2,85.9
+New South Wales,2005-Q3,88.1
+New South Wales,2005-Q4,88.5
+New South Wales,2006-Q1,89.7
+New South Wales,2006-Q2,90
+New South Wales,2006-Q3,92
+New South Wales,2006-Q4,92.5
+New South Wales,2007-Q1,93.4
+New South Wales,2007-Q2,93.9
+New South Wales,2007-Q3,95.7
+New South Wales,2007-Q4,96.1
+New South Wales,2008-Q1,97.3
+New South Wales,2008-Q2,97.4
+New South Wales,2008-Q3,98.2
+New South Wales,2008-Q4,99.7
+New South Wales,2009-Q1,100.7
+New South Wales,2009-Q2,101.4
+New South Wales,2009-Q3,103.5
+New South Wales,2009-Q4,104
+New South Wales,2010-Q1,105.2
+New South Wales,2010-Q2,105.3
+New South Wales,2010-Q3,107.4
+New South Wales,2010-Q4,107.7
+New South Wales,2011-Q1,108.9
+New South Wales,2011-Q2,109.5
+New South Wales,2011-Q3,110.4
+New South Wales,2011-Q4,111.4
+New South Wales,2012-Q1,112.3
+New South Wales,2012-Q2,112.8
+New South Wales,2012-Q3,114.5
+New South Wales,2012-Q4,114.8
+New South Wales,2013-Q1,115.5
+New South Wales,2013-Q2,115.8
+New South Wales,2013-Q3,116.8
+New South Wales,2013-Q4,117.7
+New South Wales,2014-Q1,118.7
+New South Wales,2014-Q2,118.9
+New South Wales,2014-Q3,120.3
+New South Wales,2014-Q4,120.7
+New South Wales,2015-Q1,121.4
+New South Wales,2015-Q2,121.6
+New South Wales,2015-Q3,123.3
+New South Wales,2015-Q4,123.5
+New South Wales,2016-Q1,124.1
+New South Wales,2016-Q2,124.3
+New South Wales,2016-Q3,126.2
+New South Wales,2016-Q4,126.4
+New South Wales,2017-Q1,127.3
+New South Wales,2017-Q2,127.5
+New South Wales,2017-Q3,129.2
+New South Wales,2017-Q4,129.4
+New South Wales,2018-Q1,130.3
+New South Wales,2018-Q2,130.5
+New South Wales,2018-Q3,132.5
+New South Wales,2018-Q4,133
+New South Wales,2019-Q1,133.6
+New South Wales,2019-Q2,133.9
+New South Wales,2019-Q3,135.7
+New South Wales,2019-Q4,136.1
+New South Wales,2020-Q1,136.8
+New South Wales,2020-Q2,137
+New South Wales,2020-Q3,137.5
+New South Wales,2020-Q4,137.6
+New South Wales,2021-Q1,138.3
+New South Wales,2021-Q2,138.5
+New South Wales,2021-Q3,139.7
+New South Wales,2021-Q4,140.7
+New South Wales,2022-Q1,141.3
+New South Wales,2022-Q2,141.4
+New South Wales,2022-Q3,142.2
+New South Wales,2022-Q4,144.2
+New South Wales,2023-Q1,145
+New South Wales,2023-Q2,145.5
+New South Wales,2023-Q3,146.8
+New South Wales,2023-Q4,151.3
+New South Wales,2024-Q1,151.8
+New South Wales,2024-Q2,152.3
+New South Wales,2024-Q3,153.3
+New South Wales,2024-Q4,154
+New South Wales,2025-Q1,157.1
+New South Wales,2025-Q2,157.6
+New South Wales,2025-Q3,160
+New South Wales,2025-Q4,162.7
+New South Wales,2026-Q1,163.1
+New South Wales,2026-Q2,163.6
+Australian Capital Territory,2000-Q1,70.4
+Australian Capital Territory,2000-Q2,70.6
+Australian Capital Territory,2000-Q3,71.6
+Australian Capital Territory,2000-Q4,72.2
+Australian Capital Territory,2001-Q1,72.8
+Australian Capital Territory,2001-Q2,73
+Australian Capital Territory,2001-Q3,74.2
+Australian Capital Territory,2001-Q4,74.6
+Australian Capital Territory,2002-Q1,74.9
+Australian Capital Territory,2002-Q2,75.1
+Australian Capital Territory,2002-Q3,76.3
+Australian Capital Territory,2002-Q4,77.1
+Australian Capital Territory,2003-Q1,77.9
+Australian Capital Territory,2003-Q2,78.1
+Australian Capital Territory,2003-Q3,79.9
+Australian Capital Territory,2003-Q4,80.8
+Australian Capital Territory,2004-Q1,81.6
+Australian Capital Territory,2004-Q2,81.9
+Australian Capital Territory,2004-Q3,83
+Australian Capital Territory,2004-Q4,84.9
+Australian Capital Territory,2005-Q1,85.8
+Australian Capital Territory,2005-Q2,86.2
+Australian Capital Territory,2005-Q3,87.3
+Australian Capital Territory,2005-Q4,88.1
+Australian Capital Territory,2006-Q1,89.2
+Australian Capital Territory,2006-Q2,89.7
+Australian Capital Territory,2006-Q3,91.3
+Australian Capital Territory,2006-Q4,92
+Australian Capital Territory,2007-Q1,92.8
+Australian Capital Territory,2007-Q2,93.5
+Australian Capital Territory,2007-Q3,95.1
+Australian Capital Territory,2007-Q4,95.9
+Australian Capital Territory,2008-Q1,96.7
+Australian Capital Territory,2008-Q2,97.4
+Australian Capital Territory,2008-Q3,98.7
+Australian Capital Territory,2008-Q4,99.5
+Australian Capital Territory,2009-Q1,100.5
+Australian Capital Territory,2009-Q2,101.2
+Australian Capital Territory,2009-Q3,102.7
+Australian Capital Territory,2009-Q4,103.8
+Australian Capital Territory,2010-Q1,104.8
+Australian Capital Territory,2010-Q2,105
+Australian Capital Territory,2010-Q3,106.9
+Australian Capital Territory,2010-Q4,107.6
+Australian Capital Territory,2011-Q1,108.4
+Australian Capital Territory,2011-Q2,108.5
+Australian Capital Territory,2011-Q3,109.6
+Australian Capital Territory,2011-Q4,110.2
+Australian Capital Territory,2012-Q1,111.7
+Australian Capital Territory,2012-Q2,112.9
+Australian Capital Territory,2012-Q3,115.1
+Australian Capital Territory,2012-Q4,115.9
+Australian Capital Territory,2013-Q1,116
+Australian Capital Territory,2013-Q2,116.2
+Australian Capital Territory,2013-Q3,118.1
+Australian Capital Territory,2013-Q4,118.4
+Australian Capital Territory,2014-Q1,118.6
+Australian Capital Territory,2014-Q2,118.9
+Australian Capital Territory,2014-Q3,119.5
+Australian Capital Territory,2014-Q4,120
+Australian Capital Territory,2015-Q1,120.1
+Australian Capital Territory,2015-Q2,120.7
+Australian Capital Territory,2015-Q3,121
+Australian Capital Territory,2015-Q4,121.6
+Australian Capital Territory,2016-Q1,122.1
+Australian Capital Territory,2016-Q2,123
+Australian Capital Territory,2016-Q3,123.2
+Australian Capital Territory,2016-Q4,123.8
+Australian Capital Territory,2017-Q1,124.2
+Australian Capital Territory,2017-Q2,125
+Australian Capital Territory,2017-Q3,125.5
+Australian Capital Territory,2017-Q4,126.3
+Australian Capital Territory,2018-Q1,126.8
+Australian Capital Territory,2018-Q2,127.1
+Australian Capital Territory,2018-Q3,128
+Australian Capital Territory,2018-Q4,128.6
+Australian Capital Territory,2019-Q1,129.2
+Australian Capital Territory,2019-Q2,130
+Australian Capital Territory,2019-Q3,130.9
+Australian Capital Territory,2019-Q4,131.1
+Australian Capital Territory,2020-Q1,132
+Australian Capital Territory,2020-Q2,132.3
+Australian Capital Territory,2020-Q3,132.7
+Australian Capital Territory,2020-Q4,132.8
+Australian Capital Territory,2021-Q1,133.3
+Australian Capital Territory,2021-Q2,133.8
+Australian Capital Territory,2021-Q3,135.3
+Australian Capital Territory,2021-Q4,136
+Australian Capital Territory,2022-Q1,137.1
+Australian Capital Territory,2022-Q2,137.6
+Australian Capital Territory,2022-Q3,138.4
+Australian Capital Territory,2022-Q4,139.1
+Australian Capital Territory,2023-Q1,140.8
+Australian Capital Territory,2023-Q2,141.3
+Australian Capital Territory,2023-Q3,141.7
+Australian Capital Territory,2023-Q4,142.8
+Australian Capital Territory,2024-Q1,143.5
+Australian Capital Territory,2024-Q2,147.2
+Australian Capital Territory,2024-Q3,148
+Australian Capital Territory,2024-Q4,148.6
+Australian Capital Territory,2025-Q1,150.4
+Australian Capital Territory,2025-Q2,153.5
+Australian Capital Territory,2025-Q3,154
+Australian Capital Territory,2025-Q4,154.2
+Australian Capital Territory,2026-Q1,155.9
+Australian Capital Territory,2026-Q2,158.3
+Australia,2000-Q1,70.3
+Australia,2000-Q2,70.7
+Australia,2000-Q3,71.5
+Australia,2000-Q4,72
+Australia,2001-Q1,72.9
+Australia,2001-Q2,73.4
+Australia,2001-Q3,74.1
+Australia,2001-Q4,74.6
+Australia,2002-Q1,75.4
+Australia,2002-Q2,75.7
+Australia,2002-Q3,76.6
+Australia,2002-Q4,77.2
+Australia,2003-Q1,78.5
+Australia,2003-Q2,78.9
+Australia,2003-Q3,80.2
+Australia,2003-Q4,80.8
+Australia,2004-Q1,81.8
+Australia,2004-Q2,82
+Australia,2004-Q3,83.3
+Australia,2004-Q4,84.2
+Australia,2005-Q1,85.4
+Australia,2005-Q2,85.8
+Australia,2005-Q3,87.2
+Australia,2005-Q4,88
+Australia,2006-Q1,89
+Australia,2006-Q2,89.7
+Australia,2006-Q3,90.9
+Australia,2006-Q4,91.9
+Australia,2007-Q1,92.8
+Australia,2007-Q2,93.4
+Australia,2007-Q3,94.9
+Australia,2007-Q4,95.7
+Australia,2008-Q1,96.5
+Australia,2008-Q2,97
+Australia,2008-Q3,98.3
+Australia,2008-Q4,99.7
+Australia,2009-Q1,100.7
+Australia,2009-Q2,101.4
+Australia,2009-Q3,102.8
+Australia,2009-Q4,103.8
+Australia,2010-Q1,105
+Australia,2010-Q2,105.4
+Australia,2010-Q3,106.9
+Australia,2010-Q4,107.9
+Australia,2011-Q1,108.8
+Australia,2011-Q2,109.3
+Australia,2011-Q3,110.4
+Australia,2011-Q4,111.3
+Australia,2012-Q1,112.2
+Australia,2012-Q2,112.9
+Australia,2012-Q3,114.2
+Australia,2012-Q4,114.9
+Australia,2013-Q1,115.7
+Australia,2013-Q2,116.1
+Australia,2013-Q3,117.2
+Australia,2013-Q4,118.1
+Australia,2014-Q1,119.1
+Australia,2014-Q2,119.5
+Australia,2014-Q3,120.4
+Australia,2014-Q4,121.3
+Australia,2015-Q1,122.1
+Australia,2015-Q2,122.5
+Australia,2015-Q3,123.7
+Australia,2015-Q4,124.3
+Australia,2016-Q1,125
+Australia,2016-Q2,125.4
+Australia,2016-Q3,126.5
+Australia,2016-Q4,127.2
+Australia,2017-Q1,128
+Australia,2017-Q2,128.5
+Australia,2017-Q3,129.5
+Australia,2017-Q4,130.3
+Australia,2018-Q1,131
+Australia,2018-Q2,131.5
+Australia,2018-Q3,132.7
+Australia,2018-Q4,133.6
+Australia,2019-Q1,134.2
+Australia,2019-Q2,135
+Australia,2019-Q3,136
+Australia,2019-Q4,136.6
+Australia,2020-Q1,137.3
+Australia,2020-Q2,137.9
+Australia,2020-Q3,138.4
+Australia,2020-Q4,138.8
+Australia,2021-Q1,139.4
+Australia,2021-Q2,139.7
+Australia,2021-Q3,140.7
+Australia,2021-Q4,141.7
+Australia,2022-Q1,142.5
+Australia,2022-Q2,143.1
+Australia,2022-Q3,144
+Australia,2022-Q4,145.2
+Australia,2023-Q1,146.7
+Australia,2023-Q2,147.5
+Australia,2023-Q3,149.1
+Australia,2023-Q4,151.4
+Australia,2024-Q1,152.2
+Australia,2024-Q2,153.3
+Australia,2024-Q3,154.6
+Australia,2024-Q4,155.8
+Australia,2025-Q1,157.7
+Australia,2025-Q2,158.9
+Australia,2025-Q3,160.5
+Australia,2025-Q4,161.9
+Australia,2026-Q1,163
+Australia,2026-Q2,164.2
+Northern Territory,2000-Q1,73.4
+Northern Territory,2000-Q2,73.5
+Northern Territory,2000-Q3,73.7
+Northern Territory,2000-Q4,75.3
+Northern Territory,2001-Q1,75.4
+Northern Territory,2001-Q2,75.4
+Northern Territory,2001-Q3,75.7
+Northern Territory,2001-Q4,77.9
+Northern Territory,2002-Q1,78.2
+Northern Territory,2002-Q2,78.2
+Northern Territory,2002-Q3,78.8
+Northern Territory,2002-Q4,79
+Northern Territory,2003-Q1,80.6
+Northern Territory,2003-Q2,80.8
+Northern Territory,2003-Q3,81.5
+Northern Territory,2003-Q4,83
+Northern Territory,2004-Q1,83.4
+Northern Territory,2004-Q2,84
+Northern Territory,2004-Q3,84.5
+Northern Territory,2004-Q4,84.8
+Northern Territory,2005-Q1,86.7
+Northern Territory,2005-Q2,87.5
+Northern Territory,2005-Q3,88.6
+Northern Territory,2005-Q4,90.1
+Northern Territory,2006-Q1,90.6
+Northern Territory,2006-Q2,91.1
+Northern Territory,2006-Q3,93.1
+Northern Territory,2006-Q4,93.5
+Northern Territory,2007-Q1,94.1
+Northern Territory,2007-Q2,94.2
+Northern Territory,2007-Q3,94.7
+Northern Territory,2007-Q4,95.3
+Northern Territory,2008-Q1,95.8
+Northern Territory,2008-Q2,97.6
+Northern Territory,2008-Q3,98.1
+Northern Territory,2008-Q4,99.6
+Northern Territory,2009-Q1,101
+Northern Territory,2009-Q2,101.3
+Northern Territory,2009-Q3,102.2
+Northern Territory,2009-Q4,104.4
+Northern Territory,2010-Q1,105.4
+Northern Territory,2010-Q2,105.5
+Northern Territory,2010-Q3,106.4
+Northern Territory,2010-Q4,107
+Northern Territory,2011-Q1,108.8
+Northern Territory,2011-Q2,108.8
+Northern Territory,2011-Q3,109.7
+Northern Territory,2011-Q4,111.8
+Northern Territory,2012-Q1,112.5
+Northern Territory,2012-Q2,112.9
+Northern Territory,2012-Q3,114.2
+Northern Territory,2012-Q4,115.9
+Northern Territory,2013-Q1,116
+Northern Territory,2013-Q2,116.1
+Northern Territory,2013-Q3,117.2
+Northern Territory,2013-Q4,117.7
+Northern Territory,2014-Q1,119.1
+Northern Territory,2014-Q2,119.2
+Northern Territory,2014-Q3,120.6
+Northern Territory,2014-Q4,121.8
+Northern Territory,2015-Q1,122.7
+Northern Territory,2015-Q2,122.8
+Northern Territory,2015-Q3,124.3
+Northern Territory,2015-Q4,126.1
+Northern Territory,2016-Q1,126.3
+Northern Territory,2016-Q2,126.3
+Northern Territory,2016-Q3,128.8
+Northern Territory,2016-Q4,129.8
+Northern Territory,2017-Q1,130
+Northern Territory,2017-Q2,130.1
+Northern Territory,2017-Q3,130.5
+Northern Territory,2017-Q4,130.6
+Northern Territory,2018-Q1,130.8
+Northern Territory,2018-Q2,132.4
+Northern Territory,2018-Q3,133.6
+Northern Territory,2018-Q4,135
+Northern Territory,2019-Q1,135.5
+Northern Territory,2019-Q2,135.6
+Northern Territory,2019-Q3,136.8
+Northern Territory,2019-Q4,138.9
+Northern Territory,2020-Q1,139
+Northern Territory,2020-Q2,139
+Northern Territory,2020-Q3,139.7
+Northern Territory,2020-Q4,141.5
+Northern Territory,2021-Q1,141.7
+Northern Territory,2021-Q2,141.8
+Northern Territory,2021-Q3,143.2
+Northern Territory,2021-Q4,143.5
+Northern Territory,2022-Q1,143.7
+Northern Territory,2022-Q2,143.8
+Northern Territory,2022-Q3,144.2
+Northern Territory,2022-Q4,144.3
+Northern Territory,2023-Q1,145.2
+Northern Territory,2023-Q2,146.1
+Northern Territory,2023-Q3,148.5
+Northern Territory,2023-Q4,150.1
+Northern Territory,2024-Q1,150.5
+Northern Territory,2024-Q2,150.6
+Northern Territory,2024-Q3,152.8
+Northern Territory,2024-Q4,154.8
+Northern Territory,2025-Q1,155.5
+Northern Territory,2025-Q2,155.7
+Northern Territory,2025-Q3,156.3
+Northern Territory,2025-Q4,156.9
+Northern Territory,2026-Q1,158.3
+Northern Territory,2026-Q2,160
+Victoria,2000-Q1,71.9
+Victoria,2000-Q2,72.2
+Victoria,2000-Q3,73
+Victoria,2000-Q4,73.5
+Victoria,2001-Q1,74.7
+Victoria,2001-Q2,75.3
+Victoria,2001-Q3,75.9
+Victoria,2001-Q4,76.2
+Victoria,2002-Q1,77.2
+Victoria,2002-Q2,78.1
+Victoria,2002-Q3,79
+Victoria,2002-Q4,79.7
+Victoria,2003-Q1,80.2
+Victoria,2003-Q2,81.1
+Victoria,2003-Q3,81.8
+Victoria,2003-Q4,82.4
+Victoria,2004-Q1,82.9
+Victoria,2004-Q2,83.2
+Victoria,2004-Q3,84.5
+Victoria,2004-Q4,85.9
+Victoria,2005-Q1,86.8
+Victoria,2005-Q2,87.2
+Victoria,2005-Q3,87.7
+Victoria,2005-Q4,88.9
+Victoria,2006-Q1,89.8
+Victoria,2006-Q2,90.4
+Victoria,2006-Q3,91
+Victoria,2006-Q4,92.6
+Victoria,2007-Q1,93.3
+Victoria,2007-Q2,93.8
+Victoria,2007-Q3,94.4
+Victoria,2007-Q4,95.3
+Victoria,2008-Q1,95.9
+Victoria,2008-Q2,96.6
+Victoria,2008-Q3,98.4
+Victoria,2008-Q4,99.8
+Victoria,2009-Q1,100.8
+Victoria,2009-Q2,101
+Victoria,2009-Q3,102.4
+Victoria,2009-Q4,103.2
+Victoria,2010-Q1,104.5
+Victoria,2010-Q2,104.7
+Victoria,2010-Q3,105.5
+Victoria,2010-Q4,107
+Victoria,2011-Q1,108.1
+Victoria,2011-Q2,108.4
+Victoria,2011-Q3,109
+Victoria,2011-Q4,109.7
+Victoria,2012-Q1,110.7
+Victoria,2012-Q2,111.4
+Victoria,2012-Q3,112.6
+Victoria,2012-Q4,113.3
+Victoria,2013-Q1,113.9
+Victoria,2013-Q2,114.2
+Victoria,2013-Q3,115.2
+Victoria,2013-Q4,116.3
+Victoria,2014-Q1,117.5
+Victoria,2014-Q2,118
+Victoria,2014-Q3,118.8
+Victoria,2014-Q4,120.1
+Victoria,2015-Q1,121.3
+Victoria,2015-Q2,121.9
+Victoria,2015-Q3,123.3
+Victoria,2015-Q4,123.7
+Victoria,2016-Q1,124.3
+Victoria,2016-Q2,124.8
+Victoria,2016-Q3,125.7
+Victoria,2016-Q4,126.3
+Victoria,2017-Q1,127.5
+Victoria,2017-Q2,128.1
+Victoria,2017-Q3,129.1
+Victoria,2017-Q4,130.2
+Victoria,2018-Q1,131.2
+Victoria,2018-Q2,132.3
+Victoria,2018-Q3,133.4
+Victoria,2018-Q4,134.3
+Victoria,2019-Q1,135.2
+Victoria,2019-Q2,137.2
+Victoria,2019-Q3,138.2
+Victoria,2019-Q4,139
+Victoria,2020-Q1,139.6
+Victoria,2020-Q2,140.4
+Victoria,2020-Q3,140.7
+Victoria,2020-Q4,141.5
+Victoria,2021-Q1,142.3
+Victoria,2021-Q2,142.7
+Victoria,2021-Q3,143.7
+Victoria,2021-Q4,144.4
+Victoria,2022-Q1,145.2
+Victoria,2022-Q2,145.6
+Victoria,2022-Q3,147.6
+Victoria,2022-Q4,148.4
+Victoria,2023-Q1,149.6
+Victoria,2023-Q2,150.3
+Victoria,2023-Q3,151.7
+Victoria,2023-Q4,152.6
+Victoria,2024-Q1,153.3
+Victoria,2024-Q2,154.2
+Victoria,2024-Q3,155.4
+Victoria,2024-Q4,157
+Victoria,2025-Q1,157.9
+Victoria,2025-Q2,159.2
+Victoria,2025-Q3,160.9
+Victoria,2025-Q4,161.5
+Victoria,2026-Q1,162.6
+Victoria,2026-Q2,163.9

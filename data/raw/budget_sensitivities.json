@@ -1,0 +1,95 @@
+{
+ "note": "Sensitivity tables published by governments in their 2026-27 budget papers, used to cross-check the tool's arithmetic. Effect on the general government operating result, $ million; negative makes the result worse.",
+ "years": [
+  "2026-27",
+  "2027-28",
+  "2028-29",
+  "2029-30"
+ ],
+ "rows": [
+  {
+   "jurisdiction": "nsw",
+   "label": "Payroll tax: employment 1% higher",
+   "published": [
+    172,
+    180,
+    189,
+    196
+   ],
+   "tool": {
+    "payroll": 0.01
+   },
+   "source": "NSW Budget Statement 2026-27, Table E.3 (PDF page 164)"
+  },
+  {
+   "jurisdiction": "nsw",
+   "label": "Transfer duty: residential prices 1% higher",
+   "published": [
+    122,
+    136,
+    149,
+    153
+   ],
+   "tool": {
+    "duty": 0.01
+   },
+   "source": "NSW Budget Statement 2026-27, Table E.3 (PDF page 164)"
+  },
+  {
+   "jurisdiction": "nsw",
+   "label": "GST: taxable consumption 1% higher",
+   "published": [
+    237,
+    246,
+    265,
+    286
+   ],
+   "tool": {
+    "gst": 0.01
+   },
+   "source": "NSW Budget Statement 2026-27, Table E.3 (PDF page 164)"
+  },
+  {
+   "jurisdiction": "nsw",
+   "label": "Interest: cost of borrowing 1 percentage point higher",
+   "published": [
+    -241,
+    -433,
+    -614,
+    -807
+   ],
+   "tool": {
+    "rateShock": 0.01
+   },
+   "source": "NSW Budget Statement 2026-27, Table E.3 (PDF page 164)"
+  },
+  {
+   "jurisdiction": "vic",
+   "label": "Stamp duty: property transaction volumes 1% higher",
+   "published": [
+    103,
+    118,
+    131,
+    144
+   ],
+   "tool": {
+    "duty": 0.01
+   },
+   "source": "Victorian Budget 2026-27, Budget Paper 2, Table 6.5 (PDF page 97)"
+  },
+  {
+   "jurisdiction": "vic",
+   "label": "Interest rates 1 percentage point higher (net of extra interest earned)",
+   "published": [
+    -102,
+    18,
+    -184,
+    -422
+   ],
+   "tool": {
+    "rateShock": 0.01
+   },
+   "source": "Victorian Budget 2026-27, Budget Paper 2, Table 6.5 (PDF page 97)"
+  }
+ ]
+}

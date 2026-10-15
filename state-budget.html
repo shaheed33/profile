@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/theme.css">
   <link rel="stylesheet" href="css/state-budget.css">
   <script src="data/state_budget.js" defer></script>
+  <script src="data/shock_history.js" defer></script>
   <script src="js/state-budget-math.js" defer></script>
   <script src="js/state-budget.js" defer></script>
 </head>
@@ -24,6 +25,16 @@
     <a class="brand" href="index.html">Abdulla Shaheed</a>
     <nav class="site-nav" aria-label="Main"><a href="index.html#tools">Tools</a><a href="index.html#about">About</a><button class="theme-toggle" type="button" aria-label="Switch to dark theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20.7 13A9 9 0 0 1 11 3.3 9 9 0 1 0 20.7 13Z"/></svg></button></nav>
   </div></header>
+
+  <div class="sb-bar" id="sb-bar" hidden>
+    <div class="sb-wrap sb-bar-in">
+      <label class="sr-only" for="bar-jur">State or territory</label>
+      <select id="bar-jur" class="bar-jur"></select>
+      <span class="bar-scn" id="bar-scn">Budget as published</span>
+      <span class="bar-out" id="bar-out" aria-live="polite"></span>
+      <a class="bar-link" href="#scenario-form">Change shocks</a>
+    </div>
+  </div>
 
   <main id="main" class="sb-wrap">
     <section class="sb-hero">
@@ -85,40 +96,45 @@
         <form id="scenario-form" class="controls" onsubmit="return false" novalidate>
           <span class="section-number">02 / Shock it</span>
           <h2 id="scenario-title">Choose what goes wrong</h2>
-          <p class="small-note">Shocks start in 2026-27 and last to 2029-30. They are changes from the budget's own figures, not from today.</p>
+          <p class="small-note">Shocks start in 2026-27 and last to 2029-30, measured against the budget's own figures. Sizes in the ready-made scenarios come from history: the worst year on record, or a year as bad as one in five.</p>
 
           <fieldset class="presets">
             <legend>Ready-made <button type="button" class="term" data-term="scenario">scenarios</button></legend>
             <div class="preset-list" id="presets"></div>
             <p class="preset-desc" id="preset-desc" aria-live="polite"></p>
+            <p class="preset-key"><span class="hk hk-bad">Bad year</span><span>as bad as roughly one year in five</span><span class="hk hk-worst">Worst</span><span>the worst year on record</span></p>
           </fieldset>
 
           <fieldset class="group">
             <legend>Revenue</legend>
             <div class="control" data-key="gst">
               <label for="s-gst"><span><button type="button" class="term" data-term="gst">GST revenue</button></span><output id="o-gst" for="s-gst">0%</output></label>
-              <input type="range" id="s-gst" min="-20" max="10" step="1" value="0" aria-describedby="h-gst">
-              <p id="h-gst">Change in GST received each year, for example from weaker spending or a smaller share.</p>
+              <input type="range" id="s-gst" min="-15" max="10" step="1" value="0" aria-describedby="h-gst">
+              <p id="h-gst">Weaker household spending shrinks the national GST pool.</p>
+              <div class="hist" data-for="gst"></div>
             </div>
             <div class="control" data-key="otherGrants">
               <label for="s-otherGrants"><span><button type="button" class="term" data-term="other-grants">Other Commonwealth grants</button></span><output id="o-otherGrants" for="s-otherGrants">0%</output></label>
               <input type="range" id="s-otherGrants" min="-20" max="10" step="1" value="0" aria-describedby="h-otherGrants">
-              <p id="h-otherGrants">Grants for hospitals, schools, roads and other set purposes.</p>
+              <p id="h-otherGrants">Grants for hospitals, schools, roads and other set purposes. No consistent history to size this one, so it is your call.</p>
             </div>
             <div class="control" data-key="payroll">
               <label for="s-payroll"><span><button type="button" class="term" data-term="payroll-tax">Payroll tax</button></span><output id="o-payroll" for="s-payroll">0%</output></label>
-              <input type="range" id="s-payroll" min="-20" max="10" step="1" value="0" aria-describedby="h-payroll">
+              <input type="range" id="s-payroll" min="-30" max="10" step="1" value="0" aria-describedby="h-payroll">
               <p id="h-payroll">Follows jobs and wages. Falls in a downturn.</p>
+              <div class="hist" data-for="payroll"></div>
             </div>
             <div class="control" data-key="duty">
               <label for="s-duty"><span><button type="button" class="term" data-term="transfer-duty">Property stamp duty</button></span><output id="o-duty" for="s-duty">0%</output></label>
-              <input type="range" id="s-duty" min="-50" max="20" step="1" value="0" aria-describedby="h-duty">
-              <p id="h-duty">Moves with house prices and the number of sales. Can swing by a quarter or more.</p>
+              <input type="range" id="s-duty" min="-60" max="20" step="1" value="0" aria-describedby="h-duty">
+              <p id="h-duty">Moves with house prices and the number of sales.</p>
+              <div class="hist" data-for="duty"></div>
             </div>
             <div class="control" data-key="royalties">
               <label for="s-royalties"><span><button type="button" class="term" data-term="royalties">Mining royalties</button></span><output id="o-royalties" for="s-royalties">0%</output></label>
               <input type="range" id="s-royalties" min="-60" max="30" step="1" value="0" aria-describedby="h-royalties">
               <p id="h-royalties">Follow coal, iron ore, gas and other commodity prices.</p>
+              <div class="hist" data-for="royalties"></div>
             </div>
           </fieldset>
 
@@ -126,27 +142,29 @@
             <legend>Spending</legend>
             <div class="control" data-key="wages">
               <label for="s-wages"><span>Extra <button type="button" class="term" data-term="employee">wage</button> growth a year</span><output id="o-wages" for="s-wages">0.0 pts</output></label>
-              <input type="range" id="s-wages" min="-1" max="3" step="0.25" value="0" aria-describedby="h-wages">
-              <p id="h-wages"><button type="button" class="term" data-term="percentage-point">Percentage points</button> above the pay growth already in the budget. It compounds each year.</p>
+              <input type="range" id="s-wages" min="-1" max="3" step="0.1" value="0" aria-describedby="h-wages">
+              <p id="h-wages"><button type="button" class="term" data-term="percentage-point">Percentage points</button> above the pay growth already in the budget, every year, so it compounds.</p>
+              <div class="hist" data-for="wages"></div>
             </div>
             <div class="control" data-key="otherSpending">
               <label for="s-otherSpending"><span><button type="button" class="term" data-term="other-spending">Other running costs</button></span><output id="o-otherSpending" for="s-otherSpending">0%</output></label>
               <input type="range" id="s-otherSpending" min="-5" max="10" step="0.5" value="0" aria-describedby="h-otherSpending">
-              <p id="h-otherSpending">Higher prices for services, contracts and grants, or new spending.</p>
+              <p id="h-otherSpending">Higher prices for services, contracts and grants, or new spending. Your call.</p>
             </div>
             <div class="control" data-key="capex">
               <label for="s-capex"><span><button type="button" class="term" data-term="capex">Infrastructure spending</button></span><output id="o-capex" for="s-capex">0%</output></label>
               <input type="range" id="s-capex" min="-30" max="30" step="1" value="0" aria-describedby="h-capex">
-              <p id="h-capex">Cost overruns or a bigger programme. Adds to debt, not to running costs.</p>
+              <p id="h-capex">Cost overruns or a bigger programme. Adds to debt, not to running costs. Your call.</p>
             </div>
           </fieldset>
 
           <fieldset class="group">
             <legend>Borrowing</legend>
             <div class="control" data-key="rateShock">
-              <label for="s-rateShock"><span>Higher interest rates</span><output id="o-rateShock" for="s-rateShock">0.00 pts</output></label>
-              <input type="range" id="s-rateShock" min="-1" max="3" step="0.25" value="0" aria-describedby="h-rateShock">
+              <label for="s-rateShock"><span>Higher interest rates</span><output id="o-rateShock" for="s-rateShock">0.0 pts</output></label>
+              <input type="range" id="s-rateShock" min="-1" max="3" step="0.1" value="0" aria-describedby="h-rateShock">
               <p id="h-rateShock">Added to the rate on new and refinanced debt.</p>
+              <div class="hist" data-for="rateShock"></div>
             </div>
             <details class="advanced">
               <summary>Borrowing assumptions</summary>
@@ -156,9 +174,9 @@
                 <p id="h-borrowingRate">Interest paid on any extra debt the scenario creates, before the rate shock.</p>
               </div>
               <div class="control" data-key="repricing">
-                <label for="s-repricing"><span><button type="button" class="term" data-term="repricing">Debt refinanced each year</button></span><output id="o-repricing" for="s-repricing">20%</output></label>
-                <input type="range" id="s-repricing" min="0" max="50" step="5" value="20" aria-describedby="h-repricing">
-                <p id="h-repricing">How quickly a rate shock reaches the debt already in the budget.</p>
+                <label for="s-repricing"><span><button type="button" class="term" data-term="repricing">Debt refinanced each year</button></span><output id="o-repricing" for="s-repricing">10%</output></label>
+                <input type="range" id="s-repricing" min="0" max="50" step="5" value="10" aria-describedby="h-repricing">
+                <p id="h-repricing">How quickly a rate shock reaches the debt already in the budget. The two governments that publish it imply about 15% a year (NSW) and 7% (Victoria); 10% sits between. See the cross-check below.</p>
               </div>
             </details>
           </fieldset>
@@ -224,6 +242,27 @@
       </section>
     </div>
 
+    <section id="evidence" class="evidence-section" aria-labelledby="evidence-title">
+      <span class="section-number">Evidence</span>
+      <h2 id="evidence-title">Where the shock sizes come from</h2>
+      <p class="section-deck">Each ready-made shock is a repeat of something that has already happened to that government. For every revenue line, the tool takes each year's growth and compares it with that line's normal (median) growth, because a budget already assumes roughly normal growth. The gap is how far revenue would fall below the budget if that year happened again. <strong>Worst</strong> is the biggest gap on record. <strong>Bad year</strong> is a gap as large as roughly one year in five (the 20th percentile).</p>
+      <div class="table-scroll sticky-head"><table class="evidence-table">
+        <caption>History for <span id="ev-name"></span>. Select another government at the top of the page.</caption>
+        <thead><tr><th scope="col">Shock</th><th scope="col">Bad year</th><th scope="col">Worst</th><th scope="col">Worst year</th><th scope="col">Years covered</th><th scope="col">Source</th></tr></thead>
+        <tbody id="ev-rows"></tbody>
+      </table></div>
+      <p class="small-note">A shock in the tool lasts from 2026-27 to 2029-30: revenue drops to the lower level and stays there, and extra wage growth repeats every year. History rarely repeats its worst year four years running, so the "worst" scenarios are deliberately harsh. "Severe downturn" puts every revenue line at its worst at once, which no single year has done.</p>
+
+      <h3 class="sub-h">Cross-check against the governments' own sensitivity tables</h3>
+      <p class="section-deck">NSW and Victoria publish how their budgets respond to a 1% or 1 percentage point change. The tool, given the same shock, should land near their figures. It is close for payroll tax and stamp duty. For interest rates it depends on how quickly debt is refinanced, which is why that assumption is yours to change.</p>
+      <div class="table-scroll sticky-head"><table class="check-table">
+        <caption>Change in the operating result, $ million. Negative makes the result worse. The tool also counts interest on any extra debt, which the published tables mostly leave out.</caption>
+        <thead><tr><th scope="col">Shock</th><th scope="col">Government's figure, 2026-27</th><th scope="col">Tool, 2026-27</th><th scope="col">Government's figure, 2029-30</th><th scope="col">Tool, 2029-30</th></tr></thead>
+        <tbody id="check-rows"></tbody>
+      </table></div>
+      <p class="small-note" id="check-sources"></p>
+    </section>
+
     <section id="method" class="method-section" aria-labelledby="method-title">
       <span class="section-number">Open method</span>
       <h2 id="method-title">How the numbers work</h2>
@@ -236,7 +275,7 @@
         <summary>Exactly how a shock is calculated</summary>
         <p>For each year from 2026-27 (year 1) to 2029-30 (year 4), with every amount taken from that year's published budget:</p>
         <ul>
-          <li><strong>Revenue shocks</strong> change that year's published GST, other grants, payroll tax, stamp duty or royalties by the percentage chosen. It is a lasting change in level, not repeated growth.</li>
+          <li><strong>Revenue shocks</strong> change that year's published GST, other grants, payroll tax, stamp duty or royalties by the percentage chosen. It is a lasting change in level, not repeated growth. The ready-made sizes come from history (see "Where the shock sizes come from").</li>
           <li><strong>Wages</strong>: extra cost = published employee and superannuation expenses × [(1 + extra growth)<sup>year</sup> − 1].</li>
           <li><strong>Other running costs</strong>: extra cost = (total expenses − employee costs − interest) × the percentage chosen.</li>
           <li><strong>Infrastructure</strong>: extra spending = published purchases of non-financial assets × the percentage chosen. It is paid for with debt and does not reduce the operating balance directly.</li>
@@ -248,7 +287,7 @@
       </details>
       <details>
         <summary>What this tool cannot tell you</summary>
-        <p>It is not a forecast. It attaches no probability to any scenario and draws no confidence bands. It does not model how shocks feed into each other (a recession that cuts payroll tax also usually cuts stamp duty and GST; the "mild downturn" scenario combines them for that reason). Commonwealth decisions, such as GST top-up payments to Western Australia, are as published in the budgets.</p>
+        <p>It is not a forecast. It attaches no probability to any scenario and draws no confidence bands. It does not model how shocks feed into each other (a recession that cuts payroll tax also usually cuts stamp duty and GST; the downturn scenarios combine them for that reason). GST history is for the national pool: changes in a government's share of it, decided by the Commonwealth Grants Commission, come on top. Commonwealth decisions, such as GST top-up payments to Western Australia, are as published in the budgets.</p>
         <p>Accounting rules still differ a little between governments, for example in how superannuation investments and lease liabilities are treated. Where a government's headline figure uses a different definition, the tool uses the common definition and says so in the notes for that government.</p>
       </details>
       <details>
@@ -272,7 +311,6 @@
   <footer class="sb-wrap sb-footer">© <span id="year"></span> Abdulla Shaheed · Figures from the 2026-27 budget papers of each state and territory government.</footer>
 
   <div class="term-pop" id="term-pop" role="tooltip" hidden></div>
-  <a class="mini-result" id="mini-result" href="#results" aria-hidden="true" tabindex="-1"></a>
   <script src="js/theme.js"></script>
   <script src="js/more.js"></script>
 </body>

@@ -130,15 +130,60 @@
     wages: { scale: 100, unit: 'pts', dp: 2 }, otherSpending: { scale: 100, unit: '%', dp: 1 }, capex: { scale: 100, unit: '%' },
     rateShock: { scale: 100, unit: 'pts', dp: 2 }, borrowingRate: { scale: 100, unit: '%', dp: 2, plain: true }, repricing: { scale: 100, unit: '%', plain: true }
   };
+  /* Ready-made scenarios. Sizes come from each government's own history (data/shock_history.js). */
+  var HIST = window.SHOCK_HISTORY || null;
+  var HIST_KEYS = { gst: 'gst', payroll: 'payroll', duty: 'duty', royalties: 'royalties', wages: 'wages', rateShock: 'rates' };
+  var HIST_NAMES = { gst: 'GST', payroll: 'payroll tax', duty: 'stamp duty', royalties: 'royalties', wages: 'public sector pay growth', rateShock: 'the 10-year bond yield' };
+  function histOf(key, jid) {
+    if (!HIST || !HIST_KEYS[key]) return null;
+    if (key === 'gst') return HIST.national.gst;
+    if (key === 'rateShock') return HIST.national.rates;
+    var st = HIST.states[jid];
+    var m = st && st[HIST_KEYS[key]];
+    if (key === 'royalties' && (!m || !(byIdEarly[jid] && byIdEarly[jid].series.royalties[1] > 0))) return null;
+    return m || null;
+  }
+  function sizeOf(key, m, level) {
+    var v = m[level];
+    return m.unit === 'rate' ? Math.round(v * 1000) / 10 : Math.round(v * 100);
+  }
+  var byIdEarly = {};
+  data.jurisdictions.forEach(function (j) { byIdEarly[j.id] = j; });
   var PRESETS = [
-    { id: 'published', name: 'Budget as published', desc: 'No shocks. The figures are each government’s own budget.', set: {} },
-    { id: 'property', name: 'Property slump', desc: 'Fewer homes change hands and prices fall, so stamp duty drops by a quarter.', set: { duty: -25 } },
-    { id: 'commodity', name: 'Commodity price fall', desc: 'Coal, iron ore and gas prices drop, cutting royalties by around a third.', set: { royalties: -35 } },
-    { id: 'gst', name: 'GST shortfall', desc: 'Weaker household spending, or a smaller share of the national pool, cuts GST by 5%.', set: { gst: -5 } },
-    { id: 'wages', name: 'Wage breakout', desc: 'Public sector pay grows 1.5 percentage points a year faster than budgeted.', set: { wages: 1.5 } },
-    { id: 'rates', name: 'Higher for longer', desc: 'Borrowing costs one percentage point more on new and refinanced debt.', set: { rateShock: 1 } },
-    { id: 'downturn', name: 'Mild downturn', desc: 'Several revenues fall together as the economy slows, while demand for services rises: GST −4%, payroll tax −5%, stamp duty −20%, royalties −15%, running costs +1%.', set: { gst: -4, payroll: -5, duty: -20, royalties: -15, otherSpending: 1 } }
+    { id: 'published', name: 'Budget as published', keys: [], level: null },
+    { id: 'property', name: 'Property slump', keys: ['duty'], level: 'worst' },
+    { id: 'commodity', name: 'Commodity price fall', keys: ['royalties'], level: 'worst' },
+    { id: 'gst', name: 'GST shortfall', keys: ['gst'], level: 'worst' },
+    { id: 'wages', name: 'Wage breakout', keys: ['wages'], level: 'worst' },
+    { id: 'rates', name: 'Interest rate jump', keys: ['rateShock'], level: 'worst' },
+    { id: 'badyear', name: 'Bad year, all revenue', keys: ['gst', 'payroll', 'duty', 'royalties'], level: 'bad_year' },
+    { id: 'severe', name: 'Severe downturn', keys: ['gst', 'payroll', 'duty', 'royalties'], level: 'worst' }
   ];
+  function presetValues(p, jid) {
+    var set = {};
+    p.keys.forEach(function (k) { var m = histOf(k, jid); if (m) set[k] = sizeOf(k, m, p.level); });
+    return set;
+  }
+  function presetAvailable(p, jid) { return !p.keys.length || Object.keys(presetValues(p, jid)).length > 0; }
+  function shortName(j) { return j.kind === 'territory' ? 'the ' + j.short : j.name; }
+  function sizeText(k, v) { return k === 'wages' || k === 'rateShock' ? '+' + v.toFixed(1) + ' percentage points' : (v < 0 ? MINUS : '+') + Math.abs(v) + '%'; }
+  function presetDesc(p, jid) {
+    var j = byIdEarly[jid], set = presetValues(p, jid);
+    if (p.id === 'published') return 'No shocks. The figures are ' + shortName(j) + '\u2019s own budget.';
+    if (!Object.keys(set).length) return 'Not available for ' + shortName(j) + '.';
+    if (p.keys.length === 1) {
+      var k = p.keys[0], m = histOf(k, jid);
+      var what = { duty: 'Stamp duty falls ' + Math.abs(set[k]) + '% below the budget', royalties: 'Royalties fall ' + Math.abs(set[k]) + '% below the budget',
+        gst: 'GST falls ' + Math.abs(set[k]) + '% below the budget', wages: 'Public sector pay grows ' + set[k].toFixed(1) + ' percentage points a year faster than budgeted',
+        rateShock: 'Borrowing costs rise ' + set[k].toFixed(1) + ' percentage points' }[k];
+      var whose = k === 'gst' ? 'the national GST pool' : k === 'rateShock' ? 'the 10-year bond yield' : shortName(j) + '\u2019s ' + HIST_NAMES[k];
+      return what + ': a repeat of ' + m.worst_year + ', the worst year for ' + whose + ' in records from ' + m.years[0] + '.';
+    }
+    var parts = Object.keys(set).map(function (k) { return HIST_NAMES[k] + ' ' + sizeText(k, set[k]); });
+    return (p.level === 'worst'
+      ? 'Every revenue line at its worst year on record, all at once, which has never happened in a single year: '
+      : 'Each revenue line has a year as bad as roughly one in five, at the same time: ') + parts.join(', ') + '.';
+  }
   var defaultsUi = {};
   Object.keys(CONTROLS).forEach(function (k) { defaultsUi[k] = +$('s-' + k).value; });
 
@@ -146,7 +191,8 @@
     var c = CONTROLS[k], v = +$('s-' + k).value, a = Math.abs(v);
     // Show as few decimals as the step needs: 1.0, 1.5, 0.25; 5.0%, 5.25%; 10%, 0.5%.
     var txt;
-    if (c.unit === 'pts' || k === 'borrowingRate') txt = Math.round(a * 4) % 2 ? a.toFixed(2) : a.toFixed(1);
+    if (c.unit === 'pts') txt = a.toFixed(1);
+    else if (k === 'borrowingRate') txt = Math.round(a * 4) % 2 ? a.toFixed(2) : a.toFixed(1);
     else txt = a % 1 ? a.toFixed(1) : a.toFixed(0);
     var sign = c.plain ? '' : (v > 0 ? '+' : v < 0 ? MINUS : '');
     $('o-' + k).textContent = sign + txt + (c.unit === 'pts' ? ' pts' : '%');
@@ -168,14 +214,17 @@
       showValue(k);
     });
   }
-  function activePreset() {
+  function activePreset(jid) {
     var cur = {};
+    jid = jid || (current && current.id);
     Object.keys(CONTROLS).forEach(function (k) { cur[k] = +$('s-' + k).value; });
     for (var i = 0; i < PRESETS.length; i++) {
       var p = PRESETS[i];
+      if (!presetAvailable(p, jid)) continue;
+      var set = presetValues(p, jid);
       var match = Object.keys(CONTROLS).every(function (k) {
         if (k === 'borrowingRate' || k === 'repricing') return true;
-        var want = p.set[k] !== undefined ? p.set[k] : defaultsUi[k];
+        var want = set[k] !== undefined ? set[k] : defaultsUi[k];
         return Math.abs(cur[k] - want) < 1e-9;
       });
       if (match) return p;
@@ -210,13 +259,17 @@
   select.addEventListener('change', function () { choose(select.value, true); });
 
   function choose(id, push) {
+    var was = current ? activePreset(current.id) : null;
     current = byId[id] || data.jurisdictions[0];
+    if (was && was.id !== 'published') applyPreset(was, false);
     select.value = current.id;
     chips.querySelectorAll('.chip').forEach(function (b) {
       var on = b.dataset.id === current.id;
       b.classList.toggle('on', on); b.setAttribute('aria-checked', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1;
     });
+    if ($('bar-jur')) $('bar-jur').value = current.id;
     renderBaseline();
+    renderHistory();
     update();
     if (push) syncUrl();
   }
@@ -400,7 +453,8 @@
       var on = !!p && b.dataset.id === p.id;
       b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    $('preset-desc').textContent = p ? p.desc : 'Your own scenario. Illustrative sizes, not predictions.';
+    $('preset-desc').textContent = p ? presetDesc(p, current.id) : 'Your own scenario. The Bad year and Worst buttons under each slider size a shock from history.';
+    if ($('bar-scn')) $('bar-scn').textContent = p ? p.name : 'Your own scenario';
     var r;
     try { r = M.scenario(current.series, a); } catch (e) { r = null; }
     if (!r) {
@@ -422,8 +476,14 @@
     $('r-ratio-change').textContent = Math.abs(dr) < 0.0005 ? asPub : signedPts(dr) + ' against ' + pct(pub.debtToRevenue, 0) + ' published';
     $('r-int').textContent = pct(last.interestToRevenue);
     $('r-int-change').textContent = Math.abs(ir) < 0.0005 ? asPub : signedPts(ir) + ' against ' + pct(pub.interestToRevenue) + ' published';
-    var mini = $('mini-result');
-    if (mini) mini.textContent = current.short + ' 2029-30: ' + balanceWords(last.nob) + (same(Math.round(last.balanceChange * 10)) ? ' (as published)' : ' (' + signedMoney(last.balanceChange) + ')');
+    if ($('bar-out')) {
+      $('bar-out').replaceChildren();
+      var lab = document.createElement('span'); lab.className = 'bar-lab'; lab.textContent = '2029-30 operating balance ';
+      var val = document.createElement('strong'); val.textContent = balanceWords(last.nob); val.classList.toggle('negative', last.nob < 0);
+      var chg = document.createElement('span'); chg.className = 'bar-chg';
+      chg.textContent = same(Math.round(last.balanceChange * 10)) ? ' as published' : ' (' + signedMoney(last.balanceChange) + ')';
+      $('bar-out').append(lab, val, chg);
+    }
     // Plain-English verdict
     var name = current.short === 'ACT' || current.short === 'NT' ? 'the ' + current.short : current.name;
     var any = Math.abs(last.balanceChange) >= 0.05 || Math.abs(last.extraDebt) >= 0.05;
@@ -452,6 +512,7 @@
       tb.appendChild(tr);
     });
     compareAll(a);
+    renderChecks();
   }
 
   /* ---------- Compare all eight ---------- */
@@ -493,16 +554,85 @@
 
   /* ---------- Presets, reset, URL, download ---------- */
   var presetBox = $('presets');
+  function applyPreset(p, sync) {
+    var keep = { borrowingRate: +$('s-borrowingRate').value, repricing: +$('s-repricing').value };
+    setControls(Object.assign({}, presetValues(p, current.id), keep));
+    if (sync !== false) { update(); syncUrl(); }
+  }
   PRESETS.forEach(function (p) {
     var b = document.createElement('button'); b.type = 'button'; b.className = 'preset'; b.dataset.id = p.id; b.textContent = p.name;
     b.setAttribute('aria-pressed', 'false');
-    b.addEventListener('click', function () {
-      var keep = { borrowingRate: +$('s-borrowingRate').value, repricing: +$('s-repricing').value };
-      var vals = Object.assign({}, p.set, keep);
-      setControls(vals); update(); syncUrl();
-    });
+    if (p.level) { var tag = document.createElement('span'); tag.className = 'hk ' + (p.level === 'worst' ? 'hk-worst' : 'hk-bad'); tag.textContent = p.level === 'worst' ? 'Worst' : 'Bad year'; tag.setAttribute('aria-hidden', 'true'); b.appendChild(tag); }
+    b.addEventListener('click', function () { applyPreset(p); });
     presetBox.appendChild(b);
   });
+
+  /* History buttons under each slider: one tap sets a bad year or the worst on record. */
+  function renderHistory() {
+    document.querySelectorAll('.hist').forEach(function (box) {
+      var k = box.dataset.for, m = histOf(k, current.id);
+      box.replaceChildren();
+      if (!m) {
+        if (k === 'royalties') { var none = document.createElement('span'); none.className = 'hist-none'; none.textContent = shortName(current) === 'the ACT' ? 'The ACT collects no mining royalties.' : 'No usable history.'; box.appendChild(none); }
+        return;
+      }
+      var label = document.createElement('span'); label.className = 'hist-label';
+      label.textContent = (k === 'gst' ? 'National GST, ' : k === 'rateShock' ? '10-year bond yield, ' : current.short + ', ') + m.years[0] + ' to ' + m.years[1] + ':';
+      box.appendChild(label);
+      [['bad_year', 'Bad year', 'hk-bad'], ['worst', 'Worst', 'hk-worst']].forEach(function (lv) {
+        var v = sizeOf(k, m, lv[0]);
+        var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'hist-btn ' + lv[2];
+        var unit = m.unit === 'rate' ? ' pts' : '%';
+        btn.textContent = lv[1] + ' ' + (v > 0 ? '+' : v < 0 ? MINUS : '') + Math.abs(m.unit === 'rate' ? v : v).toFixed(m.unit === 'rate' ? 1 : 0) + unit + (lv[0] === 'worst' ? ' (' + m.worst_year + ')' : '');
+        btn.setAttribute('aria-label', 'Set ' + HIST_NAMES[k] + ' to ' + btn.textContent);
+        btn.addEventListener('click', function () { var input = $('s-' + k); input.value = v; update(); syncUrl(); });
+        box.appendChild(btn);
+      });
+    });
+    // Disable presets that do not apply to this government (e.g. royalties in the ACT).
+    document.querySelectorAll('.preset').forEach(function (b) {
+      var p = PRESETS.filter(function (x) { return x.id === b.dataset.id; })[0];
+      var ok = presetAvailable(p, current.id); b.disabled = !ok; b.title = ok ? '' : 'Not available for ' + shortName(current);
+    });
+    renderEvidence();
+  }
+
+  function renderEvidence() {
+    if (!HIST || !$('ev-rows')) return;
+    $('ev-name').textContent = current.name;
+    var tb = $('ev-rows'); tb.replaceChildren();
+    [['gst', 'GST (national pool)'], ['payroll', 'Payroll tax'], ['duty', 'Property stamp duty'], ['royalties', 'Mining royalties'], ['wages', 'Extra public sector pay growth'], ['rateShock', 'Interest rate rise (10-year yield)']].forEach(function (r) {
+      var m = histOf(r[0], current.id);
+      var tr = document.createElement('tr');
+      var th = document.createElement('th'); th.scope = 'row'; th.textContent = r[1]; tr.appendChild(th);
+      var cells = m ? [sizeText(r[0], sizeOf(r[0], m, 'bad_year')), sizeText(r[0], sizeOf(r[0], m, 'worst')), m.worst_year, m.years[0] + ' to ' + m.years[1] + ' (' + m.observations + ' changes)', m.source]
+        : ['Not applicable', '', '', '', r[0] === 'royalties' ? 'No mining royalties in this budget' : ''];
+      cells.forEach(function (c, i) { var td = document.createElement('td'); td.textContent = c; if (i === 4) td.className = 'src-cell'; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+  }
+
+  function renderChecks() {
+    if (!HIST || !HIST.sensitivities || !$('check-rows')) return;
+    var tb = $('check-rows'); tb.replaceChildren();
+    var base = assumptions(), sources = {};
+    HIST.sensitivities.rows.forEach(function (row) {
+      var j = byId[row.jurisdiction];
+      var a = { borrowingRate: base.borrowingRate, repricing: base.repricing };
+      Object.keys(row.tool).forEach(function (k) { a[k] = row.tool[k]; });
+      var r = M.scenario(j.series, a);
+      var tr = document.createElement('tr');
+      var th = document.createElement('th'); th.scope = 'row'; th.textContent = j.short + ': ' + row.label; tr.appendChild(th);
+      var fmt = function (v) { return (v < 0 ? MINUS : '') + Math.abs(Math.round(v)).toLocaleString('en-AU'); };
+      [row.published[0], r.years[0].balanceChange, row.published[3], r.years[3].balanceChange].forEach(function (v, i) {
+        var td = document.createElement('td'); td.textContent = fmt(v); if (i % 2) td.className = 'tool-cell'; tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+      sources[row.source] = 1;
+    });
+    $('check-sources').textContent = 'Sources: ' + Object.keys(sources).join('; ') + '. Tool figures use the borrowing assumptions currently set.';
+  }
+
   Object.keys(CONTROLS).forEach(function (k) {
     $('s-' + k).addEventListener('input', function () { update(); });
     $('s-' + k).addEventListener('change', syncUrl);
@@ -584,13 +714,24 @@
     list.appendChild(d);
   });
 
-  /* ---------- Phone helper: a strip showing the result while the sliders are on screen ---------- */
-  if ('IntersectionObserver' in window && $('mini-result')) {
-    var form = $('scenario-form'), results = $('results'), formIn = false, resultsIn = false;
-    var showMini = function () { $('mini-result').classList.toggle('show', formIn && !resultsIn); };
-    new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.target === form) formIn = e.isIntersecting; else resultsIn = e.isIntersecting; }); showMini(); }, { threshold: 0.05 })
-      .observe(form);
-    new IntersectionObserver(function (es) { resultsIn = es[0].isIntersecting && es[0].intersectionRatio > 0.15; showMini(); }, { threshold: [0, 0.15, 0.3] }).observe(results);
+  /* ---------- Sticky summary bar: appears once the government picker scrolls away ---------- */
+  var bar = $('sb-bar'), barJur = $('bar-jur');
+  if (bar && barJur) {
+    data.jurisdictions.forEach(function (j) { var o = document.createElement('option'); o.value = j.id; o.textContent = j.name; barJur.appendChild(o); });
+    barJur.addEventListener('change', function () { choose(barJur.value, true); });
+    var setBarH = function () { document.documentElement.style.setProperty('--bar-h', bar.hidden ? '0px' : bar.offsetHeight + 'px'); };
+    // Show the bar once the government picker has scrolled up under the site header.
+    var pick = $('tool-start'), ticking = false;
+    var checkBar = function () {
+      ticking = false;
+      var hdr = document.querySelector('.site-header');
+      var limit = hdr ? hdr.getBoundingClientRect().bottom : 64;
+      var show = pick.getBoundingClientRect().bottom < limit;
+      if (bar.hidden === show) { bar.hidden = !show; setBarH(); }
+    };
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(checkBar); } }, { passive: true });
+    checkBar();
+    window.addEventListener('resize', setBarH);
   }
 
   /* ---------- Start ---------- */
