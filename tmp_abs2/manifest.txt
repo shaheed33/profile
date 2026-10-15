@@ -1,0 +1,12 @@
+gfs_003.xlsx 69415 https://www.abs.gov.au/statistics/economy/government/government-finance-statistics-annual/2024-25/55120DO003_202425.xlsx
+gfs_004.xlsx 70792 https://www.abs.gov.au/statistics/economy/government/government-finance-statistics-annual/2024-25/55120DO004_202425.xlsx
+gfs_005.xlsx 71600 https://www.abs.gov.au/statistics/economy/government/government-finance-statistics-annual/2024-25/55120DO005_202425.xlsx
+gfs_006.xlsx 70572 https://www.abs.gov.au/statistics/economy/government/government-finance-statistics-annual/2024-25/55120DO006_202425.xlsx
+gfs_007.xlsx 68710 https://www.abs.gov.au/statistics/economy/government/government-finance-statistics-annual/2024-25/55120DO007_202425.xlsx
+gfs_008.xlsx 73169 https://www.abs.gov.au/statistics/economy/government/government-finance-statistics-annual/2024-25/55120DO008_202425.xlsx
+gfs_009.xlsx 70583 https://www.abs.gov.au/statistics/economy/government/government-finance-statistics-annual/2024-25/55120DO009_202425.xlsx
+gfs_010.xlsx 72410 https://www.abs.gov.au/statistics/economy/government/government-finance-statistics-annual/2024-25/55120DO010_202425.xlsx
+tax_201516.xlsx 66400 https://www.abs.gov.au/statistics/economy/government/taxation-revenue-australia/2015-16/55060DO001_201516.xlsx
+tax_201617.xlsx 66400 https://www.abs.gov.au/statistics/economy/government/taxation-revenue-australia/2016-17/55060DO001_201617.xlsx
+tax_201718.xlsx 66400 https://www.abs.gov.au/statistics/economy/government/taxation-revenue-australia/2017-18/55060DO001_201718.xlsx
+tax_201819.xlsx 66400 https://www.abs.gov.au/statistics/economy/government/taxation-revenue-australia/2018-19/55060DO001_201819.xlsx
