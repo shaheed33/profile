@@ -13,7 +13,7 @@
 
   var LIMITS = {
     gst: [-0.5, 0.5], otherGrants: [-0.5, 0.5], payroll: [-0.5, 0.5], duty: [-0.6, 0.6], royalties: [-0.8, 0.8],
-    wages: [-0.02, 0.05], otherSpending: [-0.1, 0.2], capex: [-0.5, 0.5],
+    wages: [-0.03, 0.05], otherSpending: [-0.1, 0.2], capex: [-0.5, 0.5],
     rateShock: [-0.02, 0.04], repricing: [0, 1], borrowingRate: [0, 0.12]
   };
 

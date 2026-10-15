@@ -166,7 +166,7 @@
   }
   function presetAvailable(p, jid) { return !p.keys.length || Object.keys(presetValues(p, jid)).length > 0; }
   function shortName(j) { return j.kind === 'territory' ? 'the ' + j.short : j.name; }
-  function sizeText(k, v) { return k === 'wages' || k === 'rateShock' ? '+' + v.toFixed(1) + ' percentage points' : (v < 0 ? MINUS : '+') + Math.abs(v) + '%'; }
+  function sizeText(k, v) { var sign = v > 0 ? '+' : v < 0 ? MINUS : ''; return k === 'wages' || k === 'rateShock' ? sign + Math.abs(v).toFixed(1) + ' percentage points' : sign + Math.abs(v) + '%'; }
   function presetDesc(p, jid) {
     var j = byIdEarly[jid], set = presetValues(p, jid);
     if (p.id === 'published') return 'No shocks. The figures are ' + shortName(j) + '\u2019s own budget.';
@@ -187,19 +187,40 @@
   var defaultsUi = {};
   Object.keys(CONTROLS).forEach(function (k) { defaultsUi[k] = +$('s-' + k).value; });
 
+  function decimals(k) { var st = String($('s-' + k).step); return st.indexOf('.') > -1 ? st.split('.')[1].length : 0; }
   function showValue(k) {
     var c = CONTROLS[k], v = +$('s-' + k).value, a = Math.abs(v);
-    // Show as few decimals as the step needs: 1.0, 1.5, 0.25; 5.0%, 5.25%; 10%, 0.5%.
-    var txt;
-    if (c.unit === 'pts') txt = a.toFixed(1);
-    else if (k === 'borrowingRate') txt = Math.round(a * 4) % 2 ? a.toFixed(2) : a.toFixed(1);
-    else txt = a % 1 ? a.toFixed(1) : a.toFixed(0);
+    var txt = c.unit === 'pts' ? a.toFixed(1) : k === 'borrowingRate' ? (Math.round(a * 4) % 2 ? a.toFixed(2) : a.toFixed(1)) : (a % 1 ? a.toFixed(1) : a.toFixed(0));
     var sign = c.plain ? '' : (v > 0 ? '+' : v < 0 ? MINUS : '');
-    $('o-' + k).textContent = sign + txt + (c.unit === 'pts' ? ' pts' : '%');
-    $('s-' + k).setAttribute('aria-valuetext', $('o-' + k).textContent);
+    var text = sign + txt + (c.unit === 'pts' ? ' percentage points' : '%');
+    var box = $('n-' + k);
+    if (box && document.activeElement !== box) box.value = String(+v.toFixed(decimals(k)));
+    $('s-' + k).setAttribute('aria-valuetext', text);
     var ctl = $('s-' + k).closest('.control');
-    if (ctl) ctl.classList.toggle('changed', Math.abs(v - defaultsUi[k]) > 1e-9);
+    if (ctl) {
+      ctl.classList.toggle('changed', Math.abs(v - defaultsUi[k]) > 1e-9);
+      ctl.classList.toggle('down', v < defaultsUi[k] - 1e-9);
+      ctl.classList.toggle('up', v > defaultsUi[k] + 1e-9);
+    }
   }
+  /* Typed values: clamp to the slider's range and round to its step. */
+  function fromBox(k, final) {
+    var box = $('n-' + k), input = $('s-' + k);
+    var raw = String(box.value).replace('\u2212', '-').trim();
+    if (raw === '' || raw === '-' || isNaN(+raw)) { if (final) showValueForce(k); return; }
+    var st = +input.step, v = Math.round(+raw / st) * st;
+    v = Math.min(+input.max, Math.max(+input.min, v));
+    input.value = v;
+    if (final) showValueForce(k);
+    update();
+    if (final) syncUrl();
+  }
+  function showValueForce(k) { var box = $('n-' + k); box.value = String(+(+$('s-' + k).value).toFixed(decimals(k))); }
+  var SCALE_WORDS = {
+    gst: ['Below budget', 'Above budget'], otherGrants: ['Below budget', 'Above budget'], payroll: ['Below budget', 'Above budget'],
+    duty: ['Below budget', 'Above budget'], royalties: ['Below budget', 'Above budget'], wages: ['Slower pay growth', 'Faster pay growth'],
+    otherSpending: ['Less spending', 'More spending'], capex: ['Less spending', 'More spending'], rateShock: ['Lower rates', 'Higher rates']
+  };
   function assumptions() {
     var a = {};
     Object.keys(CONTROLS).forEach(function (k) { a[k] = +$('s-' + k).value / CONTROLS[k].scale; });
@@ -453,7 +474,7 @@
       var on = !!p && b.dataset.id === p.id;
       b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    $('preset-desc').textContent = p ? presetDesc(p, current.id) : 'Your own scenario. The Bad year and Worst buttons under each slider size a shock from history.';
+    $('preset-desc').textContent = p ? presetDesc(p, current.id) : 'Your own scenario. Every slider goes both ways; the Good year, Bad year and Worst buttons under each one size it from history.';
     if ($('bar-scn')) $('bar-scn').textContent = p ? p.name : 'Your own scenario';
     var r;
     try { r = M.scenario(current.series, a); } catch (e) { r = null; }
@@ -579,7 +600,7 @@
       var label = document.createElement('span'); label.className = 'hist-label';
       label.textContent = (k === 'gst' ? 'National GST, ' : k === 'rateShock' ? '10-year bond yield, ' : current.short + ', ') + m.years[0] + ' to ' + m.years[1] + ':';
       box.appendChild(label);
-      [['bad_year', 'Bad year', 'hk-bad'], ['worst', 'Worst', 'hk-worst']].forEach(function (lv) {
+      [['good_year', 'Good year', 'hk-good'], ['bad_year', 'Bad year', 'hk-bad'], ['worst', 'Worst', 'hk-worst']].forEach(function (lv) {
         var v = sizeOf(k, m, lv[0]);
         var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'hist-btn ' + lv[2];
         var unit = m.unit === 'rate' ? ' pts' : '%';
@@ -605,9 +626,9 @@
       var m = histOf(r[0], current.id);
       var tr = document.createElement('tr');
       var th = document.createElement('th'); th.scope = 'row'; th.textContent = r[1]; tr.appendChild(th);
-      var cells = m ? [sizeText(r[0], sizeOf(r[0], m, 'bad_year')), sizeText(r[0], sizeOf(r[0], m, 'worst')), m.worst_year, m.years[0] + ' to ' + m.years[1] + ' (' + m.observations + ' changes)', m.source]
-        : ['Not applicable', '', '', '', r[0] === 'royalties' ? 'No mining royalties in this budget' : ''];
-      cells.forEach(function (c, i) { var td = document.createElement('td'); td.textContent = c; if (i === 4) td.className = 'src-cell'; tr.appendChild(td); });
+      var cells = m ? [sizeText(r[0], sizeOf(r[0], m, 'good_year')), sizeText(r[0], sizeOf(r[0], m, 'bad_year')), sizeText(r[0], sizeOf(r[0], m, 'worst')), m.worst_year, m.years[0] + ' to ' + m.years[1] + ' (' + m.observations + ' changes)', m.source]
+        : ['Not applicable', '', '', '', '', r[0] === 'royalties' ? 'No mining royalties in this budget' : ''];
+      cells.forEach(function (c, i) { var td = document.createElement('td'); td.textContent = c; if (i === 5) td.className = 'src-cell'; tr.appendChild(td); });
       tb.appendChild(tr);
     });
   }
@@ -634,8 +655,26 @@
   }
 
   Object.keys(CONTROLS).forEach(function (k) {
-    $('s-' + k).addEventListener('input', function () { update(); });
-    $('s-' + k).addEventListener('change', syncUrl);
+    var input = $('s-' + k), box = $('n-' + k);
+    input.addEventListener('input', function () { update(); });
+    input.addEventListener('change', syncUrl);
+    if (box) {
+      box.min = input.min; box.max = input.max; box.step = input.step;
+      box.addEventListener('input', function () { fromBox(k, false); });
+      box.addEventListener('change', function () { fromBox(k, true); });
+      box.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); fromBox(k, true); box.blur(); } });
+    }
+    // A labelled scale under the slider: where the budget sits, and which way is which.
+    if (SCALE_WORDS[k]) {
+      var lo = +input.min, hi = +input.max, zero = (0 - lo) / (hi - lo) * 100;
+      var sc = document.createElement('div'); sc.className = 'scale'; sc.setAttribute('aria-hidden', 'true');
+      var l = document.createElement('span'); l.className = 'sc-l'; l.textContent = '\u2190 ' + SCALE_WORDS[k][0];
+      var r = document.createElement('span'); r.className = 'sc-r'; r.textContent = SCALE_WORDS[k][1] + ' \u2192';
+      var z = document.createElement('i'); z.className = 'sc-zero'; z.style.left = zero + '%';
+      var zt = document.createElement('span'); zt.className = 'sc-zt'; zt.textContent = 'Budget'; zt.style.left = zero + '%';
+      sc.append(z, zt, l, r);
+      input.insertAdjacentElement('afterend', sc);
+    }
   });
   $('reset').addEventListener('click', function () { setControls({}); update(); syncUrl(); });
 

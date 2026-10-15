@@ -12,7 +12,8 @@ For each state and each revenue line it measures, year by year, how far growth f
 line's normal (median) growth:  shortfall = (1 + growth) / (1 + median growth) - 1.
 A budget assumes roughly normal growth, so the shortfall is how far a repeat of that year would leave
 revenue below the budget. "Worst year" is the largest shortfall on record; "bad year" is the 20th
-percentile, a year as bad as roughly one year in five. Wages and interest rates use the excess over
+percentile, a year as bad as roughly one year in five; "good year" is the 80th percentile, a year as
+good as roughly one in five. Wages and interest rates use the excess over
 their median change, in percentage points.
 
 Writes data/shock_history.json and data/shock_history.js.
@@ -99,6 +100,7 @@ def revenue_measure(series, source):
         "median_growth": round(m, 4),
         "worst": round(short[worst_year], 4), "worst_year": worst_year, "worst_growth": round(g[worst_year], 4),
         "bad_year": round(percentile(short.values(), 0.2), 4),
+        "good_year": round(percentile(short.values(), 0.8), 4),
         "history": {y: round(series[y], 1) for y in sorted(series)},
     }
 
@@ -111,6 +113,7 @@ def excess_measure(changes, source, unit):
         "unit": unit, "source": source, "years": [min(changes), max(changes)], "observations": len(exc),
         "median_change": round(m, 4), "worst": round(exc[worst_year], 4), "worst_year": worst_year,
         "worst_change": round(changes[worst_year], 4), "bad_year": round(percentile(exc.values(), 0.8), 4),
+        "good_year": round(percentile(exc.values(), 0.2), 4),
     }
 
 
@@ -175,6 +178,10 @@ def main():
                 m = s[k]
                 assert m["observations"] >= 8, (sid, k)
                 assert -0.9 < m["worst"] <= m["bad_year"] <= 0.05, (sid, k, m["worst"], m["bad_year"])
+        for k in ("payroll", "duty", "royalties"):
+            if k in out["states"][sid]:
+                assert out["states"][sid][k]["good_year"] >= 0 >= out["states"][sid][k]["bad_year"] - 1e-9, (sid, k)
+        assert out["states"][sid]["wages"]["good_year"] <= 0 <= out["states"][sid]["wages"]["bad_year"]
         assert 0 <= out["states"][sid]["wages"]["bad_year"] <= out["states"][sid]["wages"]["worst"] < 0.1
     assert out["national"]["gst"]["observations"] >= 15
 

@@ -98,9 +98,19 @@ legend { float: none; width: auto; line-height: 1.4; font-size: .72rem; font-wei
 .group { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
 .control { margin-top: 14px; padding: 2px 0; }
 .control label { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: .85rem; font-weight: 500; }
-.control output { color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: .84rem; }
-.control.changed output { color: var(--accent); }
-.control input[type="range"] { width: 100%; margin: 10px 0 4px; accent-color: var(--accent); cursor: pointer; }
+.val { display: inline-flex; align-items: baseline; gap: 3px; flex-shrink: 0; }
+.num { width: 64px; font: inherit; font-size: .84rem; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; -moz-appearance: textfield; }
+.num::-webkit-outer-spin-button, .num::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.num:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.unit { font-size: .74rem; color: var(--muted); }
+.control.down .num { color: var(--sb-neg); border-color: color-mix(in srgb, var(--sb-neg) 45%, var(--line)); }
+.control.up .num { color: var(--sb-pos); border-color: color-mix(in srgb, var(--sb-pos) 45%, var(--line)); }
+.panel-lead { font-size: .82rem; line-height: 1.55; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 4px 0 8px; }
+.scale { position: relative; display: flex; justify-content: space-between; font-size: .64rem; line-height: 1.2; color: var(--muted); margin: 0 0 4px; padding-top: 10px; }
+.sc-zero { position: absolute; top: 0; width: 2px; height: 7px; margin-left: -1px; background: var(--ink); border-radius: 1px; }
+.sc-zt { position: absolute; top: 10px; transform: translateX(-50%); font-weight: 600; color: var(--ink); }
+.control input[type="range"] { width: 100%; margin: 10px 0 0; accent-color: var(--accent); cursor: pointer; }
 .control p { font-size: .72rem; color: var(--muted); line-height: 1.5; margin: 2px 0 0; }
 .advanced { margin-top: 16px; }
 .advanced summary { font-size: .8rem; cursor: pointer; color: var(--soft); }
@@ -188,6 +198,7 @@ tr.on th, tr.on td { background: var(--accent-soft); }
 .hk { display: inline-block; font-size: .64rem; font-weight: 600; letter-spacing: .02em; padding: 1px 6px; border-radius: 4px; margin-left: 6px; vertical-align: 1px; }
 .hk-bad { background: color-mix(in srgb, var(--mx-duty) 22%, transparent); color: var(--ink); }
 .hk-worst { background: color-mix(in srgb, var(--sb-neg) 22%, transparent); color: var(--ink); }
+.hk-good { background: color-mix(in srgb, var(--sb-pos) 20%, transparent); color: var(--ink); }
 .preset .hk { margin-left: 6px; }
 .preset.on .hk { background: rgba(255, 255, 255, .22); color: inherit; }
 .preset:disabled { opacity: .45; cursor: not-allowed; }
@@ -198,6 +209,7 @@ tr.on th, tr.on td { background: var(--accent-soft); }
 .hist-btn { font: inherit; font-size: .7rem; font-weight: 500; padding: 3px 8px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; color: var(--ink); font-variant-numeric: tabular-nums; }
 .hist-btn.hk-bad { background: color-mix(in srgb, var(--mx-duty) 18%, transparent); }
 .hist-btn.hk-worst { background: color-mix(in srgb, var(--sb-neg) 16%, transparent); }
+.hist-btn.hk-good { background: color-mix(in srgb, var(--sb-pos) 15%, transparent); }
 .hist-btn:hover { border-color: var(--muted); }
 .hist-none { font-size: .7rem; color: var(--muted); }
 
