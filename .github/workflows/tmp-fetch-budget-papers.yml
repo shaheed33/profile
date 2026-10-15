@@ -7,25 +7,43 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download ACT and NT papers
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Fetch ACT papers through a real browser
         run: |
-          mkdir -p tmp_papers && cd tmp_papers
-          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
-          ok() { head -c 5 "$1" | grep -qE '%PDF|PK' ; }
-          get() {
-            out=$1; url=$2
-            curl -sSL -A "$UA" -H "Accept: */*" -H "Accept-Language: en-AU,en;q=0.9" --retry 2 -m 180 -o "$out" "$url" || true
-            if ! ok "$out"; then
-              curl -sSL -A "$UA" --retry 2 -m 240 -o "$out" "https://web.archive.org/web/2026id_/$url" || true
-            fi
-            if ok "$out"; then echo "$out $(stat -c%s "$out") $(sha256sum "$out"|cut -c1-64) $url" >> manifest2.txt; else echo "FAIL $out $url" >> manifest2.txt; rm -f "$out"; fi
+          pip install -q playwright && python -m playwright install --with-deps chromium >/dev/null
+          cat > fetch.py <<'PY'
+          import asyncio, hashlib, pathlib
+          from playwright.async_api import async_playwright
+          URLS = {
+            "act_tables.xlsx": "https://www.treasury.act.gov.au/__data/assets/excel_doc/0009/3081492/ACT-Government-2026-27-Budget-tables.xlsx",
+            "act_outlook.pdf": "https://www.treasury.act.gov.au/__data/assets/pdf_file/0003/3080667/2026-27-Budget-Outlook.pdf",
           }
-          get act_tables.xlsx "https://www.treasury.act.gov.au/__data/assets/excel_doc/0009/3081492/ACT-Government-2026-27-Budget-tables.xlsx"
-          get act_outlook.pdf "https://www.treasury.act.gov.au/__data/assets/pdf_file/0003/3080667/2026-27-Budget-Outlook.pdf"
-          get nt_bp2.pdf "https://budget.nt.gov.au/__data/assets/pdf_file/0004/1609744/2026-27-budget-bp2.pdf"
-          rm -f act_outlook.docx
-          cat manifest2.txt
+          async def main():
+              out = pathlib.Path("tmp_papers"); out.mkdir(exist_ok=True)
+              async with async_playwright() as p:
+                  b = await p.chromium.launch(headless=False)
+                  ctx = await b.new_context(accept_downloads=True)
+                  page = await ctx.new_page()
+                  await page.goto("https://www.treasury.act.gov.au/budget/budget-2026-27/budget-papers-and-statements", wait_until="networkidle")
+                  await page.wait_for_timeout(8000)
+                  print("title:", await page.title())
+                  for name, url in URLS.items():
+                      try:
+                          r = await ctx.request.get(url, timeout=120000)
+                          body = await r.body()
+                          print(name, r.status, len(body), body[:5])
+                          if body[:4] in (b"%PDF", b"PK\x03\x04"):
+                              (out/name).write_bytes(body)
+                              with open(out/"manifest3.txt","a") as f: f.write(f"{name} {len(body)} {hashlib.sha256(body).hexdigest()} {url}\n")
+                      except Exception as e:
+                          print(name, "ERR", e)
+                  await b.close()
+          asyncio.run(main())
+          PY
+          xvfb-run -a python fetch.py
+          ls -la tmp_papers
       - name: Commit
         run: |
           git config user.name "github-actions" && git config user.email "actions@github.com"
-          git add -A tmp_papers && git commit -m "Temporary: ACT and NT papers [skip ci]" && git push
+          git add -A tmp_papers && (git commit -m "Temporary: ACT papers [skip ci]" && git push) || echo nothing
