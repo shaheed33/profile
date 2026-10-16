@@ -1,0 +1,9 @@
+  ChunkedEncodingError from https://data.api.abs.gov.au/rest/data/ABS,ABS_REGIONAL_LGA2021,/.LGA2021.57490+54830+51820+55110+50210+58760+58050+57700+53780+26810+23810+22110+20830+26170+207
+regional: 54,819 rows, 694 measures, cols ['DATAFLOW', 'MEASURE', 'REGIONTYPE', 'LGA_2021', 'FREQUENCY', 'TIME_PERIOD', 'OBS_VALUE', 'UNIT_MEASURE', 'UNIT_MULT', 'OBS_STATUS', 'OBS_COMMENT']
+regional measures: 1078 names
+census 2021_WPP_LGA_for_AUS_short-header: 88 tables saved
+census 2021_GCP_LGA_for_AUS_short-header: 119 tables saved
+census 2021_WPP_STE_for_AUS_short-header: 88 tables saved
+census 2021_GCP_STE_for_AUS_short-header: 119 tables saved
+census 2016_WPP_LGA_for_AUS_short-header: 79 tables saved
+tra list saved
